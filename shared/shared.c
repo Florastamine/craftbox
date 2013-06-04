@@ -10,13 +10,7 @@ Contains portion of code from VLED project
 
 */
 
-int enable_click;
-
-int 		GAMEMODE;
-#define 	GAME_EDITOR				1
-#define 	GAME_FPS					2
-#define 	GAME_PLATFORM			3
-#define 	GAME_GENERICSHOOTER	4
+var enable_click;
 
 #define	FADE_IN					1
 #define	FADE_OUT					0

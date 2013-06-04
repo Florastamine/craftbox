@@ -4,7 +4,7 @@
 #define BBOX 8
 
 ENTITY *select;
-var fpsf_alpha_control;
+var fpsf_alpha_control, fpsf_ambient_control, fpsf_albedo_control;
 
 #define PRAGMA_PATH "../shared/sharedData"
 
@@ -85,7 +85,6 @@ void main(void) {
 	//	shadow_stencil = 0;
 	video_window(NULL,NULL,0,"editor 0.1 Milestone 0");
 	
-	GAMEMODE = GAME_EDITOR;
 	sharedGUI_mouseset(mouse);
 	
 	sharedGUI_loadbackground();
@@ -104,7 +103,7 @@ void main(void) {
 		{
 			while(mouse_left) wait(1);
 			
-			if(mouse_ent)
+			if(mouse_ent && enable_click != 0)
 			{
 				if(select)
 				{
@@ -113,6 +112,21 @@ void main(void) {
 				}
 				select = mouse_ent;
 				select.material = mat_select;
+				
+				set(select, BRIGHT | TRANSLUCENT);
+				
+				fpsf_alpha_control = select.alpha;
+				fpsf_ambient_control = select.ambient;
+				fpsf_albedo_control = select.albedo;
+				
+				//				if(is(select,BRIGHT)) button_state(panProp_EDITOR_elements,1,1);
+				//				if(is(select,INVISIBLE)) button_state(panProp_EDITOR_elements,2,1);
+				//				if(is(select,NOFOG)) button_state(panProp_EDITOR_elements,3,1);
+				//				if(is(select,OVERLAY)) button_state(panProp_EDITOR_elements,4,1);
+				//				if(is(select,PASSABLE)) button_state(panProp_EDITOR_elements,5,1);
+				//				if(is(select,POLYGON)) button_state(panProp_EDITOR_elements,6,1);
+				//				if(is(select,SHADOW)) button_state(panProp_EDITOR_elements,7,1);
+				//				if(is(select,TRANSLUCENT)) button_state(panProp_EDITOR_elements,8,1);
 			}
 			else
 			{
@@ -158,7 +172,7 @@ void main(void) {
 }
 
 void _my() {
-	draw_bounding_box(my);
+	//	draw_bounding_box(my);
 	select = you;
 	my.emask |= ENABLE_CLICK;
 	my.event = my_event;
@@ -175,8 +189,6 @@ void test()
 		while(select) 
 		{
 			proc_mode = PROC_LATE;
-			
-			fpsf_alpha_control = select.alpha;
 			if(!mouse_left) draw_bounding_box(select);
 			
 			wait(1);
