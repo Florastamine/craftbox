@@ -121,7 +121,6 @@ button_Path_x,			button_Path_y;
 PANEL *panProp_EDITOR_elements = {
 	layer = 3;
 	
-	/* we got 8 buttons ranged from [1..8] */
 	button_toggle(0,0,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_NOFOG_EDITOR_on,flag_NOFOG_EDITOR,flag_NOFOG_EDITOR_on,flag_NOFOG_EDITOR_on,NULL,NULL,NULL);
@@ -161,7 +160,6 @@ PANEL *panMat_EDITOR_closebutton = {
 /* fuck this shit. i couldn't use arrays to create these buttons
 which will result in shorter and much more readable code.
 if you're a better lite-C programmer than me, please fix this.*/
-
 PANEL *panHome_EDITOR_elements_button1 = {
 	layer = 3;
 	button(0,0,button_Home_saveworld,button_Home_saveworld,button_Home_saveworld,NULL,NULL,NULL);
@@ -285,10 +283,6 @@ void sharedGUI_updategui(PANEL *wg) {
 		panPhy_EDITOR_closebutton.pos_y = panPhy.pos_y + 8 + BORDER/4;			
 	}
 	
-	
-	//bitch take this cause i'm not gonna use external variables anymooooore.
-	//	pan_setpos(panHome_EDITOR_closebutton,3,2,vector(panHome.pos_x + panHome_EDITOR_closebutton.pos_x));
-	
 	/*
 	if(GAMEMODE == GAME_EDITOR) {
 		wait(1);
@@ -308,9 +302,12 @@ void sharedGUI_updategui(PANEL *wg) {
 	*/
 }
 
-/* id always = 1 cuz we don't have two closebuttons at the same time. 
+/* 
+
+id always = 1 cuz we don't have two closebuttons at the same time. 
 only one PANEL * parameter isn't enough (and it won't work too) so 
 this simple ugly hack should do the trick.
+
 */
 void sharedGUI_closewindow(var id, PANEL *p) {
 	id = 1;
@@ -371,11 +368,6 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	}
 }
 
-/*
-
-custom
-
-*/
 void sharedGUI_dragpanel(PANEL *p)
 {
 	var click_offset[2];
@@ -784,11 +776,5 @@ void sharedGUI_phy() {
 }
 
 void sharedGUI_toggle_translucent() {
-	if(button_state(panProp_EDITOR_elements,8,-1) == ON)
-	{
-		if(!select) {
-			set(select,TRANSLUCENT);
-			button_state(panProp_EDITOR_elements,8,1);
-		}
-	}
+	wait(1);
 }

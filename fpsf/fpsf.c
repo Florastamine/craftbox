@@ -16,7 +16,7 @@ int fpsf_obj_type;
 BMAP* mouse = "arrow.pcx";
 
 void _my();
-void bitch();
+void my_event();
 void test();
 void manipobj();
 
@@ -157,24 +157,15 @@ void main(void) {
 	wait(1);
 }
 
-/*
-void flg() {
-	if(button_state(flagtest,1,-1) == ON) {
-		printf("on");
-	} else printf("off");
-}
-*/
-
-//implement this shit
 void _my() {
 	draw_bounding_box(my);
 	select = you;
 	my.emask |= ENABLE_CLICK;
-	my.event = bitch;
+	my.event = my_event;
 }
 
-void bitch() {
-	error("bitch. fuck you");
+void my_event() {
+	error("my_event");
 }
 
 void test() 
@@ -184,10 +175,9 @@ void test()
 		while(select) 
 		{
 			proc_mode = PROC_LATE;
-			select.alpha = fpsf_alpha_control;
-			if(!mouse_left){draw_bounding_box(select);    }
 			
-			//			printf("%d",select.alpha);
+			fpsf_alpha_control = select.alpha;
+			if(!mouse_left) draw_bounding_box(select);
 			
 			wait(1);
 		}
