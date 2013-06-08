@@ -1,3 +1,9 @@
+/*
+
+close button will be the first element no matter what.
+
+*/
+
 PANEL *buttonlst;
 
 TEXT *t_panProp[3];
@@ -125,14 +131,14 @@ PANEL *panHome = {
 	
 	bmap = "panHome_EDITOR.bmp";
 	
+	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	
 	button(0,0,button_Home_saveworld,button_Home_saveworld,button_Home_saveworld,NULL,NULL,NULL);
 	button(0,0,button_Home_loadworld,button_Home_loadworld,button_Home_loadworld,NULL,NULL,NULL);
 	button(0,0,button_Home_newworld,button_Home_newworld,button_Home_newworld,NULL,NULL,NULL);
 	button(0,0,button_Home_quitworld,button_Home_quitworld,button_Home_quitworld,NULL,NULL,NULL);
 	button(0,0,button_Home_compileworld,button_Home_compileworld,button_Home_compileworld,NULL,NULL,NULL);
 	button(0,0,button_Home_configworld,button_Home_configworld,button_Home_configworld,NULL,NULL,NULL);
-	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -143,6 +149,8 @@ PANEL *panProp = {
 	layer = 2;
 	
 	bmap = "panProp_EDITOR.bmp";
+	
+	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	button_toggle(0,0,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR_on,NULL,NULL,NULL);
@@ -156,8 +164,6 @@ PANEL *panProp = {
 	hslider(0,0,100,slider,0,100,fpsf_alpha_control);	
 	hslider(0,0,100,slider,0,100,fpsf_ambient_control);	
 	hslider(0,0,100,slider,0,100,fpsf_albedo_control);	
-	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -198,14 +204,14 @@ void sharedGUI_updategui(PANEL *wg) {
 		button_CmpWorld_y = button_QuitWorld_y + 40 + BORDER/2.5;
 		button_SetWorld_y = button_CmpWorld_y + 40 + BORDER/2.5;
 		
-		pan_setpos(panHome,3,1,vector(BORDER,button_SaveWorld_y,0));
-		pan_setpos(panHome,3,2,vector(BORDER,button_LoadWorld_y,0));	
-		pan_setpos(panHome,3,3,vector(BORDER,button_NewWorld_y,0));
-		pan_setpos(panHome,3,4,vector(BORDER,button_QuitWorld_y,0));
-		pan_setpos(panHome,3,5,vector(BORDER,button_CmpWorld_y,0));
-		pan_setpos(panHome,3,6,vector(BORDER,button_SetWorld_y,0));
+		pan_setpos(panHome,3,2,vector(BORDER,button_SaveWorld_y,0));
+		pan_setpos(panHome,3,3,vector(BORDER,button_LoadWorld_y,0));	
+		pan_setpos(panHome,3,4,vector(BORDER,button_NewWorld_y,0));
+		pan_setpos(panHome,3,5,vector(BORDER,button_QuitWorld_y,0));
+		pan_setpos(panHome,3,6,vector(BORDER,button_CmpWorld_y,0));
+		pan_setpos(panHome,3,7,vector(BORDER,button_SetWorld_y,0));
 		
-		pan_setpos(panHome,3,7,vector(bmap_width(panHome.bmap) - BORDER * 2,BORDER,0));
+		pan_setpos(panHome,3,1,vector(bmap_width(panHome.bmap) - BORDER * 2,BORDER,0));
 		
 	}
 	
@@ -219,21 +225,22 @@ void sharedGUI_updategui(PANEL *wg) {
 		t_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
 		
 		int i;
-		for(i = 1;i < 9;i++)
-		pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * i,0));
+		for(i = 2;i < 10;i++)
+		pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
 		
 		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
 		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
 		pan_setpos(panProp,4,3,vector(BORDER + 102,BORDER * 4 + 23 * 3,0));
 		
+		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - BORDER * 2,BORDER,0));
 	}
 	
 	if(wg == panMat) {
-		wait(1);
+		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
 	}
 	
 	if(wg == panPhy) {
-		wait(1);
+		pan_setpos(panPhy,3,1,vector(bmap_width(panPhy.bmap) - BORDER * 2, BORDER,0));
 	}
 }
 
@@ -306,7 +313,6 @@ void sharedGUI_dragpanel(PANEL *p)
 		if(p == panPhy) sharedGUI_updategui(panPhy);
 		if(p == panMat) sharedGUI_updategui(panMat);
 		
-		//		sharedGUI_panelselect(p);
 		wait(1);
 	}
 	
