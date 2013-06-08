@@ -72,31 +72,69 @@ BMAP *button_Home_compileworld = "button_Home_compileworld.bmp";
 BMAP *button_Home_configworld = "button_Home_configworld.bmp";
 BMAP *button_Home_quitworld = "button_Home_quitworld.bmp";
 
-BMAP *flag_BIRGHT_EDITOR = "flag_BIRGHT_EDITOR.bmp";
-BMAP *flag_BIRGHT_EDITOR_on = "flag_BIRGHT_EDITOR_on.bmp";
+BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
+BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
 
-BMAP *flag_INVISIBLE_EDITOR = "flag_INVISIBLE_EDITOR.bmp";
-BMAP *flag_INVISIBLE_EDITOR_on = "flag_INVISIBLE_EDITOR_on.bmp";
+BMAP *flag_INVISIBLE = "flag_INVISIBLE.bmp";
+BMAP *flag_INVISIBLE_on = "flag_INVISIBLE_on.bmp";
 
-BMAP *flag_NOFOG_EDITOR = "flag_NOFOG_EDITOR.bmp";
-BMAP *flag_NOFOG_EDITOR_on = "flag_NOFOG_EDITOR_on.bmp";
+BMAP *flag_NOFOG = "flag_NOFOG.bmp";
+BMAP *flag_NOFOG_on = "flag_NOFOG_on.bmp";
 
-BMAP *flag_OVERLAY_EDITOR = "flag_OVERLAY_EDITOR.bmp";
-BMAP *flag_OVERLAY_EDITOR_on = "flag_OVERLAY_EDITOR_on.bmp";
+BMAP *flag_OVERLAY = "flag_OVERLAY.bmp";
+BMAP *flag_OVERLAY_on = "flag_OVERLAY_on.bmp";
 
-BMAP *flag_PASSABLE_EDITOR = "flag_PASSABLE_EDITOR.bmp";
-BMAP *flag_PASSABLE_EDITOR_on = "flag_PASSABLE_EDITOR_on.bmp";
+BMAP *flag_PASSABLE = "flag_PASSABLE.bmp";
+BMAP *flag_PASSABLE_on = "flag_PASSABLE_on.bmp";
 
-BMAP *flag_POLYGON_EDITOR = "flag_POLYGON_EDITOR.bmp";
-BMAP *flag_POLYGON_EDITOR_on = "flag_POLYGON_on.bmp";
+BMAP *flag_POLYGON = "flag_POLYGON.bmp";
+BMAP *flag_POLYGON_on = "flag_POLYGON_on.bmp";
 
-BMAP *flag_SHADOW_EDITOR = "flag_SHADOW_EDITOR.bmp";
-BMAP *flag_SHADOW_EDITOR_on = "flag_SHADOW_EDITOR_on.bmp";
+BMAP *flag_SHADOW = "flag_SHADOW.bmp";
+BMAP *flag_SHADOW_on = "flag_SHADOW_on.bmp";
 
-BMAP *flag_TRANSLUCENT_EDITOR = "flag_TRANSLUCENT_EDITOR.bmp";
-BMAP *flag_TRANSLUCENT_EDITOR_on = "flag_TRANSLUCENT_EDITOR_on.bmp";
+BMAP *flag_TRANSLUCENT = "flag_TRANSLUCENT.bmp";
+BMAP *flag_TRANSLUCENT_on = "flag_TRANSLUCENT_on.bmp";
 
 BMAP *slider = "xlider.bmp";
+
+BMAP *button_Mat1 = "button_Mat1.bmp";
+BMAP *button_Mat2 = "button_Mat2.bmp";
+BMAP *button_Mat3 = "button_Mat3.bmp";
+BMAP *button_Mat4 = "button_Mat4.bmp";
+BMAP *button_Mat5 = "button_Mat5.bmp";
+BMAP *button_Mat6 = "button_Mat6.bmp";
+BMAP *button_MatNorm = "button_MatNorm.bmp";
+
+BMAP *menu1_submenu1 = "button_general";
+BMAP *menu1_submenu2 = "button_general";
+BMAP *menu1_submenu3 = "button_general";
+BMAP *menu1_submenu4 = "button_general";
+BMAP *menu1_submenu5 = "button_general";
+
+BMAP *menu2_submenu1 = "button_general";
+BMAP *menu2_submenu2 = "button_general";
+BMAP *menu2_submenu3 = "button_general";
+BMAP *menu2_submenu4 = "button_general";
+BMAP *menu2_submenu5 = "button_general";
+
+BMAP *menu3_submenu1 = "button_general";
+BMAP *menu3_submenu2 = "button_general";
+BMAP *menu3_submenu3 = "button_general";
+BMAP *menu3_submenu4 = "button_general";
+BMAP *menu3_submenu5 = "button_general";
+
+BMAP *menu4_submenu1 = "button_general";
+BMAP *menu4_submenu2 = "button_general";
+BMAP *menu4_submenu3 = "button_general";
+BMAP *menu4_submenu4 = "button_general";
+BMAP *menu4_submenu5 = "button_general";
+
+BMAP *menu5_submenu1 = "button_general";
+BMAP *menu5_submenu2 = "button_general";
+BMAP *menu5_submenu3 = "button_general";
+BMAP *menu5_submenu4 = "button_general";
+BMAP *menu5_submenu5 = "button_general";
 
 var 
 /* buttons which is used for the main HUD. */
@@ -123,13 +161,20 @@ button_LoadWorld_y,
 button_NewWorld_y,
 button_QuitWorld_y,
 button_CmpWorld_y,
-button_SetWorld_y;
+button_SetWorld_y,
 
+button_Mat1_x,
+button_Mat2_x,
+button_Mat3_x,
+button_Mat4_x,
+button_Mat5_x,
+button_Mat6_x,
+button_MatNorm_x;
 
 PANEL *panHome = {
 	layer = 2;
 	
-	bmap = "panHome_EDITOR.bmp";
+	bmap = "panHome.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
@@ -148,18 +193,18 @@ PANEL *panHome = {
 PANEL *panProp = {
 	layer = 2;
 	
-	bmap = "panProp_EDITOR.bmp";
+	bmap = "panProp.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
-	button_toggle(0,0,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_NOFOG_EDITOR_on,flag_NOFOG_EDITOR,flag_NOFOG_EDITOR_on,flag_NOFOG_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_OVERLAY_EDITOR_on,flag_OVERLAY_EDITOR,flag_OVERLAY_EDITOR_on,flag_OVERLAY_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_PASSABLE_EDITOR_on,flag_PASSABLE_EDITOR,flag_PASSABLE_EDITOR_on,flag_PASSABLE_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_POLYGON_EDITOR_on,flag_POLYGON_EDITOR,flag_POLYGON_EDITOR_on,flag_POLYGON_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_SHADOW_EDITOR_on,flag_SHADOW_EDITOR,flag_SHADOW_EDITOR_on,flag_SHADOW_EDITOR_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_TRANSLUCENT_EDITOR_on,flag_TRANSLUCENT_EDITOR,flag_TRANSLUCENT_EDITOR_on,flag_TRANSLUCENT_EDITOR_on,sharedGUI_toggle_translucent,NULL,NULL);
+	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,sharedGUI_toggle_translucent,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,fpsf_alpha_control);	
 	hslider(0,0,100,slider,0,100,fpsf_ambient_control);	
@@ -173,7 +218,7 @@ PANEL *panProp = {
 PANEL *panPhy = {
 	layer = 2;
 	
-	bmap = "panPhy_EDITOR.bmp";
+	bmap = "panPhy.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
@@ -185,9 +230,17 @@ PANEL *panPhy = {
 PANEL *panMat = {
 	layer = 2;
 	
-	bmap = "panMat_EDITOR.bmp";
+	bmap = "panMat.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	
+	button(0,0,button_Mat1,button_Mat1,button_Mat1,NULL,NULL,NULL);
+	button(0,0,button_Mat2,button_Mat2,button_Mat2,NULL,NULL,NULL);
+	button(0,0,button_Mat3,button_Mat3,button_Mat3,NULL,NULL,NULL);
+	button(0,0,button_Mat4,button_Mat4,button_Mat4,NULL,NULL,NULL);
+	button(0,0,button_Mat5,button_Mat5,button_Mat5,NULL,NULL,NULL);
+	button(0,0,button_Mat6,button_Mat6,button_Mat6,NULL,NULL,NULL);
+	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -236,6 +289,30 @@ void sharedGUI_updategui(PANEL *wg) {
 	}
 	
 	if(wg == panMat) {
+		/*
+		button_Mat1_x = BORDER;
+		button_Mat2_x = button_Mat1_x + 42 + BORDER;
+		button_Mat3_x = button_Mat2_x + 42 + BORDER;
+		button_Mat4_x = button_Mat3_x + 42 + BORDER;
+		button_Mat5_x = button_Mat4_x + 42 + BORDER;
+		button_Mat6_x = button_Mat5_x + 42 + BORDER;
+		button_MatNorm_x = button_Mat6_x + 42 + BORDER;
+		
+		pan_setpos(panMat,3,2,vector(button_Mat1_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,3,vector(button_Mat2_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,4,vector(button_Mat3_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,5,vector(button_Mat4_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,6,vector(button_Mat5_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,7,vector(button_Mat6_x,BORDER * 2 + 42,0));
+		pan_setpos(panMat,3,8,vector(button_MatNorm_x,BORDER * 2 + 42,0));
+		*/
+		
+		var i = 2;
+		while(i < 9) {
+			pan_setpos(panMat,3,i,vector( (i-1) * BORDER + (i-2) * 42,BORDER * 2 + 42,0));
+			i++;
+		}
+		
 		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
 	}
 	
