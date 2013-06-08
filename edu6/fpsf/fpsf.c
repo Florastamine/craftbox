@@ -6,6 +6,8 @@
 ENTITY *select;
 var fpsf_alpha_control, fpsf_ambient_control, fpsf_albedo_control;
 
+char *ch = '_';
+
 #define PRAGMA_PATH "../shared/sharedData"
 
 #include "../shared/shared.c"
@@ -22,30 +24,6 @@ void manipobj();
 
 ENTITY	*fpsf_marker;
 VECTOR 	sharedGUI_cpos1,sharedGUI_cpos2,fpsf_temp_pos;
-
-void draw_bounding_box(ENTITY* ent)
-{
-	VECTOR bounding_box[BBOX];
-	int i;
-	for(i = 0;i < BBOX;i++) {
-		vec_set(bounding_box[i],vector(ent.min_x,ent.min_y,ent.min_z));
-		vec_rotate(bounding_box[i],ent.pan);
-		vec_add(bounding_box[i],ent.x);
-	}
-	
-	draw_line3d(bounding_box[0],NULL,100);
-	for(i = 0;i < BBOX;i++) draw_line3d(bounding_box[i],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[4],vector(0,0,255),100);
-	draw_line3d(bounding_box[5],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[2],NULL,100);
-	draw_line3d(bounding_box[6],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[3],NULL,100);
-	draw_line3d(bounding_box[7],vector(0,0,255),100);
-}
-
 
 void follow_pointer() {
 	fpsf_marker = me;
@@ -65,16 +43,6 @@ void follow_pointer() {
 		vec_set(fpsf_temp_pos.x,hit.x);
 		wait(1);
 	}
-}
-
-MATERIAL* mat_select = 
-{
-	ambient_red=255;
-	ambient_green=255;
-	ambient_blue=0;
-	diffuse_red=255;
-	diffuse_green=255;
-	diffuse_blue=0;
 }
 
 void main(void) {

@@ -32,6 +32,7 @@ void sharedGUI_toggle_translucent();
 
 void sharedGUI_updategui(PANEL *);
 void sharedGUI_closewindow(var, PANEL *);
+void sharedGUI_panelselect(PANEL *);
 
 // Functions do uninitialize
 void sharedGUI__release();

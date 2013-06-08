@@ -1,6 +1,6 @@
 PANEL *buttonlst;
 
-TEXT *t_editor_panProp[3];
+TEXT *t_panProp[3];
 
 /*
 BMAP *button_New = "button_general.bmp";
@@ -110,14 +110,20 @@ button_Home_x,			button_Home_y,
 button_Cam_x,			button_Cam_y,
 button_Terrain_x,		button_Terrain_y,
 button_Objs_x,			button_Objs_y,
-button_Path_x,			button_Path_y;
+button_Path_x,			button_Path_y,
+
+button_SaveWorld_y,
+button_LoadWorld_y,
+button_NewWorld_y,
+button_QuitWorld_y,
+button_CmpWorld_y,
+button_SetWorld_y;
+
 
 PANEL *panHome = {
-	bmap = "panHome_EDITOR.bmp";
-	
 	layer = 2;
-	pos_x = 0;
-	pos_y = 0;
+	
+	bmap = "panHome_EDITOR.bmp";
 	
 	button(0,0,button_Home_saveworld,button_Home_saveworld,button_Home_saveworld,NULL,NULL,NULL);
 	button(0,0,button_Home_loadworld,button_Home_loadworld,button_Home_loadworld,NULL,NULL,NULL);
@@ -129,14 +135,14 @@ PANEL *panHome = {
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
+	
+	flags = OVERLAY | TRANSLUCENT;
 }
 
 PANEL *panProp = {
-	bmap = "panProp_EDITOR.bmp";
-	
 	layer = 2;
-	pos_x = 0;
-	pos_y = 0;
+	
+	bmap = "panProp_EDITOR.bmp";
 	
 	button_toggle(0,0,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR,flag_BIRGHT_EDITOR_on,flag_BIRGHT_EDITOR_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR,flag_INVISIBLE_EDITOR_on,flag_INVISIBLE_EDITOR_on,NULL,NULL,NULL);
@@ -153,49 +159,72 @@ PANEL *panProp = {
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
-	flags=OVERLAY;
+	on_click = sharedGUI_dragpanel;
 	
-	//	on_click = sharedGUI_dragpanel;
+	flags = TRANSLUCENT | OVERLAY;
 }
 
 PANEL *panPhy = {
-	bmap = "panPhy_EDITOR.bmp";
-	
 	layer = 2;
-	pos_x = 0;
-	pos_y = 0;
+	
+	bmap = "panPhy_EDITOR.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
+	
+	flags = OVERLAY | TRANSLUCENT;
 }
 
 PANEL *panMat = {
-	bmap = "panMat_EDITOR.bmp";
-	
 	layer = 2;
-	pos_x = 0;
-	pos_y = 0;
+	
+	bmap = "panMat_EDITOR.bmp";
 	
 	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
+	
+	flags = OVERLAY | TRANSLUCENT;
 }
 
 void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panHome) {
-		wait(1);	
+		button_SaveWorld_y = BORDER;
+		button_LoadWorld_y = button_SaveWorld_y + 40 + BORDER/2.5;
+		button_NewWorld_y = button_LoadWorld_y + 40 + BORDER/2.5;
+		button_QuitWorld_y = button_NewWorld_y + 40 + BORDER/2.5;
+		button_CmpWorld_y = button_QuitWorld_y + 40 + BORDER/2.5;
+		button_SetWorld_y = button_CmpWorld_y + 40 + BORDER/2.5;
+		
+		pan_setpos(panHome,3,1,vector(BORDER,button_SaveWorld_y,0));
+		pan_setpos(panHome,3,2,vector(BORDER,button_LoadWorld_y,0));	
+		pan_setpos(panHome,3,3,vector(BORDER,button_NewWorld_y,0));
+		pan_setpos(panHome,3,4,vector(BORDER,button_QuitWorld_y,0));
+		pan_setpos(panHome,3,5,vector(BORDER,button_CmpWorld_y,0));
+		pan_setpos(panHome,3,6,vector(BORDER,button_SetWorld_y,0));
+		
+		pan_setpos(panHome,3,7,vector(bmap_width(panHome.bmap) - BORDER * 2,BORDER,0));
+		
 	}
 	
 	if(wg == panProp) { 
 		
 		int i;
-		for(i = 0;i < 3;i++) t_editor_panProp[i].pos_x = panProp.pos_x + 102 + (2 * BORDER);
+		for(i = 0;i < 3;i++) t_panProp[i].pos_x = panProp.pos_x + 102 + (2 * BORDER);
 		
-		t_editor_panProp[0].pos_y = (panProp.pos_y + (5 * BORDER)) - 15;
-		t_editor_panProp[1].pos_y = (panProp.pos_y + (10 * BORDER)) - 15;
-		t_editor_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
+		t_panProp[0].pos_y = (panProp.pos_y + (5 * BORDER)) - 15;
+		t_panProp[1].pos_y = (panProp.pos_y + (10 * BORDER)) - 15;
+		t_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
+		
+		int i;
+		for(i = 1;i < 9;i++)
+		pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * i,0));
+		
+		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
+		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
+		pan_setpos(panProp,4,3,vector(BORDER + 102,BORDER * 4 + 23 * 3,0));
 		
 	}
 	
@@ -247,7 +276,7 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	
 	if(p == panProp) {		
 		int i;
-		for(i = 0;i < 3;i++) txt_remove(t_editor_panProp[i]);
+		for(i = 0;i < 3;i++) txt_remove(t_panProp[i]);
 		
 		reset(panProp,SHOW);
 	}
@@ -260,9 +289,14 @@ void sharedGUI_dragpanel(PANEL *p)
 	click_offset[0]=p.pos_x - mouse_pos.x;
 	click_offset[1]=p.pos_y - mouse_pos.y;
 	
+	sharedGUI_panelselect(p);
+	
 	while(mouse_left)
 	{
 		proc_mode = PROC_EARLY;
+		
+		is_select = 1;
+		
 		p.pos_x = mouse_pos.x+click_offset[0];
 		p.pos_y = mouse_pos.y+click_offset[1];
 		
@@ -271,6 +305,8 @@ void sharedGUI_dragpanel(PANEL *p)
 		if(p == panProp) sharedGUI_updategui(panProp);
 		if(p == panPhy) sharedGUI_updategui(panPhy);
 		if(p == panMat) sharedGUI_updategui(panMat);
+		
+		//		sharedGUI_panelselect(p);
 		wait(1);
 	}
 	
@@ -279,6 +315,8 @@ void sharedGUI_dragpanel(PANEL *p)
 	if(p == panProp) sharedGUI_updategui(panProp);
 	if(p == panPhy) sharedGUI_updategui(panPhy);
 	if(p == panMat) sharedGUI_updategui(panMat);
+	
+	is_select = 0;
 }
 
 void sharedGUI_centerpanel(PANEL *p) {
@@ -542,13 +580,13 @@ void sharedGUI_prop() {
 	
 	int i;
 	for(i = 0;i < 3;i++) {
-		t_editor_panProp[i] = txt_create(1,3);
-		t_editor_panProp[i].font = f;
+		t_panProp[i] = txt_create(1,3);
+		t_panProp[i].font = f;
 	}
 	
-	str_cpy((t_editor_panProp[0].pstring)[0],"Alpha");
-	str_cpy((t_editor_panProp[1].pstring)[0],"Ambient");
-	str_cpy((t_editor_panProp[2].pstring)[0],"Albedo");
+	str_cpy((t_panProp[0].pstring)[0],"Alpha");
+	str_cpy((t_panProp[1].pstring)[0],"Ambient");
+	str_cpy((t_panProp[2].pstring)[0],"Albedo");
 	
 	panProp.pos_x = BORDER;
 	panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
@@ -557,7 +595,7 @@ void sharedGUI_prop() {
 	
 	set(panProp,SHOW);
 	
-	int i; for(i = 0;i < 3;i++) set(t_editor_panProp[i],SHOW);
+	int i; for(i = 0;i < 3;i++) set(t_panProp[i],SHOW);
 }
 
 void sharedGUI_mat() {
@@ -590,4 +628,25 @@ PANEL *debug = {
 	digits(0,60,99,"arial#25b",1,enable_click);
 	
 	flags=SHOW;
+}
+
+void sharedGUI_panelselect(PANEL *p)
+{
+	if(last_pan) {
+		last_pan.alpha = DEFAULT_ALPHA;
+		layer_sort(last_pan,2);
+		
+		last_pan = p;
+		layer_sort(last_pan,3);
+		last_pan.alpha = 100;
+	}
+	else {
+		last_pan = p;
+		layer_sort(last_pan,3);
+		last_pan.alpha = 100;
+	}
+}
+
+void init_startup() {
+	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
 }

@@ -10,7 +10,8 @@ Contains portion of code from VLED project
 
 */
 
-var enable_click;
+var enable_click, is_select;
+PANEL *last_pan;
 
 #define	FADE_IN					1
 #define	FADE_OUT					0
@@ -21,6 +22,18 @@ var enable_click;
 #define BUTTON_SIZE 32
 #define BORDER 10
 #define SPACE BUTTON_SIZE + BORDER
+
+#define	DEFAULT_ALPHA	50
+
+MATERIAL* mat_select = 
+{
+	ambient_red=255;
+	ambient_green=255;
+	ambient_blue=0;
+	diffuse_red=255;
+	diffuse_green=255;
+	diffuse_blue=0;
+}
 
 FONT *f = "Arial#25b";
 
@@ -73,4 +86,28 @@ void scan_folder(STRING* dir,STRING* ext)
 	list_start=0;
 	
 	wait(1);
+}
+
+
+void draw_bounding_box(ENTITY* ent)
+{
+	VECTOR bounding_box[BBOX];
+	int i;
+	for(i = 0;i < BBOX;i++) {
+		vec_set(bounding_box[i],vector(ent.min_x,ent.min_y,ent.min_z));
+		vec_rotate(bounding_box[i],ent.pan);
+		vec_add(bounding_box[i],ent.x);
+	}
+	
+	draw_line3d(bounding_box[0],NULL,100);
+	for(i = 0;i < BBOX;i++) draw_line3d(bounding_box[i],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[4],vector(0,0,255),100);
+	draw_line3d(bounding_box[5],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[2],NULL,100);
+	draw_line3d(bounding_box[6],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[3],NULL,100);
+	draw_line3d(bounding_box[7],vector(0,0,255),100);
 }
