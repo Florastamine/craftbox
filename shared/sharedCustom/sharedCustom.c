@@ -106,38 +106,42 @@ BMAP *button_Mat5 = "button_Mat5.bmp";
 BMAP *button_Mat6 = "button_Mat6.bmp";
 BMAP *button_MatNorm = "button_MatNorm.bmp";
 
-BMAP *menu1_submenu1 = "button_general";
-BMAP *menu1_submenu2 = "button_general";
-BMAP *menu1_submenu3 = "button_general";
-BMAP *menu1_submenu4 = "button_general";
-BMAP *menu1_submenu5 = "button_general";
+BMAP *menu1_submenu1 = "button_general.bmp";
+BMAP *menu1_submenu2 = "button_general.bmp";
+BMAP *menu1_submenu3 = "button_general.bmp";
+BMAP *menu1_submenu4 = "button_general.bmp";
+BMAP *menu1_submenu5 = "button_general.bmp";
 
-BMAP *menu2_submenu1 = "button_general";
-BMAP *menu2_submenu2 = "button_general";
-BMAP *menu2_submenu3 = "button_general";
-BMAP *menu2_submenu4 = "button_general";
-BMAP *menu2_submenu5 = "button_general";
+BMAP *menu2_submenu1 = "button_general.bmp";
+BMAP *menu2_submenu2 = "button_general.bmp";
+BMAP *menu2_submenu3 = "button_general.bmp";
+BMAP *menu2_submenu4 = "button_general.bmp";
+BMAP *menu2_submenu5 = "button_general.bmp";
 
-BMAP *menu3_submenu1 = "button_general";
-BMAP *menu3_submenu2 = "button_general";
-BMAP *menu3_submenu3 = "button_general";
-BMAP *menu3_submenu4 = "button_general";
-BMAP *menu3_submenu5 = "button_general";
+BMAP *menu3_submenu1 = "button_general.bmp";
+BMAP *menu3_submenu2 = "button_general.bmp";
+BMAP *menu3_submenu3 = "button_general.bmp";
+BMAP *menu3_submenu4 = "button_general.bmp";
+BMAP *menu3_submenu5 = "button_general.bmp";
 
-BMAP *menu4_submenu1 = "button_general";
-BMAP *menu4_submenu2 = "button_general";
-BMAP *menu4_submenu3 = "button_general";
-BMAP *menu4_submenu4 = "button_general";
-BMAP *menu4_submenu5 = "button_general";
+BMAP *menu4_submenu1 = "button_general.bmp";
+BMAP *menu4_submenu2 = "button_general.bmp";
+BMAP *menu4_submenu3 = "button_general.bmp";
+BMAP *menu4_submenu4 = "button_general.bmp";
+BMAP *menu4_submenu5 = "button_general.bmp";
 
-BMAP *menu5_submenu1 = "button_general";
-BMAP *menu5_submenu2 = "button_general";
-BMAP *menu5_submenu3 = "button_general";
-BMAP *menu5_submenu4 = "button_general";
-BMAP *menu5_submenu5 = "button_general";
+BMAP *menu5_submenu1 = "button_general.bmp";
+BMAP *menu5_submenu2 = "button_general.bmp";
+BMAP *menu5_submenu3 = "button_general.bmp";
+BMAP *menu5_submenu4 = "button_general.bmp";
+BMAP *menu5_submenu5 = "button_general.bmp";
+
+BMAP *button_default = "button_default.bmp";
+BMAP *button_editmat = "button_editmat.bmp";
+BMAP *button_editmat_def = "button_editmat_default.bmp";
+BMAP *button_editmat_save = "button_editmat_savechanges.bmp";
 
 var 
-/* buttons which is used for the main HUD. */
 button_New_x,
 button_Open_x,
 button_Save_x,
@@ -161,15 +165,7 @@ button_LoadWorld_y,
 button_NewWorld_y,
 button_QuitWorld_y,
 button_CmpWorld_y,
-button_SetWorld_y,
-
-button_Mat1_x,
-button_Mat2_x,
-button_Mat3_x,
-button_Mat4_x,
-button_Mat5_x,
-button_Mat6_x,
-button_MatNorm_x;
+button_SetWorld_y;
 
 PANEL *panHome = {
 	layer = 2;
@@ -205,6 +201,8 @@ PANEL *panProp = {
 	button_toggle(0,0,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,sharedGUI_toggle_translucent,NULL,NULL);
+	
+	button(0,0,button_default,button_default,button_default,NULL,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,fpsf_alpha_control);	
 	hslider(0,0,100,slider,0,100,fpsf_ambient_control);	
@@ -242,6 +240,23 @@ PANEL *panMat = {
 	button(0,0,button_Mat6,button_Mat6,button_Mat6,NULL,NULL,NULL);
 	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
 	
+	button(0,0,button_editmat,button_editmat,button_editmat,sharedGUI_editmat,NULL,NULL);
+		
+	on_click = sharedGUI_dragpanel;
+	
+	flags = OVERLAY | TRANSLUCENT;
+}
+
+PANEL *panMat_Sub1 = {
+	layer = 2;
+	
+	bmap = "panMatEd.bmp";
+	
+	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	
+	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
+	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,NULL,NULL,NULL);
+	
 	on_click = sharedGUI_dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -250,12 +265,21 @@ PANEL *panMat = {
 void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panHome) {
+		
 		button_SaveWorld_y = BORDER;
 		button_LoadWorld_y = button_SaveWorld_y + 40 + BORDER/2.5;
 		button_NewWorld_y = button_LoadWorld_y + 40 + BORDER/2.5;
 		button_QuitWorld_y = button_NewWorld_y + 40 + BORDER/2.5;
 		button_CmpWorld_y = button_QuitWorld_y + 40 + BORDER/2.5;
 		button_SetWorld_y = button_CmpWorld_y + 40 + BORDER/2.5;
+		
+		/*
+		var i = 2;
+		while(i < 8) {
+			pan_setpos(panHome,3,i,vector(BORDER, BORDER * (i-1) + 40 * (i-2) + (BORDER/2.5)*(i-2),0));
+			i++;
+		}
+		*/
 		
 		pan_setpos(panHome,3,2,vector(BORDER,button_SaveWorld_y,0));
 		pan_setpos(panHome,3,3,vector(BORDER,button_LoadWorld_y,0));	
@@ -278,8 +302,8 @@ void sharedGUI_updategui(PANEL *wg) {
 		t_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
 		
 		int i;
-		for(i = 2;i < 10;i++)
-		pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
+		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
+		pan_setpos(panProp,3,10,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 32,0));
 		
 		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
 		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
@@ -289,29 +313,21 @@ void sharedGUI_updategui(PANEL *wg) {
 	}
 	
 	if(wg == panMat) {
-		/*
-		button_Mat1_x = BORDER;
-		button_Mat2_x = button_Mat1_x + 42 + BORDER;
-		button_Mat3_x = button_Mat2_x + 42 + BORDER;
-		button_Mat4_x = button_Mat3_x + 42 + BORDER;
-		button_Mat5_x = button_Mat4_x + 42 + BORDER;
-		button_Mat6_x = button_Mat5_x + 42 + BORDER;
-		button_MatNorm_x = button_Mat6_x + 42 + BORDER;
+		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
 		
-		pan_setpos(panMat,3,2,vector(button_Mat1_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,3,vector(button_Mat2_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,4,vector(button_Mat3_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,5,vector(button_Mat4_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,6,vector(button_Mat5_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,7,vector(button_Mat6_x,BORDER * 2 + 42,0));
-		pan_setpos(panMat,3,8,vector(button_MatNorm_x,BORDER * 2 + 42,0));
-		*/
+		var i = 2;
+		while(i < 4) {
+			pan_setpos(panMat_Sub1,3,i,vector(BORDER, bmap_height(panMat_Sub1.bmap) - BORDER * (i-1) - 24 * (i-1),0));
+			i++;
+		}
 		
 		var i = 2;
 		while(i < 9) {
 			pan_setpos(panMat,3,i,vector( (i-1) * BORDER + (i-2) * 42,BORDER * 2 + 42,0));
 			i++;
 		}
+		
+		pan_setpos(panMat,3,9,vector(bmap_width(panMat.bmap) - BORDER - 100, bmap_height(panMat.bmap) - BORDER - 24 ,0));
 		
 		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
 	}
@@ -353,9 +369,16 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	}
 	
 	if(p == panMat) {
+		
+		if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+		
 		reset(panMat,SHOW);
 		
 		enable_click = 1;
+	}
+	
+	if(p == panMat_Sub1) {
+		reset(panMat_Sub1,SHOW);
 	}
 	
 	if(p == panProp) {		
@@ -407,6 +430,13 @@ void sharedGUI_centerpanel(PANEL *p) {
 	
 	p.pos_x = (screen_size.x - bmap_width(p.bmap)) / 2; 
 	p.pos_y = (screen_size.y - bmap_height(p.bmap)) / 2;
+}
+
+void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
+	while(p == NULL || s == NULL) wait(1);
+	
+	p.pos_x = (bmap_width(s.bmap) - bmap_width(p.bmap))/2;
+	p.pos_y = (bmap_height(s.bmap) - bmap_height(p.bmap))/2;
 }
 
 void sharedGUI_loadbuttons() {
@@ -688,6 +718,13 @@ void sharedGUI_mat() {
 	sharedGUI_updategui(panMat);
 	
 	set(panMat,SHOW);
+}
+
+void sharedGUI_editmat() {
+	sharedGUI_centerfrom(panMat_Sub1,panMat);
+	sharedGUI_updategui(panMat_Sub1);
+	
+	set(panMat_Sub1,SHOW);
 }
 
 void sharedGUI_phy() {

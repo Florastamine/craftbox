@@ -22,10 +22,12 @@ void sharedGUI_loadbackground();
 /**/void sharedGUI_loadbuttons();
 /**/void sharedGUI_centerpanel(PANEL *);
 /**/void sharedGUI_dragpanel(PANEL *);
+/**/void sharedGUI_centerfrom(PANEL *, PANEL *);
 
 void sharedGUI_home();
 void sharedGUI_prop();
 void sharedGUI_mat();
+void sharedGUI_editmat();
 void sharedGUI_phy();
 
 void sharedGUI_toggle_translucent();
