@@ -4,7 +4,20 @@ close button will be the first element no matter what.
 
 */
 
-PANEL *buttonlst;
+PANEL *buttonlst,
+*buttonlst_submenu_terrain,
+*buttonlst_submenu_object,
+*buttonlst_submenu_path,
+*panHome,
+*panProp,
+*panPhy,
+*panMat,
+*panMat_Sub1,
+*_logo,
+*blackscreen,
+*blackpix,
+*inst,
+*debug;
 
 TEXT *t_panProp[3];
 
@@ -110,31 +123,19 @@ BMAP *menu1_submenu1 = "button_general.bmp";
 BMAP *menu1_submenu2 = "button_general.bmp";
 BMAP *menu1_submenu3 = "button_general.bmp";
 BMAP *menu1_submenu4 = "button_general.bmp";
-BMAP *menu1_submenu5 = "button_general.bmp";
 
 BMAP *menu2_submenu1 = "button_general.bmp";
 BMAP *menu2_submenu2 = "button_general.bmp";
 BMAP *menu2_submenu3 = "button_general.bmp";
 BMAP *menu2_submenu4 = "button_general.bmp";
-BMAP *menu2_submenu5 = "button_general.bmp";
 
 BMAP *menu3_submenu1 = "button_general.bmp";
 BMAP *menu3_submenu2 = "button_general.bmp";
 BMAP *menu3_submenu3 = "button_general.bmp";
 BMAP *menu3_submenu4 = "button_general.bmp";
-BMAP *menu3_submenu5 = "button_general.bmp";
 
-BMAP *menu4_submenu1 = "button_general.bmp";
-BMAP *menu4_submenu2 = "button_general.bmp";
-BMAP *menu4_submenu3 = "button_general.bmp";
-BMAP *menu4_submenu4 = "button_general.bmp";
-BMAP *menu4_submenu5 = "button_general.bmp";
-
-BMAP *menu5_submenu1 = "button_general.bmp";
-BMAP *menu5_submenu2 = "button_general.bmp";
-BMAP *menu5_submenu3 = "button_general.bmp";
-BMAP *menu5_submenu4 = "button_general.bmp";
-BMAP *menu5_submenu5 = "button_general.bmp";
+BMAP *button_back = "button_back.bmp";
+BMAP *button_back_over = "button_back_over.bmp";
 
 BMAP *button_default = "button_default.bmp";
 BMAP *button_editmat = "button_editmat.bmp";
@@ -166,6 +167,40 @@ button_NewWorld_y,
 button_QuitWorld_y,
 button_CmpWorld_y,
 button_SetWorld_y;
+
+PANEL *buttonlst_submenu_terrain = {
+	layer = 1;
+	
+	button(0,0,menu1_submenu1,menu1_submenu1,menu1_submenu1,NULL,NULL,NULL);
+	button(0,0,menu1_submenu2,menu1_submenu2,menu1_submenu2,NULL,NULL,NULL);
+	button(0,0,menu1_submenu3,menu1_submenu3,menu1_submenu3,NULL,NULL,NULL);
+	button(0,0,menu1_submenu4,menu1_submenu4,menu1_submenu4,NULL,NULL,NULL);
+	
+	// The final button will be the back button.
+	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+}
+
+PANEL *buttonlst_submenu_object = {
+	layer = 1;
+	
+	button(0,0,menu2_submenu1,menu2_submenu1,menu2_submenu1,NULL,NULL,NULL);
+	button(0,0,menu2_submenu2,menu2_submenu2,menu2_submenu2,NULL,NULL,NULL);
+	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
+	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
+	
+	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+}
+
+PANEL *buttonlst_submenu_path = {
+	layer = 1;
+	
+	button(0,0,menu3_submenu1,menu3_submenu1,menu3_submenu1,NULL,NULL,NULL);
+	button(0,0,menu3_submenu2,menu3_submenu2,menu3_submenu2,NULL,NULL,NULL);
+	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
+	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
+	
+	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+}
 
 PANEL *panHome = {
 	layer = 2;
@@ -241,7 +276,7 @@ PANEL *panMat = {
 	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
 	
 	button(0,0,button_editmat,button_editmat,button_editmat,sharedGUI_editmat,NULL,NULL);
-		
+	
 	on_click = sharedGUI_dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -494,6 +529,24 @@ void sharedGUI_loadbuttons() {
 	pan_setpos(buttonlst,3,15,vector(button_Terrain_x,button_Home_y,0));
 	pan_setpos(buttonlst,3,14,vector(button_Objs_x,button_Home_y,0));
 	pan_setpos(buttonlst,3,13,vector(button_Path_x,button_Home_y,0));
+	
+	/*
+	
+	setup for submenus
+	* buttonlst_submenu_terrain
+	* buttonlst_submenu_object
+	* buttonlst_submenu_path
+	
+	*/
+	
+	int i = 1;
+	while(i < 6) /* five buttons so 1..5 */ {
+		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
+		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
+		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
+		
+		i++;
+	}
 }
 
 void sharedGUI__loadbuttons() {
@@ -501,8 +554,9 @@ void sharedGUI__loadbuttons() {
 }
 
 PANEL *buttonlst = {
-	size_x = 800;
-	size_y = 600;
+	//	size_x = 800;
+	//	size_y = 600;
+	
 	layer = 1;
 	
 	/*
@@ -527,9 +581,9 @@ PANEL *buttonlst = {
 	button(0,0,button_Phy,button_Phy,button_Phy_Over,sharedGUI_phy,NULL,NULL);
 	button(0,0,button_Mat,button_Mat,button_Mat_Over,sharedGUI_mat,NULL,NULL);
 	
-	button(0,0,button_Path,button_Path,button_Path_Over,NULL,NULL,NULL);
-	button(0,0,button_Objs,button_Objs,button_Objs_Over,NULL,NULL,NULL);
-	button(0,0,button_Terrain,button_Terrain,button_Terrain_Over,NULL,NULL,NULL);
+	button(0,0,button_Path,button_Path,button_Path_Over,sharedGUI_launch_path,NULL,NULL);
+	button(0,0,button_Objs,button_Objs,button_Objs_Over,sharedGUI_launch_object,NULL,NULL);
+	button(0,0,button_Terrain,button_Terrain,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
 	button(0,0,button_Cam,button_Cam,button_Cam_Over,NULL,NULL,NULL);
 	button(0,0,button_Home,button_Home,button_Home_Over,sharedGUI_home,NULL,NULL);
 	
@@ -623,9 +677,8 @@ void sharedGUI__loadlogo() {
 	if(is(_logo,SHOW)) reset(_logo,SHOW);
 }
 
-void sharedGUI_release() {
-	
-	str_cpy(sharedGUI_releaseStr,"Editor");
+void sharedGUI_release(STRING *str) {
+	str_cpy(sharedGUI_releaseStr,str);
 
 	sharedGUI_releaseTEXT->pos_x = screen_size.x - str_width(sharedGUI_releaseStr,"Arial#25b");
 	sharedGUI_releaseTEXT->pos_y = screen_size.y - str_width(sharedGUI_releaseStr,"Arial#25b");
@@ -747,7 +800,7 @@ PANEL *debug = {
 	digits(0,40,99,"arial#25b",1,fpsf_ambient_control);
 	digits(0,60,99,"arial#25b",1,enable_click);
 	
-	flags=SHOW;
+	flags = SHOW;
 }
 
 void sharedGUI_panelselect(PANEL *p)
@@ -765,6 +818,42 @@ void sharedGUI_panelselect(PANEL *p)
 		layer_sort(last_pan,3);
 		last_pan.alpha = 100;
 	}
+}
+
+/* function specialized for use with submenus. */
+void sharedGUI_launchsubmenu(PANEL *which) {
+	var absolute_y = screen_size.y - 2 * BORDER - 64;
+	
+	layer_sort(which,0);
+	
+	which.pos_x = BORDER;
+	which.pos_y = screen_size.y - BORDER - 32;
+	
+	while(which.pos_y <= absolute_y) {
+		which.pos_y -= 5 * time_step;
+		wait(1);
+	}
+	
+	layer_sort(which,1);
+}
+
+void sharedGUI_launch_terrain() {
+	reset(buttonlst_submenu_object,SHOW);
+	reset(buttonlst_submenu_path,SHOW);
+	
+	set(buttonlst_submenu_terrain,SHOW);
+	
+	sharedGUI_launchsubmenu(buttonlst_submenu_terrain);
+	
+	wait(1);
+}
+
+void sharedGUI_launch_object() {
+	wait(1);
+}
+
+void sharedGUI_launch_path() {
+	wait(1);
 }
 
 void init_startup() {
