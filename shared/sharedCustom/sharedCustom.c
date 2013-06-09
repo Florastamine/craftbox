@@ -171,6 +171,8 @@ button_SetWorld_y;
 PANEL *buttonlst_submenu_terrain = {
 	layer = 1;
 	
+	bmap = "button_submenu_black.bmp";
+	
 	button(0,0,menu1_submenu1,menu1_submenu1,menu1_submenu1,NULL,NULL,NULL);
 	button(0,0,menu1_submenu2,menu1_submenu2,menu1_submenu2,NULL,NULL,NULL);
 	button(0,0,menu1_submenu3,menu1_submenu3,menu1_submenu3,NULL,NULL,NULL);
@@ -185,18 +187,22 @@ PANEL *buttonlst_submenu_terrain = {
 PANEL *buttonlst_submenu_object = {
 	layer = 1;
 	
+	bmap = "button_submenu_black.bmp";
+	
 	button(0,0,menu2_submenu1,menu2_submenu1,menu2_submenu1,NULL,NULL,NULL);
 	button(0,0,menu2_submenu2,menu2_submenu2,menu2_submenu2,NULL,NULL,NULL);
 	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
 	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
 	
 	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
-		
+	
 	flags = OVERLAY;
 }
 
 PANEL *buttonlst_submenu_path = {
 	layer = 1;
+	
+	bmap = "button_submenu_black.bmp";
 	
 	button(0,0,menu3_submenu1,menu3_submenu1,menu3_submenu1,NULL,NULL,NULL);
 	button(0,0,menu3_submenu2,menu3_submenu2,menu3_submenu2,NULL,NULL,NULL);
@@ -204,7 +210,7 @@ PANEL *buttonlst_submenu_path = {
 	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
 	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
-		
+	
 	flags = OVERLAY;
 }
 
@@ -573,14 +579,22 @@ void sharedGUI_loadbuttons() {
 	
 	*/
 	
+	buttonlst_submenu_terrain.pos_x = 
+	buttonlst_submenu_object.pos_x = 
+	buttonlst_submenu_path.pos_x = BORDER;
+	
+	buttonlst_submenu_terrain.pos_y = 
+	buttonlst_submenu_object.pos_y =
+	buttonlst_submenu_path.pos_y = screen_size.y - 2 * BORDER - 64;
+	
 	int i = 1;
-	while(i < 6) /* five buttons so 1..5 */ {
-		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
-		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
-		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * i + 32 * (i-1),screen_size.y - 2 * BORDER - 64,0));
+	while(i < 6){
+		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
+		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
+		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		
 		i++;
-	}
+	}	
 }
 
 void sharedGUI__loadbuttons() {

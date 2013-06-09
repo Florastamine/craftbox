@@ -6,8 +6,6 @@
 ENTITY *select;
 var fpsf_alpha_control, fpsf_ambient_control, fpsf_albedo_control;
 
-char *ch = '_';
-
 #define PRAGMA_PATH "../shared/sharedData"
 
 #include "../shared/shared.c"
@@ -17,8 +15,6 @@ char *ch = '_';
 int fpsf_obj_type;
 BMAP* mouse = "arrow.pcx";
 
-void _my();
-void my_event();
 void manipobj();
 
 ENTITY	*fpsf_marker;
@@ -48,7 +44,6 @@ void main(void) {
 	enable_click = 1;
 	
 	video_set(800,600,32,2);
-	//	shadow_stencil = 0;
 	video_window(NULL,NULL,0,"editor 0.1 Milestone 0");
 	
 	sharedGUI_mouseset(mouse);
@@ -78,7 +73,7 @@ void main(void) {
 				select = mouse_ent;
 				select.material = mat_select;
 				
-//				set(select, BRIGHT | TRANSLUCENT);
+				//				set(select, BRIGHT | TRANSLUCENT);
 				
 				fpsf_alpha_control = select.alpha;
 				fpsf_ambient_control = select.ambient;
@@ -100,7 +95,7 @@ void main(void) {
 				break;
 				
 				case 1:
-				ent_create("winterbaum.mdl",fpsf_temp_pos.x,_my);
+				ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
 				break;
 				
 				default:
@@ -125,17 +120,6 @@ void main(void) {
 	}
 	
 	wait(1);
-}
-
-void _my() {
-	//	draw_bounding_box(my);
-	select = you;
-	my.emask |= ENABLE_CLICK;
-	my.event = my_event;
-}
-
-void my_event() {
-	error("my_event");
 }
 
 void manipobj() 
