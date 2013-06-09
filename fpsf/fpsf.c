@@ -19,7 +19,6 @@ BMAP* mouse = "arrow.pcx";
 
 void _my();
 void my_event();
-void test();
 void manipobj();
 
 ENTITY	*fpsf_marker;
@@ -65,7 +64,6 @@ void main(void) {
 	
 	while(1) {
 		vec_set(mouse_pos,mouse_cursor);
-		manipobj();
 		
 		if(mouse_left && enable_click != 0) 
 		{
@@ -86,15 +84,6 @@ void main(void) {
 				fpsf_alpha_control = select.alpha;
 				fpsf_ambient_control = select.ambient;
 				fpsf_albedo_control = select.albedo;
-				
-				//				if(is(select,BRIGHT)) button_state(panProp_EDITOR_elements,1,1);
-				//				if(is(select,INVISIBLE)) button_state(panProp_EDITOR_elements,2,1);
-				//				if(is(select,NOFOG)) button_state(panProp_EDITOR_elements,3,1);
-				//				if(is(select,OVERLAY)) button_state(panProp_EDITOR_elements,4,1);
-				//				if(is(select,PASSABLE)) button_state(panProp_EDITOR_elements,5,1);
-				//				if(is(select,POLYGON)) button_state(panProp_EDITOR_elements,6,1);
-				//				if(is(select,SHADOW)) button_state(panProp_EDITOR_elements,7,1);
-				//				if(is(select,TRANSLUCENT)) button_state(panProp_EDITOR_elements,8,1);
 			}
 			else
 			{
@@ -120,7 +109,7 @@ void main(void) {
 				break;
 			}
 			
-			test();
+			manipobj();
 			
 		}
 		
@@ -150,7 +139,7 @@ void my_event() {
 	error("my_event");
 }
 
-void test() 
+void manipobj() 
 {
 	while(1) 
 	{
@@ -158,17 +147,6 @@ void test()
 		{
 			proc_mode = PROC_LATE;
 			if(!mouse_left) draw_bounding_box(select);
-			
-			wait(1);
-		}
-		wait(1);
-	}
-}
-
-void manipobj() {
-	while(1) {
-		
-		if(select != NULL) {
 			
 			if(key_del) {
 				while(key_del) wait(1);
@@ -181,8 +159,8 @@ void manipobj() {
 			select.y += .005 * (key_cul - key_cur) * time_step;			
 			select.z += .005 * (key_pgup - key_pgdn) * time_step;
 			
+			wait(1);
 		}
-		
 		wait(1);
 	}
 }
