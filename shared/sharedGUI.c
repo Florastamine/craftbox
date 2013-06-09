@@ -13,7 +13,7 @@ available frameworks. its kernel is located in ./sharedCustom/sharedCustom.c
 // Functions do intialize
 /**/void sharedGUI_rescale(PANEL *);
 /**/void sharedGUI_release(STRING *);
-/**/void sharedGUI_playintro(int);
+/**/void sharedGUI_playintro(STRING *, var);
 /**/void sharedGUI_blackscreen(int, int);
 void sharedGUI_loadscene(STRING *);
 void sharedGUI_loadbackground();

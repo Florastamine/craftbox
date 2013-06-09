@@ -119,20 +119,20 @@ BMAP *button_Mat5 = "button_Mat5.bmp";
 BMAP *button_Mat6 = "button_Mat6.bmp";
 BMAP *button_MatNorm = "button_MatNorm.bmp";
 
-BMAP *menu1_submenu1 = "button_general.bmp";
-BMAP *menu1_submenu2 = "button_general.bmp";
-BMAP *menu1_submenu3 = "button_general.bmp";
-BMAP *menu1_submenu4 = "button_general.bmp";
+BMAP *menu1_submenu1 = "button_submenu1_1.bmp";
+BMAP *menu1_submenu2 = "button_submenu1_2.bmp";
+BMAP *menu1_submenu3 = "button_submenu1_3.bmp";
+BMAP *menu1_submenu4 = "button_submenu1_4.bmp";
 
-BMAP *menu2_submenu1 = "button_general.bmp";
-BMAP *menu2_submenu2 = "button_general.bmp";
-BMAP *menu2_submenu3 = "button_general.bmp";
-BMAP *menu2_submenu4 = "button_general.bmp";
+BMAP *menu2_submenu1 = "button_submenu2_1.bmp";
+BMAP *menu2_submenu2 = "button_submenu2_2.bmp";
+BMAP *menu2_submenu3 = "button_submenu2_3.bmp";
+BMAP *menu2_submenu4 = "button_submenu2_4.bmp";
 
-BMAP *menu3_submenu1 = "button_general.bmp";
-BMAP *menu3_submenu2 = "button_general.bmp";
-BMAP *menu3_submenu3 = "button_general.bmp";
-BMAP *menu3_submenu4 = "button_general.bmp";
+BMAP *menu3_submenu1 = "button_submenu3_1.bmp";
+BMAP *menu3_submenu2 = "button_submenu3_2.bmp";
+BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
+BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
 
 BMAP *button_back = "button_back.bmp";
 BMAP *button_back_over = "button_back_over.bmp";
@@ -177,7 +177,9 @@ PANEL *buttonlst_submenu_terrain = {
 	button(0,0,menu1_submenu4,menu1_submenu4,menu1_submenu4,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
-	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+	button(0,0,button_back,button_back,menu1_submenu4,sharedGUI_closewindow,NULL,NULL);
+	
+	flags = OVERLAY;
 }
 
 PANEL *buttonlst_submenu_object = {
@@ -188,7 +190,9 @@ PANEL *buttonlst_submenu_object = {
 	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
 	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
+		
+	flags = OVERLAY;
 }
 
 PANEL *buttonlst_submenu_path = {
@@ -199,7 +203,9 @@ PANEL *buttonlst_submenu_path = {
 	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
 	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back,NULL,NULL,NULL);
+	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
+		
+	flags = OVERLAY;
 }
 
 PANEL *panHome = {
@@ -422,6 +428,18 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 		
 		reset(panProp,SHOW);
 	}
+	
+	if(p == buttonlst_submenu_terrain) {
+		reset(buttonlst_submenu_terrain,SHOW);
+	}
+	
+	if(p == buttonlst_submenu_object) {
+		reset(buttonlst_submenu_object,SHOW);
+	}
+	
+	if(p == buttonlst_submenu_path) {
+		reset(buttonlst_submenu_path,SHOW);
+	}
 }
 
 void sharedGUI_dragpanel(PANEL *p)
@@ -475,8 +493,24 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 }
 
 void sharedGUI_loadbuttons() {
+	
+	/*
+	to keep the code readable, i don't use multiple assignments. 
+	*/
+	
 	buttonlst.size_x = screen_size.x;
 	buttonlst.size_y = screen_size.y;
+	
+	/*
+	buttonlst_submenu_terrain.size_x = 5 * BORDER + 5 * 24;
+	buttonlst_submenu_terrain.size_y = 0;
+	
+	buttonlst_submenu_object.size_x = 0;
+	buttonlst_submenu_object.size_y = 0;
+	
+	buttonlst_submenu_path.size_x = screen_size.x;
+	buttonlst_submenu_path.size_y = screen_size.y;
+	*/
 	
 	// Initialize variables use for positioning elements in the panel (X first)
 	// Top-left ( left-to-right )
@@ -550,6 +584,7 @@ void sharedGUI_loadbuttons() {
 }
 
 void sharedGUI__loadbuttons() {
+	
 	if(is(buttonlst,SHOW)) reset(buttonlst,SHOW);
 }
 
@@ -557,7 +592,7 @@ PANEL *buttonlst = {
 	//	size_x = 800;
 	//	size_y = 600;
 	
-	layer = 1;
+	layer = 0;
 	
 	/*
 	button(0,0,button_New,button_New,button_New_Over,NULL,NULL,NULL);
@@ -691,18 +726,20 @@ void sharedGUI__release() {
 	str_cpy(sharedGUI_releaseStr,"");
 }
 
-void sharedGUI_playintro(int vol) {
+void sharedGUI_playintro(STRING *what, var vol) {
 	proc_kill(4);
 	
+	if(vol<0) vol = 100;
+	
 	var hndl;
-	hndl = media_play("",NULL,100);
+	hndl = media_play(what,NULL,vol);
 
 	while(media_playing(hndl)) wait(1);
 }
 
 int instance;
 PANEL *inst = {
-	layer=25;
+	layer=3;
 	digits(0,0,99,"Arial#25b",1,instance);
 	flags=SHOW;
 }
@@ -794,7 +831,7 @@ void sharedGUI_toggle_translucent() {
 }
 
 PANEL *debug = {
-	layer=6;
+	layer=3;
 	digits(0,0,99,"arial#25b",1,fpsf_alpha_control);
 	digits(0,20,99,"arial#25b",1,fpsf_albedo_control);
 	digits(0,40,99,"arial#25b",1,fpsf_ambient_control);
@@ -827,10 +864,10 @@ void sharedGUI_launchsubmenu(PANEL *which) {
 	layer_sort(which,0);
 	
 	which.pos_x = BORDER;
-	which.pos_y = screen_size.y - BORDER - 32;
+	which.pos_y = screen_size.y - 32 - BORDER;
 	
 	while(which.pos_y <= absolute_y) {
-		which.pos_y -= 5 * time_step;
+		which.pos_y -= .5 * time_step;
 		wait(1);
 	}
 	
@@ -843,17 +880,21 @@ void sharedGUI_launch_terrain() {
 	
 	set(buttonlst_submenu_terrain,SHOW);
 	
-	sharedGUI_launchsubmenu(buttonlst_submenu_terrain);
-	
-	wait(1);
+	//	sharedGUI_launchsubmenu(buttonlst_submenu_terrain);
 }
 
 void sharedGUI_launch_object() {
-	wait(1);
+	reset(buttonlst_submenu_terrain,SHOW);
+	reset(buttonlst_submenu_path,SHOW);
+	
+	set(buttonlst_submenu_object,SHOW);
 }
 
 void sharedGUI_launch_path() {
-	wait(1);
+	reset(buttonlst_submenu_object,SHOW);
+	reset(buttonlst_submenu_terrain,SHOW);
+	
+	set(buttonlst_submenu_path,SHOW);
 }
 
 void init_startup() {

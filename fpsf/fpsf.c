@@ -45,7 +45,6 @@ void follow_pointer() {
 }
 
 void main(void) {
-	
 	enable_click = 1;
 	
 	video_set(800,600,32,2);
@@ -79,7 +78,7 @@ void main(void) {
 				select = mouse_ent;
 				select.material = mat_select;
 				
-				set(select, BRIGHT | TRANSLUCENT);
+//				set(select, BRIGHT | TRANSLUCENT);
 				
 				fpsf_alpha_control = select.alpha;
 				fpsf_ambient_control = select.ambient;
