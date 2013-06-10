@@ -41,7 +41,6 @@ void follow_pointer() {
 }
 
 void main(void) {
-	enable_click = 1;
 	
 	video_set(800,600,32,2);
 	video_window(NULL,NULL,0,"editor 0.1 Milestone 0");
@@ -56,54 +55,59 @@ void main(void) {
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
 	
-	while(1) {
+	while(1) 
+	{
 		vec_set(mouse_pos,mouse_cursor);
 		
-		if(mouse_left && enable_click != 0) 
+		if(mouse_left) 
 		{
 			while(mouse_left) wait(1);
 			
-			if(mouse_ent && enable_click != 0)
+			if(!mouse_panel)
 			{
-				if(select)
+				
+				if(mouse_ent)
 				{
-					select.material = NULL;
-					select = NULL;
+					if(select)
+					{
+						select.material = NULL;
+						select = NULL;
+					}
+					select = mouse_ent;
+					select.material = mat_select;
+					
+					//				set(select, BRIGHT | TRANSLUCENT);
+					
+					fpsf_alpha_control = select.alpha;
+					fpsf_ambient_control = select.ambient;
+					fpsf_albedo_control = select.albedo;
 				}
-				select = mouse_ent;
-				select.material = mat_select;
-				
-				//				set(select, BRIGHT | TRANSLUCENT);
-				
-				fpsf_alpha_control = select.alpha;
-				fpsf_ambient_control = select.ambient;
-				fpsf_albedo_control = select.albedo;
-			}
-			else
-			{
-				if(select)
+				else
 				{
-					select.material = NULL;
-					select = NULL;
+					if(select)
+					{
+						select.material = NULL;
+						select = NULL;
+					}
+					select = NULL;	
 				}
-				select = NULL;	
-			}
-			
-			switch(fpsf_obj_type) {
-				case 0:
-				ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
-				break;
 				
-				case 1:
-				ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
-				break;
+				switch(fpsf_obj_type) {
+					case 0:
+					ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
+					break;
+					
+					case 1:
+					ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
+					break;
+					
+					default:
+					sys_exit(NULL);
+					break;
+				}
 				
-				default:
-				sys_exit(NULL);
-				break;
+				manipobj();
 			}
-			
-			manipobj();
 			
 		}
 		

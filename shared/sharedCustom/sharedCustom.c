@@ -1,166 +1,4 @@
-/*
-
-close button will be the first element no matter what.
-
-*/
-
-PANEL *buttonlst,
-*buttonlst_submenu_terrain,
-*buttonlst_submenu_object,
-*buttonlst_submenu_path,
-*panHome,
-*panProp,
-*panPhy,
-*panMat,
-*panMat_Sub1,
-*_logo,
-*blackscreen,
-*blackpix,
-*inst,
-*debug;
-
-TEXT *t_panProp[3];
-
-/*
-BMAP *button_New = "button_general.bmp";
-BMAP *button_New_Over = "button_general_over.bmp";
-
-BMAP *button_Open = "button_general.bmp";
-BMAP *button_Open_Over = "button_general_over.bmp";
-
-BMAP *button_Save = "button_general.bmp";
-BMAP *button_Save_Over = "button_general_over.bmp";
-*/
-
-BMAP *button_black = "button_black.bmp";
-
-BMAP *button_Copy = "button_general.bmp";
-BMAP *button_Copy_Over = "button_general_over.bmp";
-
-BMAP *button_Paste = "button_general.bmp";
-BMAP *button_Paste_Over = "button_general_over.bmp";
-
-BMAP *button_Delete = "button_general.bmp";
-BMAP *button_Delete_Over = "button_general_over.bmp";
-
-BMAP *button_Move = "button_general.bmp";
-BMAP *button_Move_Over = "button_general_over.bmp";
-
-BMAP *button_Rotate = "button_general.bmp";
-BMAP *button_Rotate_Over = "button_general_over.bmp";
-
-BMAP *button_Scale = "button_general.bmp";
-BMAP *button_Scale_Over = "button_general_over.bmp";
-
-BMAP *button_Prop = "button_general.bmp";
-BMAP *button_Prop_Over = "button_general_over.bmp";
-
-BMAP *button_Phy = "button_general.bmp";
-BMAP *button_Phy_Over = "button_general_over.bmp";
-
-BMAP *button_Mat = "button_general.bmp";
-BMAP *button_Mat_Over = "button_general_over.bmp";
-
-BMAP *button_Home = "button_general.bmp";
-BMAP *button_Home_Over = "button_general_over.bmp";
-
-BMAP *button_Cam = "button_general.bmp";
-BMAP *button_Cam_Over = "button_general_over.bmp";
-
-BMAP *button_Terrain = "button_general.bmp";
-BMAP *button_Terrain_Over = "button_general_over.bmp";
-
-BMAP *button_Objs = "button_general.bmp";
-BMAP *button_Objs_Over = "button_general_over.bmp";
-
-BMAP *button_Path = "button_general.bmp";
-BMAP *button_Path_Over = "button_general_over.bmp";
-
-BMAP *button_Close = "button_Close.bmp";
-
-BMAP *button_Home_newworld = "button_Home_newworld.bmp";
-BMAP *button_Home_loadworld = "button_Home_loadworld.bmp";
-BMAP *button_Home_saveworld = "button_Home_saveworld.bmp";
-BMAP *button_Home_compileworld = "button_Home_compileworld.bmp";
-BMAP *button_Home_configworld = "button_Home_configworld.bmp";
-BMAP *button_Home_quitworld = "button_Home_quitworld.bmp";
-
-BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
-BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
-
-BMAP *flag_INVISIBLE = "flag_INVISIBLE.bmp";
-BMAP *flag_INVISIBLE_on = "flag_INVISIBLE_on.bmp";
-
-BMAP *flag_NOFOG = "flag_NOFOG.bmp";
-BMAP *flag_NOFOG_on = "flag_NOFOG_on.bmp";
-
-BMAP *flag_OVERLAY = "flag_OVERLAY.bmp";
-BMAP *flag_OVERLAY_on = "flag_OVERLAY_on.bmp";
-
-BMAP *flag_PASSABLE = "flag_PASSABLE.bmp";
-BMAP *flag_PASSABLE_on = "flag_PASSABLE_on.bmp";
-
-BMAP *flag_POLYGON = "flag_POLYGON.bmp";
-BMAP *flag_POLYGON_on = "flag_POLYGON_on.bmp";
-
-BMAP *flag_SHADOW = "flag_SHADOW.bmp";
-BMAP *flag_SHADOW_on = "flag_SHADOW_on.bmp";
-
-BMAP *flag_TRANSLUCENT = "flag_TRANSLUCENT.bmp";
-BMAP *flag_TRANSLUCENT_on = "flag_TRANSLUCENT_on.bmp";
-
-BMAP *slider = "xlider.bmp";
-
-BMAP *button_Mat1 = "button_Mat1.bmp";
-BMAP *button_Mat2 = "button_Mat2.bmp";
-BMAP *button_Mat3 = "button_Mat3.bmp";
-BMAP *button_Mat4 = "button_Mat4.bmp";
-BMAP *button_Mat5 = "button_Mat5.bmp";
-BMAP *button_Mat6 = "button_Mat6.bmp";
-BMAP *button_MatNorm = "button_MatNorm.bmp";
-
-BMAP *menu1_submenu1 = "button_submenu1_1.bmp";
-BMAP *menu1_submenu2 = "button_submenu1_2.bmp";
-BMAP *menu1_submenu3 = "button_submenu1_3.bmp";
-BMAP *menu1_submenu4 = "button_submenu1_4.bmp";
-
-BMAP *menu2_submenu1 = "button_submenu2_1.bmp";
-BMAP *menu2_submenu2 = "button_submenu2_2.bmp";
-BMAP *menu2_submenu3 = "button_submenu2_3.bmp";
-BMAP *menu2_submenu4 = "button_submenu2_4.bmp";
-
-BMAP *menu3_submenu1 = "button_submenu3_1.bmp";
-BMAP *menu3_submenu2 = "button_submenu3_2.bmp";
-BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
-BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
-
-BMAP *button_back = "button_back.bmp";
-BMAP *button_back_over = "button_back_over.bmp";
-
-BMAP *button_default = "button_default.bmp";
-BMAP *button_editmat = "button_editmat.bmp";
-BMAP *button_editmat_def = "button_editmat_default.bmp";
-BMAP *button_editmat_save = "button_editmat_savechanges.bmp";
-
 var 
-button_New_x,
-button_Open_x,
-button_Save_x,
-button_Copy_x,
-button_Paste_x,
-button_Delete_x,
-button_Move_x,
-button_Rotate_x,
-button_Scale_x,
-button_Prop_x,
-button_Phy_x,
-button_Mat_x,
-button_Home_x,			button_Home_y,
-button_Cam_x,			button_Cam_y,
-button_Terrain_x,		button_Terrain_y,
-button_Objs_x,			button_Objs_y,
-button_Path_x,			button_Path_y,
-
 button_SaveWorld_y,
 button_LoadWorld_y,
 button_NewWorld_y,
@@ -179,7 +17,7 @@ PANEL *buttonlst_submenu_terrain = {
 	button(0,0,menu1_submenu4,menu1_submenu4,menu1_submenu4,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
-	button(0,0,button_back,button_back,menu1_submenu4,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -194,7 +32,7 @@ PANEL *buttonlst_submenu_object = {
 	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
 	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -209,7 +47,7 @@ PANEL *buttonlst_submenu_path = {
 	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
 	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -320,14 +158,6 @@ void sharedGUI_updategui(PANEL *wg) {
 		button_CmpWorld_y = button_QuitWorld_y + 40 + BORDER/2.5;
 		button_SetWorld_y = button_CmpWorld_y + 40 + BORDER/2.5;
 		
-		/*
-		var i = 2;
-		while(i < 8) {
-			pan_setpos(panHome,3,i,vector(BORDER, BORDER * (i-1) + 40 * (i-2) + (BORDER/2.5)*(i-2),0));
-			i++;
-		}
-		*/
-		
 		pan_setpos(panHome,3,2,vector(BORDER,button_SaveWorld_y,0));
 		pan_setpos(panHome,3,3,vector(BORDER,button_LoadWorld_y,0));	
 		pan_setpos(panHome,3,4,vector(BORDER,button_NewWorld_y,0));
@@ -341,12 +171,14 @@ void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panProp) { 
 		
+		/*
 		int i;
 		for(i = 0;i < 3;i++) t_panProp[i].pos_x = panProp.pos_x + 102 + (2 * BORDER);
 		
 		t_panProp[0].pos_y = (panProp.pos_y + (5 * BORDER)) - 15;
 		t_panProp[1].pos_y = (panProp.pos_y + (10 * BORDER)) - 15;
 		t_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
+		*/
 		
 		int i;
 		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
@@ -404,15 +236,10 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	
 	if(p == panHome) {
 		reset(panHome,SHOW);
-
-		enable_click = 1;
-		wait(1);
 	}
 	
 	if(p == panPhy) {
 		reset(panPhy,SHOW);
-		
-		enable_click  = 1;
 	}
 	
 	if(p == panMat) {
@@ -420,8 +247,6 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 		if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 		
 		reset(panMat,SHOW);
-		
-		enable_click = 1;
 	}
 	
 	if(p == panMat_Sub1) {
@@ -429,8 +254,10 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	}
 	
 	if(p == panProp) {		
+		/*
 		int i;
 		for(i = 0;i < 3;i++) txt_remove(t_panProp[i]);
+		*/
 		
 		reset(panProp,SHOW);
 	}
@@ -500,75 +327,24 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 
 void sharedGUI_loadbuttons() {
 	
-	/*
-	to keep the code readable, i don't use multiple assignments. 
-	*/
+	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * BUTTON_SIZE);
+	panMain_Top.pos_y = BORDER;
 	
-	buttonlst.size_x = screen_size.x;
-	buttonlst.size_y = screen_size.y;
+	panMain_Bottom.pos_x = BORDER;
+	panMain_Bottom.pos_y = screen_size.y - bmap_height(panMain_Bottom.bmap) - BORDER;
+
+	int i = 1;
+	while(i < 10) {
+		pan_setpos(panMain_Top,3,i,vector((i - 1) * (BORDER + 32),0,0));
+		i++;
+	}
 	
-	/*
-	buttonlst_submenu_terrain.size_x = 5 * BORDER + 5 * 24;
-	buttonlst_submenu_terrain.size_y = 0;
-	
-	buttonlst_submenu_object.size_x = 0;
-	buttonlst_submenu_object.size_y = 0;
-	
-	buttonlst_submenu_path.size_x = screen_size.x;
-	buttonlst_submenu_path.size_y = screen_size.y;
-	*/
-	
-	// Initialize variables use for positioning elements in the panel (X first)
-	// Top-left ( left-to-right )
-	button_New_x = BORDER;
-	button_Open_x = BORDER + SPACE;
-	button_Save_x = button_Open_x + SPACE;
-	
-	// Top-right, ( right-to-left )
-	button_Mat_x = screen_size.x - BORDER - (BUTTON_SIZE * 3);
-	button_Phy_x = button_Mat_x - (SPACE);
-	button_Prop_x = button_Phy_x - (SPACE);
-	
-	button_Scale_x = button_Prop_x - ((SPACE) * 1.25);
-	button_Rotate_x = button_Scale_x - (SPACE);
-	button_Move_x = button_Rotate_x - (SPACE);
-	
-	button_Delete_x = button_Move_x - ((SPACE) * 1.25);
-	button_Paste_x = button_Delete_x - (SPACE);
-	button_Copy_x = button_Paste_x - (SPACE);
-	
-	// Down-left ( left-to-right )
-	button_Home_x = button_New_x;
-	button_Cam_x = button_Open_x;
-	button_Terrain_x = button_Save_x;
-	button_Objs_x = button_Terrain_x + SPACE;
-	button_Path_x = button_Objs_x + SPACE;
-	
-	// Initialize variables use for positioning elements in the panel (Y)
-	// For down-left
-	button_Home_y = screen_size.y - BORDER - BUTTON_SIZE;
-	
-	pan_setpos(buttonlst,3,1,vector(button_New_x,BORDER,0));
-	pan_setpos(buttonlst,3,2,vector(button_Open_x,BORDER,0));
-	pan_setpos(buttonlst,3,3,vector(button_Save_x,BORDER,0));
-	
-	pan_setpos(buttonlst,3,12,vector(button_Mat_x,BORDER,0));
-	pan_setpos(buttonlst,3,11,vector(button_Phy_x,BORDER,0));
-	pan_setpos(buttonlst,3,10,vector(button_Prop_x,BORDER,0));\
-	
-	pan_setpos(buttonlst,3,9,vector(button_Scale_x,BORDER,0));
-	pan_setpos(buttonlst,3,8,vector(button_Rotate_x,BORDER,0));
-	pan_setpos(buttonlst,3,7,vector(button_Move_x,BORDER,0));
-	
-	pan_setpos(buttonlst,3,6,vector(button_Delete_x,BORDER,0));
-	pan_setpos(buttonlst,3,5,vector(button_Paste_x,BORDER,0));
-	pan_setpos(buttonlst,3,4,vector(button_Copy_x,BORDER,0));
-	
-	pan_setpos(buttonlst,3,17,vector(button_Home_x,button_Home_y,0));
-	pan_setpos(buttonlst,3,16,vector(button_Cam_x,button_Home_y,0));
-	pan_setpos(buttonlst,3,15,vector(button_Terrain_x,button_Home_y,0));
-	pan_setpos(buttonlst,3,14,vector(button_Objs_x,button_Home_y,0));
-	pan_setpos(buttonlst,3,13,vector(button_Path_x,button_Home_y,0));
+	int i = 1;
+	while(i < 6) {
+		pan_setpos(panMain_Bottom,3,i,vector((i-1) * (BORDER + 32),0,0));
+		
+		i++;
+	}
 	
 	/*
 	
@@ -599,47 +375,44 @@ void sharedGUI_loadbuttons() {
 
 void sharedGUI__loadbuttons() {
 	
-	if(is(buttonlst,SHOW)) reset(buttonlst,SHOW);
+	if(is(panMain_Top,SHOW)) reset(panMain_Top,SHOW);
+	if(is(panMain_Bottom,SHOW)) reset(panMain_Bottom,SHOW);
 }
 
-PANEL *buttonlst = {
-	//	size_x = 800;
-	//	size_y = 600;
-	
+PANEL *panMain_Top = {
 	layer = 0;
 	
-	/*
-	button(0,0,button_New,button_New,button_New_Over,NULL,NULL,NULL);
-	button(0,0,button_Open,button_Open,button_Open_Over,NULL,NULL,NULL);
-	button(0,0,button_Save,button_Save,button_Save_Over,NULL,NULL,NULL);
-	*/
-	
-	button(0,0,button_black,button_black,button_black,NULL,NULL,NULL);
-	button(0,0,button_black,button_black,button_black,NULL,NULL,NULL);
-	button(0,0,button_black,button_black,button_black,NULL,NULL,NULL);
+	bmap = "panMain_Top.bmp";
 	
 	button(0,0,button_Copy,button_Copy,button_Copy_Over,NULL,NULL,NULL);
 	button(0,0,button_Paste,button_Paste,button_Paste_Over,NULL,NULL,NULL);
 	button(0,0,button_Delete,button_Delete,button_Delete_Over,NULL,NULL,NULL);
 	
-	button(0,0,button_Move,button_Move,button_Move_Over,NULL,NULL,NULL);
-	button(0,0,button_Rotate,button_Rotate,button_Rotate_Over,NULL,NULL,NULL);
-	button(0,0,button_Scale,button_Scale,button_Scale_Over,NULL,NULL,NULL);
+	button(0,0,button_Move,button_Move_Off,button_Move_Over,NULL,NULL,NULL);
+	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,NULL,NULL,NULL);
+	button(0,0,button_Scale,button_Scale_Off,button_Scale_Over,NULL,NULL,NULL);
 	
-	button(0,0,button_Prop,button_Prop,button_Prop_Over,sharedGUI_prop,NULL,NULL);
-	button(0,0,button_Phy,button_Phy,button_Phy_Over,sharedGUI_phy,NULL,NULL);
-	button(0,0,button_Mat,button_Mat,button_Mat_Over,sharedGUI_mat,NULL,NULL);
-	
-	button(0,0,button_Path,button_Path,button_Path_Over,sharedGUI_launch_path,NULL,NULL);
-	button(0,0,button_Objs,button_Objs,button_Objs_Over,sharedGUI_launch_object,NULL,NULL);
-	button(0,0,button_Terrain,button_Terrain,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
-	button(0,0,button_Cam,button_Cam,button_Cam_Over,NULL,NULL,NULL);
-	button(0,0,button_Home,button_Home,button_Home_Over,sharedGUI_home,NULL,NULL);
+	button(0,0,button_Prop,button_Prop_Off,button_Prop_Over,sharedGUI_prop,NULL,NULL);
+	button(0,0,button_Phy,button_Phy_Off,button_Phy_Over,sharedGUI_phy,NULL,NULL);
+	button(0,0,button_Mat,button_Mat_Off,button_Mat_Over,sharedGUI_mat,NULL,NULL);
 	
 	flags = OVERLAY | SHOW;
 }
 
-//panel_set
+PANEL *panMain_Bottom = {
+	layer = 0;
+	
+	bmap = "panMain_Bottom.bmp";
+
+	button(0,0,button_Home,button_Home_Off,button_Home_Over,sharedGUI_home,NULL,NULL);
+	button(0,0,button_Cam,button_Cam_Off,button_Cam_Over,NULL,NULL,NULL);
+	button(0,0,button_Terrain,button_Terrain_Off,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
+	button(0,0,button_Objs,button_Objs_Off,button_Objs_Over,sharedGUI_launch_object,NULL,NULL);
+	button(0,0,button_Path,button_Path_Off,button_Path_Over,sharedGUI_launch_path,NULL,NULL);
+	
+	flags = OVERLAY | SHOW;
+}
+
 STRING *sharedGUI_releaseStr = "                       ";
 
 TEXT *sharedGUI_releaseTEXT = {
@@ -751,13 +524,6 @@ void sharedGUI_playintro(STRING *what, var vol) {
 	while(media_playing(hndl)) wait(1);
 }
 
-int instance;
-PANEL *inst = {
-	layer=3;
-	digits(0,0,99,"Arial#25b",1,instance);
-	flags=SHOW;
-}
-
 void sharedGUI_loadbackground() {
 	//		sharedGUI_playintro(100);
 	//		wait_for(sharedGUI_playintro);
@@ -784,7 +550,6 @@ void sharedGUI_mouseset(BMAP *b) {
 }
 
 void sharedGUI_home() {
-	enable_click = 0;
 	
 	sharedGUI_centerpanel(panHome);
 	sharedGUI_updategui(panHome);
@@ -793,8 +558,8 @@ void sharedGUI_home() {
 }
 
 void sharedGUI_prop() {
-	enable_click = 0;
 	
+	/*
 	int i;
 	for(i = 0;i < 3;i++) {
 		t_panProp[i] = txt_create(1,3);
@@ -804,6 +569,7 @@ void sharedGUI_prop() {
 	str_cpy((t_panProp[0].pstring)[0],"Alpha");
 	str_cpy((t_panProp[1].pstring)[0],"Ambient");
 	str_cpy((t_panProp[2].pstring)[0],"Albedo");
+	*/
 	
 	panProp.pos_x = BORDER;
 	panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
@@ -812,11 +578,10 @@ void sharedGUI_prop() {
 	
 	set(panProp,SHOW);
 	
-	int i; for(i = 0;i < 3;i++) set(t_panProp[i],SHOW);
+	//	int i; for(i = 0;i < 3;i++) set(t_panProp[i],SHOW);
 }
 
 void sharedGUI_mat() {
-	enable_click = 0;
 	
 	sharedGUI_centerpanel(panMat);
 	sharedGUI_updategui(panMat);
@@ -832,7 +597,6 @@ void sharedGUI_editmat() {
 }
 
 void sharedGUI_phy() {
-	enable_click = 0;
 	
 	sharedGUI_centerpanel(panPhy);
 	sharedGUI_updategui(panPhy);
@@ -849,9 +613,8 @@ PANEL *debug = {
 	digits(0,0,99,"arial#25b",1,fpsf_alpha_control);
 	digits(0,20,99,"arial#25b",1,fpsf_albedo_control);
 	digits(0,40,99,"arial#25b",1,fpsf_ambient_control);
-	digits(0,60,99,"arial#25b",1,enable_click);
 	
-	flags = SHOW;
+	//	flags = SHOW;
 }
 
 void sharedGUI_panelselect(PANEL *p)
