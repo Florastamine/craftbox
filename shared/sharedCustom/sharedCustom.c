@@ -384,9 +384,9 @@ PANEL *panMain_Top = {
 	
 	bmap = "panMain_Top.bmp";
 	
-	button(0,0,button_Copy,button_Copy,button_Copy_Over,NULL,NULL,NULL);
-	button(0,0,button_Paste,button_Paste,button_Paste_Over,NULL,NULL,NULL);
-	button(0,0,button_Delete,button_Delete,button_Delete_Over,NULL,NULL,NULL);
+	button(0,0,button_Cut,button_Cut_Off,button_Cut_Over,NULL,NULL,NULL);
+	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,NULL,NULL,NULL);
+	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,NULL,NULL,NULL);
 	
 	button(0,0,button_Move,button_Move_Off,button_Move_Over,NULL,NULL,NULL);
 	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,NULL,NULL,NULL);

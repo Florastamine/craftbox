@@ -42,7 +42,7 @@ void follow_pointer() {
 
 void main(void) {
 	
-	video_set(800,600,32,2);
+	video_set(800,600,32,1);
 	video_window(NULL,NULL,0,"editor 0.1 Milestone 0");
 	
 	sharedGUI_mouseset(mouse);

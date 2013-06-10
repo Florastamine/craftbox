@@ -48,14 +48,17 @@ BMAP *button_Save_Over = "button_general_over.bmp";
 
 BMAP *button_black = "button_black.bmp";
 
-BMAP *button_Copy = "button_general.bmp";
-BMAP *button_Copy_Over = "button_general_over.bmp";
+BMAP *button_Copy = "button_Copy.bmp";
+BMAP *button_Copy_Over = "button_Copy_over.bmp";
+BMAP *button_Copy_Off = "button_Copy_off.bmp";
 
-BMAP *button_Paste = "button_general.bmp";
-BMAP *button_Paste_Over = "button_general_over.bmp";
+BMAP *button_Paste = "button_Paste.bmp";
+BMAP *button_Paste_Over = "button_Paste_over.bmp";
+BMAP *button_Paste_off = "button_Paste_off.bmp";
 
-BMAP *button_Delete = "button_general.bmp";
-BMAP *button_Delete_Over = "button_general_over.bmp";
+BMAP *button_Cut = "button_Cut.bmp";
+BMAP *button_Cut_Over = "button_Cut_over.bmp";
+BMAP *button_Cut_Off = "button_Cut_off.bmp";
 
 BMAP *button_Move = "button_Move.bmp";
 BMAP *button_Move_Over = "button_Move_over.bmp";
