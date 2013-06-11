@@ -11,10 +11,10 @@ PANEL *buttonlst_submenu_terrain = {
 	
 	bmap = "button_submenu_black.bmp";
 	
-	button(0,0,menu1_submenu1,menu1_submenu1,menu1_submenu1,NULL,NULL,NULL);
-	button(0,0,menu1_submenu2,menu1_submenu2,menu1_submenu2,NULL,NULL,NULL);
-	button(0,0,menu1_submenu3,menu1_submenu3,menu1_submenu3,NULL,NULL,NULL);
-	button(0,0,menu1_submenu4,menu1_submenu4,menu1_submenu4,NULL,NULL,NULL);
+	button(0,0,menu1_submenu1,menu1_submenu1_off,menu1_submenu1_over,NULL,NULL,NULL);
+	button(0,0,menu1_submenu2,menu1_submenu2_off,menu1_submenu2_over,NULL,NULL,NULL);
+	button(0,0,menu1_submenu3,menu1_submenu3_off,menu1_submenu3_over,NULL,NULL,NULL);
+	button(0,0,menu1_submenu4,menu1_submenu4_off,menu1_submenu4_over,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
 	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
@@ -27,10 +27,10 @@ PANEL *buttonlst_submenu_object = {
 	
 	bmap = "button_submenu_black.bmp";
 	
-	button(0,0,menu2_submenu1,menu2_submenu1,menu2_submenu1,NULL,NULL,NULL);
-	button(0,0,menu2_submenu2,menu2_submenu2,menu2_submenu2,NULL,NULL,NULL);
-	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
-	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
+	button(0,0,menu2_submenu1,menu2_submenu1_off,menu2_submenu1_over,NULL,NULL,NULL);
+	button(0,0,menu2_submenu2,menu2_submenu2_off,menu2_submenu2_over,NULL,NULL,NULL);
+	//	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
+	//	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
 	
 	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
 	
@@ -42,10 +42,10 @@ PANEL *buttonlst_submenu_path = {
 	
 	bmap = "button_submenu_black.bmp";
 	
-	button(0,0,menu3_submenu1,menu3_submenu1,menu3_submenu1,NULL,NULL,NULL);
-	button(0,0,menu3_submenu2,menu3_submenu2,menu3_submenu2,NULL,NULL,NULL);
-	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
-	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
+	button(0,0,menu3_submenu1,menu3_submenu1_off,menu3_submenu1_over,NULL,NULL,NULL);
+	button(0,0,menu3_submenu2,menu3_submenu2_off,menu3_submenu2_over,NULL,NULL,NULL);
+	//	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
+	//	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
 	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
 	
@@ -57,14 +57,14 @@ PANEL *panHome = {
 	
 	bmap = "panHome.bmp";
 	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
-	button(0,0,button_Home_saveworld,button_Home_saveworld,button_Home_saveworld,NULL,NULL,NULL);
-	button(0,0,button_Home_loadworld,button_Home_loadworld,button_Home_loadworld,NULL,NULL,NULL);
-	button(0,0,button_Home_newworld,button_Home_newworld,button_Home_newworld,NULL,NULL,NULL);
-	button(0,0,button_Home_quitworld,button_Home_quitworld,button_Home_quitworld,NULL,NULL,NULL);
-	button(0,0,button_Home_compileworld,button_Home_compileworld,button_Home_compileworld,NULL,NULL,NULL);
-	button(0,0,button_Home_configworld,button_Home_configworld,button_Home_configworld,NULL,NULL,NULL);
+	button(0,0,button_Home_saveworld,button_Home_saveworld_off,button_Home_saveworld_over,NULL,NULL,NULL);
+	button(0,0,button_Home_loadworld,button_Home_loadworld_off,button_Home_loadworld_over,NULL,NULL,NULL);
+	button(0,0,button_Home_newworld,button_Home_newworld_off,button_Home_newworld_over,NULL,NULL,NULL);
+	button(0,0,button_Home_quitworld,button_Home_quitworld_off,button_Home_quitworld_over,NULL,NULL,NULL);
+	button(0,0,button_Home_compileworld,button_Home_compileworld_off,button_Home_compileworld_over,NULL,NULL,NULL);
+	button(0,0,button_Home_configworld,button_Home_configworld_off,button_Home_configworld_over,NULL,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -76,7 +76,7 @@ PANEL *panProp = {
 	
 	bmap = "panProp.bmp";
 	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
 	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
@@ -87,7 +87,7 @@ PANEL *panProp = {
 	button_toggle(0,0,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,sharedGUI_toggle_translucent,NULL,NULL);
 	
-	button(0,0,button_default,button_default,button_default,NULL,NULL,NULL);
+	button(0,0,button_default,button_default_off,button_default_over,NULL,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,fpsf_alpha_control);	
 	hslider(0,0,100,slider,0,100,fpsf_ambient_control);	
@@ -103,7 +103,7 @@ PANEL *panPhy = {
 	
 	bmap = "panPhy.bmp";
 	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -115,7 +115,7 @@ PANEL *panMat = {
 	
 	bmap = "panMat.bmp";
 	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
 	button(0,0,button_Mat1,button_Mat1,button_Mat1,NULL,NULL,NULL);
 	button(0,0,button_Mat2,button_Mat2,button_Mat2,NULL,NULL,NULL);
@@ -137,7 +137,7 @@ PANEL *panMat_Sub1 = {
 	
 	bmap = "panMatEd.bmp";
 	
-	button(0,0,button_Close,button_Close,button_Close,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
 	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
 	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,NULL,NULL,NULL);
@@ -171,15 +171,6 @@ void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panProp) { 
 		
-		/*
-		int i;
-		for(i = 0;i < 3;i++) t_panProp[i].pos_x = panProp.pos_x + 102 + (2 * BORDER);
-		
-		t_panProp[0].pos_y = (panProp.pos_y + (5 * BORDER)) - 15;
-		t_panProp[1].pos_y = (panProp.pos_y + (10 * BORDER)) - 15;
-		t_panProp[2].pos_y = (panProp.pos_y + (15 * BORDER)) - 15;
-		*/
-		
 		int i;
 		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
 		pan_setpos(panProp,3,10,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 32,0));
@@ -192,13 +183,6 @@ void sharedGUI_updategui(PANEL *wg) {
 	}
 	
 	if(wg == panMat) {
-		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
-		
-		var i = 2;
-		while(i < 4) {
-			pan_setpos(panMat_Sub1,3,i,vector(BORDER, bmap_height(panMat_Sub1.bmap) - BORDER * (i-1) - 24 * (i-1),0));
-			i++;
-		}
 		
 		var i = 2;
 		while(i < 9) {
@@ -213,6 +197,16 @@ void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panPhy) {
 		pan_setpos(panPhy,3,1,vector(bmap_width(panPhy.bmap) - BORDER * 2, BORDER,0));
+	}
+	
+	if(wg == panMat_Sub1) { 
+		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
+		
+		var i = 2;
+		while(i < 4) {
+			pan_setpos(panMat_Sub1,3,i,vector(BORDER, bmap_height(panMat_Sub1.bmap) - BORDER * (i-1) - 24 * (i-1),0));
+			i++;
+		}
 	}
 }
 
@@ -254,23 +248,25 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	}
 	
 	if(p == panProp) {		
-		/*
-		int i;
-		for(i = 0;i < 3;i++) txt_remove(t_panProp[i]);
-		*/
 		
 		reset(panProp,SHOW);
 	}
 	
 	if(p == buttonlst_submenu_terrain) {
+		wait(1);
+		
 		reset(buttonlst_submenu_terrain,SHOW);
 	}
 	
 	if(p == buttonlst_submenu_object) {
+		wait(1);
+		
 		reset(buttonlst_submenu_object,SHOW);
 	}
 	
 	if(p == buttonlst_submenu_path) {
+		wait(1);
+		
 		reset(buttonlst_submenu_path,SHOW);
 	}
 }
@@ -321,7 +317,13 @@ void sharedGUI_centerpanel(PANEL *p) {
 void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 	while(p == NULL || s == NULL) wait(1);
 	
+	// peform a S comparison
+	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) return;
+	
+	if(bmap_width(s.bmap) > bmap_width(p.bmap))
 	p.pos_x = (bmap_width(s.bmap) - bmap_width(p.bmap))/2;
+	
+	if(bmap_height(s.bmap) > bmap_height(p.bmap))
 	p.pos_y = (bmap_height(s.bmap) - bmap_height(p.bmap))/2;
 }
 
@@ -355,6 +357,9 @@ void sharedGUI_loadbuttons() {
 	
 	*/
 	
+	panMain_Play.pos_x = screen_size.x - BORDER - bmap_width(panMain_Play.bmap);
+	panMain_Play.pos_y = screen_size.y - BORDER - bmap_height(panMain_Play.bmap);
+	
 	buttonlst_submenu_terrain.pos_x = 
 	buttonlst_submenu_object.pos_x = 
 	buttonlst_submenu_path.pos_x = BORDER;
@@ -364,13 +369,18 @@ void sharedGUI_loadbuttons() {
 	buttonlst_submenu_path.pos_y = screen_size.y - 2 * BORDER - 64;
 	
 	int i = 1;
-	while(i < 6){
+	while(i < 5){
 		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		
 		i++;
-	}	
+	}
+	
+	var cache = BORDER * 4 + 32 * 4; // the above formula, i = 5
+	pan_setpos(buttonlst_submenu_terrain,3,5,vector(cache,NULL,NULL));
+	pan_setpos(buttonlst_submenu_object,3,3,vector(cache,NULL,NULL));
+	pan_setpos(buttonlst_submenu_path,3,3,vector(cache,NULL,NULL));
 }
 
 void sharedGUI__loadbuttons() {
@@ -413,6 +423,16 @@ PANEL *panMain_Bottom = {
 	flags = OVERLAY | SHOW;
 }
 
+PANEL *panMain_Play = {
+	layer = 0;
+	
+	bmap = "panMain_Play.bmp";
+	
+	button(0,0,button_Play,button_Play_off,button_Play_over,NULL,NULL,NULL);
+	
+	flags = OVERLAY | SHOW;
+}
+
 STRING *sharedGUI_releaseStr = "                       ";
 
 TEXT *sharedGUI_releaseTEXT = {
@@ -427,10 +447,6 @@ PANEL *_logo = {
 
 PANEL *blackscreen = {
 	bmap = "bitmap.bmp";
-}
-
-PANEL *blackpix = {
-	bmap = "black.bmp";
 }
 
 void sharedGUI_loadscene(STRING *s) {
@@ -559,26 +575,12 @@ void sharedGUI_home() {
 
 void sharedGUI_prop() {
 	
-	/*
-	int i;
-	for(i = 0;i < 3;i++) {
-		t_panProp[i] = txt_create(1,3);
-		t_panProp[i].font = f;
-	}
-	
-	str_cpy((t_panProp[0].pstring)[0],"Alpha");
-	str_cpy((t_panProp[1].pstring)[0],"Ambient");
-	str_cpy((t_panProp[2].pstring)[0],"Albedo");
-	*/
-	
 	panProp.pos_x = BORDER;
 	panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
 	
 	sharedGUI_updategui(panProp);
 	
 	set(panProp,SHOW);
-	
-	//	int i; for(i = 0;i < 3;i++) set(t_panProp[i],SHOW);
 }
 
 void sharedGUI_mat() {

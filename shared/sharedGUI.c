@@ -1,24 +1,18 @@
 // 28/5/2013, 19:02 the recipe - kendrick lamar, dr.dre
 // 29/5/2013, 8:00 swimming pools - kendrick lamar
 // 9/6/2013, 18:04 love me - lil wayne, drake, future
-//#include<acknex.h>
 /*
 
 [ sharedGUI.c ]
 
-a .c file that defines the general-purpose GUI/HUD for use within all 
-available frameworks. its kernel is located in ./sharedCustom/sharedCustom.c
-*/
-
-/*
-
-close button will be the first element no matter what.
+a .c file that defines the general-purpose GUI/HUD.
 
 */
 
 PANEL *buttonlst,
 *panMain_Top,
 *panMain_Bottom,
+*panMain_Play,
 *buttonlst_submenu_terrain,
 *buttonlst_submenu_object,
 *buttonlst_submenu_path,
@@ -29,24 +23,11 @@ PANEL *buttonlst,
 *panMat_Sub1,
 *_logo,
 *blackscreen,
-*blackpix,
-*inst,
 *debug;
 
-//TEXT *t_panProp[3];
-
-/*
-BMAP *button_New = "button_general.bmp";
-BMAP *button_New_Over = "button_general_over.bmp";
-
-BMAP *button_Open = "button_general.bmp";
-BMAP *button_Open_Over = "button_general_over.bmp";
-
-BMAP *button_Save = "button_general.bmp";
-BMAP *button_Save_Over = "button_general_over.bmp";
-*/
-
-BMAP *button_black = "button_black.bmp";
+BMAP *button_Play = "button_play.bmp";
+BMAP *button_Play_over = "button_play_over.bmp";
+BMAP *button_play_off = "button_play_off.bmp";
 
 BMAP *button_Copy = "button_Copy.bmp";
 BMAP *button_Copy_Over = "button_Copy_over.bmp";
@@ -105,13 +86,32 @@ BMAP *button_Path_Over = "button_Path_over.bmp";
 BMAP *button_Path_Off = "button_Path_off.bmp";
 
 BMAP *button_Close = "button_Close.bmp";
+BMAP *button_Close_off = "button_Close_off.bmp";
+BMAP *button_Close_over = "button_Close_over.bmp";
 
 BMAP *button_Home_newworld = "button_Home_newworld.bmp";
+BMAP *button_Home_newworld_off = "button_Home_newworld_off.bmp";
+BMAP *button_Home_newworld_over = "button_Home_newworld_over.bmp";
+
 BMAP *button_Home_loadworld = "button_Home_loadworld.bmp";
+BMAP *button_Home_loadworld_off = "button_Home_loadworld_off.bmp";
+BMAP *button_Home_loadworld_over = "button_Home_loadworld_over.bmp";
+
 BMAP *button_Home_saveworld = "button_Home_saveworld.bmp";
+BMAP *button_Home_saveworld_off = "button_Home_saveworld_off.bmp";
+BMAP *button_Home_saveworld_over = "button_Home_saveworld_over.bmp";
+
 BMAP *button_Home_compileworld = "button_Home_compileworld.bmp";
+BMAP *button_Home_compileworld_off = "button_Home_compileworld_off.bmp";
+BMAP *button_Home_compileworld_over = "button_Home_compileworld_over.bmp";
+
 BMAP *button_Home_configworld = "button_Home_configworld.bmp";
+BMAP *button_Home_configworld_off = "button_Home_configworld_off.bmp";
+BMAP *button_Home_configworld_over = "button_Home_configworld_over.bmp";
+
 BMAP *button_Home_quitworld = "button_Home_quitworld.bmp";
+BMAP *button_Home_quitworld_off = "button_Home_quitworld_off.bmp";
+BMAP *button_Home_quitworld_over = "button_Home_quitworld_over.bmp";
 
 BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
 BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
@@ -147,25 +147,51 @@ BMAP *button_Mat5 = "button_Mat5.bmp";
 BMAP *button_Mat6 = "button_Mat6.bmp";
 BMAP *button_MatNorm = "button_MatNorm.bmp";
 
-BMAP *menu1_submenu1 = "button_submenu1_1.bmp";
-BMAP *menu1_submenu2 = "button_submenu1_2.bmp";
-BMAP *menu1_submenu3 = "button_submenu1_3.bmp";
-BMAP *menu1_submenu4 = "button_submenu1_4.bmp";
+BMAP *menu1_submenu1 = "button_loadfrom.bmp";
+BMAP *menu1_submenu1_off = "button_loadfrom_off.bmp";
+BMAP *menu1_submenu1_over = "button_loadfrom_over.bmp";
 
-BMAP *menu2_submenu1 = "button_submenu2_1.bmp";
-BMAP *menu2_submenu2 = "button_submenu2_2.bmp";
-BMAP *menu2_submenu3 = "button_submenu2_3.bmp";
-BMAP *menu2_submenu4 = "button_submenu2_4.bmp";
+BMAP *menu1_submenu2 = "button_saveto.bmp";
+BMAP *menu1_submenu2_off = "button_saveto_off.bmp";
+BMAP *menu1_submenu2_over = "button_saveto_over.bmp";
 
-BMAP *menu3_submenu1 = "button_submenu3_1.bmp";
-BMAP *menu3_submenu2 = "button_submenu3_2.bmp";
-BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
-BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
+BMAP *menu1_submenu3 = "button_brusht.bmp";
+BMAP *menu1_submenu3_off = "button_brusht_off.bmp";
+BMAP *menu1_submenu3_over = "button_brusht_over.bmp";
+
+BMAP *menu1_submenu4 = "button_deformt.bmp";
+BMAP *menu1_submenu4_off = "button_deformt_off.bmp";
+BMAP *menu1_submenu4_over = "button_deformt_over.bmp";
+
+BMAP *menu2_submenu1 = "button_addobject.bmp";
+BMAP *menu2_submenu1_off = "button_addobject_off.bmp";
+BMAP *menu2_submenu1_over = "button_addobject_over.bmp";
+
+BMAP *menu2_submenu2 = "button_addevent.bmp";
+BMAP *menu2_submenu2_off = "button_addevent_off.bmp";
+BMAP *menu2_submenu2_over = "button_addevent_over.bmp";
+
+//BMAP *menu2_submenu3 = "button_submenu2_3.bmp";
+//BMAP *menu2_submenu4 = "button_submenu2_4.bmp";
+
+BMAP *menu3_submenu1 = "button_addnode.bmp";
+BMAP *menu3_submenu1_off = "button_addnode_off.bmp";
+BMAP *menu3_submenu1_over = "button_addnode_over.bmp";
+
+BMAP *menu3_submenu2 = "button_nodetype.bmp";
+BMAP *menu3_submenu2_off = "button_nodetype_off.bmp";
+BMAP *menu3_submenu2_over = "button_nodetype_over.bmp";
+
+//BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
+//BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
 
 BMAP *button_back = "button_back.bmp";
 BMAP *button_back_over = "button_back_over.bmp";
 
 BMAP *button_default = "button_default.bmp";
+BMAP *button_default_off = "button_default_off.bmp";
+BMAP *button_default_over = "button_default_over.bmp";
+
 BMAP *button_editmat = "button_editmat.bmp";
 BMAP *button_editmat_def = "button_editmat_default.bmp";
 BMAP *button_editmat_save = "button_editmat_savechanges.bmp";

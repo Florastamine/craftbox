@@ -1,10 +1,8 @@
-
 /*
 
 [ shared.c ]
 
-a .c file which contains many general-purpose functions that is shared among 
-all available frameworks.
+a .c file which contains many general-purpose functions.
 
 Contains portion of code from VLED project
 
@@ -13,17 +11,17 @@ Contains portion of code from VLED project
 var enable_click, is_select;
 PANEL *last_pan;
 
-#define	FADE_IN					1
-#define	FADE_OUT					0
+#define FADE_IN 1
+#define FADE_OUT 0
 
-#define	ON							1
-#define	OFF						0
+#define ON 1
+#define OFF 0
 
 #define BUTTON_SIZE 32
 #define BORDER 10
 #define SPACE BUTTON_SIZE + BORDER
 
-#define	DEFAULT_ALPHA	50
+#define DEFAULT_ALPHA 50
 
 MATERIAL* mat_select = 
 {

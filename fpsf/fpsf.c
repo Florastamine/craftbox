@@ -17,8 +17,8 @@ BMAP* mouse = "arrow.pcx";
 
 void manipobj();
 
-ENTITY	*fpsf_marker;
-VECTOR 	sharedGUI_cpos1,sharedGUI_cpos2,fpsf_temp_pos;
+ENTITY *fpsf_marker;
+VECTOR sharedGUI_cpos1,sharedGUI_cpos2,fpsf_temp_pos;
 
 void follow_pointer() {
 	fpsf_marker = me;
@@ -50,7 +50,6 @@ void main(void) {
 	sharedGUI_loadbackground();
 	
 	//	scan_folder("../shared","c");
-	//	sharedGUI_release();
 	
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
