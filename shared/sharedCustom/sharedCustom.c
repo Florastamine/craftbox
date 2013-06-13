@@ -1,10 +1,88 @@
-var 
-button_SaveWorld_y,
-button_LoadWorld_y,
-button_NewWorld_y,
-button_QuitWorld_y,
-button_CmpWorld_y,
-button_SetWorld_y;
+
+MATERIAL* mat_select = 
+{
+	ambient_red=255;
+	ambient_green=255;
+	ambient_blue=0;
+	diffuse_red=255;
+	diffuse_green=255;
+	diffuse_blue=0;
+}
+
+TEXT* files_list = 
+{ 
+	strings = 1000; 
+	pos_x = 0;
+	pos_y = 0;
+	font = "Arial#25b";
+	flags=SHOW;
+}
+
+/*
+void main(void) {
+	//	CreateDirectory("cd",0);
+	scan_folder("sharedData","pcx");
+}
+*/
+
+STRING *current_folder = "a", *file_selected = "a";
+
+void scan_folder(STRING* dir,STRING* ext)
+{
+	TEXT* read_files = {strings = 1000;}
+	
+	STRING* search_form = "a";
+
+	str_cpy(current_folder,dir);
+
+	str_cpy(search_form,dir);
+	str_cat(search_form,"\\*.");
+	str_cat(search_form,ext);
+	
+	files_found = txt_for_dir(read_files, search_form);
+	
+	var num = files_already;
+	while(num<999)
+	{
+		str_cpy((files_list.pstring)[num],"");
+		num+=1;
+	}
+	
+	num=0;
+	while(num<files_found)
+	{
+		str_cpy((files_list.pstring)[num+files_already],(read_files.pstring)[num]);
+		num+=1;
+	}
+	list_start=0;
+	
+	wait(1);
+}
+
+
+void draw_bounding_box(ENTITY *ent)
+{
+	VECTOR bounding_box[BBOX];
+	int i;
+	for(i = 0;i < BBOX;i++) {
+		vec_set(bounding_box[i],vector(ent.min_x,ent.min_y,ent.min_z));
+		vec_rotate(bounding_box[i],ent.pan);
+		vec_add(bounding_box[i],ent.x);
+	}
+	
+	draw_line3d(bounding_box[0],NULL,100);
+	for(i = 0;i < BBOX;i++) draw_line3d(bounding_box[i],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[4],vector(0,0,255),100);
+	draw_line3d(bounding_box[5],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[2],NULL,100);
+	draw_line3d(bounding_box[6],vector(0,0,255),100);
+	
+	draw_line3d(bounding_box[3],NULL,100);
+	draw_line3d(bounding_box[7],vector(0,0,255),100);
+}
+
 
 PANEL *buttonlst_submenu_terrain = {
 	layer = 1;
@@ -89,8 +167,8 @@ PANEL *panProp = {
 	
 	button(0,0,button_default,button_default_off,button_default_over,NULL,NULL,NULL);
 	
-	hslider(0,0,100,slider,0,100,fpsf_alpha_control);	
-	hslider(0,0,100,slider,0,100,fpsf_ambient_control);	
+	hslider(0,0,100,slider,0,100,v_alpha);	
+	hslider(0,0,100,slider,0,100,v_ambient);	
 	hslider(0,0,100,slider,0,100,fpsf_albedo_control);	
 	
 	on_click = sharedGUI_dragpanel;
@@ -220,14 +298,6 @@ this simple ugly hack should do the trick.
 void sharedGUI_closewindow(var id, PANEL *p) {
 	id = 1;
 	
-	/*
-	select.alpha = fpsf_alpha_control;
-	select.ambient = fpsf_ambient_control;
-	select.albedo = fpsf_albedo_control;
-	
-	printf("%d,%d,$d",select.alpha,select.ambient,select.albedo);
-	*/
-	
 	if(p == panHome) {
 		reset(panHome,SHOW);
 	}
@@ -284,8 +354,6 @@ void sharedGUI_dragpanel(PANEL *p)
 	{
 		proc_mode = PROC_EARLY;
 		
-		is_select = 1;
-		
 		p.pos_x = mouse_pos.x+click_offset[0];
 		p.pos_y = mouse_pos.y+click_offset[1];
 		
@@ -303,8 +371,6 @@ void sharedGUI_dragpanel(PANEL *p)
 	if(p == panProp) sharedGUI_updategui(panProp);
 	if(p == panPhy) sharedGUI_updategui(panPhy);
 	if(p == panMat) sharedGUI_updategui(panMat);
-	
-	is_select = 0;
 }
 
 void sharedGUI_centerpanel(PANEL *p) {
@@ -387,6 +453,7 @@ void sharedGUI__loadbuttons() {
 	
 	if(is(panMain_Top,SHOW)) reset(panMain_Top,SHOW);
 	if(is(panMain_Bottom,SHOW)) reset(panMain_Bottom,SHOW);
+	if(is(panMain_Play,SHOW)) reset(panMain_Play,SHOW);
 }
 
 PANEL *panMain_Top = {
@@ -415,7 +482,7 @@ PANEL *panMain_Bottom = {
 	bmap = "panMain_Bottom.bmp";
 
 	button(0,0,button_Home,button_Home_Off,button_Home_Over,sharedGUI_home,NULL,NULL);
-	button(0,0,button_Cam,button_Cam_Off,button_Cam_Over,NULL,NULL,NULL);
+	button_toggle(0,0,button_Cam,button_Cam_Off,button_Cam,button_Cam,controlcam,NULL,NULL);
 	button(0,0,button_Terrain,button_Terrain_Off,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
 	button(0,0,button_Objs,button_Objs_Off,button_Objs_Over,sharedGUI_launch_object,NULL,NULL);
 	button(0,0,button_Path,button_Path_Off,button_Path_Over,sharedGUI_launch_path,NULL,NULL);
@@ -500,13 +567,13 @@ void sharedGUI_blackscreen(int mode, int sec) {
 	}
 }
 
-void sharedGUI_loadlogo() {
-	// Initial setup	
-	_logo->size_x = bmap_width(_logo.bmap);
-	_logo->size_y = bmap_height(_logo.bmap);
+void sharedGUI_loadlogo(BMAP *logo_bmap) {
+	while(logo_bmap == NULL) wait(1);
 	
-	_logo->pos_x = screen_size.x - bmap_width(_logo.bmap) - 25;
-	_logo->pos_y = 25;
+	_logo.bmap = logo_bmap;
+	
+	_logo->pos_x = screen_size.x - bmap_width(_logo.bmap) - 2 * BORDER;
+	_logo->pos_y = 20;
 	
 	set(_logo,SHOW);
 }
@@ -540,11 +607,11 @@ void sharedGUI_playintro(STRING *what, var vol) {
 	while(media_playing(hndl)) wait(1);
 }
 
-void sharedGUI_loadbackground() {
+void sharedGUI_loadbackground(STRING *lv_name) {
 	//		sharedGUI_playintro(100);
 	//		wait_for(sharedGUI_playintro);
 	
-	sharedGUI_loadscene("small.hmp");
+	sharedGUI_loadscene(lv_name);
 	wait_for(sharedGUI_loadscene);
 	
 	sharedGUI_loadbuttons();
@@ -612,11 +679,11 @@ void sharedGUI_toggle_translucent() {
 
 PANEL *debug = {
 	layer=3;
-	digits(0,0,99,"arial#25b",1,fpsf_alpha_control);
+	digits(0,0,99,"arial#25b",1,obj_type);
 	digits(0,20,99,"arial#25b",1,fpsf_albedo_control);
-	digits(0,40,99,"arial#25b",1,fpsf_ambient_control);
+	digits(0,40,99,"arial#25b",1,is_camera);
 	
-	//	flags = SHOW;
+	flags = SHOW;
 }
 
 void sharedGUI_panelselect(PANEL *p)
@@ -678,4 +745,69 @@ void sharedGUI_launch_path() {
 
 void init_startup() {
 	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
+}
+
+void manipobj() 
+{
+	proc_mode = PROC_LATE;
+	
+	while(something_is_selected == 1) {
+		
+		if(key_del) if(select) ptr_remove(select);
+		
+		select.x += .005 * (key_cuu - key_cud) * time_step;
+		select.y += .005 * (key_cul - key_cur) * time_step;			
+		select.z += .005 * (key_pgup - key_pgdn) * time_step;
+		
+		select.alpha = v_alpha;
+		select.ambient = v_ambient;
+		select.albedo = v_albedo;
+		
+		wait(1);
+	}
+}
+
+void follow_pointer() {
+	fpsf_marker = me;
+	set(fpsf_marker,PASSABLE);
+	while(1) {
+		sharedGUI_cpos1.x = mouse_pos.x;
+		sharedGUI_cpos1.y = mouse_pos.y;
+		sharedGUI_cpos1.z = 0;
+		vec_for_screen(sharedGUI_cpos1,camera);
+		sharedGUI_cpos2.x = mouse_pos.x;
+		sharedGUI_cpos2.y = mouse_pos.y;
+		sharedGUI_cpos2.z = 200000;
+		vec_for_screen(sharedGUI_cpos2,camera);
+
+		c_trace(sharedGUI_cpos1.x,sharedGUI_cpos2.x,IGNORE_ME | IGNORE_PASSABLE | IGNORE_MODELS);
+		vec_set(fpsf_marker.x,hit.x);
+		vec_set(temp_pos.x,hit.x);
+		wait(1);
+	}
+}
+
+void place_me(ENTITY *e) {
+	if(is_camera == 1) return;
+	else ent_create(e,temp_pos.x,NULL);
+}
+
+void pass_to_gui(ENTITY *e) {
+	v_ambient = e.ambient;
+	v_alpha = e.alpha;
+	v_albedo = e.albedo;
+
+	if(is(e,BRIGHT)) button_state(panProp,2,1);
+	if(is(e,INVISIBLE)) button_state(panProp,3,1);
+	if(is(e,NOFOG)) button_state(panProp,4,1);
+	if(is(e,OVERLAY)) button_state(panProp,5,1);
+	if(is(e,PASSABLE)) button_state(panProp,6,1);
+	if(is(e,POLYGON)) button_state(panProp,7,1);
+	if(is(e,SHADOW)) button_state(panProp,8,1);
+	if(is(e,TRANSLUCENT)) button_state(panProp,9,1);
+}
+
+void controlcam() {
+	if(button_state(panMain_Bottom,2,-1) == OFF) is_camera = 0;
+	else is_camera = 1;
 }

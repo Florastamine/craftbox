@@ -1,55 +1,21 @@
 #include <acknex.h>
 #include <default.c>
 
-#define BBOX 8
-
-ENTITY *select;
-var fpsf_alpha_control, fpsf_ambient_control, fpsf_albedo_control;
-
 #define PRAGMA_PATH "../shared/sharedData"
 
 #include "../shared/shared.c"
-#include "../shared/sharedGUI.c"
 #include "../shared/sharedCustom/sharedCustom.c"
-
-int fpsf_obj_type;
-BMAP* mouse = "arrow.pcx";
-
-void manipobj();
-
-ENTITY *fpsf_marker;
-VECTOR sharedGUI_cpos1,sharedGUI_cpos2,fpsf_temp_pos;
-
-void follow_pointer() {
-	fpsf_marker = me;
-	set(fpsf_marker,PASSABLE);
-	while(1) {
-		sharedGUI_cpos1.x = mouse_pos.x;
-		sharedGUI_cpos1.y = mouse_pos.y;
-		sharedGUI_cpos1.z = 0;
-		vec_for_screen(sharedGUI_cpos1,camera);
-		sharedGUI_cpos2.x = mouse_pos.x;
-		sharedGUI_cpos2.y = mouse_pos.y;
-		sharedGUI_cpos2.z = 200000;
-		vec_for_screen(sharedGUI_cpos2,camera);
-		
-		c_trace(sharedGUI_cpos1.x,sharedGUI_cpos2.x,IGNORE_ME | IGNORE_PASSABLE | IGNORE_MODELS);
-		vec_set(fpsf_marker.x,hit.x);
-		vec_set(fpsf_temp_pos.x,hit.x);
-		wait(1);
-	}
-}
 
 void main(void) {
 	
+	obj_type = 0;
+	
 	video_set(800,600,32,1);
-	video_window(NULL,NULL,0,"editor 0.1 Milestone 0");
+	video_window(NULL,NULL,0,"editor 0.2 Milestone 1");
 	
 	sharedGUI_mouseset(mouse);
 	
-	sharedGUI_loadbackground();
-	
-	//	scan_folder("../shared","c");
+	sharedGUI_loadbackground("small.hmp");
 	
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
@@ -57,6 +23,12 @@ void main(void) {
 	while(1) 
 	{
 		vec_set(mouse_pos,mouse_cursor);
+		
+		if(key_t) 
+		{
+			while(key_t) wait(1);
+			obj_type++;
+		}
 		
 		if(mouse_left) 
 		{
@@ -71,15 +43,13 @@ void main(void) {
 					{
 						select.material = NULL;
 						select = NULL;
+						something_is_selected = 0;
 					}
 					select = mouse_ent;
 					select.material = mat_select;
 					
-					//				set(select, BRIGHT | TRANSLUCENT);
-					
-					fpsf_alpha_control = select.alpha;
-					fpsf_ambient_control = select.ambient;
-					fpsf_albedo_control = select.albedo;
+					something_is_selected = 1;
+					pass_to_gui(select);
 				}
 				else
 				{
@@ -87,17 +57,33 @@ void main(void) {
 					{
 						select.material = NULL;
 						select = NULL;
+						something_is_selected = 0;
 					}
 					select = NULL;	
+					something_is_selected = 0;
 				}
 				
-				switch(fpsf_obj_type) {
-					case 0:
-					ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
+				switch(obj_type) 
+				{
+					
+					case obj_winterbaum :
+					place_me(o_winterbaum);
 					break;
 					
-					case 1:
-					ent_create("winterbaum.mdl",fpsf_temp_pos.x,NULL);
+					case obj_snowman :
+					place_me(o_snowman);
+					break;
+					
+					case obj_genericwall :
+					place_me(o_genericwall);
+					break;
+					
+					case obj_generictree :
+					place_me(o_generictree);
+					break;
+					
+					case obj_palmtree :
+					place_me(o_palmtree);
 					break;
 					
 					default:
@@ -105,48 +91,14 @@ void main(void) {
 					break;
 				}
 				
-				manipobj();
 			}
 			
 		}
 		
-		/*
-		
-		if(mouse_right) {
-			while(mouse_right) wait(1);
-			if(mouse_ent) ent_remove(mouse_ent);
-		}
-		
-		*/
-		
+		manipobj();
+
 		wait(1);
 	}
 	
 	wait(1);
-}
-
-void manipobj() 
-{
-	while(1) 
-	{
-		while(select) 
-		{
-			proc_mode = PROC_LATE;
-			if(!mouse_left) draw_bounding_box(select);
-			
-			if(key_del) {
-				while(key_del) wait(1);
-				select = NULL;
-				select.material = NULL;
-				
-			}
-			
-			select.x += .005 * (key_cuu - key_cud) * time_step;
-			select.y += .005 * (key_cul - key_cur) * time_step;			
-			select.z += .005 * (key_pgup - key_pgdn) * time_step;
-			
-			wait(1);
-		}
-		wait(1);
-	}
 }
