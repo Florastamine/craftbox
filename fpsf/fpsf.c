@@ -30,6 +30,8 @@ void main(void) {
 			obj_type++;
 		}
 		
+		pass_to_object();
+		
 		if(mouse_left) 
 		{
 			while(mouse_left) wait(1);
@@ -49,6 +51,7 @@ void main(void) {
 					select.material = mat_select;
 					
 					something_is_selected = 1;
+					
 					pass_to_gui(select);
 				}
 				else
@@ -94,8 +97,6 @@ void main(void) {
 			}
 			
 		}
-		
-		manipobj();
 
 		wait(1);
 	}

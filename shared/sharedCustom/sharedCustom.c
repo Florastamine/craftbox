@@ -1,4 +1,3 @@
-
 MATERIAL* mat_select = 
 {
 	ambient_red=255;
@@ -25,9 +24,7 @@ void main(void) {
 }
 */
 
-STRING *current_folder = "a", *file_selected = "a";
-
-void scan_folder(STRING* dir,STRING* ext)
+void scan_folder(STRING *dir, STRING *ext)
 {
 	TEXT* read_files = {strings = 1000;}
 	
@@ -747,25 +744,49 @@ void init_startup() {
 	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
 }
 
-void manipobj() 
+void pass_to_object()
 {
-	proc_mode = PROC_LATE;
-	
-	while(something_is_selected == 1) {
-		
-		if(key_del) if(select) ptr_remove(select);
-		
-		select.x += .005 * (key_cuu - key_cud) * time_step;
-		select.y += .005 * (key_cul - key_cur) * time_step;			
-		select.z += .005 * (key_pgup - key_pgdn) * time_step;
-		
+	while(select)
+	{
 		select.alpha = v_alpha;
 		select.ambient = v_ambient;
 		select.albedo = v_albedo;
 		
+		if(button_state(panProp,2,-1) == ON) set(select,BRIGHT);
+		else reset(select,BRIGHT);
+		
+		if(button_state(panProp,3,-1) == ON) set(select,INVISIBLE);
+		else reset(select,INVISIBLE);
+		
+		if(button_state(panProp,4,-1) == ON) set(select,NOFOG);
+		else reset(select,NOFOG);
+		
+		if(button_state(panProp,5,-1) == ON) set(select,OVERLAY);
+		else reset(select,OVERLAY);
+		
+		if(button_state(panProp,6,-1) == ON) set(select,PASSABLE);
+		else reset(select,PASSABLE);
+		
+		if(button_state(panProp,7,-1) == ON) set(select,POLYGON);
+		else reset(select,POLYGON);
+		
+		if(button_state(panProp,8,-1) == ON) set(select,SHADOW);
+		else reset(select,SHADOW);
+		
+		if(button_state(panProp,9,-1) == ON) set(select,TRANSLUCENT);
+		else reset(select,TRANSLUCENT);
+		
 		wait(1);
 	}
 }
+
+/*
+if(key_del) ptr_remove(select);
+
+select.x += .005 * (key_cuu - key_cud) * time_step;
+select.y += .005 * (key_cul - key_cur) * time_step;			
+select.z += .005 * (key_pgup - key_pgdn) * time_step;
+*/
 
 void follow_pointer() {
 	fpsf_marker = me;
@@ -790,6 +811,15 @@ void follow_pointer() {
 void place_me(ENTITY *e) {
 	if(is_camera == 1) return;
 	else ent_create(e,temp_pos.x,NULL);
+	
+	while(e == NULL) wait(1); // wait for e to be completely created
+	
+	set(e, POLYGON);
+	reset(e, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
+	
+	e.alpha = 0;
+	e.ambient = 50;
+	e.albedo = 0;
 }
 
 void pass_to_gui(ENTITY *e) {

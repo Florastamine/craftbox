@@ -28,13 +28,18 @@
 #define obj_generictree 4
 
 //////////////////////////////
-// Strings will be declared here.
+// Strings and texts will be declared here.
 //////////////////////////////
 STRING *o_winterbaum = "winterbaum.mdl",
 *o_snowman = "snowman.mdl",
 *o_genericwall = "wall1.mdl",
 *o_palmtree = "palmtree.mdl",
 *o_generictree = "tree1.mdl";
+
+STRING *current_folder = "a",
+*file_selected = "a";
+
+TEXT *files_list;
 
 ////////////////////////////////////////////////////////////
 // Variables will be declared here.
@@ -317,4 +322,6 @@ void scan_folder(STRING *,STRING *);
 void manipobj();
 void follow_pointer();
 void place_me(ENTITY *);
+
 void pass_to_gui(ENTITY *);
+void pass_to_object();
