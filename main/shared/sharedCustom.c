@@ -1,3 +1,50 @@
+MATERIAL *mat_smaragd = {
+	ambient_red = 100;
+	ambient_green = 255;
+	ambient_blue = 100;
+	diffuse_red = 0;
+	diffuse_green = 100;
+	diffuse_blue = 0;
+	specular_red = 255;
+	specular_green = 255;
+	specular_blue = 255;
+	power = 10;
+}
+
+MATERIAL *mat_lava = {
+	emissive_red = 200;
+	emissive_green = 70;
+	emissive_blue = 20;
+	ambient_red = 255;
+	ambient_green = 150;
+	ambient_blue = 50;
+	diffuse_red = 200;
+	diffuse_green = 150;
+	diffuse_blue = 50;
+	specular_red = 255;
+	specular_green = 255;
+	specular_blue = 255;
+	alpha = 60;
+	albedo = 70;
+	power = 10;
+}
+
+MATERIAL *mat_marble = {
+	emissive_red = 30;
+	emissive_green = 30;
+	emissive_blue = 30;
+	ambient_red = 200;
+	ambient_green = 225;
+	ambient_blue = 200;
+	diffuse_red = 255;
+	diffuse_green = 255;
+	diffuse_blue = 255;
+	specular_red = 255;
+	specular_green = 255;
+	specular_blue = 255;
+	power = 10;
+}
+
 MATERIAL* mat_select = 
 {
 	ambient_red=255;
@@ -162,7 +209,7 @@ PANEL *panProp = {
 	button_toggle(0,0,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,sharedGUI_toggle_translucent,NULL,NULL);
 	
-	button(0,0,button_default,button_default_off,button_default_over,NULL,NULL,NULL);
+	button(0,0,button_default,button_default_off,button_default_over,restore,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,v_alpha);	
 	hslider(0,0,100,slider,0,100,v_ambient);	
@@ -192,10 +239,10 @@ PANEL *panMat = {
 	
 	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
-	button(0,0,button_Mat1,button_Mat1,button_Mat1,NULL,NULL,NULL);
-	button(0,0,button_Mat2,button_Mat2,button_Mat2,NULL,NULL,NULL);
-	button(0,0,button_Mat3,button_Mat3,button_Mat3,NULL,NULL,NULL);
-	button(0,0,button_Mat4,button_Mat4,button_Mat4,NULL,NULL,NULL);
+	button(0,0,button_Mat1,button_Mat1,button_Mat1,mat_select_lava,NULL,NULL);
+	button(0,0,button_Mat2,button_Mat2,button_Mat2,mat_select_marble,NULL,NULL);
+	button(0,0,button_Mat3,button_Mat3,button_Mat3,mat_select_smaragd,NULL,NULL);
+	button(0,0,button_Mat4,button_Mat4,button_Mat4,mat_select_empty,NULL,NULL);
 	button(0,0,button_Mat5,button_Mat5,button_Mat5,NULL,NULL,NULL);
 	button(0,0,button_Mat6,button_Mat6,button_Mat6,NULL,NULL,NULL);
 	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
@@ -639,12 +686,16 @@ void sharedGUI_home() {
 
 void sharedGUI_prop() {
 	
-	panProp.pos_x = BORDER;
-	panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
-	
-	sharedGUI_updategui(panProp);
-	
-	set(panProp,SHOW);
+	if(select) {
+		
+		panProp.pos_x = BORDER;
+		panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
+		
+		sharedGUI_updategui(panProp);
+		
+		set(panProp,SHOW);
+		
+	}
 }
 
 void sharedGUI_mat() {
@@ -820,6 +871,8 @@ void place_me(ENTITY *e) {
 	e.alpha = 0;
 	e.ambient = 50;
 	e.albedo = 0;
+	
+	e.material = mat_model;
 }
 
 void pass_to_gui(ENTITY *e) {
@@ -828,16 +881,48 @@ void pass_to_gui(ENTITY *e) {
 	v_albedo = e.albedo;
 
 	if(is(e,BRIGHT)) button_state(panProp,2,1);
+	else button_state(panProp,2,0);
+	
 	if(is(e,INVISIBLE)) button_state(panProp,3,1);
+	else button_state(panProp,3,0);
+	
 	if(is(e,NOFOG)) button_state(panProp,4,1);
+	else button_state(panProp,4,0);
+	
 	if(is(e,OVERLAY)) button_state(panProp,5,1);
+	else button_state(panProp,5,0);
+	
 	if(is(e,PASSABLE)) button_state(panProp,6,1);
+	else button_state(panProp,6,0);
+	
 	if(is(e,POLYGON)) button_state(panProp,7,1);
+	else button_state(panProp,7,0);
+	
 	if(is(e,SHADOW)) button_state(panProp,8,1);
+	else button_state(panProp,8,0);
+	
 	if(is(e,TRANSLUCENT)) button_state(panProp,9,1);
+	else button_state(panProp,9,0);
 }
 
 void controlcam() {
 	if(button_state(panMain_Bottom,2,-1) == OFF) is_camera = 0;
 	else is_camera = 1;
 }
+
+void restore() {
+	if(select) {
+		select.alpha = 0;
+		select.ambient = 0;
+		select.albedo = 50;
+		reset(select, BRIGHT | INVISIBLE | NOFOG | OVERLAY | PASSABLE | SHADOW | TRANSLUCENT);
+		set(select,POLYGON);
+		
+		pass_to_gui(select); // update the properties panel
+	}
+}
+
+void mat_select_lava() { mat_pick = mat_select_lava; }
+void mat_select_smaragd() { mat_pick = mat_select_smaragd; } 
+void mat_select_marble() { mat_pick = mat_select_marble; }
+void mat_select_empty() { mat_pick = NULL; }

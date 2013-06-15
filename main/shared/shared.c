@@ -7,6 +7,18 @@
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
+typedef struct obj_form {
+	
+	BOOL df;
+	
+	int _flags[8];
+	var _alpha, _albedo, _ambient;
+	MATERIAL *m;
+	
+} obj_form;
+
+obj_form clipboard;
+
 #define BBOX 8
 
 #define FADE_IN 1
@@ -47,7 +59,6 @@ TEXT *files_list;
 int obj_type;
 int files_found, list_start;
 int is_camera;
-int something_is_selected;
 
 var files_already;
 
@@ -99,7 +110,8 @@ FONT *f = "Arial#25b";
 ////////////////////////////////////////////////////////////
 // Material declarations
 ////////////////////////////////////////////////////////////
-MATERIAL *mat_select;
+MATERIAL *mat_select, *mat_temp, *mat_pick;
+MATERIAL *mat_lava, *mat_smaragd, *mat_marble;
 
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
@@ -322,6 +334,12 @@ void scan_folder(STRING *,STRING *);
 void manipobj();
 void follow_pointer();
 void place_me(ENTITY *);
+void restore();
 
 void pass_to_gui(ENTITY *);
 void pass_to_object();
+
+void mat_select_lava();
+void mat_select_marble();
+void mat_select_smaragd();
+void mat_select_empty();
