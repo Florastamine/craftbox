@@ -1,12 +1,15 @@
 #include <acknex.h>
 #include <default.c>
 
-#define PRAGMA_PATH "../shared/sharedData"
+#define PRAGMA_PATH "./shared/sharedData"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels"
+#define PRAGMA_PATH "./shared/sharedData/sharedLevels"
 
-#include "../shared/shared.c"
-#include "../shared/sharedCustom/sharedCustom.c"
+#include "./shared/shared.c"
+#include "./shared/sharedCustom.c"
 
-void main(void) {
+void main(void) 
+{
 	
 	obj_type = 0;
 	
@@ -15,10 +18,25 @@ void main(void) {
 	
 	sharedGUI_mouseset(mouse);
 	
-	sharedGUI_loadbackground("small.hmp");
+	sharedGUI_loadbackground("sandbox.wmb");
 	
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
+	
+	// process all entities within the level
+	you = ent_next(NULL);
+	int t;
+	while(you) {
+
+	   t = (int)random(3);
+	   if(t == 0) you.material = mat_lava;
+	   if(t == 1) you.material = mat_smaragd;
+	   if(t == 2) you.material = mat_marble;
+	   
+		you = ent_next(you);
+		
+		wait(1);
+	}
 	
 	while(1) 
 	{
@@ -38,19 +56,19 @@ void main(void) {
 			
 			if(!mouse_panel)
 			{
-				
 				if(mouse_ent)
 				{
+					
 					if(select)
 					{
-						select.material = NULL;
+					   select.material = mat_temp;
 						select = NULL;
-						something_is_selected = 0;
 					}
-					select = mouse_ent;
-					select.material = mat_select;
 					
-					something_is_selected = 1;
+					select = mouse_ent;
+					
+					mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
+					select.material = mat_select;
 					
 					pass_to_gui(select);
 				}
@@ -58,12 +76,18 @@ void main(void) {
 				{
 					if(select)
 					{
-						select.material = NULL;
+					   if(mat_temp) select.material = mat_temp;
+						else select.material = NULL;
+						
 						select = NULL;
-						something_is_selected = 0;
+						
+						reset(panProp,SHOW);
 					}
-					select = NULL;	
-					something_is_selected = 0;
+					
+					select = NULL;
+					
+					if(is(panProp,SHOW)) reset(panProp,SHOW);
+					
 				}
 				
 				switch(obj_type) 
