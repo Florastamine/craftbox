@@ -227,6 +227,11 @@ PANEL *panPhy = {
 	
 	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
+	button_toggle(0,0,flag_PHY_on,flag_PHY,flag_PHY_on,flag_PHY_on,NULL,NULL,NULL);
+	
+	hslider(0,0,100,slider,0,100,v_friction);
+	hslider(0,0,100,slider,0,100,v_bounciness);
+	
 	on_click = sharedGUI_dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -242,12 +247,13 @@ PANEL *panMat = {
 	button(0,0,button_Mat1,button_Mat1,button_Mat1,mat_select_lava,NULL,NULL);
 	button(0,0,button_Mat2,button_Mat2,button_Mat2,mat_select_marble,NULL,NULL);
 	button(0,0,button_Mat3,button_Mat3,button_Mat3,mat_select_smaragd,NULL,NULL);
-	button(0,0,button_Mat4,button_Mat4,button_Mat4,mat_select_empty,NULL,NULL);
+	button(0,0,button_Mat4,button_Mat4,button_Mat4,mat_select_null,NULL,NULL);
 	button(0,0,button_Mat5,button_Mat5,button_Mat5,NULL,NULL,NULL);
 	button(0,0,button_Mat6,button_Mat6,button_Mat6,NULL,NULL,NULL);
 	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
 	
 	button(0,0,button_editmat,button_editmat,button_editmat,sharedGUI_editmat,NULL,NULL);
+	button(0,0,button_matapply,button_matapply_off,button_matapply_over,pass_mat_to_object,NULL,NULL);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -312,13 +318,19 @@ void sharedGUI_updategui(PANEL *wg) {
 			i++;
 		}
 		
-		pan_setpos(panMat,3,9,vector(bmap_width(panMat.bmap) - BORDER - 100, bmap_height(panMat.bmap) - BORDER - 24 ,0));
+		var cache = bmap_width(panMat.bmap) - BORDER - 100;
+		pan_setpos(panMat,3,9,vector(cache, bmap_height(panMat.bmap) - BORDER - 24 ,0));
+		pan_setpos(panMat,3,10,vector(cache, bmap_height(panMat.bmap) - BORDER * 2 - 48,0));
 		
 		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
 	}
 	
 	if(wg == panPhy) {
 		pan_setpos(panPhy,3,1,vector(bmap_width(panPhy.bmap) - BORDER * 2, BORDER,0));
+		
+		pan_setpos(panPhy,3,2,vector(BORDER,BORDER*4,0));
+		pan_setpos(panPhy,4,1,vector(141,bmap_height(panPhy.bmap) - 109,0)); // Bounciness
+		pan_setpos(panPhy,4,2,vector(141,bmap_height(panPhy.bmap) - 135,0)); // Friction
 	}
 	
 	if(wg == panMat_Sub1) { 
@@ -728,8 +740,7 @@ void sharedGUI_toggle_translucent() {
 PANEL *debug = {
 	layer=3;
 	digits(0,0,99,"arial#25b",1,obj_type);
-	digits(0,20,99,"arial#25b",1,fpsf_albedo_control);
-	digits(0,40,99,"arial#25b",1,is_camera);
+	digits(0,20,99,"arial#25b",1,is_camera);
 	
 	flags = SHOW;
 }
@@ -880,6 +891,9 @@ void pass_to_gui(ENTITY *e) {
 	v_alpha = e.alpha;
 	v_albedo = e.albedo;
 
+	////////////////////////////////////////////////////////////
+	// For panProp
+	////////////////////////////////////////////////////////////
 	if(is(e,BRIGHT)) button_state(panProp,2,1);
 	else button_state(panProp,2,0);
 	
@@ -903,6 +917,7 @@ void pass_to_gui(ENTITY *e) {
 	
 	if(is(e,TRANSLUCENT)) button_state(panProp,9,1);
 	else button_state(panProp,9,0);
+	
 }
 
 void controlcam() {
@@ -922,7 +937,50 @@ void restore() {
 	}
 }
 
-void mat_select_lava() { mat_pick = mat_select_lava; }
-void mat_select_smaragd() { mat_pick = mat_select_smaragd; } 
-void mat_select_marble() { mat_pick = mat_select_marble; }
-void mat_select_empty() { mat_pick = NULL; }
+void mat_select_lava() {
+	mat_type = select_mat_lava;
+}
+
+void mat_select_smaragd() {
+	mat_type = select_mat_smaragd;
+}
+
+void mat_select_marble() {
+	mat_type = select_mat_marble;
+}
+
+void mat_select_null() {
+	mat_type = select_mat_null;
+}
+
+void pass_mat_to_object() {
+	
+	if(select) { // make sure something have been saved to mat_temp
+		
+		switch(mat_type) {
+			
+			case select_mat_null :
+			mat_temp = mat_model;
+			break;
+			
+			case select_mat_lava :
+			mat_temp = mat_lava;
+			break;
+			
+			case select_mat_smaragd :
+			mat_temp = mat_smaragd;
+			break;
+			
+			case select_mat_marble :
+			mat_temp = mat_marble;
+			break;
+			
+			default:
+			sys_exit(NULL);
+			break; 
+			
+		}
+		
+	}
+	
+}

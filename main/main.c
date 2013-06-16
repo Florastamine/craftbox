@@ -9,8 +9,7 @@
 #include "./shared/sharedCustom.c"
 
 void main(void) 
-{
-	
+{	
 	obj_type = 0;
 	
 	video_set(800,600,32,1);
@@ -28,11 +27,11 @@ void main(void)
 	int t;
 	while(you) {
 
-	   t = (int)random(3);
-	   if(t == 0) you.material = mat_lava;
-	   if(t == 1) you.material = mat_smaragd;
-	   if(t == 2) you.material = mat_marble;
-	   
+		t = (int)random(3);
+		if(t == 0) you.material = mat_lava;
+		if(t == 1) you.material = mat_smaragd;
+		if(t == 2) you.material = mat_marble;
+		
 		you = ent_next(you);
 		
 		wait(1);
@@ -61,7 +60,7 @@ void main(void)
 					
 					if(select)
 					{
-					   select.material = mat_temp;
+						select.material = mat_temp;
 						select = NULL;
 					}
 					
@@ -76,7 +75,7 @@ void main(void)
 				{
 					if(select)
 					{
-					   if(mat_temp) select.material = mat_temp;
+						if(mat_temp) select.material = mat_temp;
 						else select.material = NULL;
 						
 						select = NULL;

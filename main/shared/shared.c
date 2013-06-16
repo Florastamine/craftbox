@@ -39,6 +39,11 @@ obj_form clipboard;
 #define obj_palmtree 3
 #define obj_generictree 4
 
+#define select_mat_null 0
+#define select_mat_lava 1
+#define select_mat_smaragd 2
+#define select_mat_marble 3
+
 //////////////////////////////
 // Strings and texts will be declared here.
 //////////////////////////////
@@ -56,7 +61,8 @@ TEXT *files_list;
 ////////////////////////////////////////////////////////////
 // Variables will be declared here.
 ////////////////////////////////////////////////////////////
-int obj_type;
+int obj_type, mat_type;
+
 int files_found, list_start;
 int is_camera;
 
@@ -110,7 +116,7 @@ FONT *f = "Arial#25b";
 ////////////////////////////////////////////////////////////
 // Material declarations
 ////////////////////////////////////////////////////////////
-MATERIAL *mat_select, *mat_temp, *mat_pick;
+MATERIAL *mat_select, *mat_temp;
 MATERIAL *mat_lava, *mat_smaragd, *mat_marble;
 
 ////////////////////////////////////////////////////////////
@@ -230,6 +236,9 @@ BMAP *flag_SHADOW_on = "flag_SHADOW_on.bmp";
 BMAP *flag_TRANSLUCENT = "flag_TRANSLUCENT.bmp";
 BMAP *flag_TRANSLUCENT_on = "flag_TRANSLUCENT_on.bmp";
 
+BMAP *flag_PHY = "flag_PHY.bmp";
+BMAP *flag_PHY_on = "flag_PHY_on.bmp";
+
 BMAP *slider = "xlider.bmp";
 
 BMAP *button_Mat1 = "button_Mat1.bmp";
@@ -289,6 +298,10 @@ BMAP *button_editmat = "button_editmat.bmp";
 BMAP *button_editmat_def = "button_editmat_default.bmp";
 BMAP *button_editmat_save = "button_editmat_savechanges.bmp";
 
+BMAP *button_matapply = "button_matapply.bmp";
+BMAP *button_matapply_off = "button_matapply_off.bmp";
+BMAP *button_matapply_over = "button_matapply_over.bmp";
+
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
@@ -338,8 +351,9 @@ void restore();
 
 void pass_to_gui(ENTITY *);
 void pass_to_object();
+void pass_mat_to_object();
 
 void mat_select_lava();
 void mat_select_marble();
 void mat_select_smaragd();
-void mat_select_empty();
+void mat_select_null();
