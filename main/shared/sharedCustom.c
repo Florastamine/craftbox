@@ -762,30 +762,11 @@ void sharedGUI_panelselect(PANEL *p)
 	}
 }
 
-/* function specialized for use with submenus. */
-void sharedGUI_launchsubmenu(PANEL *which) {
-	var absolute_y = screen_size.y - 2 * BORDER - 64;
-	
-	layer_sort(which,0);
-	
-	which.pos_x = BORDER;
-	which.pos_y = screen_size.y - 32 - BORDER;
-	
-	while(which.pos_y <= absolute_y) {
-		which.pos_y -= .5 * time_step;
-		wait(1);
-	}
-	
-	layer_sort(which,1);
-}
-
 void sharedGUI_launch_terrain() {
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
 	
 	set(buttonlst_submenu_terrain,SHOW);
-	
-	//	sharedGUI_launchsubmenu(buttonlst_submenu_terrain);
 }
 
 void sharedGUI_launch_object() {
@@ -810,6 +791,8 @@ void pass_to_object()
 {
 	while(select)
 	{
+	   if(key_del) ptr_remove(select);
+	   
 		select.alpha = v_alpha;
 		select.ambient = v_ambient;
 		select.albedo = v_albedo;
@@ -841,14 +824,6 @@ void pass_to_object()
 		wait(1);
 	}
 }
-
-/*
-if(key_del) ptr_remove(select);
-
-select.x += .005 * (key_cuu - key_cud) * time_step;
-select.y += .005 * (key_cul - key_cur) * time_step;			
-select.z += .005 * (key_pgup - key_pgdn) * time_step;
-*/
 
 void follow_pointer() {
 	fpsf_marker = me;

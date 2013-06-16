@@ -329,7 +329,6 @@ void controlcam();
 
 void sharedGUI_toggle_translucent();
 
-void sharedGUI_launchsubmenu(PANEL *);
 void sharedGUI_launch_terrain();
 void sharedGUI_launch_object();
 void sharedGUI_launch_path();
@@ -344,7 +343,6 @@ void sharedGUI__loadbuttons();
 
 void scan_folder(STRING *,STRING *);
 
-void manipobj();
 void follow_pointer();
 void place_me(ENTITY *);
 void restore();
