@@ -22,21 +22,6 @@ void main(void)  {
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
 	
-	// process all entities within the level
-	you = ent_next(NULL);
-	int t;
-	while(you) {
-
-		t = (int)random(3);
-		if(t == 0) you.material = mat_lava;
-		if(t == 1) you.material = mat_smaragd;
-		if(t == 2) you.material = mat_marble;
-		
-		you = ent_next(you);
-		
-		wait(1);
-	}
-	
 	while(1) 
 	{
 		vec_set(mouse_pos,mouse_cursor);
@@ -45,6 +30,11 @@ void main(void)  {
 		{
 			while(key_t) wait(1);
 			obj_type++;
+		}
+		
+		if(key_y) {
+		   while(key_y) wait(1);
+		   obj_type--;
 		}
 		
 		pass_to_object();
