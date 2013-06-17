@@ -8,13 +8,19 @@
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 typedef struct obj_form {
-	
-	BOOL df;
-	
-	int _flags[8];
-	var _alpha, _albedo, _ambient;
-	MATERIAL *m;
-	
+   
+   var _scale_x, _scale_y, _scale_z,
+   _pan, _tilt, _roll,
+   _alpha, _ambient;
+   
+   BOOL _flags[8];
+   
+   MATERIAL *m;
+   
+   int oid;
+   
+   BOOL dp;
+   
 } obj_form;
 
 obj_form clipboard;
@@ -68,7 +74,7 @@ int is_camera;
 
 var files_already;
 
-var v_alpha, v_ambient, v_albedo;
+var v_alpha, v_ambient;
 
 var button_SaveWorld_y,
 button_LoadWorld_y,
@@ -344,14 +350,19 @@ void sharedGUI__loadbuttons();
 void scan_folder(STRING *,STRING *);
 
 void follow_pointer();
-void place_me(ENTITY *);
+void place_me(STRING *, int);
 void restore();
 
 void pass_to_gui(ENTITY *);
 void pass_to_object();
 void pass_mat_to_object();
+void pass_clipboard_to_object(ENTITY *);
 
 void mat_select_lava();
 void mat_select_marble();
 void mat_select_smaragd();
 void mat_select_null();
+
+void obj_cut();
+void obj_copy();
+void obj_paste();

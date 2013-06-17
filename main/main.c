@@ -57,7 +57,6 @@ void main(void)
 			{
 				if(mouse_ent)
 				{
-					
 					if(select)
 					{
 						select.material = mat_temp;
@@ -70,7 +69,9 @@ void main(void)
 					select.material = mat_select;
 					
 					pass_to_gui(select);
+					
 				}
+				
 				else
 				{
 					if(select)
@@ -93,29 +94,30 @@ void main(void)
 				{
 					
 					case obj_winterbaum :
-					place_me(o_winterbaum);
+					place_me(o_winterbaum, obj_winterbaum);
 					break;
 					
 					case obj_snowman :
-					place_me(o_snowman);
+					place_me(o_snowman, obj_snowman);
 					break;
 					
 					case obj_genericwall :
-					place_me(o_genericwall);
+					place_me(o_genericwall, obj_genericwall);
 					break;
 					
 					case obj_generictree :
-					place_me(o_generictree);
+					place_me(o_generictree, obj_generictree);
 					break;
 					
 					case obj_palmtree :
-					place_me(o_palmtree);
+					place_me(o_palmtree, obj_palmtree);
 					break;
 					
 					default:
 					sys_exit(NULL);
 					break;
 				}
+				wait(1);
 				
 			}
 			

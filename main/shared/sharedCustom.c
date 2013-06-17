@@ -213,7 +213,6 @@ PANEL *panProp = {
 	
 	hslider(0,0,100,slider,0,100,v_alpha);	
 	hslider(0,0,100,slider,0,100,v_ambient);	
-	hslider(0,0,100,slider,0,100,fpsf_albedo_control);	
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -517,9 +516,9 @@ PANEL *panMain_Top = {
 	
 	bmap = "panMain_Top.bmp";
 	
-	button(0,0,button_Cut,button_Cut_Off,button_Cut_Over,NULL,NULL,NULL);
-	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,NULL,NULL,NULL);
-	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,NULL,NULL,NULL);
+	button(0,0,button_Cut,button_Cut_Off,button_Cut_Over,obj_cut,NULL,NULL);
+	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,obj_copy,NULL,NULL);
+	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,obj_paste,NULL,NULL);
 	
 	button(0,0,button_Move,button_Move_Off,button_Move_Over,NULL,NULL,NULL);
 	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,NULL,NULL,NULL);
@@ -791,11 +790,10 @@ void pass_to_object()
 {
 	while(select)
 	{
-	   if(key_del) ptr_remove(select);
-	   
+		if(key_del) ptr_remove(select);
+		
 		select.alpha = v_alpha;
 		select.ambient = v_ambient;
-		select.albedo = v_albedo;
 		
 		if(button_state(panProp,2,-1) == ON) set(select,BRIGHT);
 		else reset(select,BRIGHT);
@@ -845,26 +843,26 @@ void follow_pointer() {
 	}
 }
 
-void place_me(ENTITY *e) {
+void place_me(STRING *e, int otype) {
 	if(is_camera == 1) return;
-	else ent_create(e,temp_pos.x,NULL);
+	else ENTITY *tmp = ent_create(e,temp_pos.x,NULL);
 	
-	while(e == NULL) wait(1); // wait for e to be completely created
+	tmp.skill99 = otype; // Pass object type 
 	
-	set(e, POLYGON);
-	reset(e, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
+	while(tmp == NULL) wait(1); // wait for e to be completely created
 	
-	e.alpha = 0;
-	e.ambient = 50;
-	e.albedo = 0;
+	set(tmp, POLYGON);
+	reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
 	
-	e.material = mat_model;
+	tmp.alpha = 0;
+	tmp.ambient = 50;
+	
+	tmp.material = mat_model;
 }
 
 void pass_to_gui(ENTITY *e) {
 	v_ambient = e.ambient;
 	v_alpha = e.alpha;
-	v_albedo = e.albedo;
 
 	////////////////////////////////////////////////////////////
 	// For panProp
@@ -904,7 +902,6 @@ void restore() {
 	if(select) {
 		select.alpha = 0;
 		select.ambient = 0;
-		select.albedo = 50;
 		reset(select, BRIGHT | INVISIBLE | NOFOG | OVERLAY | PASSABLE | SHADOW | TRANSLUCENT);
 		set(select,POLYGON);
 		
@@ -953,6 +950,200 @@ void pass_mat_to_object() {
 			default:
 			sys_exit(NULL);
 			break; 
+			
+		}
+		
+	}
+	
+}
+
+void pass_clipboard_to_object(ENTITY *e) {
+	e.material = clipboard.m;
+	e.skill99 = clipboard.oid;
+	
+	e.ambient = clipboard._ambient;
+	e.alpha = clipboard._alpha;
+	
+	e.scale_x = clipboard._scale_x;
+	e.scale_y = clipboard._scale_y;
+	e.scale_z = clipboard._scale_z;
+	
+	e.pan = clipboard._pan;
+	e.tilt = clipboard._tilt;
+	e.roll = clipboard._roll;
+	
+	if(clipboard._flags[0] == ON) set(e,BRIGHT);
+	else reset(e,BRIGHT);
+	
+	if(clipboard._flags[1] == ON) set(e,INVISIBLE);
+	else reset(e,INVISIBLE);
+	
+	if(clipboard._flags[2] == ON) set(e,NOFOG);
+	else reset(e,NOFOG);
+	
+	if(clipboard._flags[3] == ON) set(e,OVERLAY);
+	else reset(e,OVERLAY);
+	
+	if(clipboard._flags[4] == ON) set(e,PASSABLE);
+	else reset(e,PASSABLE);
+	
+	if(clipboard._flags[5] == ON) set(e,POLYGON);
+	else reset(e,POLYGON);
+	
+	if(clipboard._flags[6] == ON) set(e,SHADOW);
+	else reset(e,SHADOW);
+	
+	if(clipboard._flags[7] == ON) set(e,TRANSLUCENT);
+	else reset(e,TRANSLUCENT);
+	
+}
+
+void obj_cut() {
+	
+	if(select) {
+		
+		clipboard._scale_x = select.scale_x;
+		clipboard._scale_y = select.scale_y;
+		clipboard._scale_z = select.scale_z;
+		
+		clipboard._pan = select.pan;
+		clipboard._tilt = select.tilt;
+		clipboard._roll = select.roll;
+		
+		clipboard._alpha = select.alpha;
+		clipboard._ambient = select.ambient;
+		
+		if(is(select,BRIGHT)) clipboard._flags[0] = ON;
+		else clipboard._flags[0] = OFF;
+		
+		if(is(select,INVISIBLE)) clipboard._flags[1] = ON;
+		else clipboard._flags[1] = OFF;
+		
+		if(is(select,NOFOG)) clipboard._flags[2] = ON;
+		else clipboard._flags[2] = OFF;
+		
+		if(is(select,OVERLAY)) clipboard._flags[3] = ON;
+		else clipboard._flags[3] = OFF;
+		
+		if(is(select,PASSABLE)) clipboard._flags[4] = ON;
+		else clipboard._flags[4] = OFF;
+		
+		if(is(select,POLYGON)) clipboard._flags[5] = ON;
+		else clipboard._flags[5] = OFF;
+		
+		if(is(select,SHADOW)) clipboard._flags[6] = ON;
+		else clipboard._flags[6] = OFF;
+		
+		if(is(select,TRANSLUCENT)) clipboard._flags[7] = ON;
+		else clipboard._flags[7] = OFF;
+		
+		// select is selected
+		// so something must have been copied into mat_temp
+		// so I take mat_temp directly and copy it into clipboard.m
+		clipboard.m = mat_temp;
+		
+		clipboard.oid = select.skill99;
+		clipboard.dp = 1;
+		
+		ptr_remove(select);
+		select = NULL;
+	}
+	
+}
+
+void obj_copy() {
+	
+	if(select) {
+		clipboard._scale_x = select.scale_x;
+		clipboard._scale_y = select.scale_y;
+		clipboard._scale_z = select.scale_z;
+		
+		clipboard._pan = select.pan;
+		clipboard._tilt = select.tilt;
+		clipboard._roll = select.roll;
+		
+		clipboard._alpha = select.alpha;
+		clipboard._ambient = select.ambient;
+		
+		if(is(select,BRIGHT)) clipboard._flags[0] = ON;
+		else clipboard._flags[0] = OFF;
+		
+		if(is(select,INVISIBLE)) clipboard._flags[1] = ON;
+		else clipboard._flags[1] = OFF;
+		
+		if(is(select,NOFOG)) clipboard._flags[2] = ON;
+		else clipboard._flags[2] = OFF;
+		
+		if(is(select,OVERLAY)) clipboard._flags[3] = ON;
+		else clipboard._flags[3] = OFF;
+		
+		if(is(select,PASSABLE)) clipboard._flags[4] = ON;
+		else clipboard._flags[4] = OFF;
+		
+		if(is(select,POLYGON)) clipboard._flags[5] = ON;
+		else clipboard._flags[5] = OFF;
+		
+		if(is(select,SHADOW)) clipboard._flags[6] = ON;
+		else clipboard._flags[6] = OFF;
+		
+		if(is(select,TRANSLUCENT)) clipboard._flags[7] = ON;
+		else clipboard._flags[7] = OFF;
+		
+		clipboard.m = mat_temp;
+		
+		clipboard.oid = select.skill99;
+		clipboard.dp = 1;
+	}
+	
+}
+
+void obj_paste() {
+
+	if(clipboard.dp) {
+
+		ENTITY *tmp;
+
+		switch(clipboard.oid) {
+			
+			case obj_winterbaum :
+			
+			tmp = ent_create(o_winterbaum,temp_pos.x,NULL);
+			// Begin passing clipboard to the newly created object.
+			pass_clipboard_to_object(tmp);
+			
+			break;
+			
+			case obj_snowman :
+			
+			tmp = ent_create(o_snowman,temp_pos.x,NULL);
+			pass_clipboard_to_object(tmp);
+			
+			break;
+			
+			case obj_genericwall :
+			
+			tmp = ent_create(o_genericwall,temp_pos.x,NULL);
+			pass_clipboard_to_object(tmp);
+			
+			break;
+			
+			case obj_generictree :
+			
+			tmp = ent_create(o_generictree,temp_pos.x,NULL);
+			pass_clipboard_to_object(tmp);
+			
+			break;
+			
+			case obj_palmtree :
+			
+			tmp = ent_create(o_palmtree,temp_pos.x,NULL);
+			pass_clipboard_to_object(tmp);
+			
+			break;
+			
+			default:
+			sys_exit(NULL);
+			break;
 			
 		}
 		
