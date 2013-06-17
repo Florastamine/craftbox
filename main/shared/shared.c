@@ -39,6 +39,10 @@ obj_form clipboard;
 
 #define DEFAULT_ALPHA 50
 
+#define move 1
+#define rotate 2
+#define scale 3
+
 #define obj_winterbaum 0
 #define obj_snowman 1
 #define obj_genericwall 2
@@ -78,7 +82,7 @@ TEXT *files_list;
 ////////////////////////////////////////////////////////////
 // Variables will be declared here.
 ////////////////////////////////////////////////////////////
-int obj_type, mat_type;
+int obj_type, mat_type, manip_type;
 
 int files_found, list_start;
 int is_camera;
@@ -131,6 +135,9 @@ ENTITY *select, *fpsf_marker;
 // Vectors will be declared here.
 ////////////////////////////////////////////////////////////
 VECTOR sharedGUI_cpos1,sharedGUI_cpos2,temp_pos;
+
+// Vectors for dragging entities
+VECTOR v1, v2;
 
 ////////////////////////////////////////////////////////////
 // Fonts and texts' declarations
@@ -413,3 +420,10 @@ void mat_save();
 void obj_cut();
 void obj_copy();
 void obj_paste();
+
+void obj_manip_setup();
+void obj_manip_interface();
+
+void switch_to_move();
+void switch_to_rotate();
+void switch_to_scale();

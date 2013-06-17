@@ -599,9 +599,9 @@ PANEL *panMain_Top = {
 	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,obj_copy,NULL,NULL);
 	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,obj_paste,NULL,NULL);
 	
-	button(0,0,button_Move,button_Move_Off,button_Move_Over,NULL,NULL,NULL);
-	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,NULL,NULL,NULL);
-	button(0,0,button_Scale,button_Scale_Off,button_Scale_Over,NULL,NULL,NULL);
+	button(0,0,button_Move,button_Move_Off,button_Move_Over,switch_to_move,NULL,NULL);
+	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,switch_to_rotate,NULL,NULL);
+	button(0,0,button_Scale,button_Scale_Off,button_Scale_Over,switch_to_scale,NULL,NULL);
 	
 	button(0,0,button_Prop,button_Prop_Off,button_Prop_Over,sharedGUI_prop,NULL,NULL);
 	button(0,0,button_Phy,button_Phy_Off,button_Phy_Over,sharedGUI_phy,NULL,NULL);
@@ -961,7 +961,7 @@ void follow_pointer() {
 
 void place_me(STRING *e, int otype) {
 	if(is_camera == 1) return;
-	else ENTITY *tmp = ent_create(e,temp_pos.x,NULL);
+	else ENTITY *tmp = ent_create(e,temp_pos.x,obj_manip_setup);
 	
 	tmp.skill99 = otype; // Pass object type 
 	
@@ -1376,7 +1376,7 @@ void obj_paste() {
 			
 			case obj_winterbaum :
 			
-			tmp = ent_create(o_winterbaum,temp_pos.x,NULL);
+			tmp = ent_create(o_winterbaum,temp_pos.x,obj_manip_setup);
 			// Begin passing clipboard to the newly created object.
 			pass_clipboard_to_object(tmp);
 			
@@ -1384,28 +1384,28 @@ void obj_paste() {
 			
 			case obj_snowman :
 			
-			tmp = ent_create(o_snowman,temp_pos.x,NULL);
+			tmp = ent_create(o_snowman,temp_pos.x,obj_manip_setup);
 			pass_clipboard_to_object(tmp);
 			
 			break;
 			
 			case obj_genericwall :
 			
-			tmp = ent_create(o_genericwall,temp_pos.x,NULL);
+			tmp = ent_create(o_genericwall,temp_pos.x,obj_manip_setup);
 			pass_clipboard_to_object(tmp);
 			
 			break;
 			
 			case obj_generictree :
 			
-			tmp = ent_create(o_generictree,temp_pos.x,NULL);
+			tmp = ent_create(o_generictree,temp_pos.x,obj_manip_setup);
 			pass_clipboard_to_object(tmp);
 			
 			break;
 			
 			case obj_palmtree :
 			
-			tmp = ent_create(o_palmtree,temp_pos.x,NULL);
+			tmp = ent_create(o_palmtree,temp_pos.x,obj_manip_setup);
 			pass_clipboard_to_object(tmp);
 			
 			break;
@@ -1570,6 +1570,92 @@ void mat_save() {
 		break;
 	}
 	
+}
+
+////////////////////////////////////////////////////////////
+// The following function will handle how the object is manipulated: move, rotate, or scale.
+// While holding mouse_left, press Ctrl to downscale the object,
+// or release it to upscale the object.
+// Why do I have to comment the lines above if you've already
+// read through the code.
+// Actually this is just an extended version of follow_pointer
+// because I'm too lazy to code a new one.
+////////////////////////////////////////////////////////////
+void obj_manip_interface()
+{
+	while(mouse_left)
+	{
+		if(manip_type == scale) 
+		{
+			
+			if(key_ctrl) {
+				
+				my.scale_x -= .05;
+				my.scale_y -= .05;
+				my.scale_z -= .05;
+				
+			}
+			
+			else {
+				
+				my.scale_x += .05;
+				my.scale_y += .05;
+				my.scale_z += .05;
+				
+			}
+			
+		}
+		
+		if(manip_type == move) {
+			
+			v1.x = mouse_pos.x;
+			v1.y = mouse_pos.y;
+			v1.z = 0;
+			vec_for_screen(v1,camera);
+			v2.x = mouse_pos.x;
+			v2.y = mouse_pos.y;
+			v2.z = 200000;
+			vec_for_screen(v2,camera);
+			
+			c_trace(v1.x,v2.x,IGNORE_ME | IGNORE_PASSABLE | IGNORE_MODELS);
+			vec_set(my.x,hit.x);
+			
+		}
+		
+		if(manip_type == rotate) {
+			
+			my.pan = mouse_pos.x;
+			my.tilt = mouse_pos.y;
+			
+		}
+
+		wait (1);
+	}
+	
+}
+
+void obj_manip_setup()
+{
+	my.emask |= ENABLE_CLICK;
+	my.event = obj_manip_interface;
+}
+
+////////////////////////////////////////////////////////////
+// These functions will be assigned to move, rotate, scale button respectively.
+////////////////////////////////////////////////////////////
+
+// stupid switchers
+// lite-C compiler: stupid programmer
+void switch_to_move() {
+	manip_type = move;
+}
+
+void switch_to_rotate() {
+	manip_type = rotate;
+}
+
+void switch_to_scale() {
+	manip_type = scale;
 }
 
 ////////////////////////////////////////////////////////////
