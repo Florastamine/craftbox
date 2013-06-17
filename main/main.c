@@ -13,7 +13,7 @@ void main(void)  {
 	obj_type = 0;
 	
 	video_set(800,600,32,2);
-	video_window(NULL,NULL,0,"editor 0.5 Milestone 2");
+	video_window(NULL,NULL,0,"editor 0.7 Milestone 3");
 	
 	sharedGUI_mouseset(mouse);
 	
