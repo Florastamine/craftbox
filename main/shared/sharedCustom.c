@@ -207,7 +207,7 @@ PANEL *panProp = {
 	button_toggle(0,0,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
-	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,sharedGUI_toggle_translucent,NULL,NULL);
+	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
 	
 	button(0,0,button_default,button_default_off,button_default_over,restore,NULL,NULL);
 	
@@ -246,10 +246,18 @@ PANEL *panMat = {
 	button(0,0,button_Mat1,button_Mat1,button_Mat1,mat_select_lava,NULL,NULL);
 	button(0,0,button_Mat2,button_Mat2,button_Mat2,mat_select_marble,NULL,NULL);
 	button(0,0,button_Mat3,button_Mat3,button_Mat3,mat_select_smaragd,NULL,NULL);
-	button(0,0,button_Mat4,button_Mat4,button_Mat4,mat_select_null,NULL,NULL);
-	button(0,0,button_Mat5,button_Mat5,button_Mat5,NULL,NULL,NULL);
-	button(0,0,button_Mat6,button_Mat6,button_Mat6,NULL,NULL,NULL);
-	button(0,0,button_MatNorm,button_MatNorm,button_MatNorm,NULL,NULL,NULL);
+	button(0,0,button_Mat4,button_Mat4,button_Mat4,mat_select_4,NULL,NULL);
+	button(0,0,button_Mat5,button_Mat5,button_Mat5,mat_select_5,NULL,NULL);
+	button(0,0,button_Mat6,button_Mat6,button_Mat6,mat_select_6,NULL,NULL);
+	button(0,0,button_Mat7,button_Mat7,button_Mat7,mat_select_7,NULL,NULL);
+	button(0,0,button_Mat8,button_Mat8,button_Mat8,mat_select_8,NULL,NULL);
+	button(0,0,button_Mat9,button_Mat9,button_Mat9,mat_select_9,NULL,NULL);
+	button(0,0,button_Mat10,button_Mat10,button_Mat10,mat_select_10,NULL,NULL);
+	button(0,0,button_Mat11,button_Mat11,button_Mat11,mat_select_11,NULL,NULL);
+	button(0,0,button_Mat12,button_Mat12,button_Mat12,mat_select_12,NULL,NULL);
+	button(0,0,button_Mat13,button_Mat13,button_Mat13,mat_select_13,NULL,NULL);
+	button(0,0,button_Mat14,button_Mat14,button_Mat14,mat_select_14,NULL,NULL);
+	button(0,0,button_Mat15,button_Mat15,button_Mat15,mat_select_null,NULL,NULL);
 	
 	button(0,0,button_editmat,button_editmat,button_editmat,sharedGUI_editmat,NULL,NULL);
 	button(0,0,button_matapply,button_matapply_off,button_matapply_over,pass_mat_to_object,NULL,NULL);
@@ -267,7 +275,29 @@ PANEL *panMat_Sub1 = {
 	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
 	
 	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
-	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,NULL,NULL,NULL);
+	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,mat_save,NULL,NULL);
+	
+	// we need 14 sliders for ambient x3, specular x3, diffuse x3 and emissive x3
+	// +power, +alpha.
+	
+	hslider(0,0,50,slider,0,255,v_emissive_r);
+	hslider(0,0,50,slider,0,255,v_emissive_g);
+	hslider(0,0,50,slider,0,255,v_emissive_b);
+	
+	hslider(0,0,50,slider,0,255,v_ambient_r);
+	hslider(0,0,50,slider,0,255,v_ambient_g);
+	hslider(0,0,50,slider,0,255,v_ambient_b);
+	
+	hslider(0,0,50,slider,0,255,v_diffuse_r);
+	hslider(0,0,50,slider,0,255,v_diffuse_g);
+	hslider(0,0,50,slider,0,255,v_diffuse_b);
+	
+	hslider(0,0,50,slider,0,255,v_specular_r);
+	hslider(0,0,50,slider,0,255,v_specular_g);
+	hslider(0,0,50,slider,0,255,v_specular_b);
+	
+	hslider(0,0,50,slider,0,10,v_power);
+	hslider(0,0,50,slider,0,255,v_alpha_m);
 	
 	on_click = sharedGUI_dragpanel;
 	
@@ -311,15 +341,27 @@ void sharedGUI_updategui(PANEL *wg) {
 	
 	if(wg == panMat) {
 		
-		var i = 2;
-		while(i < 9) {
-			pan_setpos(panMat,3,i,vector( (i-1) * BORDER + (i-2) * 42,BORDER * 2 + 42,0));
-			i++;
+		var i = 2, j = 0, k;
+		k = i;
+		while(i < 17) {
+			pan_setpos(panMat,3,i,vector( (k-1) * BORDER + (k-2) * 64,BORDER * 2 + 15 + j,0));
+			i++; k++;
+			
+			if(i == 7) {
+				j = 74; // 64 + BORDER
+				k = 2;
+			}
+			
+			if(i == 12) {
+				j = 148; // 128 + 2x BORDER
+				k = 2;
+			}
+			
 		}
 		
 		var cache = bmap_width(panMat.bmap) - BORDER - 100;
-		pan_setpos(panMat,3,9,vector(cache, bmap_height(panMat.bmap) - BORDER - 24 ,0));
-		pan_setpos(panMat,3,10,vector(cache, bmap_height(panMat.bmap) - BORDER * 2 - 48,0));
+		pan_setpos(panMat,3,17,vector(cache, bmap_height(panMat.bmap) - BORDER - 24 ,0));
+		pan_setpos(panMat,3,18,vector(cache, bmap_height(panMat.bmap) - BORDER * 2 - 48,0));
 		
 		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
 	}
@@ -339,6 +381,36 @@ void sharedGUI_updategui(PANEL *wg) {
 		while(i < 4) {
 			pan_setpos(panMat_Sub1,3,i,vector(BORDER, bmap_height(panMat_Sub1.bmap) - BORDER * (i-1) - 24 * (i-1),0));
 			i++;
+		}
+		
+		var i = 1, j = 0, k;
+		k = i; //lite-C doesn't allow me to initialize continuous variables during declaring them so...
+		
+		while(i < 15) {
+			
+			pan_setpos(panMat_Sub1,4,i,vector( BORDER * k + (k-1) * 50, BORDER * 2 + 45 + j,0 ));
+			i++; k++;
+			
+			if(i == 4) {
+				j = 23 + BORDER; // 23 = slider height
+				k = 1;
+			}
+			
+			if(i == 7) {
+				j = (23 + BORDER) * 2;
+				k = 1;
+			}
+			
+			if(i ==  10) {
+				j = (23 + BORDER) * 3;
+				k = 1;
+			}
+			
+			if(i == 13) {
+				j = (23 + BORDER) * 4;
+				k = 1;
+			}
+			
 		}
 	}
 }
@@ -363,13 +435,20 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 	
 	if(p == panMat) {
 		
-		if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+		if(is(panMat_Sub1,SHOW)) {
+			reset(panMat_Sub1,SHOW);
+			
+			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			
+		}
 		
 		reset(panMat,SHOW);
 	}
 	
 	if(p == panMat_Sub1) {
 		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 	}
 	
 	if(p == panProp) {		
@@ -718,10 +797,63 @@ void sharedGUI_mat() {
 }
 
 void sharedGUI_editmat() {
+	
+	// Precache panMat_Sub1
 	sharedGUI_centerfrom(panMat_Sub1,panMat);
 	sharedGUI_updategui(panMat_Sub1);
 	
-	set(panMat_Sub1,SHOW);
+	// Material editor is available only to custom materials
+	switch(mat_type) {
+		
+		case select_custom_mat1 :
+		
+		pass_mat_to_matsub(mat_custom[0]);
+		set(panMat_Sub1,SHOW);
+		
+		// For debug purposes
+		reset(debug,SHOW);
+		set(debug_material,SHOW);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat2 :
+		
+		pass_mat_to_matsub(mat_custom[1]);
+		set(panMat_Sub1,SHOW);
+		
+		reset(debug,SHOW);
+		set(debug_material,SHOW);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat3 :
+		
+		pass_mat_to_matsub(mat_custom[2]);
+		set(panMat_Sub1,SHOW);
+		
+		reset(debug,SHOW);
+		set(debug_material,SHOW);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat4 :
+		
+		pass_mat_to_matsub(mat_custom[3]);
+		set(panMat_Sub1,SHOW);
+		
+		reset(debug,SHOW);
+		set(debug_material,SHOW);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		default:
+		printf("Material editor is available only to custom materials.");
+		break;
+	}	
 }
 
 void sharedGUI_phy() {
@@ -730,18 +862,6 @@ void sharedGUI_phy() {
 	sharedGUI_updategui(panPhy);
 	
 	set(panPhy,SHOW);
-}
-
-void sharedGUI_toggle_translucent() {
-	wait(1);
-}
-
-PANEL *debug = {
-	layer=3;
-	digits(0,0,99,"arial#25b",1,obj_type);
-	digits(0,20,99,"arial#25b",1,is_camera);
-	
-	flags = SHOW;
 }
 
 void sharedGUI_panelselect(PANEL *p)
@@ -780,10 +900,6 @@ void sharedGUI_launch_path() {
 	reset(buttonlst_submenu_terrain,SHOW);
 	
 	set(buttonlst_submenu_path,SHOW);
-}
-
-void init_startup() {
-	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
 }
 
 void pass_to_object()
@@ -909,20 +1025,151 @@ void restore() {
 	}
 }
 
+////////////////////////////////////////////////////////////
+// These materials can't be customized. Thus selecting them make panMat_Sub1 disappears.
+////////////////////////////////////////////////////////////
+void mat_select_null() {
+	mat_type = select_mat_null;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
 void mat_select_lava() {
 	mat_type = select_mat_lava;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
 }
 
 void mat_select_smaragd() {
 	mat_type = select_mat_smaragd;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
 }
 
 void mat_select_marble() {
 	mat_type = select_mat_marble;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
 }
 
-void mat_select_null() {
-	mat_type = select_mat_null;
+void mat_select_4() {
+	mat_type = select_mat_4;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_5() {
+	mat_type = select_mat_5;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_6() {
+	mat_type = select_mat_6;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_7() {
+	mat_type = select_mat_7;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_8() {
+	mat_type = select_mat_8;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_9() {
+	mat_type = select_mat_9;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+void mat_select_10() {
+	mat_type = select_mat_10;
+	if(is(panMat_Sub1,SHOW)) {
+		reset(panMat_Sub1,SHOW);
+		
+		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+	}
+}
+
+////////////////////////////////////////////////////////////
+// These materials are customizable. You know what to do.
+// Only customizable materials' properties is passed through
+// pass_mat_to_matsub(MATERIAL *).
+////////////////////////////////////////////////////////////
+void mat_select_11() {
+	mat_type = select_custom_mat1;
+	
+	/*
+	a quick terrible ugly hack
+	normally panMat_Sub1 will only be updated
+	if you click on "Edit Material",
+	but this hack allows you to update panMat_Sub1 directly
+	without pressing that button.
+	
+	this can be useful if you've already opened panMat_Sub1
+	and select another customizable material, the panel
+	will be updated immediately without having to click
+	the "Edit Material" button again.
+	*/
+	if(is(panMat_Sub1,SHOW))
+	pass_mat_to_matsub(mat_custom[0]);
+}
+
+void mat_select_12() {
+	mat_type = select_custom_mat2;
+	
+	if(is(panMat_Sub1,SHOW))
+	pass_mat_to_matsub(mat_custom[1]);
+}
+
+void mat_select_13() {
+	mat_type = select_custom_mat3;
+	
+	if(is(panMat_Sub1,SHOW))
+	pass_mat_to_matsub(mat_custom[2]);
+}
+
+void mat_select_14() {
+	mat_type = select_custom_mat4;
+	
+	if(is(panMat_Sub1,SHOW))
+	pass_mat_to_matsub(mat_custom[3]);
 }
 
 void pass_mat_to_object() {
@@ -947,14 +1194,99 @@ void pass_mat_to_object() {
 			mat_temp = mat_marble;
 			break;
 			
+			case select_mat_4 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_5 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_6 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_7 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_8 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_9 :
+			mat_temp = mat_marble;
+			break;
+			
+			case select_mat_10 :
+			mat_temp = mat_marble;
+			break;
+			
+			// Custom materials
+			case select_custom_mat1 :
+			mat_temp = mat_custom[0];
+			break;
+			
+			case select_custom_mat2 :
+			mat_temp = mat_custom[1];
+			break;
+			
+			case select_custom_mat3 :
+			mat_temp = mat_custom[2];
+			break;
+			
+			case select_custom_mat4 :
+			mat_temp = mat_custom[3];
+			break;
+			
 			default:
-			sys_exit(NULL);
+			error("mat_type exceeded/wrong.");
 			break; 
 			
 		}
 		
 	}
 	
+}
+
+void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
+	of._scale_x = o.scale_x;
+	of._scale_y = o.scale_y;
+	of._scale_z = o.scale_z;
+	
+	of._pan = o.pan;
+	of._tilt = o.tilt;
+	of._roll = o.roll;
+	
+	of._alpha = o.alpha;
+	of._ambient = o.ambient;
+	
+	if(is(o,BRIGHT)) of._flags[0] = ON;
+	else of._flags[0] = OFF;
+	
+	if(is(o,INVISIBLE)) of._flags[1] = ON;
+	else of._flags[1] = OFF;
+	
+	if(is(o,NOFOG)) of._flags[2] = ON;
+	else of._flags[2] = OFF;
+	
+	if(is(o,OVERLAY)) of._flags[3] = ON;
+	else of._flags[3] = OFF;
+	
+	if(is(o,PASSABLE)) of._flags[4] = ON;
+	else of._flags[4] = OFF;
+	
+	if(is(o,POLYGON)) of._flags[5] = ON;
+	else of._flags[5] = OFF;
+	
+	if(is(o,SHADOW)) of._flags[6] = ON;
+	else of._flags[6] = OFF;
+	
+	if(is(o,TRANSLUCENT)) of._flags[7] = ON;
+	else of._flags[7] = OFF;
+	
+	of.oid = o.skill99;
+	of.dp = 1;
 }
 
 void pass_clipboard_to_object(ENTITY *e) {
@@ -1002,48 +1334,19 @@ void obj_cut() {
 	
 	if(select) {
 		
-		clipboard._scale_x = select.scale_x;
-		clipboard._scale_y = select.scale_y;
-		clipboard._scale_z = select.scale_z;
+		pass_object_to_clipboard(select,clipboard);
 		
-		clipboard._pan = select.pan;
-		clipboard._tilt = select.tilt;
-		clipboard._roll = select.roll;
+		// Perform manual access to clipboard to copy material
 		
-		clipboard._alpha = select.alpha;
-		clipboard._ambient = select.ambient;
+		/*
+		select is selected.
+		so something must have been copied into mat_temp.
+		so I directly take mat_temp and copy it into the clipboard.
 		
-		if(is(select,BRIGHT)) clipboard._flags[0] = ON;
-		else clipboard._flags[0] = OFF;
-		
-		if(is(select,INVISIBLE)) clipboard._flags[1] = ON;
-		else clipboard._flags[1] = OFF;
-		
-		if(is(select,NOFOG)) clipboard._flags[2] = ON;
-		else clipboard._flags[2] = OFF;
-		
-		if(is(select,OVERLAY)) clipboard._flags[3] = ON;
-		else clipboard._flags[3] = OFF;
-		
-		if(is(select,PASSABLE)) clipboard._flags[4] = ON;
-		else clipboard._flags[4] = OFF;
-		
-		if(is(select,POLYGON)) clipboard._flags[5] = ON;
-		else clipboard._flags[5] = OFF;
-		
-		if(is(select,SHADOW)) clipboard._flags[6] = ON;
-		else clipboard._flags[6] = OFF;
-		
-		if(is(select,TRANSLUCENT)) clipboard._flags[7] = ON;
-		else clipboard._flags[7] = OFF;
-		
-		// select is selected
-		// so something must have been copied into mat_temp
-		// so I take mat_temp directly and copy it into clipboard.m
+		otherwise if we pass select.material to clipboard.m,
+		mat_select is passed but not select's material.
+		*/
 		clipboard.m = mat_temp;
-		
-		clipboard.oid = select.skill99;
-		clipboard.dp = 1;
 		
 		ptr_remove(select);
 		select = NULL;
@@ -1054,45 +1357,11 @@ void obj_cut() {
 void obj_copy() {
 	
 	if(select) {
-		clipboard._scale_x = select.scale_x;
-		clipboard._scale_y = select.scale_y;
-		clipboard._scale_z = select.scale_z;
 		
-		clipboard._pan = select.pan;
-		clipboard._tilt = select.tilt;
-		clipboard._roll = select.roll;
+		pass_object_to_clipboard(select,clipboard);
 		
-		clipboard._alpha = select.alpha;
-		clipboard._ambient = select.ambient;
-		
-		if(is(select,BRIGHT)) clipboard._flags[0] = ON;
-		else clipboard._flags[0] = OFF;
-		
-		if(is(select,INVISIBLE)) clipboard._flags[1] = ON;
-		else clipboard._flags[1] = OFF;
-		
-		if(is(select,NOFOG)) clipboard._flags[2] = ON;
-		else clipboard._flags[2] = OFF;
-		
-		if(is(select,OVERLAY)) clipboard._flags[3] = ON;
-		else clipboard._flags[3] = OFF;
-		
-		if(is(select,PASSABLE)) clipboard._flags[4] = ON;
-		else clipboard._flags[4] = OFF;
-		
-		if(is(select,POLYGON)) clipboard._flags[5] = ON;
-		else clipboard._flags[5] = OFF;
-		
-		if(is(select,SHADOW)) clipboard._flags[6] = ON;
-		else clipboard._flags[6] = OFF;
-		
-		if(is(select,TRANSLUCENT)) clipboard._flags[7] = ON;
-		else clipboard._flags[7] = OFF;
-		
+		// Perform manual access to clipboard to copy material
 		clipboard.m = mat_temp;
-		
-		clipboard.oid = select.skill99;
-		clipboard.dp = 1;
 	}
 	
 }
@@ -1142,11 +1411,214 @@ void obj_paste() {
 			break;
 			
 			default:
-			sys_exit(NULL);
+			error("clipboard.oid exceed/wrong.");
 			break;
 			
 		}
 		
 	}
 	
+}
+
+// Read material properties from a file and pass it to a
+// previously-defined material.
+void pass_file_to_material(MATERIAL *m, STRING *file) {
+	while(m == NULL) wait(1); // wait for m to be completely created
+	
+	var vpass = file_open_read(file);
+	if(vpass == 0) return;
+	// Follow this form :
+	/*
+	
+	ambient_red, ambient_green, ambient_blue
+	specular_red, specular_green, specular_blue,
+	diffuse_red, diffuse_green, diffuse_blue,
+	emissive_red, emissive_green, emissive_blue,
+	alpha, power (no need for albedo)
+	
+	*/
+	
+	m.ambient_red = file_var_read(vpass);
+	m.ambient_green = file_var_read(vpass);
+	m.ambient_blue = file_var_read(vpass);
+	
+	m.specular_red = file_var_read(vpass);
+	m.specular_green = file_var_read(vpass);
+	m.specular_blue = file_var_read(vpass);
+	
+	m.diffuse_red = file_var_read(vpass);
+	m.diffuse_green = file_var_read(vpass);
+	m.diffuse_blue = file_var_read(vpass);
+	
+	m.emissive_red = file_var_read(vpass);
+	m.emissive_green = file_var_read(vpass);
+	m.emissive_blue = file_var_read(vpass);
+	
+	m.alpha = file_var_read(vpass);
+	m.power = file_var_read(vpass);
+	
+	file_close(vpass);
+}
+
+void pass_mat_to_matsub(MATERIAL *m) {
+	while(m == NULL) wait(1);
+
+	v_ambient_r = m.ambient_red;
+	v_ambient_g = m.ambient_green;
+	v_ambient_b = m.ambient_blue;
+
+	v_diffuse_r = m.diffuse_red;
+	v_diffuse_g = m.diffuse_green;
+	v_diffuse_b = m.diffuse_blue;
+
+	v_specular_r = m.specular_red;
+	v_specular_g = m.specular_green;
+	v_specular_b = m.specular_blue;
+
+	v_emissive_r = m.emissive_red;
+	v_emissive_g = m.emissive_green;
+	v_emissive_b = m.emissive_blue;
+
+	v_power = m.power;
+	v_alpha_m = m.alpha;
+}
+
+void pass_material_to_file(STRING *file, MATERIAL *m) {
+	
+	while(m == NULL) wait(1);
+	
+	var vpass = file_open_write(file);
+	if(vpass == 0) return;
+	
+	// Copy values from the sliders
+	m.ambient_red = v_ambient_r;
+	m.ambient_green = v_ambient_g;
+	m.ambient_blue = v_ambient_b;
+	
+	m.specular_red = v_specular_r;
+	m.specular_green = v_specular_g;
+	m.specular_blue = v_specular_b;
+	
+	m.diffuse_red = v_diffuse_r;
+	m.diffuse_green = v_diffuse_g;
+	m.diffuse_blue = v_diffuse_b;
+	
+	m.emissive_red = v_emissive_r;
+	m.emissive_green = v_emissive_g;
+	m.emissive_blue = v_emissive_b;
+	
+	m.alpha = v_alpha_m;
+	m.power = v_power;
+	
+	// Write these copied values to vpass handle
+	file_var_write(vpass,m.ambient_red);
+	file_var_write(vpass,m.ambient_green);
+	file_var_write(vpass,m.ambient_blue);
+	
+	file_var_write(vpass,m.specular_red);
+	file_var_write(vpass,m.specular_green);
+	file_var_write(vpass,m.specular_blue);
+	
+	file_var_write(vpass,m.diffuse_red);
+	file_var_write(vpass,m.diffuse_green);
+	file_var_write(vpass,m.diffuse_blue);
+	
+	file_var_write(vpass,m.emissive_red);
+	file_var_write(vpass,m.emissive_green);
+	file_var_write(vpass,m.emissive_blue);
+	
+	file_var_write(vpass,m.alpha);
+	file_var_write(vpass,m.power);
+	
+	file_close(vpass);
+	
+	printf("Saved successfully.");
+}
+
+void mat_save() {
+	
+	// Material saving is available only to custom materials
+	switch(mat_type) {
+		
+		case select_custom_mat1 :
+		pass_material_to_file("mat_custom_1.cfg",mat_custom[0]);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat2 :
+		pass_material_to_file("mat_custom_2.cfg",mat_custom[1]);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat3 :
+		pass_material_to_file("mat_custom_3.cfg",mat_custom[2]);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		case select_custom_mat4 :
+		pass_material_to_file("mat_custom_4.cfg",mat_custom[3]);
+		
+		break;
+		//////////////////////////////////////////////////////////////
+		
+		default:
+		// This line will never be executed.
+		printf("Material saving is available only to custom materials.");
+		break;
+	}
+	
+}
+
+////////////////////////////////////////////////////////////
+// Initialization before the game can be launched.
+////////////////////////////////////////////////////////////
+void init_startup() {
+	
+	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
+	
+	int i;
+	for(i = 0;i < 4;i++) mat_custom[i] = mtl_create();
+	
+	pass_file_to_material(mat_custom[0],"mat_custom_1.cfg");
+	pass_file_to_material(mat_custom[1],"mat_custom_2.cfg");
+	pass_file_to_material(mat_custom[2],"mat_custom_3.cfg");
+	pass_file_to_material(mat_custom[3],"mat_custom_4.cfg");
+}
+
+//////////////////////////////
+// Debug & statistics
+//////////////////////////////
+PANEL *debug = {
+	layer = 3;
+	
+	digits(0,0,99,"arial#25b",1,obj_type);
+	digits(0,20,99,"arial#25b",1,is_camera);
+	
+	flags = SHOW;
+}
+
+PANEL *debug_material = {
+	layer = 3;
+	
+	digits(0,0,"Ambient red: %f","arial#15b",1,v_ambient_r);
+	digits(0,10,"Ambient green: %f","arial#15b",1,v_ambient_g);
+	digits(0,20,"Ambient blue: %f","arial#15b",1,v_ambient_b);
+	
+	digits(0,30,"Specular red: %f","arial#15b",1,v_specular_r);
+	digits(0,40,"Specular green: %f","arial#15b",1,v_specular_g);
+	digits(0,50,"Specular blue: %f","arial#15b",1,v_specular_b);
+	
+	digits(0,60,"Emissive red: %f","arial#15b",1,v_emissive_r);
+	digits(0,70,"Emissive green: %f","arial#15b",1,v_emissive_g);
+	digits(0,80,"Emissive blue: %f","arial#15b",1,v_emissive_b);
+	
+	digits(0,90,"Diffuse red: %f","arial#15b",1,v_diffuse_r);
+	digits(0,100,"Diffuse green: %f","arial#15b",1,v_diffuse_g);
+	digits(0,110,"Diffuse blue: %f","arial#15b",1,v_diffuse_b);
+	
+	digits(0,120,"Power: %f","arial#15b",1,v_power);
+	digits(0,130,"Alpha: %f","arial#15b",1,v_alpha_m);
 }

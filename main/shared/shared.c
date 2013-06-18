@@ -49,6 +49,17 @@ obj_form clipboard;
 #define select_mat_lava 1
 #define select_mat_smaragd 2
 #define select_mat_marble 3
+#define select_mat_4 4
+#define select_mat_5 5
+#define select_mat_6 6
+#define select_mat_7 7
+#define select_mat_8 8
+#define select_mat_9 9
+#define select_mat_10 10
+#define select_custom_mat1 11
+#define select_custom_mat2 12
+#define select_custom_mat3 13
+#define select_custom_mat4 14
 
 //////////////////////////////
 // Strings and texts will be declared here.
@@ -74,7 +85,13 @@ int is_camera;
 
 var files_already;
 
-var v_alpha, v_ambient;
+var v_alpha, v_ambient,
+v_ambient_r, v_ambient_g, v_ambient_b,
+v_diffuse_r, v_diffuse_g, v_diffuse_b,
+v_specular_r, v_specular_g, v_specular_b,
+v_emissive_r, v_emissive_g, v_emissive_b,
+v_power, 
+v_alpha_m; // Alpha for materials
 
 var button_SaveWorld_y,
 button_LoadWorld_y,
@@ -102,7 +119,8 @@ PANEL *buttonlst,
 *panMat_Sub1,
 *_logo,
 *blackscreen,
-*debug;
+*debug,
+*debug_material;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
@@ -123,7 +141,12 @@ FONT *f = "Arial#25b";
 // Material declarations
 ////////////////////////////////////////////////////////////
 MATERIAL *mat_select, *mat_temp;
+
+// Predefined materials
 MATERIAL *mat_lava, *mat_smaragd, *mat_marble;
+
+// Custom materials
+MATERIAL *mat_custom[4];
 
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
@@ -253,7 +276,15 @@ BMAP *button_Mat3 = "button_Mat3.bmp";
 BMAP *button_Mat4 = "button_Mat4.bmp";
 BMAP *button_Mat5 = "button_Mat5.bmp";
 BMAP *button_Mat6 = "button_Mat6.bmp";
-BMAP *button_MatNorm = "button_MatNorm.bmp";
+BMAP *button_Mat7 = "button_Mat7.bmp";
+BMAP *button_Mat8 = "button_Mat8.bmp";
+BMAP *button_Mat9 = "button_Mat9.bmp";
+BMAP *button_Mat10 = "button_Mat10.bmp";
+BMAP *button_Mat11 = "button_Mat11.bmp";
+BMAP *button_Mat12 = "button_Mat12.bmp";
+BMAP *button_Mat13 = "button_Mat13.bmp";
+BMAP *button_Mat14 = "button_Mat14.bmp";
+BMAP *button_Mat15 = "button_Mat15.bmp";
 
 BMAP *menu1_submenu1 = "button_loadfrom.bmp";
 BMAP *menu1_submenu1_off = "button_loadfrom_off.bmp";
@@ -333,8 +364,6 @@ void sharedGUI_editmat();
 void sharedGUI_phy();
 void controlcam();
 
-void sharedGUI_toggle_translucent();
-
 void sharedGUI_launch_terrain();
 void sharedGUI_launch_object();
 void sharedGUI_launch_path();
@@ -356,12 +385,30 @@ void restore();
 void pass_to_gui(ENTITY *);
 void pass_to_object();
 void pass_mat_to_object();
+
+void pass_file_to_material(MATERIAL *, STRING *);
+void pass_mat_to_matsub(MATERIAL *);
+void pass_material_to_file(STRING *, MATERIAL *);
+
+void pass_object_to_clipboard(ENTITY *, obj_form *);
 void pass_clipboard_to_object(ENTITY *);
 
+void mat_select_null();
 void mat_select_lava();
 void mat_select_marble();
 void mat_select_smaragd();
-void mat_select_null();
+void mat_select_4();
+void mat_select_5();
+void mat_select_6();
+void mat_select_7();
+void mat_select_8();
+void mat_select_9();
+void mat_select_10();
+void mat_select_11();
+void mat_select_12();
+void mat_select_13();
+void mat_select_14();
+void mat_save();
 
 void obj_cut();
 void obj_copy();

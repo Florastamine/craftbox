@@ -8,8 +8,8 @@
 #include "./shared/shared.c"
 #include "./shared/sharedCustom.c"
 
-void main(void) 
-{	
+void main(void)  {
+   	
 	obj_type = 0;
 	
 	video_set(800,600,32,2);
@@ -114,7 +114,7 @@ void main(void)
 					break;
 					
 					default:
-					sys_exit(NULL);
+					error("obj_type wrong/exceed.");
 					break;
 				}
 				wait(1);
