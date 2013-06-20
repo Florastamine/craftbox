@@ -103,31 +103,6 @@ void scan_folder(STRING *dir, STRING *ext)
 	wait(1);
 }
 
-
-void draw_bounding_box(ENTITY *ent)
-{
-	VECTOR bounding_box[BBOX];
-	int i;
-	for(i = 0;i < BBOX;i++) {
-		vec_set(bounding_box[i],vector(ent.min_x,ent.min_y,ent.min_z));
-		vec_rotate(bounding_box[i],ent.pan);
-		vec_add(bounding_box[i],ent.x);
-	}
-	
-	draw_line3d(bounding_box[0],NULL,100);
-	for(i = 0;i < BBOX;i++) draw_line3d(bounding_box[i],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[4],vector(0,0,255),100);
-	draw_line3d(bounding_box[5],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[2],NULL,100);
-	draw_line3d(bounding_box[6],vector(0,0,255),100);
-	
-	draw_line3d(bounding_box[3],NULL,100);
-	draw_line3d(bounding_box[7],vector(0,0,255),100);
-}
-
-
 PANEL *buttonlst_submenu_terrain = {
 	layer = 1;
 	
@@ -536,7 +511,7 @@ void sharedGUI_loadbuttons() {
 	panMain_Bottom.pos_y = screen_size.y - bmap_height(panMain_Bottom.bmap) - BORDER;
 
 	int i = 1;
-	while(i < 10) {
+	while(i < 7) {
 		pan_setpos(panMain_Top,3,i,vector((i - 1) * (BORDER + 32),0,0));
 		i++;
 	}
@@ -595,9 +570,9 @@ PANEL *panMain_Top = {
 	
 	bmap = "panMain_Top.bmp";
 	
-	button(0,0,button_Cut,button_Cut_Off,button_Cut_Over,obj_cut,NULL,NULL);
-	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,obj_copy,NULL,NULL);
-	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,obj_paste,NULL,NULL);
+	//	button(0,0,button_Cut,button_Cut_Off,button_Cut_Over,obj_cut,NULL,NULL);
+	//	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,obj_copy,NULL,NULL);
+	//	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,obj_paste,NULL,NULL);
 	
 	button(0,0,button_Move,button_Move_Off,button_Move_Over,switch_to_move,NULL,NULL);
 	button(0,0,button_Rotate,button_Rotate_Off,button_Rotate_Over,switch_to_rotate,NULL,NULL);
@@ -1574,7 +1549,7 @@ void mat_save() {
 
 ////////////////////////////////////////////////////////////
 // The following function will handle how the object is manipulated: move, rotate, or scale.
-// While holding mouse_left, press Ctrl to downscale the object,
+// While holding mouse_left, press L/R Alt to downscale the object,
 // or release it to upscale the object.
 // Why do I have to comment the lines above if you've already
 // read through the code.
@@ -1588,7 +1563,7 @@ void obj_manip_interface()
 		if(manip_type == scale) 
 		{
 			
-			if(key_ctrl) {
+			if(key_alt) {
 				
 				my.scale_x -= .05;
 				my.scale_y -= .05;
@@ -1672,6 +1647,94 @@ void init_startup() {
 	pass_file_to_material(mat_custom[1],"mat_custom_2.cfg");
 	pass_file_to_material(mat_custom[2],"mat_custom_3.cfg");
 	pass_file_to_material(mat_custom[3],"mat_custom_4.cfg");
+	
+	// Shortcut keys implementation
+	while(1) {
+		
+		// These keys are combined together with the Ctrl key.
+		if(key_ctrl) {
+			
+			if(key_c) {
+				
+				while(key_c) wait(1);
+				obj_copy();
+				
+			}
+			
+			if(key_x) {
+				
+				while(key_x) wait(1);
+				obj_cut();
+				
+			}
+			
+			if(key_v) {
+				
+				while(key_v) wait(1);
+				obj_paste();
+				
+			}
+			
+			if(key_p) {
+				
+				while(key_p) wait(1);
+				sharedGUI_prop();
+				
+			}
+			
+			if(key_m) {
+				
+				while(key_m) wait(1);
+				sharedGUI_mat();
+				
+			}
+			
+			if(key_h) {
+				
+				while(key_h) wait(1);
+				sharedGUI_phy();
+				
+			}
+			
+		}
+		
+		// These keys are combined together with the Alt key.
+		if(key_alt) {
+			
+			if(key_f4) {
+				
+				while(key_f4) wait(1);
+				
+				/* 
+				TODO: Perform various operations prior to
+				call sys_exit
+				*/
+				
+				// Operation #1
+				error(" I don't want to die =(( ");
+				
+				sys_exit(NULL);
+				
+			}
+			
+		}
+		
+		// These keys are pressed solely.
+		
+		// I seperately defined key_esc here
+		// so I must disable the one that has been defined 
+		// in ka7def2.c/default.c
+		if(key_esc) {
+		   
+		   while(key_esc) wait(1);
+		   sharedGUI_home();
+		   
+		}
+		
+		wait(1);
+	}
+	// End of shortcut keys implementation.
+	
 }
 
 //////////////////////////////

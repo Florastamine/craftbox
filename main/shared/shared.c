@@ -7,25 +7,59 @@
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
+#define max_chars 255
+#define max_chars_anim 16
+
 typedef struct obj_form {
-   
-   var _scale_x, _scale_y, _scale_z,
-   _pan, _tilt, _roll,
-   _alpha, _ambient;
-   
-   BOOL _flags[8];
-   
-   MATERIAL *m;
-   
-   int oid;
-   
-   BOOL dp;
-   
+	
+	STRING *filename[max_chars];
+	int oid; // Object ID
+	
+	var _x, _y, _z, // Do not store these vars if this is passed to the clipboard.
+	_scale_x, _scale_y, _scale_z,
+	_pan, _tilt, _roll,
+	_alpha, _ambient;
+	
+	BOOL pPhysics, pStatic, _flags[8];
+	
+	// Some vars define its physical properties
+	var mass, friction;
+	
+	MATERIAL *m;
+	
+	BOOL dp;
+	
+	// Animations
+	
+	// For humans
+	
+	// Normal animations
+	STRING
+	*anim_idle [max_chars_anim],
+	*anim_walk [max_chars_anim],
+	*anim_run [max_chars_anim],
+	*anim_crouch [max_chars_anim],
+	*anim_jump [max_chars_anim],
+	*anim_swim [max_chars_anim],
+	*anim_shoot [max_chars_anim],
+	*anim_die [max_chars_anim],
+	
+	// Plus five custom animations
+	*anim_custom1[max_chars_anim],
+	*anim_custom2[max_chars_anim],
+	*anim_custom3[max_chars_anim],
+	*anim_custom4[max_chars_anim],
+	
+	// For objects
+	
+	// Three custom animations
+	*anim_obj_custom1 [max_chars_anim],
+	*anim_obj_custom2 [max_chars_anim],
+	*anim_obj_custom3 [max_chars_anim];
+	
 } obj_form;
 
 obj_form clipboard;
-
-#define BBOX 8
 
 #define FADE_IN 1
 #define FADE_OUT 0
@@ -164,17 +198,17 @@ BMAP *button_Play = "button_play.bmp";
 BMAP *button_Play_over = "button_play_over.bmp";
 BMAP *button_play_off = "button_play_off.bmp";
 
-BMAP *button_Copy = "button_Copy.bmp";
-BMAP *button_Copy_Over = "button_Copy_over.bmp";
-BMAP *button_Copy_Off = "button_Copy_off.bmp";
-
-BMAP *button_Paste = "button_Paste.bmp";
-BMAP *button_Paste_Over = "button_Paste_over.bmp";
-BMAP *button_Paste_off = "button_Paste_off.bmp";
-
-BMAP *button_Cut = "button_Cut.bmp";
-BMAP *button_Cut_Over = "button_Cut_over.bmp";
-BMAP *button_Cut_Off = "button_Cut_off.bmp";
+//BMAP *button_Copy = "button_Copy.bmp";
+//BMAP *button_Copy_Over = "button_Copy_over.bmp";
+//BMAP *button_Copy_Off = "button_Copy_off.bmp";
+//
+//BMAP *button_Paste = "button_Paste.bmp";
+//BMAP *button_Paste_Over = "button_Paste_over.bmp";
+//BMAP *button_Paste_off = "button_Paste_off.bmp";
+//
+//BMAP *button_Cut = "button_Cut.bmp";
+//BMAP *button_Cut_Over = "button_Cut_over.bmp";
+//BMAP *button_Cut_Off = "button_Cut_off.bmp";
 
 BMAP *button_Move = "button_Move.bmp";
 BMAP *button_Move_Over = "button_Move_over.bmp";
@@ -362,7 +396,6 @@ void sharedGUI_loadbackground(STRING *);
 /**/void sharedGUI_centerpanel(PANEL *);
 /**/void sharedGUI_dragpanel(PANEL *);
 /**/void sharedGUI_centerfrom(PANEL *, PANEL *);
-void draw_bounding_box(ENTITY *);
 
 void sharedGUI_home();
 void sharedGUI_prop();

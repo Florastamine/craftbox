@@ -1,5 +1,5 @@
 #include <acknex.h>
-#include <default.c>
+#include "ka7def2.c"
 
 #define PRAGMA_PATH "./shared/sharedData"
 #define PRAGMA_PATH "./shared/sharedData/sharedModels"
@@ -13,7 +13,7 @@ void main(void)  {
 	obj_type = 0;
 	
 	video_set(800,600,32,2);
-	video_window(NULL,NULL,0,"editor 0.7 Milestone 3");
+	video_window(NULL,NULL,0,"editor 0.8 Milestone 4");
 	
 	sharedGUI_mouseset(mouse);
 	
