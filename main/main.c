@@ -5,6 +5,8 @@
 #define PRAGMA_PATH "./shared/sharedData/sharedModels"
 #define PRAGMA_PATH "./shared/sharedData/sharedLevels"
 
+var current = 0;
+
 #include "./shared/shared.c"
 #include "./shared/sharedCustom.c"
 
@@ -22,6 +24,8 @@ void main(void)  {
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
 	
+	of_init(burkel,6,"a_burkel.mdl");
+	
 	while(1) 
 	{
 		vec_set(mouse_pos,mouse_cursor);
@@ -29,12 +33,12 @@ void main(void)  {
 		if(key_t) 
 		{
 			while(key_t) wait(1);
-			obj_type++;
+			current++;
 		}
 		
 		if(key_y) {
 		   while(key_y) wait(1);
-		   obj_type--;
+		   current--;
 		}
 		
 		pass_to_object();
@@ -42,6 +46,7 @@ void main(void)  {
 		if(mouse_left) 
 		{
 			while(mouse_left) wait(1);
+			of_create(burkel);
 			
 			if(!mouse_panel)
 			{

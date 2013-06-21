@@ -1,3 +1,49 @@
+void of_create(obj_form *of) {
+	
+	while(of == NULL) wait(1);
+	
+	// Prevent stupid machine code to be executed so
+	// I have to handle exceptions myself.
+	if(str_len(of.filename) == 0) {
+		
+		error("str_len(of.filename) = 0. (Your object haven't got a filename yet");     
+		return;
+		
+	}
+	
+	// of.obj = ent_create(of.filename,temp_pos.x,obj_manip_setup);
+	of.obj = ent_create((strTable.pstring)[current],temp_pos.x,obj_manip_setup);
+	
+	while(of.obj == NULL) wait(1); // wait for of.obj to be completely created
+	
+	set(of.obj, POLYGON);
+	reset(of.obj, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
+	
+	of.obj.alpha = 0;
+	of.obj.ambient = 50;
+	
+	of.obj.material = mat_model;
+}
+
+void of_init(obj_form *of, int id, STRING *fn) {
+	
+	while(of == NULL) wait(1);
+	
+	of.filename = str_create("#100");
+	
+	str_cpy(of.filename,fn); // Give of a name
+	of.oid = abs(id); // Give of an id
+	
+}
+
+void of_kill(obj_form *of) {
+   
+   while(of == NULL) wait(1);
+   
+   if(of.obj) ptr_remove(of.obj);
+   
+}
+
 MATERIAL *mat_smaragd = {
 	ambient_red = 100;
 	ambient_green = 255;
@@ -1725,10 +1771,10 @@ void init_startup() {
 		// so I must disable the one that has been defined 
 		// in ka7def2.c/default.c
 		if(key_esc) {
-		   
-		   while(key_esc) wait(1);
-		   sharedGUI_home();
-		   
+			
+			while(key_esc) wait(1);
+			sharedGUI_home();
+			
 		}
 		
 		wait(1);
