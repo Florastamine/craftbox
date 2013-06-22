@@ -1,11 +1,25 @@
 #include <acknex.h>
 #include "ka7def2.c"
 
+// General-purpose gamedata
 #define PRAGMA_PATH "./shared/sharedData"
-#define PRAGMA_PATH "./shared/sharedData/sharedModels"
-#define PRAGMA_PATH "./shared/sharedData/sharedLevels"
 
-var current = 0;
+// Objects
+#define PRAGMA_PATH "./shared/sharedData/sharedModels"
+
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/sys"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/anms"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/arch"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/blands"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/chars"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/etc"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/food"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/machs"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/plants"
+#define PRAGMA_PATH "./shared/sharedData/sharedModels/tportts"
+
+// Levels/Playgrounds/Sandboxes
+#define PRAGMA_PATH "./shared/sharedData/sharedLevels"
 
 #include "./shared/shared.c"
 #include "./shared/sharedCustom.c"
@@ -24,8 +38,6 @@ void main(void)  {
 	ent_create("marker.mdl",nullvector,follow_pointer);
 	def_move();
 	
-	of_init(burkel,6,"a_burkel.mdl");
-	
 	while(1) 
 	{
 		vec_set(mouse_pos,mouse_cursor);
@@ -33,12 +45,25 @@ void main(void)  {
 		if(key_t) 
 		{
 			while(key_t) wait(1);
-			current++;
+			obj_type++;
 		}
 		
 		if(key_y) {
-		   while(key_y) wait(1);
-		   current--;
+			while(key_y) wait(1);
+			obj_type--;
+		}
+		
+		if(key_r) {
+			
+			while(key_r) wait(1);
+			you = ent_next(NULL); // Point to the first entity in the list
+			while(you) {
+				
+				ptr_remove(you);
+				you = ent_next(you);
+				
+			}
+			
 		}
 		
 		pass_to_object();
@@ -46,7 +71,6 @@ void main(void)  {
 		if(mouse_left) 
 		{
 			while(mouse_left) wait(1);
-			of_create(burkel);
 			
 			if(!mouse_panel)
 			{
@@ -85,36 +109,13 @@ void main(void)  {
 					
 				}
 				
-				switch(obj_type) 
-				{
-					
-					case obj_winterbaum :
-					place_me(o_winterbaum, obj_winterbaum);
-					break;
-					
-					case obj_snowman :
-					place_me(o_snowman, obj_snowman);
-					break;
-					
-					case obj_genericwall :
-					place_me(o_genericwall, obj_genericwall);
-					break;
-					
-					case obj_generictree :
-					place_me(o_generictree, obj_generictree);
-					break;
-					
-					case obj_palmtree :
-					place_me(o_palmtree, obj_palmtree);
-					break;
-					
-					default:
-					//					error("obj_type wrong/exceed.");
-					break;
-				}
+				if(!is_camera) obj_create();
+				
 				wait(1);
 				
 			}
+			
+			
 			
 		}
 

@@ -1,34 +1,27 @@
 #include <acknex.h>
-#include "../main/ka7def2.c"
+#include <default.c>
 
-typedef struct stupid {
-   
-   STRING *str;
-   
-} stupid;
-
-STRING *t = "                   ";
-
-TEXT *tx = {
-   string(t);
-   pos_x=0;
-   pos_y=0;
-   flags=SHOW;
-}
-
-void copy(stupid *, STRING *);
-
-stupid st;
+STRING *s[5];
+STRING **s_ptr;
 
 void main(void) {
-   
-   copy(st,"wtwrutu");
-   
 	
-}
-
-void copy(stupid *st, STRING *strs) {
-   st.str = str_create("#400");
-   
-   str_cpy(st.str,strs);
+	s_ptr = s;
+	
+	var f = file_open_read("f.txt");
+	if(f == 0) sys_exit(NULL);
+	
+	int i;
+	for(i = 0;i < 5;i++) {
+		
+		s[i] = str_create("#255");
+		file_str_read(f,s[i]);
+		
+	}
+	
+	file_close(f);
+	
+	int i;
+	for(i = 0;i < 5;i++) error(s_ptr[i]);
+	
 }
