@@ -115,7 +115,8 @@ int mat_type, manip_type;
 var obj_type;
 
 int files_found, list_start;
-int is_camera;
+
+BOOL is_camera;
 
 var files_already;
 
@@ -383,7 +384,6 @@ void sharedGUI_loadscene(STRING *);
 void sharedGUI_loadbackground(STRING *);
 /**/void sharedGUI_loadlogo(BMAP *);
 /**/void sharedGUI_mouse(int);
-/**/void sharedGUI_mouseset(BMAP *);
 /**/void sharedGUI_loadbuttons();
 /**/void sharedGUI_centerpanel(PANEL *);
 /**/void sharedGUI_dragpanel(PANEL *);
@@ -406,8 +406,6 @@ void sharedGUI_panelselect(PANEL *);
 
 void sharedGUI__release();
 void sharedGUI__loadlogo();
-void sharedGUI__loadbuttons();
-
 void scan_folder(STRING *,STRING *);
 
 void follow_pointer();
@@ -454,3 +452,6 @@ void switch_to_scale();
 
 ENTITY *obj_create();
 void init_database();
+
+void hideGUI();
+void showGUI();

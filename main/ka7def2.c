@@ -188,7 +188,6 @@ void def_screen()
 }
 
 
-var def_camera = 0;
 VECTOR* def_cam_dist = { x=100; y=0; z=100; }
 
 // call this function from a level to enable the free camera movement
@@ -201,13 +200,8 @@ void def_move()
 	vec_zero(speed);
 	vec_zero(aspeed);
 	vec_zero(dist);
-
-	if (1 > def_camera)
-	def_camera = 1;
-	if (1 < run_mode && run_mode < 5) 
-	def_camera = 2;	// prevent player movement in entity viewer mode
-
-	while (def_camera) 
+	
+	while (1) 
 	{
 		aforce.tilt = 5*(key_pgup - key_pgdn + mouse_right*mouse_force.y);
 		if (key_alt==0) {
@@ -224,7 +218,7 @@ void def_move()
 		force.z = 3*(key_home - key_end);
 		vec_accelerate(&dist,&speed,&force,0.5);
 		
-		if (NULL != player && 1 == def_camera) {
+		if (NULL != player) {
 			c_move(player,&dist,nullvector,IGNORE_PASSABLE|IGNORE_PASSENTS|GLIDE);
 			camera->genius = player;
 			vec_set(&player->pan,&camera->pan);
@@ -236,19 +230,6 @@ void def_move()
 			vec_add(&camera->x,vec_rotate(&dist,&camera->pan));
 		}
 		wait(1);
-	}
-}
-
-void def_moveset() 
-{
-	def_camera += 1;
-	if (NULL != player)
-	def_camera = cycle(def_camera,0,3);	// 0-1-2
-	else
-	def_camera = cycle(def_camera,0,2);	// 0-1
-	if (!key_shift && def_camera > 0) {
-		beep();
-		def_move();
 	}
 }
 
@@ -283,8 +264,7 @@ void def_startup()  // x + _startup
 	if (!on_f3) on_f3 = def_load;
 	if (!on_f5) on_f5 = def_video;
 	if (!on_f11) on_f11 = def_debug;
-
-	if (!on_0) on_0 = def_moveset;
+	
 	if (!on_enter) on_enter = def_screen;
 	if (!on_tab) on_tab = def_console;
 	//	if (!on_esc) on_esc = def_exit;

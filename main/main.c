@@ -26,17 +26,13 @@
 
 void main(void)  {
 	
-	obj_type = 0;
-	
 	video_set(800,600,32,2);
 	video_window(NULL,NULL,0,"editor 0.8 Milestone 4");
-	
-	sharedGUI_mouseset(mouse);
 	
 	sharedGUI_loadbackground("sandbox.wmb");
 	
 	ent_create("marker.mdl",nullvector,follow_pointer);
-	def_move();
+	//	def_move();
 	
 	while(1) 
 	{
@@ -74,6 +70,8 @@ void main(void)  {
 			
 			if(!mouse_panel)
 			{
+				if(!is_camera) obj_create();
+				
 				if(mouse_ent)
 				{
 					if(select)
@@ -108,8 +106,6 @@ void main(void)  {
 					if(is(panProp,SHOW)) reset(panProp,SHOW);
 					
 				}
-				
-				if(!is_camera) obj_create();
 				
 				wait(1);
 				

@@ -1039,13 +1039,6 @@ void sharedGUI_loadbuttons() {
 	pan_setpos(buttonlst_submenu_path,3,3,vector(cache,NULL,NULL));
 }
 
-void sharedGUI__loadbuttons() {
-	
-	if(is(panMain_Top,SHOW)) reset(panMain_Top,SHOW);
-	if(is(panMain_Bottom,SHOW)) reset(panMain_Bottom,SHOW);
-	if(is(panMain_Play,SHOW)) reset(panMain_Play,SHOW);
-}
-
 PANEL *panMain_Top = {
 	layer = 0;
 	
@@ -1055,6 +1048,7 @@ PANEL *panMain_Top = {
 	//	button(0,0,button_Copy,button_Copy_Off,button_Copy_Over,obj_copy,NULL,NULL);
 	//	button(0,0,button_Paste,button_Paste_Off,button_Paste_Over,obj_paste,NULL,NULL);
 	
+	/*
 	button_toggle(0,0,flag_MOVE_on,flag_MOVE,flag_MOVE_on,flag_MOVE_on,switch_to_move,NULL,NULL);
 	button_toggle(0,0,flag_ROTATE_on,flag_ROTATE,flag_ROTATE_on,flag_ROTATE_on,switch_to_rotate,NULL,NULL);
 	button_toggle(0,0,flag_SCALE_on,flag_SCALE,flag_SCALE_on,flag_SCALE_on,switch_to_scale,NULL,NULL);
@@ -1062,8 +1056,18 @@ PANEL *panMain_Top = {
 	button(0,0,button_Prop,button_Prop_Off,button_Prop_Over,sharedGUI_prop,NULL,NULL);
 	button(0,0,button_Phy,button_Phy_Off,button_Phy_Over,sharedGUI_phy,NULL,NULL);
 	button(0,0,button_Mat,button_Mat_Off,button_Mat_Over,sharedGUI_mat,NULL,NULL);
+	*/
 	
-	flags = SHOW;
+	button_toggle(0,0,flag_MOVE_on,flag_MOVE,flag_MOVE_on,flag_MOVE_on,switch_to_move,NULL,NULL);
+	button_toggle(0,0,flag_ROTATE_on,flag_ROTATE,flag_ROTATE_on,flag_ROTATE_on,switch_to_rotate,NULL,NULL);
+	button_toggle(0,0,flag_SCALE_on,flag_SCALE,flag_SCALE_on,flag_SCALE_on,switch_to_scale,NULL,NULL);
+	
+	button(0,0,"properties.png","properties.png","properties.png",sharedGUI_prop,NULL,NULL);
+	button(0,0,"emblem_weapon.png","emblem_weapon.png","emblem_weapon.png",sharedGUI_phy,NULL,NULL);
+	button(0,0,"pathing.png","pathing.png","pathing.png",sharedGUI_mat,NULL,NULL);
+	
+	
+	flags = OVERLAY | SHOW;
 }
 
 PANEL *panMain_Bottom = {
@@ -1071,11 +1075,20 @@ PANEL *panMain_Bottom = {
 	
 	bmap = "panMain_Bottom.bmp";
 
+	/*
 	button(0,0,button_Home,button_Home_Off,button_Home_Over,sharedGUI_home,NULL,NULL);
 	button_toggle(0,0,button_Cam,button_Cam_Off,button_Cam,button_Cam,controlcam,NULL,NULL);
 	button(0,0,button_Terrain,button_Terrain_Off,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
 	button(0,0,button_Objs,button_Objs_Off,button_Objs_Over,sharedGUI_launch_object,NULL,NULL);
 	button(0,0,button_Path,button_Path_Off,button_Path_Over,sharedGUI_launch_path,NULL,NULL);
+	*/
+	
+	button(0,0,"home.png","home.png","home.png",sharedGUI_home,NULL,NULL);
+	button_toggle(0,0,button_Cam,button_Cam_Off,button_Cam,button_Cam,controlcam,NULL,NULL);
+	button(0,0,button_Terrain,button_Terrain_Off,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
+	button(0,0,"objects.png","objects.png","objects.png",sharedGUI_launch_object,NULL,NULL);
+	button(0,0,"path_32.png","path_32.png","path_32.png",sharedGUI_launch_path,NULL,NULL);
+	
 	
 	flags = OVERLAY | SHOW;
 }
@@ -1085,7 +1098,8 @@ PANEL *panMain_Play = {
 	
 	bmap = "panMain_Play.bmp";
 	
-	button(0,0,button_Play,button_Play_off,button_Play_over,NULL,NULL,NULL);
+	// button(0,0,button_Play,button_Play_off,button_Play_over,NULL,NULL,NULL);
+	button(0,0,"v.png","button_ok.png","button_ok.png",NULL,NULL,NULL);
 	
 	flags = OVERLAY | SHOW;
 }
@@ -1216,10 +1230,6 @@ void sharedGUI_loadbackground(STRING *lv_name) {
 void sharedGUI_mouse(int mode) {
 	if(mode == OFF) mouse_mode = 0;
 	if(mode == ON) mouse_mode = 4;
-}
-
-void sharedGUI_mouseset(BMAP *b) {
-	mouse_map = b;
 }
 
 void sharedGUI_home() {
@@ -1985,10 +1995,12 @@ void mat_save() {
 ////////////////////////////////////////////////////////////
 void obj_manip_interface()
 {
-	while(mouse_left)
+	while(mouse_left && is_camera && (manip_type > 0 && manip_type < 4))
 	{
+		
 		if(manip_type == scale) 
 		{
+			hideGUI();
 			
 			if(key_alt) {
 				
@@ -2010,6 +2022,8 @@ void obj_manip_interface()
 		
 		if(manip_type == move) {
 			
+			hideGUI();
+			
 			v1.x = mouse_pos.x;
 			v1.y = mouse_pos.y;
 			v1.z = 0;
@@ -2026,13 +2040,17 @@ void obj_manip_interface()
 		
 		if(manip_type == rotate) {
 			
-			my.pan = mouse_pos.x;
-			my.tilt = mouse_pos.y;
+			hideGUI();
+			
+			my.pan = -mouse_pos.x;
+			my.tilt = -mouse_pos.y;
 			
 		}
 
 		wait (1);
 	}
+	
+	showGUI();
 	
 }
 
@@ -2049,6 +2067,17 @@ void obj_manip_setup()
 // stupid switchers
 // lite-C compiler: stupid programmer
 void switch_to_move() {
+	
+	// Houston we got a problem here !
+	if(!is_camera) {
+		
+		int i;
+		for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
+		manip_type = scale+1;
+		
+		return; // Kill him (stop him from doing bad things)
+		
+	}
 	
 	// Check its state first.
 	if(button_state(panMain_Top,1,-1) == ON) {
@@ -2072,6 +2101,16 @@ void switch_to_move() {
 
 void switch_to_rotate() {
 	
+	if(!is_camera) {
+		
+		int i;
+		for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
+		manip_type = scale+1;
+		
+		return; // Kill him (stop him from doing bad things)
+		
+	}
+	
 	if(button_state(panMain_Top,2,-1) == ON) {
 		
 		button_state(panMain_Top,1,0);
@@ -2086,6 +2125,16 @@ void switch_to_rotate() {
 
 void switch_to_scale() {
 	
+	if(!is_camera) {
+		
+		int i;
+		for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
+		manip_type = scale+1;
+		
+		return; // Kill him (stop him from doing bad things)
+		
+	}
+	
 	if(button_state(panMain_Top,3,-1) == ON) {
 		
 		button_state(panMain_Top,1,0);
@@ -2099,10 +2148,36 @@ void switch_to_scale() {
 	
 }
 
+void hideGUI() {
+	
+	reset(panMain_Top,SHOW);
+	reset(panMain_Bottom,SHOW);
+	reset(panMain_Play,SHOW);
+	
+}
+
+void showGUI() {
+	
+	set(panMain_Top,SHOW);
+	set(panMain_Bottom,SHOW);
+	set(panMain_Play,SHOW);
+	
+}
+
 ////////////////////////////////////////////////////////////
 // Initialization before the game can be launched.
 ////////////////////////////////////////////////////////////
 void init_startup() {
+	
+	// Initialization for loopix-project.com's MystyMood_Lite-C
+	sky_curve = 2;
+	sky_clip = -10;
+	
+	// Our own setup
+	obj_type = 0;
+	
+	mouse_range = 500000;	
+	mouse_map = mouse;
 	
 	// So that we can get access to the database.
 	sTable_ptr = sTable;
@@ -2209,6 +2284,37 @@ void init_startup() {
 	// End of shortcut keys implementation.
 	
 }
+
+////////////////////////////////////////////////////////////
+// Actions
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// This is the camera controller I found when I was tweaking Mystymood.
+// No need for def_move().
+action free_camera()
+{
+	VECTOR camera_force;
+	set(my, INVISIBLE | POLYGON);
+	
+	camera_force.z = 0;
+	vec_set(camera.x,my.x);
+	vec_set(camera.pan,my.pan);
+
+	while(1)
+	{
+		camera_force.x = (key_w - key_s)*10*time_step;
+		camera_force.y = (key_a - key_d)*10*time_step;
+		vec_add(my.pan,vector(mouse_force.x*(-7)*time_step,mouse_force.y*7*time_step,0));
+		
+		c_move(my,camera_force,nullvector,GLIDE+IGNORE_PASSABLE+IGNORE_PASSENTS+IGNORE_PUSH);
+		vec_set(camera.x,vector(my.x,my.y,my.z+15));
+		vec_set(camera.pan,my.pan);
+		
+		wait(1);
+	}
+}
+////////////////////////////////////////////////////////////
 
 //////////////////////////////
 // Debug & statistics
