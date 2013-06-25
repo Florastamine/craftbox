@@ -1,9 +1,9 @@
-//56
-
 ////////////////////////////////////////////////////////////
 // This function will load the database.
 ////////////////////////////////////////////////////////////
 void init_database() {
+	
+	int i;
 	
 	// Don't ask me why I don't read the whole database
 	// from an external file. I did it once - and failed.
@@ -13,10 +13,7 @@ void init_database() {
 	// activity to be performed.
 	
 	// This is slow but probably because of my outdated Celeron D
-	// processor. Maybe it will perform faster on a Pentium 4.
-	
-	wait(1);
-	
+	// processor. Maybe it will perform faster on a Pentium 4.	
 	////////////////////////////////////////////////////////////
 
 	// Animals 50 [0->49]
@@ -41,7 +38,6 @@ void init_database() {
 	sTable[17] = str_create("a_snake.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 18; i < 50;i++) sTable[i] = str_create("#2");
 
 	// Architecture 80 [50->129]
@@ -65,7 +61,6 @@ void init_database() {
 	sTable[66] = str_create("a__frame.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 67;i < 130;i++) sTable[i] = str_create("#2");
 	
 	// Characters 50 [130->179]
@@ -92,7 +87,6 @@ void init_database() {
 	sTable[149] = str_create("c__007.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 150;i < 180;i++) sTable[i] = str_create("#2");
 
 	// Everyday objects 300 [180-479]
@@ -286,7 +280,6 @@ void init_database() {
 	sTable[366] = str_create("e_woodchair2.mdl");
 
 	// Unallocated space
-	int i;
 	for (i = 367;i < 480;i++) sTable[i] = str_create("#2");
 	
 	// Food 90 [480-569]
@@ -322,7 +315,6 @@ void init_database() {
 	sTable[508] = str_create("f_watermelon_piece.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 509;i < 570;i++) sTable[i] = str_create("#2");
 	
 	// Machines 50 [570-619]
@@ -336,7 +328,6 @@ void init_database() {
 	sTable[576] = str_create("m_turret02.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 577;i < 620;i++) sTable[i] = str_create("#2");
 	
 	// Plants 160 [620-779]
@@ -428,7 +419,6 @@ void init_database() {
 	sTable[704] = str_create("weedm.mdl");
 	
 	// Unallocated space
-	int i;
 	for(i = 705;i < 780;i++) sTable[i] = str_create("#2");
 	
 	// Transportations 50 [780-829]
@@ -453,8 +443,24 @@ void init_database() {
 	sTable[797] = str_create("t_wagon.mdl");
 
 	// Unallocated space
-	int i;
 	for(i = 798; i < 830;i++) sTable[i] = str_create("#2");
+	
+	// Land 50 [830->879]
+	// Allocated space
+	sTable[830] = str_create("l_desertgeneric.hmp");
+	sTable[831] = str_create("l_greenland.hmp");
+	sTable[832] = str_create("l_greenland1.hmp");
+	sTable[833] = str_create("l_greenland_fat.hmp");
+	sTable[834] = str_create("l_marssurface.hmp");
+	sTable[835] = str_create("l_ocean1.hmp");
+	sTable[836] = str_create("l_ocean2.hmp");
+	sTable[837] = str_create("l_steppegeneric.hmp");
+	sTable[838] = str_create("l_stonegeneric.hmp");
+	sTable[839] = str_create("l_water1.hmp");
+	sTable[840] = str_create("l_water2.hmp");
+	
+	// Unallocated space
+	for(i = 841;i < 880;i++) sTable[i] = str_create("#2");
 	
 	// Done!
 	////////////////////////////////////////////////////////////
@@ -463,10 +469,10 @@ void init_database() {
 ENTITY *obj_create() { // This inherits a lot from place_me
 	
 	if(str_len(sTable_ptr[obj_type]) == 0) {
-	   
-	   printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
-	   return;
-	   
+		
+		printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
+		return;
+		
 	}
 	
 	ENTITY *tmp = ent_create(sTable_ptr[obj_type],temp_pos.x,obj_manip_setup);
@@ -478,6 +484,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 	
 	tmp.alpha = 0;
 	tmp.ambient = 50;
+	tmp.pan = random(360); // Give it a random pan value.
 	
 	tmp.material = mat_model;
 	
@@ -553,11 +560,12 @@ void sharedGUI_updategui(PANEL *wg) {
 		
 		int i;
 		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
+		
 		pan_setpos(panProp,3,10,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 32,0));
+		pan_setpos(panProp,3,11,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 64,0));		
 		
 		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
 		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
-		pan_setpos(panProp,4,3,vector(BORDER + 102,BORDER * 4 + 23 * 3,0));
 		
 		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - BORDER * 2,BORDER,0));
 	}
@@ -598,7 +606,7 @@ void sharedGUI_updategui(PANEL *wg) {
 	}
 	
 	if(wg == panMat_Sub1) { 
-	
+		
 		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
 		
 		var i = 2;
@@ -697,6 +705,17 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 		
 		reset(buttonlst_submenu_path,SHOW);
 	}
+	
+	if(p == panObj_Main) {
+		
+		reset(panObj_Main,SHOW);
+		reset(panObj_Subbar,SHOW);
+		reset(panObj_Subbar_slider,SHOW);
+		ctrl = 0;
+		
+		showGUI();
+		
+	}
 }
 
 void sharedGUI_dragpanel(PANEL *p)
@@ -743,10 +762,10 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 	
 	// peform a S comparison
 	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) {
-	   
-	   printf("The size of the image that needs to be centered is too large.\nTry resizing it.");
-	   return;
-	   
+		
+		printf("The size of the image that needs to be centered is too large.\nTry resizing it.");
+		return;
+		
 	}
 	
 	if(bmap_width(s.bmap) > bmap_width(p.bmap))
@@ -756,13 +775,32 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 	p.pos_y = (bmap_height(s.bmap) - bmap_height(p.bmap))/2;
 }
 
-void sharedGUI_loadbuttons() {
+void loadGUI() {
 	
 	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * BUTTON_SIZE);
 	panMain_Top.pos_y = BORDER;
 	
 	panMain_Bottom.pos_x = BORDER;
 	panMain_Bottom.pos_y = screen_size.y - bmap_height(panMain_Bottom.bmap) - BORDER;
+	
+	panObj_Main.pos_x = 0;
+	panObj_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
+	
+	// Position the close button for panObj_Main
+	pan_setpos(panObj_Main,3,1,vector(bmap_width(panObj_Main.bmap) - BORDER * 2,BORDER,0));
+	
+	resize(panObj_Subbar_slider,'x');
+	
+	panObj_Subbar.pos_x = panObj_Subbar_slider.pos_x = 0;
+	panObj_Subbar.pos_y = panObj_Main.pos_y + bmap_height(panObj_Main.bmap) + BORDER;
+	panObj_Subbar_slider.pos_y = panObj_Subbar.pos_y + bmap_height(panObj_Subbar_slider.bmap) + BORDER * 3;
+	
+	int i;
+	for(i = 1; i < 10;i++) {
+		
+		pan_setpos(panObj_Subbar,3,i,vector(bmap_width(panObj_Subbar.bmap)/9 * (i-1),0,0));
+		
+	}
 
 	int i = 1;
 	while(i < 7) {
@@ -812,18 +850,41 @@ void sharedGUI_loadbuttons() {
 	pan_setpos(buttonlst_submenu_path,3,3,vector(cache,NULL,NULL));
 }
 
-void sharedGUI_rescale(PANEL *p) {
+void resize(PANEL *p, char c) {
+	
 	while(p == NULL) wait(1);
 	
-	p.pos_x = 0;
-	p.pos_y = 0;
+	switch(c) {
+		
+		case 'x':
+		
+		p.scale_x = screen_size.x/bmap_width(p.bmap);
+		
+		break;
+		
+		case 'y':
+		
+		p.scale_y = screen_size.y/bmap_height(p.bmap);
+		
+		break;
+		
+		default:
+		
+		p.pos_x = 0;
+		p.pos_y = 0;
+		
+		p.scale_x = screen_size.x/bmap_width(p.bmap);
+		p.scale_y = screen_size.y/bmap_height(p.bmap);
+		
+		break;
+		
+	}
 	
-	p.scale_x = screen_size.x/bmap_width(p.bmap);
-	p.scale_y = screen_size.y/bmap_height(p.bmap);
 }
 
 void sharedGUI_blackscreen(int mode, int sec) {
-	sharedGUI_rescale(blackscreen);
+	
+	resize(blackscreen,'0');
 	set(blackscreen,SHOW);
 	
 	if(mode == FADE_IN) {
@@ -857,6 +918,7 @@ void sharedGUI_blackscreen(int mode, int sec) {
 		reset(blackscreen,SHOW);
 		
 	}
+	
 }
 
 void sharedGUI_loadlogo(BMAP *logo_bmap) {
@@ -885,24 +947,8 @@ void sharedGUI_playintro(STRING *what, var vol) {
 	while(media_playing(hndl)) wait(1);
 }
 
-void sharedGUI_loadbackground(STRING *lv_name) {
-	//		sharedGUI_playintro(100);
-	//		wait_for(sharedGUI_playintro);
-	
-	level_load(lv_name);
-	wait_for(level_load);
-	
-	sharedGUI_loadbuttons();
-	wait_for(sharedGUI_loadbuttons);
-	
-	sharedGUI_blackscreen(FADE_OUT,2);
-	wait_for(sharedGUI_blackscreen);
-	
-	sharedGUI_mouse(1);
-}
-
 void sharedGUI_mouse(BOOL mode) {
-   
+	
 	if(mode) mouse_mode = 4;
 	else mouse_mode = 0;
 	
@@ -1044,49 +1090,12 @@ void sharedGUI_launch_path() {
 	set(buttonlst_submenu_path,SHOW);
 }
 
-void pass_to_object()
-{
-	while(select)
-	{
-		if(key_del) ptr_remove(select);
-		
-		select.alpha = v_alpha;
-		select.ambient = v_ambient;
-		
-		if(button_state(panProp,2,-1)) set(select,BRIGHT);
-		else reset(select,BRIGHT);
-		
-		if(button_state(panProp,3,-1)) set(select,INVISIBLE);
-		else reset(select,INVISIBLE);
-		
-		if(button_state(panProp,4,-1)) set(select,NOFOG);
-		else reset(select,NOFOG);
-		
-		if(button_state(panProp,5,-1)) set(select,OVERLAY);
-		else reset(select,OVERLAY);
-		
-		if(button_state(panProp,6,-1)) set(select,PASSABLE);
-		else reset(select,PASSABLE);
-		
-		if(button_state(panProp,7,-1)) set(select,POLYGON);
-		else reset(select,POLYGON);
-		
-		if(button_state(panProp,8,-1)) set(select,SHADOW);
-		else reset(select,SHADOW);
-		
-		if(button_state(panProp,9,-1)) set(select,TRANSLUCENT);
-		else reset(select,TRANSLUCENT);
-		
-		wait(1);
-	}
-}
-
 void follow_pointer() {
 	fpsf_marker = me;
 	set(fpsf_marker,PASSABLE);
 	
 	while(1) {
-	   
+		
 		sharedGUI_cpos1.x = mouse_pos.x;
 		sharedGUI_cpos1.y = mouse_pos.y;
 		sharedGUI_cpos1.z = 0;
@@ -1138,18 +1147,18 @@ void pass_to_gui(ENTITY *e) {
 }
 
 void controlcam() {
-   
+	
 	if(button_state(panMain_Bottom,2,-1)) is_camera = 1;
 	else {
-	   
-	   is_camera = 0;
-	   
-	   /* Free all checked flags */
-	   int i;
-	   for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
-	   
-	   manip_type = scale + 1;
-	   
+		
+		is_camera = 0;
+		
+		/* Free all checked flags */
+		int i;
+		for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
+		
+		manip_type = scale + 1;
+		
 	}
 	
 }
@@ -1163,6 +1172,17 @@ void restore() {
 		
 		pass_to_gui(select); // update the properties panel
 	}
+}
+
+// The simplest function in the kernel. ;)
+void random_pan() {
+	
+	if(select) {
+		
+		select.pan = random(360);		
+		
+	}
+	
 }
 
 ////////////////////////////////////////////////////////////
@@ -1536,10 +1556,10 @@ void pass_file_to_material(MATERIAL *m, STRING *file) {
 	
 	var vpass = file_open_read(file);
 	if(vpass == 0) {
-	   
-	   printf("Failed to open %s for passing parameters.",file);
-	   return;
-	   
+		
+		printf("Failed to open %s for passing parameters.",file);
+		return;
+		
 	}
 	
 	// Follow this form :
@@ -1604,10 +1624,10 @@ void pass_material_to_file(STRING *file, MATERIAL *m) {
 	
 	var vpass = file_open_write(file);
 	if(vpass == 0) {
-	   
-	   printf("Failed to open %s for writing data.",file);
-	   return;
-	   
+		
+		printf("Failed to open %s for writing data.",file);
+		return;
+		
 	}
 	
 	// Copy values from the sliders
@@ -1751,7 +1771,7 @@ void obj_manip_interface()
 			hideGUI();
 			
 			my.pan = -mouse_pos.x;
-			my.tilt = -mouse_pos.y;
+			//			my.tilt = -mouse_pos.y;
 			
 		}
 
@@ -1862,6 +1882,11 @@ void hideGUI() {
 	reset(panMain_Bottom,SHOW);
 	reset(panMain_Play,SHOW);
 	
+	// Also disables any remaining active content.
+	reset(buttonlst_submenu_object,SHOW);
+	reset(buttonlst_submenu_path,SHOW);
+	reset(buttonlst_submenu_terrain,SHOW);
+	
 }
 
 void showGUI() {
@@ -1893,19 +1918,123 @@ void showr(FONT *f, STRING *r)
 	txt_remove(rt);
 }
 
+void objadd() {
+	
+	hideGUI();
+	
+	set(panObj_Main,SHOW);
+	set(panObj_Subbar,SHOW);
+	set(panObj_Subbar_slider,SHOW);
+	ctrl = 0;
+	
+}
+
+// We met again stupid switcher.
+// lite-C compiler: Without me you're nothing bitch.
+void panObj_Subbar_switcher(var id) {
+	// 10 = upper limit (9 buttons); 0 = lower limit
+	// This is more efficient than using a bunch of switch..case.
+	
+	int i;
+	
+	// Switches off all available buttons after id.
+	for(i = id + 1;i < 10;i++) button_state(panObj_Subbar,i,0);
+	// Switches off all available buttons before id.
+	for(i = id - 1;i > 0;i--) button_state(panObj_Subbar,i,0);
+	
+	// Switches on id.
+	button_state(panObj_Subbar,id,1);
+	
+	// Eeehhh..switch..case..I hate it.
+	
+	switch(id) {
+		
+		case 1: // ANMS
+		
+		panObj_Main.bmap = panObj_anms;
+		ctrl = 0;
+		
+		break;
+		
+		case 2: // ARCH
+		
+		panObj_Main.bmap = panObj_arch;
+		ctrl = 0;
+		
+		break;
+		
+		case 3: // BLANDS
+		
+		panObj_Main.bmap = panObj_blands;
+		ctrl = 0;
+		
+		break;
+		
+		case 4: // CHARS
+		
+		panObj_Main.bmap = panObj_chars;
+		ctrl = 0;
+		
+		break;
+		
+		case 5: // ETC
+		
+		panObj_Main.bmap = panObj_etc;
+		ctrl = 0;
+		
+		break;
+		
+		case 6: // FOOD
+		
+		panObj_Main.bmap = panObj_food;
+		ctrl = 0;
+		
+		break;
+		
+		case 7: // MACHS
+		
+		panObj_Main.bmap = panObj_machs;
+		ctrl = 0;
+		
+		break; 
+		
+		case 8: // PLANTS
+		
+		panObj_Main.bmap = panObj_plants;
+		ctrl = 0;
+		
+		break;
+		
+		case 9: // TPORTTS
+		
+		panObj_Main.bmap = panObj_tportts;
+		ctrl = 0;
+		
+		break;
+		
+		default:
+		sys_exit(NULL);
+		break;
+		
+	}
+	
+}
+
 ////////////////////////////////////////////////////////////
-// Initialization before the game can be launched.
+// Kernel-related functions.
 ////////////////////////////////////////////////////////////
-void kernel_startup() {
+void load_kernel(STRING *lvl_str) {
 	
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
 	sky_clip = -10;
 	
 	// Our own setup
-	obj_type = 0;
+	video_set(800,600,32,1);
+	video_window(NULL,NULL,0,"editor 0.8 Milestone 4");
 	
-	mouse_range = 500000;	
+	obj_type = 0;
+	mouse_range = 500000;
 	mouse_map = mouse;
 	
 	// So that we can get access to the database.
@@ -1925,6 +2054,31 @@ void kernel_startup() {
 	pass_file_to_material(mat_custom[2],"./src/cfg/mat_custom_3.cfg");
 	pass_file_to_material(mat_custom[3],"./src/cfg/mat_custom_4.cfg");
 	
+	////////////////////////////////////////////////////////////
+	// After all stages have done its job, we load the level and pass "something" to it. Actually I don't know what I mean by "something".
+	////////////////////////////////////////////////////////////
+	
+	// If we want a video to be played...
+	//		sharedGUI_playintro(100);
+	//		wait_for(sharedGUI_playintro);
+	
+	// Intialize and load the GUI system.
+	loadGUI();
+	wait_for(loadGUI);
+	
+	// Load the level.
+	level_load(lvl_str);
+	wait_for(level_load); // Wait for level_load to be completed.
+	
+	// Some nice effects and further setup before the game can be started.
+	sharedGUI_blackscreen(FADE_OUT,2);
+	wait_for(sharedGUI_blackscreen);
+	
+	sharedGUI_mouse(1); // Enables the mouse.
+	
+	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+	def_move();
+	//	
 	// Shortcut keys implementation
 	while(1) {
 		
@@ -2011,6 +2165,156 @@ void kernel_startup() {
 		wait(1);
 	}
 	// End of shortcut keys implementation.
+	
+}
+
+void loop_kernel() {
+	
+	while(1) 
+	{
+		
+		if(key_t) 
+		{
+			while(key_t) wait(1);
+			obj_type++;
+		}
+		
+		if(key_y) {
+			while(key_y) wait(1);
+			obj_type--;
+		}
+		
+		if(key_r) {
+			
+			while(key_r) wait(1);
+			you = ent_next(NULL); // Point to the first entity in the list
+			while(you) {
+				
+				ptr_remove(you);
+				you = ent_next(you);
+				
+			}
+			
+		}
+		
+		if(mouse_left) 
+		{
+			while(mouse_left) wait(1);
+			
+			if(!mouse_panel)
+			{
+				if(!is_camera) obj_create();
+				
+				if(mouse_ent)
+				{
+					if(select)
+					{
+						select.material = mat_temp;
+						select = NULL;
+					}
+					
+					select = mouse_ent;
+					
+					mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
+					select.material = mat_select;
+					
+					pass_to_gui(select);
+					
+				}
+				
+				else
+				{
+					if(select)
+					{
+						if(mat_temp) select.material = mat_temp;
+						else select.material = NULL;
+						
+						select = NULL;
+						
+						reset(panProp,SHOW);
+					}
+					
+					select = NULL;
+					
+					if(is(panProp,SHOW)) reset(panProp,SHOW);
+					
+				}
+				
+				wait(1);
+				
+			}		
+			
+		}
+		
+		wait(1);
+		
+	}
+	sys_exit(NULL);
+	
+}
+
+////////////////////////////////////////////////////////////
+// This _startup function needs to be run alongside with
+// kernel_loop. Don't ask why, they just don't share the
+// same while loop...
+// And no need for an extra call to main() because functions
+// with _startup prefix execute themshelves automatically.
+////////////////////////////////////////////////////////////
+void misc_startup() {
+	
+	while(1) {
+		
+		if(select) {
+			
+			if(key_del) ptr_remove(select);
+			
+			select.alpha = v_alpha;
+			select.ambient = v_ambient;
+			
+			if(button_state(panProp,2,-1)) set(select,BRIGHT);
+			else reset(select,BRIGHT);
+			
+			if(button_state(panProp,3,-1)) set(select,INVISIBLE);
+			else reset(select,INVISIBLE);
+			
+			if(button_state(panProp,4,-1)) set(select,NOFOG);
+			else reset(select,NOFOG);
+			
+			if(button_state(panProp,5,-1)) set(select,OVERLAY);
+			else reset(select,OVERLAY);
+			
+			if(button_state(panProp,6,-1)) set(select,PASSABLE);
+			else reset(select,PASSABLE);
+			
+			if(button_state(panProp,7,-1)) set(select,POLYGON);
+			else reset(select,POLYGON);
+			
+			if(button_state(panProp,8,-1)) set(select,SHADOW);
+			else reset(select,SHADOW);
+			
+			if(button_state(panProp,9,-1)) set(select,TRANSLUCENT);
+			else reset(select,TRANSLUCENT);
+			
+		}
+		
+		if(key_cul) ctrl--;
+		if(key_cur) ctrl++;
+		
+		if(ctrl<0) ctrl=0; // prevent unexpected situations
+		if(ctrl>100) ctrl=100;
+		
+		panObj_Main.pos_x = (ctrl * (-bmap_width(panObj_Main.bmap) + screen_size.x))/100;
+		
+		if(panObj_Main.pos_x > 0) panObj_Main.pos_x = 0;
+		if(panObj_Main.pos_x < -bmap_width(panObj_Main.bmap) + screen_size.x) {
+			
+			panObj_Main.pos_x = -bmap_width(panObj_Main.bmap) + screen_size.x;
+			
+		}
+		
+		wait(1);
+		
+	}
 	
 }
 

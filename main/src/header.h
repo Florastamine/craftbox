@@ -93,6 +93,8 @@ button_QuitWorld_y,
 button_CmpWorld_y,
 button_SetWorld_y;
 
+var ctrl; // This var controls panObj_Main.
+
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
 ////////////////////////////////////////////////////////////
@@ -101,6 +103,9 @@ PANEL *buttonlst,
 *panMain_Top,
 *panMain_Bottom,
 *panMain_Play,
+*panObj_Main,
+*panObj_Subbar,
+*panObj_Subbar_slider,
 *buttonlst_submenu_terrain,
 *buttonlst_submenu_object,
 *buttonlst_submenu_path,
@@ -260,6 +265,33 @@ BMAP *flag_ROTATE_on = "flag_ROTATE_on.bmp";
 BMAP *flag_SCALE = "flag_SCALE.bmp";
 BMAP *flag_SCALE_on = "flag_SCALE_on.bmp";
 
+BMAP *flag_ANMS = "flag_ANMS.bmp";
+BMAP *flag_ANMS_on = "flag_ANMS_on.bmp";
+
+BMAP *flag_ARCH = "flag_ARCH.bmp";
+BMAP *flag_ARCH_on = "flag_ARCH_on.bmp";
+
+BMAP *flag_BLANDS = "flag_BLANDS.bmp";
+BMAP *flag_BLANDS_on = "flag_BLANDS_on.bmp";
+
+BMAP *flag_CHARS = "flag_CHARS.bmp";
+BMAP *flag_CHARS_on = "flag_CHARS_on.bmp";
+
+BMAP *flag_ETC = "flag_ETC.bmp";
+BMAP *flag_ETC_on = "flag_ETC_on.bmp";
+
+BMAP *flag_FOOD = "flag_FOOD.bmp";
+BMAP *flag_FOOD_on = "flag_FOOD_on.bmp";
+
+BMAP *flag_MACHS = "flag_MACHS.bmp";
+BMAP *flag_MACHS_on = "flag_MACHS_on.bmp";
+
+BMAP *flag_PLANTS = "flag_PLANTS.bmp";
+BMAP *flag_PLANTS_on = "flag_PLANTS_on.bmp";
+
+BMAP *flag_TPORTTS = "flag_TPORTTS.bmp";
+BMAP *flag_TPORTTS_on = "flag_TPORTTS_on.bmp";
+
 BMAP *slider = "slider.tga";
 
 BMAP *button_Mat1 = "button_Mat1.bmp";
@@ -331,16 +363,31 @@ BMAP *button_matapply = "button_matapply.bmp";
 BMAP *button_matapply_off = "button_matapply_off.bmp";
 BMAP *button_matapply_over = "button_matapply_over.bmp";
 
+BMAP *button_randompan = "button_randompan.bmp";
+BMAP *button_randompan_off = "button_randompan_off.bmp";
+BMAP *button_randompan_over = "button_randompan_over.bmp";
+
+BMAP *panObj_anms = "panObj_anms.bmp";
+BMAP *panObj_arch = "panObj_arch.bmp";
+BMAP *panObj_chars = "panObj_chars.bmp";
+BMAP *panObj_etc = "panObj_etc.jpg";
+BMAP *panObj_food = "panObj_food.bmp";
+BMAP *panObj_machs = "panObj_machs.bmp";
+BMAP *panObj_plants = "panObj_plants.bmp";
+BMAP *panObj_tportts = "panObj_tportts.bmp";
+BMAP *panObj_blands = "panObj_blands.bmp";
+
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
-/**/void sharedGUI_rescale(PANEL *);
+void load_kernel(STRING *);
+void loop_kernel();
+
+void resize(PANEL *, char);
 /**/void sharedGUI_playintro(STRING *, var);
 /**/void sharedGUI_blackscreen(int, int);
-void sharedGUI_loadbackground(STRING *);
 /**/void sharedGUI_loadlogo(BMAP *);
 /**/void sharedGUI_mouse(BOOL);
-/**/void sharedGUI_loadbuttons();
 /**/void sharedGUI_centerpanel(PANEL *);
 /**/void sharedGUI_dragpanel(PANEL *);
 /**/void sharedGUI_centerfrom(PANEL *, PANEL *);
@@ -350,6 +397,8 @@ void sharedGUI_prop();
 void sharedGUI_mat();
 void sharedGUI_editmat();
 void sharedGUI_phy();
+void objadd();
+
 void controlcam();
 
 void sharedGUI_launch_terrain();
@@ -363,10 +412,11 @@ void sharedGUI__loadlogo();
 void scan_folder(STRING *,STRING *);
 
 void follow_pointer();
+
 void restore();
+void random_pan();
 
 void pass_to_gui(ENTITY *);
-void pass_to_object();
 void pass_mat_to_object();
 
 void pass_file_to_material(MATERIAL *, STRING *);
@@ -403,10 +453,12 @@ void obj_manip_interface();
 void switch_to_move();
 void switch_to_rotate();
 void switch_to_scale();
+void panObj_Subbar_switcher(var);
 
 ENTITY *obj_create();
 void init_database();
 
+void loadGUI();
 void hideGUI();
 void showGUI();
 

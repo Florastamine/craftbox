@@ -22,7 +22,7 @@ PANEL *buttonlst_submenu_object = {
 	
 	bmap = "button_submenu_black.bmp";
 	
-	button(0,0,menu2_submenu1,menu2_submenu1_off,menu2_submenu1_over,NULL,NULL,NULL);
+	button(0,0,menu2_submenu1,menu2_submenu1_off,menu2_submenu1_over,objadd,NULL,NULL);
 	button(0,0,menu2_submenu2,menu2_submenu2_off,menu2_submenu2_over,NULL,NULL,NULL);
 	//	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
 	//	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
@@ -83,6 +83,7 @@ PANEL *panProp = {
 	button_toggle(0,0,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
 	
 	button(0,0,button_default,button_default_off,button_default_over,restore,NULL,NULL);
+	button(0,0,button_randompan,button_randompan_off,button_randompan_over,random_pan,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,v_alpha);	
 	hslider(0,0,100,slider,0,100,v_ambient);	
@@ -250,6 +251,47 @@ PANEL *_logo = {
 
 PANEL *blackscreen = {
 	bmap = "bitmap.bmp";
+}
+
+PANEL *panObj_Subbar = {
+	
+	layer = 2;
+	bmap = "panObj_Subbar_cover.bmp";
+	
+	button_toggle(0,0,flag_ANMS_on,flag_ANMS,flag_ANMS_on,flag_ANMS_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_ARCH_on,flag_ARCH,flag_ARCH_on,flag_ARCH_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_BLANDS_on,flag_BLANDS,flag_BLANDS_on,flag_BLANDS_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_CHARS_on,flag_CHARS,flag_CHARS_on,flag_CHARS_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_ETC_on,flag_ETC,flag_ETC_on,flag_ETC_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_FOOD_on,flag_FOOD,flag_FOOD_on,flag_FOOD_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_MACHS_on,flag_MACHS,flag_MACHS_on,flag_MACHS_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_PLANTS_on,flag_PLANTS,flag_PLANTS_on,flag_PLANTS_on,panObj_Subbar_switcher,NULL,NULL);
+	button_toggle(0,0,flag_TPORTTS_on,flag_TPORTTS,flag_TPORTTS_on,flag_TPORTTS_on,panObj_Subbar_switcher,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panObj_Subbar_slider = {
+	
+	layer = 2;
+	bmap = "big_slider.bmp";
+	
+	// 800 = default
+	hslider(0,0,800,slider,0,100,ctrl);
+	
+}
+
+PANEL *panObj_Main = {
+	
+	layer = 2;
+	
+	bmap = "panObj_anms.bmp";
+	
+	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	
+	flags = OVERLAY;
+	
 }
 
 ////////////////////////////////////////////////////////////
