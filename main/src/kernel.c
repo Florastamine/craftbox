@@ -1,3 +1,5 @@
+//56
+
 ////////////////////////////////////////////////////////////
 // This function will load the database.
 ////////////////////////////////////////////////////////////
@@ -93,7 +95,7 @@ void init_database() {
 	int i;
 	for(i = 150;i < 180;i++) sTable[i] = str_create("#2");
 
-	// Everyday objects 300 [180-379]
+	// Everyday objects 300 [180-479]
 	// Allocated objects
 	sTable[180] = str_create("e_ball1.mdl");
 	sTable[181] = str_create("e_ball10.mdl");
@@ -287,7 +289,7 @@ void init_database() {
 	int i;
 	for (i = 367;i < 480;i++) sTable[i] = str_create("#2");
 	
-	// Food 50 [480-529]
+	// Food 90 [480-569]
 	// Allocated space
 	sTable[480] = str_create("f_apple_green.mdl");
 	sTable[481] = str_create("f_apple_red.mdl");
@@ -321,7 +323,7 @@ void init_database() {
 
 	// Unallocated space
 	int i;
-	for(i = 509;i < 530;i++) sTable[i] = str_create("#2");
+	for(i = 509;i < 570;i++) sTable[i] = str_create("#2");
 	
 	// Machines 50 [570-619]
 	// Allocated space
@@ -337,7 +339,7 @@ void init_database() {
 	int i;
 	for(i = 577;i < 620;i++) sTable[i] = str_create("#2");
 	
-	// Plants 150 [620-779]
+	// Plants 160 [620-779]
 	// Allocated space
 	sTable[620] = str_create("bigtree2.mdl");
 	sTable[621] = str_create("bstone1.mdl");
@@ -427,32 +429,32 @@ void init_database() {
 	
 	// Unallocated space
 	int i;
-	for(i = 705;i < 770;i++) sTable[i] = str_create("#2");
+	for(i = 705;i < 780;i++) sTable[i] = str_create("#2");
 	
-	// Transportations 50 [770-829]
+	// Transportations 50 [780-829]
 	// Allocated space
-	sTable[770] = str_create("t_bomber.mdl");
-	sTable[771] = str_create("t_bomber1.mdl");
-	sTable[772] = str_create("t_car1.mdl");
-	sTable[773] = str_create("t_car2.mdl");
-	sTable[774] = str_create("t_car3.mdl");
-	sTable[775] = str_create("t_car4.mdl");
-	sTable[776] = str_create("t_car_mr2.mdl");
-	sTable[777] = str_create("t_f105_thug.mdl");
-	sTable[778] = str_create("t_f16.mdl");
-	sTable[779] = str_create("t_hover1.mdl");
-	sTable[780] = str_create("t_lancaster.mdl");
-	sTable[781] = str_create("t_mcdf4_phantom.mdl");
-	sTable[782] = str_create("t_shopping.caddy.mdl");
-	sTable[783] = str_create("t_tank.mdl");
-	sTable[784] = str_create("t_tank1.mdl");
-	sTable[785] = str_create("t_trainpart.mdl");
-	sTable[786] = str_create("t_Viper.mdl");
-	sTable[787] = str_create("t_wagon.mdl");
+	sTable[780] = str_create("t_bomber.mdl");
+	sTable[781] = str_create("t_bomber1.mdl");
+	sTable[782] = str_create("t_car1.mdl");
+	sTable[783] = str_create("t_car2.mdl");
+	sTable[784] = str_create("t_car3.mdl");
+	sTable[785] = str_create("t_car4.mdl");
+	sTable[786] = str_create("t_car_mr2.mdl");
+	sTable[787] = str_create("t_f105_thug.mdl");
+	sTable[788] = str_create("t_f16.mdl");
+	sTable[789] = str_create("t_hover1.mdl");
+	sTable[790] = str_create("t_lancaster.mdl");
+	sTable[791] = str_create("t_mcdf4_phantom.mdl");
+	sTable[792] = str_create("t_shopping.caddy.mdl");
+	sTable[793] = str_create("t_tank.mdl");
+	sTable[794] = str_create("t_tank1.mdl");
+	sTable[795] = str_create("t_trainpart.mdl");
+	sTable[796] = str_create("t_Viper.mdl");
+	sTable[797] = str_create("t_wagon.mdl");
 
 	// Unallocated space
 	int i;
-	for(i = 788; i < 830;i++) sTable[i] = str_create("#2");
+	for(i = 798; i < 830;i++) sTable[i] = str_create("#2");
 	
 	// Done!
 	////////////////////////////////////////////////////////////
@@ -460,7 +462,12 @@ void init_database() {
 
 ENTITY *obj_create() { // This inherits a lot from place_me
 	
-	if(str_len(sTable_ptr[obj_type]) == 0) return;
+	if(str_len(sTable_ptr[obj_type]) == 0) {
+	   
+	   printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
+	   return;
+	   
+	}
 	
 	ENTITY *tmp = ent_create(sTable_ptr[obj_type],temp_pos.x,obj_manip_setup);
 	
@@ -591,6 +598,7 @@ void sharedGUI_updategui(PANEL *wg) {
 	}
 	
 	if(wg == panMat_Sub1) { 
+	
 		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
 		
 		var i = 2;
@@ -734,7 +742,12 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 	while(p == NULL || s == NULL) wait(1);
 	
 	// peform a S comparison
-	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) return;
+	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) {
+	   
+	   printf("The size of the image that needs to be centered is too large.\nTry resizing it.");
+	   return;
+	   
+	}
 	
 	if(bmap_width(s.bmap) > bmap_width(p.bmap))
 	p.pos_x = (bmap_width(s.bmap) - bmap_width(p.bmap))/2;
@@ -1367,7 +1380,7 @@ void pass_mat_to_object() {
 			break;
 			
 			default:
-			error("mat_type exceeded/wrong.");
+			printf("mat_type exceeded/wrong.");
 			break; 
 			
 		}
@@ -1522,7 +1535,13 @@ void pass_file_to_material(MATERIAL *m, STRING *file) {
 	while(m == NULL) wait(1); // wait for m to be completely created
 	
 	var vpass = file_open_read(file);
-	if(vpass == 0) return;
+	if(vpass == 0) {
+	   
+	   printf("Failed to open %s for passing parameters.",file);
+	   return;
+	   
+	}
+	
 	// Follow this form :
 	/*
 	
@@ -1584,7 +1603,12 @@ void pass_material_to_file(STRING *file, MATERIAL *m) {
 	while(m == NULL) wait(1);
 	
 	var vpass = file_open_write(file);
-	if(vpass == 0) return;
+	if(vpass == 0) {
+	   
+	   printf("Failed to open %s for writing data.",file);
+	   return;
+	   
+	}
 	
 	// Copy values from the sliders
 	m.ambient_red = v_ambient_r;
@@ -1964,7 +1988,7 @@ void kernel_startup() {
 				*/
 				
 				// Operation #1
-				error(" I don't want to die =(( ");
+				printf(" I don't want to die =(( ");
 				
 				sys_exit(NULL);
 				
