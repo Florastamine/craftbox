@@ -1,21 +1,40 @@
 ///////////////////////////////////////////////////////////
-// This struct is applied only to level entities.
+// This struct is applied to a wide range of objects.
+// It can be used to copy normal objects, lights, or particle
+// effects
 ////////////////////////////////////////////////////////////
 typedef struct obj_form {
-   
+	
+	////////////////////////////////////////////////////////////
+	// General information that is copied regardless
+	// which type the object is.
+	////////////////////////////////////////////////////////////
 	int oid; // Object ID
+	int of_objtype; // The type of object that has been copied.
 	
 	var _x, _y, _z, // Do not store these vars if this is passed to the clipboard.
 	_scale_x, _scale_y, _scale_z,
 	_pan, _tilt, _roll,
 	_alpha, _ambient;
 	
+	////////////////////////////////////////////////////////////
+	// Unique properties each type of object has.
+	////////////////////////////////////////////////////////////
+	
+	////////////// Normal objects (chair, mouse, salon, book...)
 	BOOL pPhysics, pStatic, _flags[8];
 	
 	// Some vars define its physical properties
 	var mass, friction;
 	
 	MATERIAL *m;
+	
+	////////////// Particle objects
+	
+	////////////// Light objects
+	var _red, _green, _blue, _range;
+	
+	////////////// Sound objects
 	
 	BOOL dp;
 	
@@ -24,7 +43,7 @@ typedef struct obj_form {
 obj_form clipboard;
 
 //////////////////////////////////////////////////////////////
-#define total_ents 1200
+#define obj_type skill1
 
 #define FADE_IN 1
 #define FADE_OUT 0
@@ -38,6 +57,11 @@ obj_form clipboard;
 #define move 1
 #define rotate 2
 #define scale 3
+
+#define mdl 1
+#define part 2
+#define light 3
+#define snd 4
 
 #define select_mat_null 0
 #define select_mat_lava 1
@@ -53,13 +77,16 @@ obj_form clipboard;
 #define select_custom_mat1 11
 #define select_custom_mat2 12
 #define select_custom_mat3 13
+
+int files_found, list_start;
+
 #define select_custom_mat4 14
 
 //////////////////////////////
 // Strings and texts will be declared here.
 //////////////////////////////
-STRING *sTable[total_ents];
-STRING **sTable_ptr;
+STRING *mdlobjs_table[1000];
+STRING **mdlobjs_table_ptr;
 
 STRING *current_folder = "a",
 *file_selected = "a";
@@ -70,10 +97,6 @@ TEXT *files_list;
 // Variables will be declared here.
 ////////////////////////////////////////////////////////////
 int mat_type, manip_type;
-var obj_type;
-
-int files_found, list_start;
-
 BOOL is_camera;
 
 var files_already;
@@ -94,6 +117,9 @@ button_CmpWorld_y,
 button_SetWorld_y;
 
 var ctrl; // This var controls panObj_Main.
+
+var num_mdlobjs, num_partobjs, num_lightobjs, num_sndobjs,
+_obj_type, _obj_type_old;
 
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
@@ -124,6 +150,8 @@ PANEL *buttonlst,
 ////////////////////////////////////////////////////////////
 ENTITY *select, *fpsf_marker;
 
+ENTITY *my_target_node;
+
 ////////////////////////////////////////////////////////////
 // Vectors will be declared here.
 ////////////////////////////////////////////////////////////
@@ -147,6 +175,11 @@ MATERIAL *mat_lava, *mat_smaragd, *mat_marble;
 
 // Custom materials
 MATERIAL *mat_custom[4];
+
+////////////////////////////////////////////////////////////
+// Sounds will be declared here.
+////////////////////////////////////////////////////////////
+SOUND *sndobjs[50];
 
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
@@ -370,7 +403,7 @@ BMAP *button_randompan_over = "button_randompan_over.bmp";
 BMAP *panObj_anms = "panObj_anms.bmp";
 BMAP *panObj_arch = "panObj_arch.bmp";
 BMAP *panObj_chars = "panObj_chars.bmp";
-BMAP *panObj_etc = "panObj_etc.jpg";
+BMAP *panObj_etc = "panObj_etc.bmp";
 BMAP *panObj_food = "panObj_food.bmp";
 BMAP *panObj_machs = "panObj_machs.bmp";
 BMAP *panObj_plants = "panObj_plants.bmp";
@@ -383,7 +416,9 @@ BMAP *panObj_blands = "panObj_blands.bmp";
 void load_kernel(STRING *);
 void loop_kernel();
 
-void resize(PANEL *, char);
+void pan_resize(PANEL *, char);
+void pan_rotate(PANEL *,var,var,BOOL);
+
 /**/void sharedGUI_playintro(STRING *, var);
 /**/void sharedGUI_blackscreen(int, int);
 /**/void sharedGUI_loadlogo(BMAP *);
@@ -392,11 +427,11 @@ void resize(PANEL *, char);
 /**/void sharedGUI_dragpanel(PANEL *);
 /**/void sharedGUI_centerfrom(PANEL *, PANEL *);
 
-void sharedGUI_home();
-void sharedGUI_prop();
-void sharedGUI_mat();
-void sharedGUI_editmat();
-void sharedGUI_phy();
+void home();
+void prop();
+void mat();
+void editmat();
+void phy();
 void objadd();
 
 void controlcam();
@@ -426,21 +461,9 @@ void pass_material_to_file(STRING *, MATERIAL *);
 void pass_object_to_clipboard(ENTITY *, obj_form *);
 void pass_clipboard_to_object(ENTITY *);
 
+void _mat_select(var); // MATERIAL *mat_select
+void _mat_select_custom(var);
 void mat_select_null();
-void mat_select_lava();
-void mat_select_marble();
-void mat_select_smaragd();
-void mat_select_4();
-void mat_select_5();
-void mat_select_6();
-void mat_select_7();
-void mat_select_8();
-void mat_select_9();
-void mat_select_10();
-void mat_select_11();
-void mat_select_12();
-void mat_select_13();
-void mat_select_14();
 void mat_save();
 
 void obj_cut();
@@ -454,6 +477,7 @@ void switch_to_move();
 void switch_to_rotate();
 void switch_to_scale();
 void panObj_Subbar_switcher(var);
+void update_size(PANEL *, BMAP *);
 
 ENTITY *obj_create();
 void init_database();
@@ -463,3 +487,9 @@ void hideGUI();
 void showGUI();
 
 void showr(FONT *, STRING *);
+
+void config_write_video(STRING *);
+void config_read_video(STRING *);
+
+void a_patroller();
+void a_patroller_node();
