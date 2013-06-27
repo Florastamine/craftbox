@@ -45,6 +45,37 @@ void timebar_decrease(var _TimeRemain,var _DecrTime, var _GameLoaderPOSX, var _G
 }
 */
 
+void generate_sound() {
+	
+	ent_playloop(my,sndobjs[num_sndobjs],100);
+	
+}
+
+void generate_light() {
+	
+	set(my, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
+	
+	/* Some adjustments for our little jabber.png */
+	my.scale_x = my.scale_y = my.scale_z /= 2;
+	
+	my.z += 25;
+	my.alpha = DEFAULT_ALPHA+25;
+	my.ambient = 100;
+	
+	my.lightrange = random(500);
+	vec_set(my.red,vector(random(255),random(255),random(255)));
+	
+	my.z += 75;
+	
+	// Like men and women, lights should equal to normal entities.
+	// They have the rights to be manipulated by the mouse.
+	// oooh, wait, was the mouse belonged to the government??
+	// ...
+	// oh no.
+	my.emask |= ENABLE_CLICK;
+	// my.event = 	
+}
+
 ////////////////////////////////////////////////////////////
 // Panel manipulation functions.
 // Some I wrote by myself, some I borrowed from the others.
@@ -101,6 +132,21 @@ void pan_resize(PANEL *p, char c) {
 ////////////////////////////////////////////////////////////
 // This function will load the database.
 ////////////////////////////////////////////////////////////
+void init_database_snd() {
+   
+   int i;
+   
+	////////////////////////////////////////////////////////////
+	// Stupid sound database.
+	// Use the same stupid database structure as init_database().
+	////////////////////////////////////////////////////////////
+	sndobjs[0] = snd_create("hit.wav");
+	
+	// Unallocated space
+	for(i = 1;i < 50;i++) sndobjs[i] = snd_create("beep.wav");
+	
+}
+
 void init_database() {
 	
 	int i;
@@ -615,7 +661,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case light:
 		
-		tmp = ent_create("marker.mdl",temp_pos.x,NULL);
+		tmp = ent_create("jabber.png",temp_pos.x,generate_light);
 		
 		tmp.obj_type = light; // Du sao thi light cung ngan hon _obj_type
 		tmp.skill4 = num_lightobjs;
@@ -628,10 +674,18 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case part :
 		
-		tmp = ent_create("part_avatar.mdl",temp_pos.x,NULL);
+		tmp = ent_create("desktop_effect.png",temp_pos.x,Base_Effect_emitter);
+		
+		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 		
 		tmp.obj_type = part;
 		tmp.skill4 = num_partobjs;
+		
+		tmp.scale_x = tmp.scale_y = tmp.scale_z /= 2;
+		
+		tmp.z += upper;
+		tmp.alpha = DEFAULT_ALPHA+25;
+		tmp.ambient = 100;
 		
 		return tmp;
 		
@@ -641,7 +695,17 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case snd:
 		
-		tmp = ent_create("part_avatar.mdl",temp_pos.x,NULL);
+		tmp = ent_create("sound_32.png",temp_pos.x,generate_sound);
+		
+		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
+		
+		// Am thanh nho be cu de cho no an :|
+		//		tmp.scale_x = tmp.scale_y = tmp.scale_z /= 2;
+		
+		tmp.z += upper;
+		tmp.alpha = DEFAULT_ALPHA+25;
+		tmp.ambient = 100;
+		
 		tmp.obj_type = snd;
 		tmp.skill4 = num_sndobjs;
 		
@@ -651,6 +715,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		
 		default:
+		error("shit");
 		sys_exit(NULL);
 		break;
 		
@@ -2043,7 +2108,7 @@ void obj_paste() {
 	//	_obj_type_old = _obj_type;
 	
 	if(clipboard.dp) {
-	   
+		
 		pass_clipboard_to_object(obj_create_from_clipboard());
 		
 	}
@@ -2226,7 +2291,6 @@ void obj_manip_interface()
 {
 	while(mouse_left && is_camera && (manip_type > 0 && manip_type < 4))
 	{
-		
 		if(manip_type == scale) 
 		{
 			hideGUI();
@@ -2275,6 +2339,7 @@ void obj_manip_interface()
 			//			my.tilt = -mouse_pos.y;
 			
 		}
+		
 
 		wait (1);
 	}
@@ -2643,18 +2708,20 @@ void load_kernel(STRING *lvl_str) {
 	
 	video_window(NULL,NULL,0,"editor 0.8 Milestone 4");
 	
-	_obj_type = 1;
+	_obj_type = 3;
 	
 	mouse_range = 500000;
 	mouse_map = mouse;
+	random_seed(0); // e.g. random light generators.
 	
 	// So that we can get access to the database.
 	mdlobjs_table_ptr = mdlobjs_table;
 	
 	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
 	
-	// Initialize the object database and load them.
+	// Initialize the databases and load them.
 	init_database();
+	init_database_snd(); // Sound database doesn't require a pointer to access.
 	
 	// Intialize and read custom materials' properties.
 	int i;

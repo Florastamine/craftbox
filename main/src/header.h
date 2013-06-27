@@ -121,6 +121,8 @@ var ctrl; // This var controls panObj_Main.
 var num_mdlobjs, num_partobjs, num_lightobjs, num_sndobjs,
 _obj_type, _obj_type_old;
 
+var upper=125;
+
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
 ////////////////////////////////////////////////////////////
@@ -480,6 +482,8 @@ void panObj_Subbar_switcher(var);
 void update_size(PANEL *, BMAP *);
 
 ENTITY *obj_create();
+ENTITY *obj_create_from_clipboard();
+
 void init_database();
 
 void loadGUI();
@@ -493,3 +497,6 @@ void config_read_video(STRING *);
 
 void a_patroller();
 void a_patroller_node();
+
+void generate_light();
+void generate_sound();
