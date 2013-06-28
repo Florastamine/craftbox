@@ -1,80 +1,99 @@
 #include <acknex.h>
 #include <default.c>
 
-BMAP *mouse = "../main/shared/sharedData/arrow.pcx";
-void sharedGUI_dragpanel(PANEL *);
+BMAP *mouse = "../main/2d/gui/arrow.pcx";
 
 var test;
 
-PANEL *pmain = {
+PANEL *background = {
 	
 	layer = 1;
 	
-	bmap = "panAddObject.bmp";
-	pos_x = 15;
-	pos_y = 15;
-	
+	bmap = "rain.jpg";
 	flags = SHOW;
 	
-	//	on_click = sharedGUI_dragpanel;
+}
+
+TEXT *start = {
+	
+	layer = 2;
+	string("Start =))");
+	pos_x = 25;
+	pos_y = 25;
+	font = "Arial#25b";
+	flags = SHOW;
+	
+}
+
+PANEL *big_in = {
+	
+	layer = 2;
+	bmap = "panObj_etc.bmp";
+	
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	//button(0,0,"panObj_button.bmp","panObj_button.bmp","panObj_button.bmp",NULL,NULL,NULL);
+	
+	flags = OVERLAY | SHOW;
 	
 }
 
 PANEL *slider = {
 	
 	layer = 2;
-	bmap = "slider.bmp";
-	
-	vslider(0,0,503,"sliderk.bmp",0,503,test);
-	
-	flags=SHOW;
-	
-}
-
-PANEL *blackup = {
-   
-   layer = 3;
-   bmap = "blackup.bmp";
-   flags=SHOW | TRANSLUCENT;
-      
-}
-
-PANEL *blackdown = {
-   
-   layer = 3;;
-   bmap = "blackup.bmp";
-   flags=SHOW;
-   
-}
-
-PANEL *psub = {
-	
-	layer = 2;
-	
-	bmap = "panAddObject_in.bmp";
-	pos_x = 0;
-	pos_y = 0;
+	bmap = "big_slider.bmp";
+	hslider(0,0,800,"slider.tga",0,100,test);
+	digits(0,50,99,"Arial#25b",1,test);
 	
 	flags = OVERLAY | SHOW;
 	
-}
-
-void sharedGUI_dragpanel(PANEL *p)
-{
-	var click_offset[2];
-	
-	click_offset[0]=p.pos_x - mouse_pos.x;
-	click_offset[1]=p.pos_y - mouse_pos.y;
-	
-	while(mouse_left)
-	{
-		proc_mode = PROC_EARLY;
-		
-		p.pos_x = mouse_pos.x+click_offset[0];
-		p.pos_y = mouse_pos.y+click_offset[1];
-		
-		wait(1);
-	}
 }
 
 void main(void) {
@@ -85,24 +104,45 @@ void main(void) {
 	
 	level_load("");
 	
+	big_in.pos_x = 0;
+	big_in.pos_y = (screen_size.y - bmap_height(big_in.bmap))/2;
+	
+	slider.pos_x = 0;
+	slider.pos_y = bmap_height(big_in.bmap) + 200;
+	
+	background.pos_x=0;
+	background.pos_y=0;
+	background.scale_x = big_in.scale_x;
+	background.scale_y = screen_size.y/bmap_height(background.bmap);
+	
+	int i;
+	for(i = 1;i <= 50;i++) {
+		
+		pan_setpos(big_in,3,i,vector(10*i + 56*(i-1),10,0));
+		
+	}
+	
 	while(1) {
 		
 		vec_set(mouse_pos,mouse_cursor);
 		
-		psub.pos_y = test;
+		big_in.pos_x = (test * (-bmap_width(big_in.bmap) + screen_size.x))/100;
+		background.pos_x = -test*2;
 		
-		psub.pos_x = pmain.pos_x + 10;
-		//		psub.pos_y = pmain.pos_y + 10;		
-		slider.pos_x = bmap_width(pmain.bmap) + 30;
-		slider.pos_y = pmain.pos_y;
+		if(key_cul) test--;
+		if(key_cur) test++;
 		
-		blackup.pos_x = pmain.pos_x;
-		blackup.pos_y = pmain.pos_y;
+		if(test<0) test=0; // prevent unexpected situations
+		if(test>100) test=100;
 		
-		blackdown.pos_x = pmain.pos_y;
-		blackdown.pos_y = bmap_height(pmain.bmap);
+		if(big_in.pos_x > 0) big_in.pos_x = 0;
+		if(big_in.pos_x < -bmap_width(big_in.bmap) + screen_size.x) {
+			
+			big_in.pos_x = -bmap_width(big_in.bmap) + screen_size.x;
+			
+		}
 		
 		wait(1);
 		
-	} 
+	}
 }

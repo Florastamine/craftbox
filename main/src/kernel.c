@@ -1,6 +1,16 @@
-/*
-void timebar_decrease(var _TimeRemain,var _DecrTime, var _GameLoaderPOSX, var _GameLoaderPOSY)
+var percentage;
+
+PANEL *perc = {
+	digits(0,0,99,"Arial#25b",1,percentage);
+	layer=5555;
+	flags=SHOW;
+	pos_x=10;
+	pos_y=10;
+}
+
+void timebar(var _TimeRemain,var _DecrTime)
 {
+	/*
 	_GameLoaderDigitCover.pos_x = (screen_size.x - bmap_width(_GameLoaderDigitCover.bmap)) - 45;
 	_GameLoaderDigitCover.pos_y = 15;
 	
@@ -29,23 +39,35 @@ void timebar_decrease(var _TimeRemain,var _DecrTime, var _GameLoaderPOSX, var _G
 	_GameLoader.scale_x = maxv(.01,_TimeRemain / 100);
 	_GameLoaderFrame.scale_x = _GameLoader.scale_x;
 	
-	_GameLoader.scale_x = .01;
-	__TimeRemain = _TimeRemain;
+	_GameLoader.scale_x = .01;*/
+	var __TimeRemain = _TimeRemain;
 	
-	while(abs(_TimeRemain) > 0 && Perc > 0) 
+	while(abs(_TimeRemain) > 0 && percentage > 0) 
 	{
 		_TimeRemain -= _DecrTime;
-		Perc = (_TimeRemain / __TimeRemain) * 100;
+		percentage = (_TimeRemain / __TimeRemain) * 100;
 
-		_GameLoader.scale_x = maxv(.01,_TimeRemain / 100);
+		//		_GameLoader.scale_x = maxv(.01,_TimeRemain / 100);
 		wait(1);
 	}
 	
-	sys_exit(NULL);
+	//	sys_exit(NULL);
 }
-*/
+
+void load_startup() {
+	
+	timebar(200,5);
+	
+}
 
 void generate_sound() {
+	
+	if(!sndobjs[num_sndobjs]) {
+		
+		printf("Wrong sound ID.\nMaybe you're trying to access unallocated space in the sound database.");
+		return;
+		
+	}
 	
 	ent_playloop(my,sndobjs[num_sndobjs],100);
 	
@@ -67,6 +89,8 @@ void generate_light() {
 	
 	my.z += 75;
 	
+	if(my.flick_time == 0) my.flick_time = .5;
+	
 	// Like men and women, lights should equal to normal entities.
 	// They have the rights to be manipulated by the mouse.
 	// oooh, wait, was the mouse belonged to the government??
@@ -74,6 +98,32 @@ void generate_light() {
 	// oh no.
 	my.emask |= ENABLE_CLICK;
 	// my.event = 	
+	
+	while(my) { // This loop will active as long as its entity is alive.
+		
+		if(my.light_mode == flick) { // Flickering lights (Flashing lights)
+			
+			my.lightrange = 0;
+			wait(-my.flick_time);
+			my.lightrange = olrange;
+			wait(-my.flick_time);
+			
+		}
+		
+		if(my.light_mode == disco) { // Lights that change its r/g/b values continuously.
+			
+			random_seed(0);
+			
+			my.red = random(255);
+			my.green = random(255);
+			my.red = random(255);
+			
+			wait(-.1);
+			
+		}
+		
+		wait(1);
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -133,9 +183,9 @@ void pan_resize(PANEL *p, char c) {
 // This function will load the database.
 ////////////////////////////////////////////////////////////
 void init_database_snd() {
-   
-   int i;
-   
+	
+	int i;
+	
 	////////////////////////////////////////////////////////////
 	// Stupid sound database.
 	// Use the same stupid database structure as init_database().
@@ -629,7 +679,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		
 		if(str_len(mdlobjs_table_ptr[num_mdlobjs]) == 0) {
 			
-			printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
+			printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the object database.");
 			return;
 			
 		}
@@ -715,124 +765,9 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		
 		default:
-		error("shit");
-		sys_exit(NULL);
-		break;
 		
+		printf("_obj_type outside range.");
 		
-	}
-
-	/*
-	
-	if(str_len(mdlobjs_table_ptr[num_mdlobjs]) == 0) {
-		
-		printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
-		return;
-		
-	}
-	
-	ENTITY *tmp = ent_create(mdlobjs_table_ptr[num_mdlobjs],temp_pos.x,obj_manip_setup);
-	
-	while(tmp == NULL) wait(1); // wait for tmp to be completely created.
-	
-	set(tmp, POLYGON);
-	reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
-	
-	tmp.alpha = 0;
-	tmp.ambient = 50;
-	tmp.pan = random(360); // Give it a random pan value.
-	
-	tmp.material = mat_model;
-	
-	tmp.skill1 = num_mdlobjs;
-	tmp.skill2 = 1; // This is a static object
-	tmp.skill3 = 0; // And physics aren't enabled by default.
-	
-	return tmp;
-	
-	*/
-}
-
-ENTITY *obj_create_from_clipboard() { // This inherits a lot from place_me
-
-	ENTITY *tmp;
-
-	switch(clipboard.of_objtype) {
-		
-		////////////////////////////////////////////////////////////
-		case mdl:
-		
-		if(str_len(mdlobjs_table_ptr[num_mdlobjs]) == 0) {
-			
-			printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the database.");
-			return;
-			
-		}
-		
-		tmp = ent_create(mdlobjs_table_ptr[num_mdlobjs],temp_pos.x,obj_manip_setup);
-		
-		while(tmp == NULL) wait(1); // wait for tmp to be completely created.
-		
-		set(tmp, POLYGON);
-		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
-		
-		tmp.alpha = 0;
-		tmp.ambient = 50;
-		tmp.pan = random(360); // Give it a random pan value.
-		
-		tmp.material = mat_model;
-		
-		tmp.obj_type = mdl;
-		tmp.skill4 = num_mdlobjs;
-		
-		tmp.skill2 = 1; // This is a static object
-		tmp.skill3 = 0; // And physics aren't enabled by default.
-		
-		return tmp;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case light:
-		
-		tmp = ent_create("marker.mdl",temp_pos.x,NULL);
-		
-		tmp.obj_type = light; // Du sao thi light cung ngan hon _obj_type
-		tmp.skill4 = num_lightobjs;
-		
-		return tmp;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case part :
-		
-		tmp = ent_create("part_avatar.mdl",temp_pos.x,NULL);
-		
-		tmp.obj_type = part;
-		tmp.skill4 = num_partobjs;
-		
-		return tmp;
-		
-		break;	
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case snd:
-		
-		tmp = ent_create("part_avatar.mdl",temp_pos.x,NULL);
-		tmp.obj_type = snd;
-		tmp.skill4 = num_sndobjs;
-		
-		return tmp;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		default:
-		sys_exit(NULL);
 		break;
 		
 		
@@ -878,7 +813,7 @@ void scan_folder(STRING *dir, STRING *ext)
 	wait(1);
 }
 
-void sharedGUI_updategui(PANEL *wg) {
+void updategui(PANEL *wg) {
 	
 	if(wg == panHome) {
 		
@@ -989,6 +924,16 @@ void sharedGUI_updategui(PANEL *wg) {
 			
 		}
 	}
+	
+	if(wg == panLight) {
+		
+		pan_setpos(panLight,3,1,vector(bmap_width(panLight.bmap) - BORDER * 2,BORDER,0));
+		
+		int i;
+		for(i = 1; i < 5;i++) pan_setpos(panLight,4,i,vector(BORDER * 7,BORDER * 2 + 26 * (i-1),0)); // 21 + 5 (bonus size)
+		for(i = 2;i < 4;i++) pan_setpos(panLight,3,i,vector(BORDER * 2,BORDER * 7 + 25 * i,0));
+		
+	}
 }
 
 /* 
@@ -998,7 +943,7 @@ only one PANEL * parameter isn't enough (and it won't work too) so
 this simple ugly hack should do the trick.
 
 */
-void sharedGUI_closewindow(var id, PANEL *p) {
+void closewindow(var id, PANEL *p) {
 	id = 1;
 	
 	if(p == panHome) {
@@ -1060,16 +1005,22 @@ void sharedGUI_closewindow(var id, PANEL *p) {
 		showGUI();
 		
 	}
+	
+	if(p == panLight) {
+		
+		reset(panLight,SHOW);
+		
+	}
 }
 
-void sharedGUI_dragpanel(PANEL *p)
+void dragpanel(PANEL *p)
 {
 	var click_offset[2];
 	
 	click_offset[0]=p.pos_x - mouse_pos.x;
 	click_offset[1]=p.pos_y - mouse_pos.y;
 	
-	sharedGUI_panelselect(p);
+	panelselect(p);
 	
 	while(mouse_left)
 	{
@@ -1079,22 +1030,22 @@ void sharedGUI_dragpanel(PANEL *p)
 		p.pos_y = mouse_pos.y+click_offset[1];
 		
 		//hack hack hack!!!!
-		if(p == panHome) sharedGUI_updategui(panHome);
-		if(p == panProp) sharedGUI_updategui(panProp);
-		if(p == panPhy) sharedGUI_updategui(panPhy);
-		if(p == panMat) sharedGUI_updategui(panMat);
+		if(p == panHome) updategui(panHome);
+		if(p == panProp) updategui(panProp);
+		if(p == panPhy) updategui(panPhy);
+		if(p == panMat) updategui(panMat);
 		
 		wait(1);
 	}
 	
 	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
-	if(p == panHome) sharedGUI_updategui(panHome);
-	if(p == panProp) sharedGUI_updategui(panProp);
-	if(p == panPhy) sharedGUI_updategui(panPhy);
-	if(p == panMat) sharedGUI_updategui(panMat);
+	if(p == panHome) updategui(panHome);
+	if(p == panProp) updategui(panProp);
+	if(p == panPhy) updategui(panPhy);
+	if(p == panMat) updategui(panMat);
 }
 
-void sharedGUI_centerpanel(PANEL *p) {
+void centerpanel(PANEL *p) {
 	while(p == NULL) wait(1);
 	
 	p.pos_x = (screen_size.x - bmap_width(p.bmap)) / 2; 
@@ -1266,30 +1217,46 @@ void sharedGUI_mouse(BOOL mode) {
 
 void home() {
 	
-	sharedGUI_centerpanel(panHome);
-	sharedGUI_updategui(panHome);
+	centerpanel(panHome);
+	updategui(panHome);
 	
 	set(panHome,SHOW);
 }
 
-void prop() {
+void prop(BOOL m) {
 	
-	if(select) {
+	if(m) {
 		
-		panProp.pos_x = BORDER;
-		panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
+		if(select) {
+			
+			if(select.obj_type != light &&
+			select.obj_type != snd &&
+			select.obj_type != part) {
+				
+				panProp.pos_x = BORDER;
+				panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
+				
+				updategui(panProp);
+				
+				set(panProp,SHOW);
+				
+			}
+			
+		}
 		
-		sharedGUI_updategui(panProp);
+	}
+	
+	else { // Object is deactivated/other object has been selected.
 		
-		set(panProp,SHOW);
+		reset(panProp,SHOW);		
 		
 	}
 }
 
 void mat() {
 	
-	sharedGUI_centerpanel(panMat);
-	sharedGUI_updategui(panMat);
+	centerpanel(panMat);
+	updategui(panMat);
 	
 	set(panMat,SHOW);
 }
@@ -1298,7 +1265,7 @@ void editmat() {
 	
 	// Precache panMat_Sub1
 	sharedGUI_centerfrom(panMat_Sub1,panMat);
-	sharedGUI_updategui(panMat_Sub1);
+	updategui(panMat_Sub1);
 	
 	// Material editor is available only to custom materials
 	switch(mat_type) {
@@ -1356,13 +1323,67 @@ void editmat() {
 
 void phy() {
 	
-	sharedGUI_centerpanel(panPhy);
-	sharedGUI_updategui(panPhy);
+	centerpanel(panPhy);
+	updategui(panPhy);
 	
 	set(panPhy,SHOW);
 }
 
-void sharedGUI_panelselect(PANEL *p)
+void _light(BOOL m) {
+	
+	if(m) {
+		
+		panLight.pos_x = xy_panLight.x;
+		panLight.pos_y = xy_panLight.y;
+		
+		//		centerpanel(panLight);
+		updategui(panLight);
+		
+		set(panLight,SHOW);
+		
+		// Surely, select has been selected already.
+		
+		v_lred = select.red;
+		v_lgreen = select.green;
+		v_lblue = select.blue;
+		v_lrange = select.lightrange;
+		
+		// 'cause no#1 is the close button so we start from 2.
+		if(select.light_mode == flick) button_state(panLight,2,0);
+		if(select.light_mode == disco) button_state(panLight,3,0);
+		
+	}
+	
+	else { // !m
+		
+		// Backup
+		xy_panLight.x = panLight.pos_x;
+		xy_panLight.y = panLight.pos_y;
+		
+		// For passing to loop_kernel without messing up the code 
+		// and/or write a new one.
+		if(!select) return; 
+		
+		// Apply new values to the selected object.
+		select.red = v_lred;
+		select.green = v_lgreen;
+		select.blue = v_lblue;
+		
+		// I grouped.
+		// Assignment will happen this way: A <-- B <-- C
+		// So we obtain C first, in this case is v_lrange
+		olrange = select.lightrange = v_lrange;
+		
+		if(button_state(panLight,2,-1)) select.skill5 = disco;
+		if(button_state(panLight,3,-1)) select.skill5 = flick;
+		
+		reset(panLight,SHOW);
+		
+	}
+	
+}
+
+void panelselect(PANEL *p)
 {
 	if(last_pan) {
 		last_pan.alpha = DEFAULT_ALPHA;
@@ -1824,6 +1845,8 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		of.pStatic = o.skill2;
 		of.pPhysics = o.skill3;
 		
+		// Flag indicates that the copy progress has done.
+		// Also, it can be used to determine if the clipboard has any piece of data or not.
 		of.dp = 1;
 		
 		break;
@@ -1870,95 +1893,9 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		
 	}
 	
-	/*
-	of._scale_x = o.scale_x;
-	of._scale_y = o.scale_y;
-	of._scale_z = o.scale_z;
-	
-	of._pan = o.pan;
-	of._tilt = o.tilt;
-	of._roll = o.roll;
-	
-	of._alpha = o.alpha;
-	of._ambient = o.ambient;
-	
-	if(is(o,BRIGHT)) of._flags[0] = 1;
-	else of._flags[0] = 0;
-	
-	if(is(o,INVISIBLE)) of._flags[1] = 1;
-	else of._flags[1] = 0;
-	
-	if(is(o,NOFOG)) of._flags[2] = 1;
-	else of._flags[2] = 0;
-	
-	if(is(o,OVERLAY)) of._flags[3] = 1;
-	else of._flags[3] = 0;
-	
-	if(is(o,PASSABLE)) of._flags[4] = 1;
-	else of._flags[4] = 0;
-	
-	if(is(o,POLYGON)) of._flags[5] = 1;
-	else of._flags[5] = 0;
-	
-	if(is(o,SHADOW)) of._flags[6] = 1;
-	else of._flags[6] = 0;
-	
-	if(is(o,TRANSLUCENT)) of._flags[7] = 1;
-	else of._flags[7] = 0;
-	
-	of.oid = o.skill1;
-	of.pStatic = o.skill2;
-	of.pPhysics = o.skill3;
-	
-	of.dp = 1;
-	*/
-	
 }
 
 void pass_clipboard_to_object(ENTITY *e) {
-	
-	/*
-	e.material = clipboard.m;
-	
-	e.skill1 = clipboard.oid;
-	e.skill2 = clipboard.pStatic;
-	e.skill3 = clipboard.pPhysics;
-	
-	e.ambient = clipboard._ambient;
-	e.alpha = clipboard._alpha;
-	
-	e.scale_x = clipboard._scale_x;
-	e.scale_y = clipboard._scale_y;
-	e.scale_z = clipboard._scale_z;
-	
-	e.pan = clipboard._pan;
-	e.tilt = clipboard._tilt;
-	e.roll = clipboard._roll;
-	
-	if(clipboard._flags[0]) set(e,BRIGHT);
-	else reset(e,BRIGHT);
-	
-	if(clipboard._flags[1]) set(e,INVISIBLE);
-	else reset(e,INVISIBLE);
-	
-	if(clipboard._flags[2]) set(e,NOFOG);
-	else reset(e,NOFOG);
-	
-	if(clipboard._flags[3]) set(e,OVERLAY);
-	else reset(e,OVERLAY);
-	
-	if(clipboard._flags[4]) set(e,PASSABLE);
-	else reset(e,PASSABLE);
-	
-	if(clipboard._flags[5]) set(e,POLYGON);
-	else reset(e,POLYGON);
-	
-	if(clipboard._flags[6]) set(e,SHADOW);
-	else reset(e,SHADOW);
-	
-	if(clipboard._flags[7]) set(e,TRANSLUCENT);
-	else reset(e,TRANSLUCENT);
-	*/
 	
 	////////////////////////////////////////////////////////////
 	// As usual, pass general data first.
@@ -2034,9 +1971,9 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		case part:
 		
-		e.material = mat_model;
-		
 		num_partobjs = clipboard.oid;
+		
+		e.material = mat_model;
 		
 		break;
 		////////////////////////////////////////////////////////////
@@ -2105,13 +2042,17 @@ void obj_copy() {
 
 void obj_paste() {
 	
-	//	_obj_type_old = _obj_type;
+	int _obj_type_old = _obj_type;
 	
 	if(clipboard.dp) {
 		
-		pass_clipboard_to_object(obj_create_from_clipboard());
+		_obj_type = clipboard.of_objtype;
+		
+		pass_clipboard_to_object(obj_create());
 		
 	}
+	
+	_obj_type = _obj_type_old; // Give me the original int.
 	
 }
 
@@ -2706,7 +2647,7 @@ void load_kernel(STRING *lvl_str) {
 	// Read and setup video settings prior to executing other functions.
 	config_read_video("./src/cfg/video_config.cfg");
 	
-	video_window(NULL,NULL,0,"editor 0.8 Milestone 4");
+	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
 	
 	_obj_type = 3;
 	
@@ -2784,12 +2725,16 @@ void load_kernel(STRING *lvl_str) {
 				
 			}
 			
+			/*
 			if(key_p) {
 				
 				while(key_p) wait(1);
-				prop();
+				
+				if(select) prop(1);
+				else prop(0);
 				
 			}
+			*/
 			
 			if(key_m) {
 				
@@ -2851,9 +2796,6 @@ void loop_kernel() {
 	while(1) 
 	{
 		
-		a=clipboard.oid;
-		b=clipboard.of_objtype;
-		
 		if(key_t) 
 		{
 			while(key_t) wait(1);
@@ -2892,6 +2834,10 @@ void loop_kernel() {
 				{
 					if(select)
 					{
+					   
+						if(select.obj_type == light) _light(0);
+						if(select.obj_type == mdl) prop(0);
+						
 						select.material = mat_temp;
 						select = NULL;
 					}
@@ -2900,6 +2846,12 @@ void loop_kernel() {
 					
 					mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
 					select.material = mat_select;
+					
+					if(select.obj_type == light) _light(1);
+					else _light(0);
+					
+					if(select.obj_type == mdl) prop(1);
+					else prop(0);
 					
 					pass_to_gui(select);
 					
@@ -2912,14 +2864,16 @@ void loop_kernel() {
 						if(mat_temp) select.material = mat_temp;
 						else select.material = NULL;
 						
-						select = NULL;
+						if(select && select.obj_type == light) _light(0);						
+						if(select && select.obj_type == mdl) prop(0);
 						
-						reset(panProp,SHOW);
+						select = NULL;
 					}
 					
-					select = NULL;
+					_light(0);
+					prop(0);
 					
-					if(is(panProp,SHOW)) reset(panProp,SHOW);
+					select = NULL;
 					
 				}
 				
@@ -2955,6 +2909,8 @@ void misc_startup() {
 			
 			if(key_del) ptr_remove(select);
 			
+			//////////////////////////////////////////////////////////////
+			// panProp
 			select.alpha = v_alpha;
 			select.ambient = v_ambient;
 			
@@ -2981,6 +2937,38 @@ void misc_startup() {
 			
 			if(button_state(panProp,9,-1)) set(select,TRANSLUCENT);
 			else reset(select,TRANSLUCENT);
+			//////////////////////////////////////////////////////////////
+			
+			//////////////////////////////////////////////////////////////
+			// panLight
+			select.red = v_lred;
+			select.blue = v_lblue;
+			select.green = v_lgreen;
+			select.lightrange = v_lrange;
+			
+			if(button_state(panLight,2,-1)) {
+				
+				button_state(panLight,3,-1);
+				select.skill5 = disco;
+				
+			}
+			
+			if(button_state(panLight,3,-1)) {
+				
+				button_state(panLight,2,-1);
+				select.skill5 = flick;
+				
+			}
+			
+			if(button_state(panLight,2,-1) && button_state(panLight,3,-1)) {
+				
+				button_state(panLight,2,0);
+				button_state(panLight,3,0);
+				select.skill5 = 0;
+				
+			}
+			
+			//////////////////////////////////////////////////////////////
 			
 		}
 		

@@ -12,7 +12,7 @@ PANEL *buttonlst_submenu_terrain = {
 	button(0,0,menu1_submenu4,menu1_submenu4_off,menu1_submenu4_over,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
-	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -27,7 +27,7 @@ PANEL *buttonlst_submenu_object = {
 	//	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
 	//	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -42,7 +42,7 @@ PANEL *buttonlst_submenu_path = {
 	//	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
 	//	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -52,7 +52,7 @@ PANEL *panHome = {
 	
 	bmap = "panHome.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	button(0,0,button_Home_saveworld,button_Home_saveworld_off,button_Home_saveworld_over,NULL,NULL,NULL);
 	button(0,0,button_Home_loadworld,button_Home_loadworld_off,button_Home_loadworld_over,NULL,NULL,NULL);
@@ -61,7 +61,7 @@ PANEL *panHome = {
 	button(0,0,button_Home_compileworld,button_Home_compileworld_off,button_Home_compileworld_over,NULL,NULL,NULL);
 	button(0,0,button_Home_configworld,button_Home_configworld_off,button_Home_configworld_over,NULL,NULL,NULL);
 	
-	on_click = sharedGUI_dragpanel;
+	on_click = dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
 }
@@ -71,7 +71,7 @@ PANEL *panProp = {
 	
 	bmap = "panProp.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
@@ -88,7 +88,7 @@ PANEL *panProp = {
 	hslider(0,0,100,slider,0,100,v_alpha);	
 	hslider(0,0,100,slider,0,100,v_ambient);	
 	
-	on_click = sharedGUI_dragpanel;
+	on_click = dragpanel;
 	
 	flags = TRANSLUCENT | OVERLAY;
 }
@@ -98,14 +98,14 @@ PANEL *panPhy = {
 	
 	bmap = "panPhy.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	button_toggle(0,0,flag_PHY_on,flag_PHY,flag_PHY_on,flag_PHY_on,NULL,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,100,v_friction);
 	hslider(0,0,100,slider,0,100,v_bounciness);
 	
-	on_click = sharedGUI_dragpanel;
+	on_click = dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
 }
@@ -115,7 +115,7 @@ PANEL *panMat = {
 	
 	bmap = "panMat.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	button(0,0,button_Mat1,button_Mat1,button_Mat1,_mat_select,NULL,NULL);
 	button(0,0,button_Mat2,button_Mat2,button_Mat2,_mat_select,NULL,NULL);
@@ -136,7 +136,7 @@ PANEL *panMat = {
 	button(0,0,button_editmat,button_editmat,button_editmat,editmat,NULL,NULL);
 	button(0,0,button_matapply,button_matapply_off,button_matapply_over,pass_mat_to_object,NULL,NULL);
 	
-	on_click = sharedGUI_dragpanel;
+	on_click = dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
 }
@@ -146,7 +146,7 @@ PANEL *panMat_Sub1 = {
 	
 	bmap = "panMatEd.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
 	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,mat_save,NULL,NULL);
@@ -173,7 +173,7 @@ PANEL *panMat_Sub1 = {
 	hslider(0,0,50,slider,0,10,v_power);
 	hslider(0,0,50,slider,0,255,v_alpha_m);
 	
-	on_click = sharedGUI_dragpanel;
+	on_click = dragpanel;
 	
 	flags = OVERLAY | TRANSLUCENT;
 }
@@ -288,9 +288,31 @@ PANEL *panObj_Main = {
 	
 	bmap = panObj_anms;
 	
-	//	button(0,0,button_Close,button_Close_off,button_Close_over,sharedGUI_closewindow,NULL,NULL);
+	//	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
+	
+}
+
+PANEL *panLight = {
+	
+	layer = 2;
+	
+	bmap = "panLight.bmp";
+	
+	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	
+	hslider(0,0,100,slider,0,255,v_lred);
+	hslider(0,0,100,slider,0,255,v_lgreen);
+	hslider(0,0,100,slider,0,255,v_lblue);
+	hslider(0,0,100,slider,0,2000,v_lrange);
+	
+	button_toggle(0,0,flag_DISCO_on,flag_DISCO,flag_DISCO_on,flag_DISCO_on,NULL,NULL,NULL);
+	button_toggle(0,0,flag_FLICK_on,flag_FLICK,flag_FLICK_on,flag_FLICK_on,NULL,NULL,NULL);
+	
+	on_click = dragpanel;
+	
+	flags = OVERLAY; // because of the checkboxes..
 	
 }
 
@@ -382,641 +404,641 @@ TEXT *files_list =
 /////////////////////////////////header/////////////////////////////////
 
 #ifndef PARTED_VECTOR_DEF
- #define PARTED_VECTOR_DEF
- VECTOR* parted_temp_vec = { x=0;y=0;z=0; }
- VECTOR* parted_temp2_vec = { x=0;y=0;z=0; }
- ANGLE* parted_temp_ang = { pan=0;tilt=0;roll=0; }
+	#define PARTED_VECTOR_DEF
+	VECTOR* parted_temp_vec = { x=0;y=0;z=0; }
+	VECTOR* parted_temp2_vec = { x=0;y=0;z=0; }
+	ANGLE* parted_temp_ang = { pan=0;tilt=0;roll=0; }
 #endif
 
 /////////////////////////////////particle code/////////////////////////////////
 
 function Base_Effect_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   parted_temp_vec.x = random(0.000)+0.000;
-   parted_temp_vec.y = random(8.000)+-4.000;
-   parted_temp_vec.z = 0.000;
-   vec_add(p.x,parted_temp_vec);
-   p.vel_x = random(0.539)+(2.461);
-   p.vel_y = (0.000);
-   p.vel_z = random(1.387)+(8.613);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	parted_temp_vec.x = random(0.000)+0.000;
+	parted_temp_vec.y = random(8.000)+-4.000;
+	parted_temp_vec.z = 0.000;
+	vec_add(p.x,parted_temp_vec);
+	p.vel_x = random(0.539)+(2.461);
+	p.vel_y = (0.000);
+	p.vel_z = random(1.387)+(8.613);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect_base_event;
 }
 
 function Base_Effect14_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect14_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.449)+(2.051);
-   p.vel_y = random(0.180)+(0.820);
-   p.vel_z = random(1.387)+(8.613);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect14_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.449)+(2.051);
+	p.vel_y = random(0.180)+(0.820);
+	p.vel_z = random(1.387)+(8.613);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect14_base_event;
 }
 
 function Base_Effect13_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect13_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.359)+(1.641);
-   p.vel_y = random(0.359)+(1.641);
-   p.vel_z = random(1.387)+(8.613);
-   vec_normalize(p.vel_x,10.392);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect13_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.359)+(1.641);
+	p.vel_y = random(0.359)+(1.641);
+	p.vel_z = random(1.387)+(8.613);
+	vec_normalize(p.vel_x,10.392);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect13_base_event;
 }
 
 function Base_Effect12_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect12_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.180)+(0.820);
-   p.vel_y = random(0.449)+(2.051);
-   p.vel_z = random(1.387)+(8.613);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect12_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.180)+(0.820);
+	p.vel_y = random(0.449)+(2.051);
+	p.vel_z = random(1.387)+(8.613);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect12_base_event;
 }
 
 function Base_Effect11_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect11_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = (0.000);
-   p.vel_y = random(0.539)+(2.461);
-   p.vel_z = random(1.387)+(8.613);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect11_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = (0.000);
+	p.vel_y = random(0.539)+(2.461);
+	p.vel_z = random(1.387)+(8.613);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect11_base_event;
 }
 
 function Base_Effect10_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect10_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   parted_temp_vec.x = random(0.000)+0.000;
-   parted_temp_vec.y = random(8.000)+-4.000;
-   parted_temp_vec.z = 0.000;
-   if(p.creator)vec_rotate(parted_temp_vec,p.creator.pan);
-   vec_add(p.x,parted_temp_vec);
-   p.vel_x = random(0.539)+(2.461);
-   p.vel_y = (0.000);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect10_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	parted_temp_vec.x = random(0.000)+0.000;
+	parted_temp_vec.y = random(8.000)+-4.000;
+	parted_temp_vec.z = 0.000;
+	if(p.creator)vec_rotate(parted_temp_vec,p.creator.pan);
+	vec_add(p.x,parted_temp_vec);
+	p.vel_x = random(0.539)+(2.461);
+	p.vel_y = (0.000);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect10_base_event;
 }
 
 function Base_Effect9_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect9_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.449)+(2.051);
-   p.vel_y = random(0.180)+(0.820);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect9_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.449)+(2.051);
+	p.vel_y = random(0.180)+(0.820);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect9_base_event;
 }
 
 function Base_Effect8_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect8_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.359)+(1.641);
-   p.vel_y = random(0.359)+(1.641);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.392);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect8_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.359)+(1.641);
+	p.vel_y = random(0.359)+(1.641);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.392);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect8_base_event;
 }
 
 function Base_Effect7_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect7_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.180)+(0.820);
-   p.vel_y = random(0.449)+(2.051);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect7_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.180)+(0.820);
+	p.vel_y = random(0.449)+(2.051);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect7_base_event;
 }
 
 function Base_Effect6_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect6_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = (0.000);
-   p.vel_y = random(0.539)+(2.461);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect6_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = (0.000);
+	p.vel_y = random(0.539)+(2.461);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect6_base_event;
 }
 
 function Base_Effect5_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect5_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   parted_temp_vec.x = random(0.000)+0.000;
-   parted_temp_vec.y = random(8.000)+-4.000;
-   parted_temp_vec.z = 0.000;
-   if(p.creator)vec_rotate(parted_temp_vec,p.creator.pan);
-   vec_add(p.x,parted_temp_vec);
-   p.vel_x = random(0.539)+(2.461);
-   p.vel_y = (0.000);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect5_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	parted_temp_vec.x = random(0.000)+0.000;
+	parted_temp_vec.y = random(8.000)+-4.000;
+	parted_temp_vec.z = 0.000;
+	if(p.creator)vec_rotate(parted_temp_vec,p.creator.pan);
+	vec_add(p.x,parted_temp_vec);
+	p.vel_x = random(0.539)+(2.461);
+	p.vel_y = (0.000);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect5_base_event;
 }
 
 function Base_Effect4_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect4_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.449)+(2.051);
-   p.vel_y = random(0.180)+(0.820);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect4_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.449)+(2.051);
+	p.vel_y = random(0.180)+(0.820);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect4_base_event;
 }
 
 function Base_Effect3_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect3_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.359)+(1.641);
-   p.vel_y = random(0.359)+(1.641);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.392);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect3_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.359)+(1.641);
+	p.vel_y = random(0.359)+(1.641);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.392);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect3_base_event;
 }
 
 function Base_Effect2_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect2_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = random(0.180)+(0.820);
-   p.vel_y = random(0.449)+(2.051);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.355);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect2_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = random(0.180)+(0.820);
+	p.vel_y = random(0.449)+(2.051);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.355);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect2_base_event;
 }
 
 function Base_Effect1_base_event(PARTICLE* p) {
-   p.vel_x = p.skill_x;
-   p.vel_y = p.skill_y;
-   p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
+	p.vel_x = p.skill_x;
+	p.vel_y = p.skill_y;
+	p.vel_z = p.skill_z-p.skill_z*p.skill_d/50;
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	p.skill_d = (p.skill_d + time_step*(var)2.500)%100;
 }
 
 function Base_Effect1_base(PARTICLE* p) {
-   p.size = random(4.793)+(7.207);
-   p.alpha = random(25.457)+(12.543);
-   p.red = 69;
-   p.green = 124;
-   p.blue = 180;
-   p.skill_c = 0.5;
-   p.vel_x = (0.000);
-   p.vel_y = random(0.539)+(2.461);
-   p.vel_z = random(1.387)+(8.613);
-   if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
-   vec_normalize(p.vel_x,10.439);
-   p.lifespan = 40.000;
-   p.gravity = random(0.000)+0.000;
-   p.flags = BRIGHT | TRANSLUCENT | MOVE;
-   p.skill_x = p.vel_x;
-   p.skill_y = p.vel_y;
-   p.skill_z = p.vel_z;
-   p.event = Base_Effect1_base_event;
+	p.size = random(4.793)+(7.207);
+	p.alpha = random(25.457)+(12.543);
+	p.red = 69;
+	p.green = 124;
+	p.blue = 180;
+	p.skill_c = 0.5;
+	p.vel_x = (0.000);
+	p.vel_y = random(0.539)+(2.461);
+	p.vel_z = random(1.387)+(8.613);
+	if(p.creator)vec_rotate(p.vel_x,p.creator.pan);
+	vec_normalize(p.vel_x,10.439);
+	p.lifespan = 40.000;
+	p.gravity = random(0.000)+0.000;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = Base_Effect1_base_event;
 }
 
 /////////////////////////////////emitter actions/////////////////////////////////
 
 action Base_Effect_emitter() {
-   var eff_frac; eff_frac = 0;
-wait(1);
-   while(my) {
-      vec_set(parted_temp_vec,nullvector);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(2.000)+-1.000;
-      parted_temp_vec.y = random(6.000)+-3.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect14_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(4.000)+-2.000;
-      parted_temp_vec.y = random(4.000)+-2.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect13_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(6.000)+-3.000;
-      parted_temp_vec.y = random(2.000)+-1.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect12_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(8.000)+-4.000;
-      parted_temp_vec.y = random(0.000)+0.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect11_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      wait(1);
-   }
+	var eff_frac; eff_frac = 0;
+	wait(1);
+	while(my) {
+		vec_set(parted_temp_vec,nullvector);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(2.000)+-1.000;
+		parted_temp_vec.y = random(6.000)+-3.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect14_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(4.000)+-2.000;
+		parted_temp_vec.y = random(4.000)+-2.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect13_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(6.000)+-3.000;
+		parted_temp_vec.y = random(2.000)+-1.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect12_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(8.000)+-4.000;
+		parted_temp_vec.y = random(0.000)+0.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect11_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		wait(1);
+	}
 }
 action Base_Effect10_emitter() {
-   var eff_frac; eff_frac = 0;
-wait(1);
-   while(my) {
-      vec_set(parted_temp_vec,nullvector);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect10_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(2.000)+-1.000;
-      parted_temp_vec.y = random(6.000)+-3.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect9_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(4.000)+-2.000;
-      parted_temp_vec.y = random(4.000)+-2.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect8_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(6.000)+-3.000;
-      parted_temp_vec.y = random(2.000)+-1.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect7_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(8.000)+-4.000;
-      parted_temp_vec.y = random(0.000)+0.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect6_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      wait(1);
-   }
+	var eff_frac; eff_frac = 0;
+	wait(1);
+	while(my) {
+		vec_set(parted_temp_vec,nullvector);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect10_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(2.000)+-1.000;
+		parted_temp_vec.y = random(6.000)+-3.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect9_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(4.000)+-2.000;
+		parted_temp_vec.y = random(4.000)+-2.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect8_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(6.000)+-3.000;
+		parted_temp_vec.y = random(2.000)+-1.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect7_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(8.000)+-4.000;
+		parted_temp_vec.y = random(0.000)+0.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect6_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		wait(1);
+	}
 }
 
 action Base_Effect5_emitter() {
-   var eff_frac; eff_frac = 0;
-wait(1);
-   while(my) {
-      vec_set(parted_temp_vec,nullvector);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect5_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(2.000)+-1.000;
-      parted_temp_vec.y = random(6.000)+-3.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect4_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(4.000)+-2.000;
-      parted_temp_vec.y = random(4.000)+-2.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect3_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(6.000)+-3.000;
-      parted_temp_vec.y = random(2.000)+-1.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect2_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      parted_temp_vec.x = random(8.000)+-4.000;
-      parted_temp_vec.y = random(0.000)+0.000;
-      parted_temp_vec.z = random(0.000)+0.000;
-      vec_rotate(parted_temp_vec,my.pan);
-      vec_add(parted_temp_vec,my.x);
-      if(!(total_frames % 2)) {
-         eff_frac += 2.000*time_step*6.25;
-         if(eff_frac >= 1){
-            effect(Base_Effect1_base,integer(eff_frac),parted_temp_vec,nullvector);
-             eff_frac -= integer(eff_frac);
-         }
-      }
-      wait(1);
-   }
+	var eff_frac; eff_frac = 0;
+	wait(1);
+	while(my) {
+		vec_set(parted_temp_vec,nullvector);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect5_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(2.000)+-1.000;
+		parted_temp_vec.y = random(6.000)+-3.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect4_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(4.000)+-2.000;
+		parted_temp_vec.y = random(4.000)+-2.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect3_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(6.000)+-3.000;
+		parted_temp_vec.y = random(2.000)+-1.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect2_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		parted_temp_vec.x = random(8.000)+-4.000;
+		parted_temp_vec.y = random(0.000)+0.000;
+		parted_temp_vec.z = random(0.000)+0.000;
+		vec_rotate(parted_temp_vec,my.pan);
+		vec_add(parted_temp_vec,my.x);
+		if(!(total_frames % 2)) {
+			eff_frac += 2.000*time_step*6.25;
+			if(eff_frac >= 1){
+				effect(Base_Effect1_base,integer(eff_frac),parted_temp_vec,nullvector);
+				eff_frac -= integer(eff_frac);
+			}
+		}
+		wait(1);
+	}
 }

@@ -32,7 +32,8 @@ typedef struct obj_form {
 	////////////// Particle objects
 	
 	////////////// Light objects
-	var _red, _green, _blue, _range;
+	var _red, _green, _blue, _range, _flick_speed;
+	int _light_mode;
 	
 	////////////// Sound objects
 	
@@ -44,6 +45,8 @@ obj_form clipboard;
 
 //////////////////////////////////////////////////////////////
 #define obj_type skill1
+#define light_mode skill5
+#define flick_time skill6
 
 #define FADE_IN 1
 #define FADE_OUT 0
@@ -77,10 +80,10 @@ obj_form clipboard;
 #define select_custom_mat1 11
 #define select_custom_mat2 12
 #define select_custom_mat3 13
-
-int files_found, list_start;
-
 #define select_custom_mat4 14
+
+#define flick 1
+#define disco 2
 
 //////////////////////////////
 // Strings and texts will be declared here.
@@ -94,20 +97,27 @@ STRING *current_folder = "a",
 TEXT *files_list;
 
 ////////////////////////////////////////////////////////////
-// Variables will be declared here.
+// Variables/Booleans will be declared here.
 ////////////////////////////////////////////////////////////
 int mat_type, manip_type;
+int files_found, list_start;
+
 BOOL is_camera;
 
 var files_already;
 
+var olrange; // Old light range
+
 var v_alpha, v_ambient,
+
 v_ambient_r, v_ambient_g, v_ambient_b,
 v_diffuse_r, v_diffuse_g, v_diffuse_b,
 v_specular_r, v_specular_g, v_specular_b,
 v_emissive_r, v_emissive_g, v_emissive_b,
 v_power, 
-v_alpha_m; // Alpha for materials
+v_alpha_m, // Alpha for materials
+
+v_lred, v_lgreen, v_lblue, v_lrange;
 
 var button_SaveWorld_y,
 button_LoadWorld_y,
@@ -144,6 +154,7 @@ PANEL *buttonlst,
 *panMat_Sub1,
 *_logo,
 *blackscreen,
+*panLight,
 *debug,
 *debug_material;
 
@@ -161,6 +172,9 @@ VECTOR sharedGUI_cpos1,sharedGUI_cpos2,temp_pos;
 
 // Vectors for dragging entities
 VECTOR v1, v2;
+
+// Vectors for backup purposes
+VECTOR xy_panLight;
 
 ////////////////////////////////////////////////////////////
 // Fonts and texts' declarations
@@ -327,6 +341,12 @@ BMAP *flag_PLANTS_on = "flag_PLANTS_on.bmp";
 BMAP *flag_TPORTTS = "flag_TPORTTS.bmp";
 BMAP *flag_TPORTTS_on = "flag_TPORTTS_on.bmp";
 
+BMAP *flag_DISCO = "flag_DISCO.bmp";
+BMAP *flag_DISCO_on = "flag_DISCO_on.bmp";
+
+BMAP *flag_FLICK = "flag_FLICK.bmp";
+BMAP *flag_FLICK_on = "flag_FLICK_on.bmp";
+
 BMAP *slider = "slider.tga";
 
 BMAP *button_Mat1 = "button_Mat1.bmp";
@@ -418,23 +438,24 @@ BMAP *panObj_blands = "panObj_blands.bmp";
 void load_kernel(STRING *);
 void loop_kernel();
 
-void pan_resize(PANEL *, char);
-void pan_rotate(PANEL *,var,var,BOOL);
-
 /**/void sharedGUI_playintro(STRING *, var);
 /**/void sharedGUI_blackscreen(int, int);
 /**/void sharedGUI_loadlogo(BMAP *);
 /**/void sharedGUI_mouse(BOOL);
-/**/void sharedGUI_centerpanel(PANEL *);
-/**/void sharedGUI_dragpanel(PANEL *);
 /**/void sharedGUI_centerfrom(PANEL *, PANEL *);
+void sharedGUI__loadlogo();
+
+void pan_resize(PANEL *, char);
+void pan_rotate(PANEL *,var,var,BOOL);
 
 void home();
-void prop();
 void mat();
 void editmat();
 void phy();
 void objadd();
+
+void prop(BOOL);
+void _light(BOOL);
 
 void controlcam();
 
@@ -442,11 +463,12 @@ void sharedGUI_launch_terrain();
 void sharedGUI_launch_object();
 void sharedGUI_launch_path();
 
-void sharedGUI_updategui(PANEL *);
-void sharedGUI_closewindow(var, PANEL *);
-void sharedGUI_panelselect(PANEL *);
-void sharedGUI__loadlogo();
+void updategui(PANEL *);
+void closewindow(var, PANEL *);
+void panelselect(PANEL *);
 void scan_folder(STRING *,STRING *);
+void centerpanel(PANEL *);
+void dragpanel(PANEL *);
 
 void follow_pointer();
 
@@ -482,7 +504,6 @@ void panObj_Subbar_switcher(var);
 void update_size(PANEL *, BMAP *);
 
 ENTITY *obj_create();
-ENTITY *obj_create_from_clipboard();
 
 void init_database();
 
