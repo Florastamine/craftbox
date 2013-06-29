@@ -54,12 +54,6 @@ void timebar(var _TimeRemain,var _DecrTime)
 	//	sys_exit(NULL);
 }
 
-void load_startup() {
-	
-	timebar(200,5);
-	
-}
-
 void generate_sound() {
 	
 	if(!sndobjs[num_sndobjs]) {
@@ -132,6 +126,7 @@ void generate_light() {
 ////////////////////////////////////////////////////////////
 void pan_rotate(PANEL *p,var lim,var speed,BOOL rotate_on_center)
 {
+	while(p == NULL) wait(1);
 	while(!is(p,SHOW)) wait(1);
 	
 	if(rotate_on_center)
@@ -153,22 +148,15 @@ void pan_resize(PANEL *p, char c) {
 	
 	switch(c) {
 		
-		case 'x':
-		
-		p.scale_x = screen_size.x/bmap_width(p.bmap);
-		
+		case 'x': p.scale_x = screen_size.x/bmap_width(p.bmap);
 		break;
 		
-		case 'y':
-		
-		p.scale_y = screen_size.y/bmap_height(p.bmap);
-		
+		case 'y': p.scale_y = screen_size.y/bmap_height(p.bmap);
 		break;
 		
 		default:
 		
-		p.pos_x = 0;
-		p.pos_y = 0;
+		p.pos_x = p.pos_y = 0;
 		
 		p.scale_x = screen_size.x/bmap_width(p.bmap);
 		p.scale_y = screen_size.y/bmap_height(p.bmap);
@@ -201,6 +189,7 @@ void init_database() {
 	
 	int i;
 	
+	////////////////////////////////////////////////////////////
 	// Don't ask me why I don't read the whole database
 	// from an external file. I did it once - and failed.
 	// The reason: try it yourself - it's an engine-related problem.
@@ -658,14 +647,33 @@ void init_database() {
 	// Unallocated space
 	for(i = 841;i < 880;i++) mdlobjs_table[i] = str_create("#2");
 	
-	// Particle effects 100 [880->979]
-	mdlobjs_table[880] = str_create("part_avatar.mdl");
-	
-	// Unallocated space
-	for(i = 881;i < 980;i++) mdlobjs_table[i] = str_create("#2");
-	
 	// Done!
 	////////////////////////////////////////////////////////////
+}
+
+////////////////////////////////////////////////////////////
+// This function will fix incorrect scale ratio on models.
+// Actually, I borrowed models from various source, and surely,
+// they don't have the same scale ratio. So this quick fix
+// will re-scale the models.
+////////////////////////////////////////////////////////////
+void fix(ENTITY *e) {
+	
+	if(num_mdlobjs == 52) // church/temple model
+	e.scale_x = e.scale_y = e.scale_z *= 3;
+	
+	if(num_mdlobjs == 51) // big building
+	e.scale_x = e.scale_y = e.scale_z *= 2;
+	
+	if(num_mdlobjs == 53) // [big] fence
+	e.scale_x = e.scale_y = e.scale_z /= 1.5;
+	
+	if(num_mdlobjs == 54) // [big] fence bar
+	e.scale_x = e.scale_y = e.scale_z /= 1.5;
+	
+	if(num_mdlobjs == 55) // wood entrance
+	e.scale_x = e.scale_y = e.scale_z *= 2;
+	
 }
 
 ENTITY *obj_create() { // This inherits a lot from place_me
@@ -684,9 +692,11 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 			
 		}
 		
-		ENTITY *tmp = ent_create(mdlobjs_table_ptr[num_mdlobjs],temp_pos.x,obj_manip_setup);
+		tmp = ent_create(mdlobjs_table_ptr[num_mdlobjs],temp_pos.x,obj_manip_setup);
 		
 		while(tmp == NULL) wait(1); // wait for tmp to be completely created.
+		
+		fix(tmp);
 		
 		set(tmp, POLYGON);
 		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
@@ -838,50 +848,42 @@ void updategui(PANEL *wg) {
 	if(wg == panProp) { 
 		
 		int i;
+		for(i = 2;i < 6;i++) {
+			
+			pan_setpos(panProp,3,i,vector(4, 20 + 35*(i-2),0));
+			
+			pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - 38 - 15,0,0));
+			
+			//////////////////////////////////////////////////////////////
+			panProp_1.pos_x = panProp.pos_x + 121;
+			panProp_1.pos_y = panProp.pos_y + 75;
+			
+			panProp_2.pos_x = panProp.pos_x + 121;
+			panProp_2.pos_y = panProp.pos_y + 43;
+			
+			panProp_3.pos_x = panProp.pos_x + 121;
+			panProp_3.pos_y = panProp.pos_y + 75;
+			//////////////////////////////////////////////////////////////
+			
+		}
+		
+		/*
+		
+		int i;
 		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
 		
 		pan_setpos(panProp,3,10,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 32,0));
 		pan_setpos(panProp,3,11,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 64,0));		
+		pan_setpos(panProp,3,12,vector(bmap_width(panProp.bmap) - BORDER - 256, bmap_height(panProp.bmap) - BORDER - 64,0));		
+		pan_setpos(panProp,3,13,vector(bmap_width(panProp.bmap) - BORDER - 256, bmap_height(panProp.bmap) - BORDER - 96,0));		
 		
 		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
 		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
 		
 		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - BORDER * 2,BORDER,0));
-	}
-	
-	if(wg == panMat) {
 		
-		var i = 2, j = 0, k;
-		k = i;
-		while(i < 17) {
-			pan_setpos(panMat,3,i,vector( (k-1) * BORDER + (k-2) * 64,BORDER * 2 + 15 + j,0));
-			i++; k++;
-			
-			if(i == 7) {
-				j = 74; // 64 + BORDER
-				k = 2;
-			}
-			
-			if(i == 12) {
-				j = 148; // 128 + 2x BORDER
-				k = 2;
-			}
-			
-		}
+		*/
 		
-		var cache = bmap_width(panMat.bmap) - BORDER - 100;
-		pan_setpos(panMat,3,17,vector(cache, bmap_height(panMat.bmap) - BORDER - 24 ,0));
-		pan_setpos(panMat,3,18,vector(cache, bmap_height(panMat.bmap) - BORDER * 2 - 48,0));
-		
-		pan_setpos(panMat,3,1,vector(bmap_width(panMat.bmap) - BORDER * 2, BORDER,0));
-	}
-	
-	if(wg == panPhy) {
-		pan_setpos(panPhy,3,1,vector(bmap_width(panPhy.bmap) - BORDER * 2, BORDER,0));
-		
-		pan_setpos(panPhy,3,2,vector(BORDER,BORDER*4,0));
-		pan_setpos(panPhy,4,1,vector(141,bmap_height(panPhy.bmap) - 109,0)); // Bounciness
-		pan_setpos(panPhy,4,2,vector(141,bmap_height(panPhy.bmap) - 135,0)); // Friction
 	}
 	
 	if(wg == panMat_Sub1) { 
@@ -950,22 +952,6 @@ void closewindow(var id, PANEL *p) {
 		reset(panHome,SHOW);
 	}
 	
-	if(p == panPhy) {
-		reset(panPhy,SHOW);
-	}
-	
-	if(p == panMat) {
-		
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-			
-		}
-		
-		reset(panMat,SHOW);
-	}
-	
 	if(p == panMat_Sub1) {
 		reset(panMat_Sub1,SHOW);
 		
@@ -1032,8 +1018,6 @@ void dragpanel(PANEL *p)
 		//hack hack hack!!!!
 		if(p == panHome) updategui(panHome);
 		if(p == panProp) updategui(panProp);
-		if(p == panPhy) updategui(panPhy);
-		if(p == panMat) updategui(panMat);
 		
 		wait(1);
 	}
@@ -1041,8 +1025,6 @@ void dragpanel(PANEL *p)
 	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
 	if(p == panHome) updategui(panHome);
 	if(p == panProp) updategui(panProp);
-	if(p == panPhy) updategui(panPhy);
-	if(p == panMat) updategui(panMat);
 }
 
 void centerpanel(PANEL *p) {
@@ -1131,7 +1113,8 @@ void loadGUI() {
 	buttonlst_submenu_path.pos_y = screen_size.y - 2 * BORDER - 64;
 	
 	int i = 1;
-	while(i < 5){
+	while(i < 5) {
+		
 		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
@@ -1141,8 +1124,8 @@ void loadGUI() {
 	
 	var cache = BORDER * 4 + 32 * 4; // the above formula, i = 5
 	pan_setpos(buttonlst_submenu_terrain,3,5,vector(cache,NULL,NULL));
-	pan_setpos(buttonlst_submenu_object,3,3,vector(cache,NULL,NULL));
-	pan_setpos(buttonlst_submenu_path,3,3,vector(cache,NULL,NULL));
+	pan_setpos(buttonlst_submenu_object,3,5,vector(cache,NULL,NULL));
+	pan_setpos(buttonlst_submenu_path,3,5,vector(cache,NULL,NULL));
 }
 
 void sharedGUI_blackscreen(int mode, int sec) {
@@ -1227,18 +1210,23 @@ void prop(BOOL m) {
 	
 	if(m) {
 		
+		panProp.pos_x = xy_panProp.x;
+		panProp.pos_y = xy_panProp.y;
+		
 		if(select) {
 			
 			if(select.obj_type != light &&
 			select.obj_type != snd &&
 			select.obj_type != part) {
 				
-				panProp.pos_x = BORDER;
-				panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
-				
-				updategui(panProp);
+				//				panProp.pos_x = BORDER;
+				//				panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
 				
 				set(panProp,SHOW);
+				
+				switch_propmode(2);
+				
+				updategui(panProp);
 				
 			}
 			
@@ -1248,23 +1236,41 @@ void prop(BOOL m) {
 	
 	else { // Object is deactivated/other object has been selected.
 		
-		reset(panProp,SHOW);		
+		reset(panProp,SHOW);	
+		
+		xy_panProp.x = panProp.pos_x;
+		xy_panProp.y = panProp.pos_y;	
 		
 	}
-}
+}/*
 
-void mat() {
+void mat(BOOL m) {
 	
-	centerpanel(panMat);
-	updategui(panMat);
+	if(m) {
+		
+		panMat.pos_x = xy_panMat.x;
+		panMat.pos_y = xy_panMat.y;
+		
+		//	centerpanel(panMat);
+		updategui(panMat);
+		
+		set(panMat,SHOW);
+	}
 	
-	set(panMat,SHOW);
-}
+	else {
+		
+		xy_panMat.x = panMat.pos_x;
+		xy_panMat.y = panMat.pos_y;
+		
+		reset(panMat,SHOW);
+		
+	}
+}*/
 
 void editmat() {
 	
 	// Precache panMat_Sub1
-	sharedGUI_centerfrom(panMat_Sub1,panMat);
+	//	sharedGUI_centerfrom(panMat_Sub1,panMat);
 	updategui(panMat_Sub1);
 	
 	// Material editor is available only to custom materials
@@ -1321,13 +1327,34 @@ void editmat() {
 	}	
 }
 
-void phy() {
+/*
+void phy(BOOL m) {
 	
-	centerpanel(panPhy);
-	updategui(panPhy);
+	if(m) {
+		
+		panPhy.pos_x = xy_panPhy.x;
+		panPhy.pos_y = xy_panPhy.y;
+		
+		if(select) {
+			
+			//	centerpanel(panPhy);
+			updategui(panPhy);
+			
+			set(panPhy,SHOW);
+			
+		}
+		
+	}
 	
-	set(panPhy,SHOW);
-}
+	else {
+		
+		xy_panPhy.x = panPhy.pos_x;
+		xy_panPhy.y = panPhy.pos_y;
+		
+		reset(panPhy,SHOW);
+		
+	}
+}*/
 
 void _light(BOOL m) {
 	
@@ -1451,29 +1478,29 @@ void pass_to_gui(ENTITY *e) {
 	////////////////////////////////////////////////////////////
 	// For panProp
 	////////////////////////////////////////////////////////////
-	if(is(e,BRIGHT)) button_state(panProp,2,1);
-	else button_state(panProp,2,0);
+	if(is(e,BRIGHT)) button_state(panProp_1,1,1);
+	else button_state(panProp_1,1,0);
 	
-	if(is(e,INVISIBLE)) button_state(panProp,3,1);
-	else button_state(panProp,3,0);
+	if(is(e,INVISIBLE)) button_state(panProp_1,2,1);
+	else button_state(panProp_1,2,0);
 	
-	if(is(e,NOFOG)) button_state(panProp,4,1);
-	else button_state(panProp,4,0);
+	if(is(e,NOFOG)) button_state(panProp_1,3,1);
+	else button_state(panProp_1,3,0);
 	
-	if(is(e,OVERLAY)) button_state(panProp,5,1);
-	else button_state(panProp,5,0);
+	if(is(e,OVERLAY)) button_state(panProp_1,4,1);
+	else button_state(panProp_1,4,0);
 	
-	if(is(e,PASSABLE)) button_state(panProp,6,1);
-	else button_state(panProp,6,0);
+	if(is(e,PASSABLE)) button_state(panProp_1,5,1);
+	else button_state(panProp_1,5,0);
 	
-	if(is(e,POLYGON)) button_state(panProp,7,1);
-	else button_state(panProp,7,0);
+	if(is(e,POLYGON)) button_state(panProp_1,6,1);
+	else button_state(panProp_1,6,0);
 	
-	if(is(e,SHADOW)) button_state(panProp,8,1);
-	else button_state(panProp,8,0);
+	if(is(e,SHADOW)) button_state(panProp_1,7,1);
+	else button_state(panProp_1,7,0);
 	
-	if(is(e,TRANSLUCENT)) button_state(panProp,9,1);
-	else button_state(panProp,9,0);
+	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
+	else button_state(panProp_1,8,0);
 	
 }
 
@@ -1521,199 +1548,225 @@ void random_pan() {
 ////////////////////////////////////////////////////////////
 void _mat_select(var id) {
 	
-	switch(id) {
+	// Clear evidence first
+	int i = id;
+	while(i > 0) {
 		
-		case 2: // Lava
-		
-		mat_type = select_mat_lava;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 3: // Marble
-		
-		mat_type = select_mat_marble;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 4: // Smaragd
-		
-		mat_type = select_mat_smaragd;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 5: // Mat 4
-		
-		mat_type = select_mat_4;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 6: // Mat 5
-		
-		mat_type = select_mat_5;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 7: // Mat 6
-		
-		mat_type = select_mat_6;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 8: // Mat 7
-		
-		mat_type = select_mat_7;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 9: // Mat 8
-		
-		mat_type = select_mat_8;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 10: // Mat 9
-		
-		mat_type = select_mat_9;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		case 11: // Mat 10
-		
-		mat_type = select_mat_10;
-		if(is(panMat_Sub1,SHOW)) {
-			reset(panMat_Sub1,SHOW);
-			
-			if(is(debug_material,SHOW)) reset(debug_material,SHOW);
-		}
-		
-		break;
-		
-		default:
-		sys_exit(NULL);
-		break;
+		button_state(panProp_2,i,0);
+		i--;
 		
 	}
-	
-}
 
-////////////////////////////////////////////////////////////
-// These materials are customizable. You know what to do.
-// Only customizable materials' properties is passed through
-// pass_mat_to_matsub(MATERIAL *).
-////////////////////////////////////////////////////////////
-void _mat_select_custom(var id) {
-	
-	switch(id) {
+	i = id; // fetch again
+	while(i < 16) {
 		
-		case 12: // Custom material #1
-		
-		mat_type = select_custom_mat1;
-		/*
-		a quick terrible ugly hack
-		normally panMat_Sub1 will only be updated
-		if you click 1 "Edit Material",
-		but this hack allows you to update panMat_Sub1 directly
-		without pressing that button.
-		
-		this can be useful if you've already opened panMat_Sub1
-		and select another customizable material, the panel
-		will be updated immediately without having to click
-		the "Edit Material" button again.
-		*/
-		if(is(panMat_Sub1,SHOW))
-		pass_mat_to_matsub(mat_custom[0]);
-		
-		break;
-		
-		case 13: // Custom material #2
-		
-		mat_type = select_custom_mat2;
-		
-		if(is(panMat_Sub1,SHOW))
-		pass_mat_to_matsub(mat_custom[1]);
-		
-		break;
-		
-		case 14: // Custom material #3
-		
-		mat_type = select_custom_mat3;
-		
-		if(is(panMat_Sub1,SHOW))
-		pass_mat_to_matsub(mat_custom[2]);
-		
-		break;
-		
-		case 15: // Custom material #4
-		mat_type = select_custom_mat4;
-		
-		if(is(panMat_Sub1,SHOW))
-		pass_mat_to_matsub(mat_custom[3]);
-		
-		break;
-		
-		default:
-		sys_exit(NULL);
-		break;
+		button_state(panProp_2,i,0);
+		i++;
 		
 	}
-	
-}
 
-////////////////////////////////////////////////////////////
-// Select the NULL material.
-////////////////////////////////////////////////////////////
-void mat_select_null() {
-	mat_type = select_mat_null;
-	if(is(panMat_Sub1,SHOW)) {
-		reset(panMat_Sub1,SHOW);
+	button_state(panProp_2,id,1);
+	
+	if(select) {
 		
-		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+		switch(id) {
+			
+			case 1: // Lava
+			
+			mat_type = select_mat_lava;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 2: // Marble
+			
+			mat_type = select_mat_marble;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 3: // Smaragd
+			
+			mat_type = select_mat_smaragd;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 4: // Lavender rose
+			
+			mat_type = select_mat_lavenderrose;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 5: // Bitter lemon
+			
+			mat_type = select_mat_bitterlemon;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 6: // Peach orange
+			
+			mat_type = select_mat_peachorange;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 7: // Pure white light
+			
+			mat_type = select_mat_purewhite;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 8: // Metallic
+			
+			mat_type = select_mat_metal;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 9: // Pure black
+			
+			mat_type = select_mat_black;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 10: // Soft pale lilac
+			
+			mat_type = select_mat_palelilac;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW)) {
+				reset(panMat_Sub1,SHOW);
+				
+				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
+			}
+			
+			break;
+			
+			case 11: // Custom material #1
+			
+			mat_temp = select_custom_mat1;
+			pass_mat_to_object();
+			
+			/*
+			a quick terrible ugly hack
+			normally panMat_Sub1 will only be updated
+			if you click 1 "Edit Material",
+			but this hack allows you to update panMat_Sub1 directly
+			without pressing that button.
+			
+			this can be useful if you've already opened panMat_Sub1
+			and select another customizable material, the panel
+			will be updated immediately without having to click
+			the "Edit Material" button again.
+			*/
+			if(is(panMat_Sub1,SHOW))
+			pass_mat_to_matsub(mat_custom[0]);
+			
+			break;
+			
+			case 12: // Custom material #2
+			
+			mat_temp = select_custom_mat2;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW))
+			pass_mat_to_matsub(mat_custom[1]);
+			
+			break;
+			
+			case 13: // Custom material #3
+			
+			mat_temp = select_custom_mat3;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW))
+			pass_mat_to_matsub(mat_custom[2]);
+			
+			break;
+			
+			case 14: // Custom material #4
+			mat_temp = select_custom_mat4;
+			pass_mat_to_object();
+			
+			if(is(panMat_Sub1,SHOW))
+			pass_mat_to_matsub(mat_custom[3]);
+			
+			break;
+			
+			case 15: // Default
+			
+			mat_type = select_mat_null;
+			pass_mat_to_object();
+			
+			break;		
+			
+			default:
+			sys_exit(NULL);
+			break;
+			
+		}
+		
 	}
+	
 }
 
 void pass_mat_to_object() {
@@ -1738,32 +1791,32 @@ void pass_mat_to_object() {
 			mat_temp = mat_marble;
 			break;
 			
-			case select_mat_4 :
-			mat_temp = mat_marble;
+			case select_mat_lavenderrose :
+			mat_temp = mat_lavenderrose;
 			break;
 			
-			case select_mat_5 :
-			mat_temp = mat_marble;
+			case select_mat_bitterlemon :
+			mat_temp = mat_bitterlemon;
 			break;
 			
-			case select_mat_6 :
-			mat_temp = mat_marble;
+			case select_mat_peachorange :
+			mat_temp = mat_peachorange;
 			break;
 			
-			case select_mat_7 :
-			mat_temp = mat_marble;
+			case select_mat_purewhite :
+			mat_temp = mat_purewhite;
 			break;
 			
-			case select_mat_8 :
-			mat_temp = mat_marble;
+			case select_mat_metal :
+			mat_temp = mat_metal; // this is just one of the predefined materials.
 			break;
 			
-			case select_mat_9 :
-			mat_temp = mat_marble;
+			case select_mat_black :
+			mat_temp = mat_black;
 			break;
 			
-			case select_mat_10 :
-			mat_temp = mat_marble;
+			case select_mat_palelilac :
+			mat_temp = mat_palelilac;
 			break;
 			
 			// Custom materials
@@ -2633,6 +2686,54 @@ void config_read_video(STRING *cf) {
 	file_close(file);
 }
 
+void switch_propmode(var mode) {
+	
+	if(mode == 2) {
+		
+		int i = 3;
+		while(i<5) {
+			
+			button_state(panProp,i,0);
+			i++;
+			
+		}
+		
+		panProp.bmap = panProp1_IMG;
+		
+		set(panProp_1,SHOW);
+		reset(panProp_2,SHOW);
+		reset(panProp_3,SHOW);
+		
+	}
+	
+	if(mode == 3) {
+		
+		button_state(panProp,2,0);
+		button_state(panProp,4,0);
+		
+		panProp.bmap = panProp2_IMG;
+		
+		reset(panProp_1,SHOW);
+		set(panProp_2,SHOW);
+		reset(panProp_3,SHOW);
+		
+	}
+	
+	if(mode == 4) {
+		
+		button_state(panProp,3,0);
+		button_state(panProp,2,0);
+		
+		panProp.bmap = panProp3_IMG;
+		
+		reset(panProp_1,SHOW);
+		reset(panProp_2,SHOW);
+		set(panProp_3,SHOW);
+		
+	}
+	
+}
+
 ////////////////////////////////////////////////////////////
 // Kernel-related functions.
 ////////////////////////////////////////////////////////////
@@ -2649,7 +2750,8 @@ void load_kernel(STRING *lvl_str) {
 	
 	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
 	
-	_obj_type = 3;
+	_obj_type = 1;
+	num_mdlobjs = 50;
 	
 	mouse_range = 500000;
 	mouse_map = mouse;
@@ -2658,7 +2760,7 @@ void load_kernel(STRING *lvl_str) {
 	// So that we can get access to the database.
 	mdlobjs_table_ptr = mdlobjs_table;
 	
-	panHome.alpha = panMat.alpha = panPhy.alpha = panProp.alpha = DEFAULT_ALPHA;
+	panHome.alpha = panProp.alpha = DEFAULT_ALPHA;
 	
 	// Initialize the databases and load them.
 	init_database();
@@ -2734,7 +2836,6 @@ void load_kernel(STRING *lvl_str) {
 				else prop(0);
 				
 			}
-			*/
 			
 			if(key_m) {
 				
@@ -2749,6 +2850,7 @@ void load_kernel(STRING *lvl_str) {
 				phy();
 				
 			}
+			*/
 			
 		}
 		
@@ -2793,8 +2895,12 @@ void load_kernel(STRING *lvl_str) {
 
 void loop_kernel() {
 	
+	int divisor=4;
+	
 	while(1) 
 	{
+		
+		//	   camera.arc += mickey.z/divisor * time_step;
 		
 		if(key_t) 
 		{
@@ -2834,7 +2940,7 @@ void loop_kernel() {
 				{
 					if(select)
 					{
-					   
+						
 						if(select.obj_type == light) _light(0);
 						if(select.obj_type == mdl) prop(0);
 						
@@ -2870,11 +2976,10 @@ void loop_kernel() {
 						select = NULL;
 					}
 					
-					_light(0);
+					_light(0);	
 					prop(0);
 					
 					select = NULL;
-					
 				}
 				
 				wait(1);
@@ -2914,28 +3019,28 @@ void misc_startup() {
 			select.alpha = v_alpha;
 			select.ambient = v_ambient;
 			
-			if(button_state(panProp,2,-1)) set(select,BRIGHT);
+			if(button_state(panProp_1,1,-1)) set(select,BRIGHT);
 			else reset(select,BRIGHT);
 			
-			if(button_state(panProp,3,-1)) set(select,INVISIBLE);
+			if(button_state(panProp_1,2,-1)) set(select,INVISIBLE);
 			else reset(select,INVISIBLE);
 			
-			if(button_state(panProp,4,-1)) set(select,NOFOG);
+			if(button_state(panProp_1,3,-1)) set(select,NOFOG);
 			else reset(select,NOFOG);
 			
-			if(button_state(panProp,5,-1)) set(select,OVERLAY);
+			if(button_state(panProp_1,4,-1)) set(select,OVERLAY);
 			else reset(select,OVERLAY);
 			
-			if(button_state(panProp,6,-1)) set(select,PASSABLE);
+			if(button_state(panProp_1,5,-1)) set(select,PASSABLE);
 			else reset(select,PASSABLE);
 			
-			if(button_state(panProp,7,-1)) set(select,POLYGON);
+			if(button_state(panProp_1,6,-1)) set(select,POLYGON);
 			else reset(select,POLYGON);
 			
-			if(button_state(panProp,8,-1)) set(select,SHADOW);
+			if(button_state(panProp_1,7,-1)) set(select,SHADOW);
 			else reset(select,SHADOW);
 			
-			if(button_state(panProp,9,-1)) set(select,TRANSLUCENT);
+			if(button_state(panProp_1,8,-1)) set(select,TRANSLUCENT);
 			else reset(select,TRANSLUCENT);
 			//////////////////////////////////////////////////////////////
 			
@@ -2968,7 +3073,9 @@ void misc_startup() {
 				
 			}
 			
-			//////////////////////////////////////////////////////////////
+			// panProp
+			// select.material now holds mat_select
+			// so we must pass something else
 			
 		}
 		
@@ -3092,6 +3199,7 @@ PANEL *debug = {
 	
 	digits(0,0,99,"arial#25b",1,num_mdlobjs);
 	digits(0,20,99,"arial#25b",1,is_camera);
+	digits(0,40,99,"arial#25b",1,camera.arc);
 	
 	flags = SHOW;
 }

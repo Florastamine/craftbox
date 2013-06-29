@@ -12,7 +12,7 @@ PANEL *buttonlst_submenu_terrain = {
 	button(0,0,menu1_submenu4,menu1_submenu4_off,menu1_submenu4_over,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
-	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
+	button(0,0,"button_back.png","button_back.png","button_back.png",closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -22,12 +22,12 @@ PANEL *buttonlst_submenu_object = {
 	
 	bmap = "button_submenu_black.bmp";
 	
-	button(0,0,menu2_submenu1,menu2_submenu1_off,menu2_submenu1_over,objadd,NULL,NULL);
-	button(0,0,menu2_submenu2,menu2_submenu2_off,menu2_submenu2_over,NULL,NULL,NULL);
-	//	button(0,0,menu2_submenu3,menu2_submenu3,menu2_submenu3,NULL,NULL,NULL);
-	//	button(0,0,menu2_submenu4,menu2_submenu4,menu2_submenu4,NULL,NULL,NULL);
+	button(0,0,"tree.png","tree.png","tree.png",objadd,NULL,NULL);
+	button(0,0,"fireworks256.png","fireworks256.png","fireworks256.png",NULL,NULL,NULL);
+	button(0,0,"music.png","music.png","music.png",NULL,NULL,NULL);
+	button(0,0,"tips.png","tips.png","tips.png",NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
+	button(0,0,"button_back.png","button_back.png","button_back.png",closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -42,7 +42,7 @@ PANEL *buttonlst_submenu_path = {
 	//	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
 	//	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
 	
-	button(0,0,button_back,button_back,button_back_over,closewindow,NULL,NULL);
+	button(0,0,"button_back.png","button_back.png","button_back.png",closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 }
@@ -52,7 +52,7 @@ PANEL *panHome = {
 	
 	bmap = "panHome.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
 	button(0,0,button_Home_saveworld,button_Home_saveworld_off,button_Home_saveworld_over,NULL,NULL,NULL);
 	button(0,0,button_Home_loadworld,button_Home_loadworld_off,button_Home_loadworld_over,NULL,NULL,NULL);
@@ -66,13 +66,76 @@ PANEL *panHome = {
 	flags = OVERLAY | TRANSLUCENT;
 }
 
+PANEL *panProp_1 = { // Properties
+	
+	layer = 16;
+	
+	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
+	button_toggle(0,20,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
+	button_toggle(0,40,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
+	button_toggle(0,60,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
+	button_toggle(0,80,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
+	button_toggle(0,100,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
+	button_toggle(0,120,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
+	button_toggle(0,140,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
+	
+	button(2,170,"button_default_on.bmp","button_default_off.bmp","button_default_on.bmp",restore,NULL,NULL);
+	button(90,170,"button_randomrotate_on.bmp","button_randomrotate_off.bmp","button_randomrotate_on.bmp",random_pan,NULL,NULL);
+	
+	hslider(0,221,100,slider,0,100,v_alpha);	
+	hslider(0,268,100,slider,0,100,v_ambient);
+	
+	flags = OVERLAY;	
+	
+}
+
+PANEL *panProp_2 = { // Materials
+	
+	layer = 3;
+	
+	button_toggle(0,0,"button_Mat1_on.bmp","button_Mat1.bmp","button_Mat1_on.bmp","button_Mat1_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,30,"button_Mat2_on.bmp","button_Mat2.bmp","button_Mat2_on.bmp","button_Mat2_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,60,"button_Mat3_on.bmp","button_Mat3.bmp","button_Mat3_on.bmp","button_Mat3_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,90,"button_Mat4_on.bmp","button_Mat4.bmp","button_Mat4_on.bmp","button_Mat4_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,120,"button_Mat5_on.bmp","button_Mat5.bmp","button_Mat5_on.bmp","button_Mat5_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,150,"button_Mat6_on.bmp","button_Mat6.bmp","button_Mat6_on.bmp","button_Mat6_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,180,"button_Mat7_on.bmp","button_Mat7.bmp","button_Mat7_on.bmp","button_Mat7_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,210,"button_Mat8_on.bmp","button_Mat8.bmp","button_Mat8_on.bmp","button_Mat8_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,240,"button_Mat9_on.bmp","button_Mat9.bmp","button_Mat9_on.bmp","button_Mat9_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,270,"button_Mat10_on.bmp","button_Mat10.bmp","button_Mat10_on.bmp","button_Mat10_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,300,"button_Mat11_on.bmp","button_Mat11.bmp","button_Mat11_on.bmp","button_Mat11_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,330,"button_Mat12_on.bmp","button_Mat12.bmp","button_Mat12_on.bmp","button_Mat12_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,360,"button_Mat13_on.bmp","button_Mat13.bmp","button_Mat13_on.bmp","button_Mat13_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,390,"button_Mat14_on.bmp","button_Mat14.bmp","button_Mat14_on.bmp","button_Mat14_on.bmp",_mat_select,NULL,NULL);
+	button_toggle(0,420,"button_Mat15_on.bmp","button_Mat15.bmp","button_Mat15_on.bmp","button_Mat15_on.bmp",_mat_select,NULL,NULL);
+	
+	button(160,0,"box_icons_on.png","box_icons.png","box_icons_on.png",editmat,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panProp_3 = { // Physics
+	
+	layer = 3;
+	
+	button_toggle(0,0,flag_PHY_on,flag_PHY,flag_PHY_on,flag_PHY_on,NULL,NULL,NULL);
+	
+	hslider(0,0,100,slider,0,100,v_friction);
+	hslider(0,0,100,slider,0,100,v_bounciness);
+	
+	flags = OVERLAY;
+	
+}
+
 PANEL *panProp = {
 	layer = 2;
 	
-	bmap = "panProp.bmp";
+	bmap = "panProp.png";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
+	/*
 	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
 	button_toggle(0,0,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
@@ -84,61 +147,16 @@ PANEL *panProp = {
 	
 	button(0,0,button_default,button_default_off,button_default_over,restore,NULL,NULL);
 	button(0,0,button_randompan,button_randompan_off,button_randompan_over,random_pan,NULL,NULL);
+	*/
 	
-	hslider(0,0,100,slider,0,100,v_alpha);	
-	hslider(0,0,100,slider,0,100,v_ambient);	
-	
-	on_click = dragpanel;
-	
-	flags = TRANSLUCENT | OVERLAY;
-}
-
-PANEL *panPhy = {
-	layer = 2;
-	
-	bmap = "panPhy.bmp";
-	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
-	
-	button_toggle(0,0,flag_PHY_on,flag_PHY,flag_PHY_on,flag_PHY_on,NULL,NULL,NULL);
-	
-	hslider(0,0,100,slider,0,100,v_friction);
-	hslider(0,0,100,slider,0,100,v_bounciness);
+	button_toggle(0,0,"button_generalattrib_on.bmp","button_generalattrib.bmp","button_generalattrib_on.bmp","button_generalattrib_on.bmp",switch_propmode,NULL,NULL);
+	button_toggle(0,0,"button_material_on.bmp","button_material.bmp","button_material_on.bmp","button_material_on.bmp",switch_propmode,NULL,NULL);
+	button_toggle(0,0,"button_physics_on.bmp","button_physics.bmp","button_physics_on.bmp","button_physics_on.bmp",switch_propmode,NULL,NULL);	
+	button(0,0,"button_apply_on.bmp","button_apply.bmp","button_apply_on.bmp",NULL,NULL,NULL);
 	
 	on_click = dragpanel;
 	
-	flags = OVERLAY | TRANSLUCENT;
-}
-
-PANEL *panMat = {
-	layer = 2;
-	
-	bmap = "panMat.bmp";
-	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
-	
-	button(0,0,button_Mat1,button_Mat1,button_Mat1,_mat_select,NULL,NULL);
-	button(0,0,button_Mat2,button_Mat2,button_Mat2,_mat_select,NULL,NULL);
-	button(0,0,button_Mat3,button_Mat3,button_Mat3,_mat_select,NULL,NULL);
-	button(0,0,button_Mat4,button_Mat4,button_Mat4,_mat_select,NULL,NULL);
-	button(0,0,button_Mat5,button_Mat5,button_Mat5,_mat_select,NULL,NULL);
-	button(0,0,button_Mat6,button_Mat6,button_Mat6,_mat_select,NULL,NULL);
-	button(0,0,button_Mat7,button_Mat7,button_Mat7,_mat_select,NULL,NULL);
-	button(0,0,button_Mat8,button_Mat8,button_Mat8,_mat_select,NULL,NULL);
-	button(0,0,button_Mat9,button_Mat9,button_Mat9,_mat_select,NULL,NULL);
-	button(0,0,button_Mat10,button_Mat10,button_Mat10,_mat_select,NULL,NULL);
-	button(0,0,button_Mat11,button_Mat11,button_Mat11,_mat_select_custom,NULL,NULL);
-	button(0,0,button_Mat12,button_Mat12,button_Mat12,_mat_select_custom,NULL,NULL);
-	button(0,0,button_Mat13,button_Mat13,button_Mat13,_mat_select_custom,NULL,NULL);
-	button(0,0,button_Mat14,button_Mat14,button_Mat14,_mat_select_custom,NULL,NULL);
-	button(0,0,button_Mat15,button_Mat15,button_Mat15,mat_select_null,NULL,NULL);
-	
-	button(0,0,button_editmat,button_editmat,button_editmat,editmat,NULL,NULL);
-	button(0,0,button_matapply,button_matapply_off,button_matapply_over,pass_mat_to_object,NULL,NULL);
-	
-	on_click = dragpanel;
-	
-	flags = OVERLAY | TRANSLUCENT;
+	flags = TRANSLUCENT;
 }
 
 PANEL *panMat_Sub1 = {
@@ -146,11 +164,11 @@ PANEL *panMat_Sub1 = {
 	
 	bmap = "panMatEd.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
-	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
-	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,mat_save,NULL,NULL);
-	
+//	button(0,0,button_editmat_def,button_editmat_def,button_editmat_def,NULL,NULL,NULL);
+//	button(0,0,button_editmat_save,button_editmat_save,button_editmat_save,mat_save,NULL,NULL);
+//	
 	// we need 14 sliders for ambient x3, specular x3, diffuse x3 and emissive x3
 	// +power, +alpha.
 	
@@ -202,9 +220,9 @@ PANEL *panMain_Top = {
 	button_toggle(0,0,flag_ROTATE_on,flag_ROTATE,flag_ROTATE_on,flag_ROTATE_on,switch_to_rotate,NULL,NULL);
 	button_toggle(0,0,flag_SCALE_on,flag_SCALE,flag_SCALE_on,flag_SCALE_on,switch_to_scale,NULL,NULL);
 	
-	button(0,0,"properties.png","properties.png","properties.png",prop,NULL,NULL);
-	button(0,0,"emblem_weapon.png","emblem_weapon.png","emblem_weapon.png",phy,NULL,NULL);
-	button(0,0,"pathing.png","pathing.png","pathing.png",mat,NULL,NULL);
+	//	button(0,0,"properties.png","properties.png","properties.png",prop,NULL,NULL);
+	//	button(0,0,"emblem_weapon.png","emblem_weapon.png","emblem_weapon.png",phy,NULL,NULL);
+	//	button(0,0,"pathing.png","pathing.png","pathing.png",mat,NULL,NULL);
 	
 	
 	flags = OVERLAY | SHOW;
@@ -224,8 +242,8 @@ PANEL *panMain_Bottom = {
 	*/
 	
 	button(0,0,"home.png","home.png","home.png",home,NULL,NULL);
-	button_toggle(0,0,button_Cam,button_Cam_Off,button_Cam,button_Cam,controlcam,NULL,NULL);
-	button(0,0,button_Terrain,button_Terrain_Off,button_Terrain_Over,sharedGUI_launch_terrain,NULL,NULL);
+	button_toggle(0,0,"mouse_pointer_on.png","mouse_pointer.png","mouse_pointer_on.png","mouse_pointer_on.png",controlcam,NULL,NULL);
+	button(0,0,"pathing.png","pathing.png","pathing.png",sharedGUI_launch_terrain,NULL,NULL);
 	button(0,0,"objects.png","objects.png","objects.png",sharedGUI_launch_object,NULL,NULL);
 	button(0,0,"path_32.png","path_32.png","path_32.png",sharedGUI_launch_path,NULL,NULL);
 	
@@ -288,7 +306,7 @@ PANEL *panObj_Main = {
 	
 	bmap = panObj_anms;
 	
-	//	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	//button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
 	flags = OVERLAY;
 	
@@ -300,7 +318,7 @@ PANEL *panLight = {
 	
 	bmap = "panLight.bmp";
 	
-	button(0,0,button_Close,button_Close_off,button_Close_over,closewindow,NULL,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
 	hslider(0,0,100,slider,0,255,v_lred);
 	hslider(0,0,100,slider,0,255,v_lgreen);
@@ -366,7 +384,85 @@ MATERIAL *mat_marble = {
 	power = 10;
 }
 
-MATERIAL* mat_select = 
+MATERIAL *mat_lavenderrose = {
+	
+	ambient_red = 251;
+	ambient_green = 160;
+	ambient_blue = 227;
+	
+	power = 10;
+	
+}
+
+MATERIAL *mat_bitterlemon = {
+	
+	ambient_red = 13;
+	ambient_green = 224;
+	ambient_blue = 202;
+	
+	power = 10;
+	
+}
+
+MATERIAL *mat_peachorange = {
+	
+	ambient_red = 255;
+	ambient_green = 204;
+	ambient_blue = 153;
+	
+	power = 10;
+	
+}
+
+MATERIAL *mat_purewhite = {
+	
+	ambient_red = 255;
+	ambient_green = 255;
+	ambient_blue = 255;
+	emissive_red = 255;
+	emissive_green = 255;
+	emissive_blue = 255;
+	diffuse_red = 255;
+	diffuse_green = 255;
+	diffuse_blue = 255;
+	specular_red = 255;
+	specular_green = 255;
+	specular_blue = 255;
+	
+	power = 10;
+	
+}
+
+MATERIAL *mat_black = {
+	
+	ambient_red = 0;
+	ambient_green = 0;
+	ambient_blue = 0;
+	emissive_red = 0;
+	emissive_green = 0;
+	emissive_blue = 0;
+	diffuse_red = 0;
+	diffuse_green = 0;
+	diffuse_blue = 0;
+	specular_red = 0;
+	specular_green = 0;
+	specular_blue = 0;
+	
+	power = 0;
+	
+}
+
+MATERIAL *mat_palelilac = {
+	
+	ambient_red = 255;
+	ambient_green = 187;
+	ambient_blue = 187;
+	
+	power = 10;
+	
+}
+
+MATERIAL *mat_select = 
 {
 	ambient_red=255;
 	ambient_green=255;

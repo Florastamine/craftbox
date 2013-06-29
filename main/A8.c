@@ -79,7 +79,6 @@
 
 	void def_debug() 
 	{
-		beep();
 		if(key_alt) 
 		{ 
 			diag_status(); 
@@ -150,14 +149,12 @@
 	void def_shot() 
 	{ 
 		file_for_screen("shot_",def_shot_num); 
-		beep(); 
 		def_shot_num++; 
 	}
 
 	void def_save() 
 	{ 
 		game_save(app_name,1,SV_ALL-SV_INFO); 
-		beep(); 
 	}
 
 	void def_load() 
@@ -186,8 +183,11 @@
 		var mode = video_screen + 1;
 		if (mode > 2) 
 		mode = 1;
-		if (video_switch(0,0,mode) == 0) 
-		beep();
+		if (video_switch(0,0,mode) == 0) {
+		   
+		   printf("This video mode is not supported.");
+		   
+		}
 	}
 
 	var def_mvol = 50;
@@ -268,7 +268,6 @@
 		else
 		def_camera = cycle(def_camera,0,2);	// 0-1
 		if (!key_shift && def_camera > 0) {
-			beep();
 			def_move();
 		}
 	}
