@@ -54,14 +54,17 @@ void timebar(var _TimeRemain,var _DecrTime)
 	//	sys_exit(NULL);
 }
 
-void generate_sound() {
+void generate_waypoint()
+{
+	while(my == NULL) wait(1);
 	
-	if(!sndobjs[num_sndobjs]) {
-		
-		printf("Wrong sound ID.\nMaybe you're trying to access unallocated space in the sound database.");
-		return;
-		
-	}
+	node++;
+
+	my_target_node = me;
+	my_target_node.emask |= ENABLE_SCAN;
+}
+
+void generate_sound() {
 	
 	ent_playloop(my,sndobjs[num_sndobjs],100);
 	
@@ -719,6 +722,9 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////
+		// Lights don't have a database. So the "unallocated space"
+		// error would never happen.
+		
 		case light:
 		
 		tmp = ent_create("jabber.png",temp_pos.x,generate_light);
@@ -734,7 +740,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case part :
 		
-		tmp = ent_create("desktop_effect.png",temp_pos.x,Base_Effect_emitter);
+		tmp = ent_create("desktop_effect.png",temp_pos.x,NULL);
 		
 		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 		
@@ -755,6 +761,13 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case snd:
 		
+		if(!sndobjs[num_sndobjs] || num_sndobjs < 0 || num_sndobjs > 50) {
+			
+			printf("Wrong sound ID or damaged sound file.\nMaybe you're trying to access unallocated space in the sound database.");
+			return;
+			
+		}
+		
 		tmp = ent_create("sound_32.png",temp_pos.x,generate_sound);
 		
 		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
@@ -768,6 +781,22 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		
 		tmp.obj_type = snd;
 		tmp.skill4 = num_sndobjs;
+		
+		return tmp;
+		
+		break;
+		////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////
+		case node_placer:
+		tmp = ent_create("ix_waypoint.mdl",temp_pos.x,generate_waypoint);
+		
+		set(tmp, BRIGHT | PASSABLE);
+		tmp.ambient = 100;
+		
+		tmp.scale_x = tmp.scale_y = tmp.scale_z *= 1.5;
+		
+		tmp.obj_type = node_placer;
 		
 		return tmp;
 		
@@ -827,113 +856,51 @@ void updategui(PANEL *wg) {
 	
 	if(wg == panHome) {
 		
-		button_SaveWorld_y = BORDER;
-		button_LoadWorld_y = button_SaveWorld_y + 40 + BORDER/2.5;
-		button_NewWorld_y = button_LoadWorld_y + 40 + BORDER/2.5;
-		button_QuitWorld_y = button_NewWorld_y + 40 + BORDER/2.5;
-		button_CmpWorld_y = button_QuitWorld_y + 40 + BORDER/2.5;
-		button_SetWorld_y = button_CmpWorld_y + 40 + BORDER/2.5;
-		
-		pan_setpos(panHome,3,2,vector(BORDER,button_SaveWorld_y,0));
-		pan_setpos(panHome,3,3,vector(BORDER,button_LoadWorld_y,0));	
-		pan_setpos(panHome,3,4,vector(BORDER,button_NewWorld_y,0));
-		pan_setpos(panHome,3,5,vector(BORDER,button_QuitWorld_y,0));
-		pan_setpos(panHome,3,6,vector(BORDER,button_CmpWorld_y,0));
-		pan_setpos(panHome,3,7,vector(BORDER,button_SetWorld_y,0));
-		
-		pan_setpos(panHome,3,1,vector(bmap_width(panHome.bmap) - BORDER * 2,BORDER,0));
+		pan_setpos(panHome,3,1,vector(bmap_width(panHome.bmap) - 38 - 15,0,0));
 		
 	}
 	
-	if(wg == panProp) { 
+	if(wg == panProp) 
+	{ 
 		
 		int i;
-		for(i = 2;i < 6;i++) {
-			
-			pan_setpos(panProp,3,i,vector(4, 20 + 35*(i-2),0));
-			
-			pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - 38 - 15,0,0));
-			
-			//////////////////////////////////////////////////////////////
-			panProp_1.pos_x = panProp.pos_x + 121;
-			panProp_1.pos_y = panProp.pos_y + 75;
-			
-			panProp_2.pos_x = panProp.pos_x + 121;
-			panProp_2.pos_y = panProp.pos_y + 43;
-			
-			panProp_3.pos_x = panProp.pos_x + 121;
-			panProp_3.pos_y = panProp.pos_y + 75;
-			//////////////////////////////////////////////////////////////
-			
-		}
+		for(i = 2;i < 6;i++) pan_setpos(panProp,3,i,vector(4, 20 + 35*(i-2),0));
+
+		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - 38 - 15,0,0));
 		
-		/*
+		//////////////////////////////////////////////////////////////
+		panProp_1.pos_x = panProp.pos_x + 121;
+		panProp_1.pos_y = panProp.pos_y + 75;
 		
-		int i;
-		for(i = 2;i < 10;i++) pan_setpos(panProp,3,i,vector(BORDER,BORDER + 23 * (i - 1),0));
+		panProp_2.pos_x = panProp.pos_x + 121;
+		panProp_2.pos_y = panProp.pos_y + 43;
 		
-		pan_setpos(panProp,3,10,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 32,0));
-		pan_setpos(panProp,3,11,vector(bmap_width(panProp.bmap) - BORDER - 64, bmap_height(panProp.bmap) - BORDER - 64,0));		
-		pan_setpos(panProp,3,12,vector(bmap_width(panProp.bmap) - BORDER - 256, bmap_height(panProp.bmap) - BORDER - 64,0));		
-		pan_setpos(panProp,3,13,vector(bmap_width(panProp.bmap) - BORDER - 256, bmap_height(panProp.bmap) - BORDER - 96,0));		
-		
-		pan_setpos(panProp,4,1,vector(BORDER + 102,BORDER * 2 + 23,0));
-		pan_setpos(panProp,4,2,vector(BORDER + 102,BORDER * 3 + 23 * 2,0));
-		
-		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - BORDER * 2,BORDER,0));
-		
-		*/
+		panProp_3.pos_x = panProp.pos_x + 121;
+		panProp_3.pos_y = panProp.pos_y + 75;
+		//////////////////////////////////////////////////////////////
 		
 	}
-	
+
 	if(wg == panMat_Sub1) { 
 		
-		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - BORDER * 2,BORDER,0));
-		
-		var i = 2;
-		while(i < 4) {
-			pan_setpos(panMat_Sub1,3,i,vector(BORDER, bmap_height(panMat_Sub1.bmap) - BORDER * (i-1) - 24 * (i-1),0));
-			i++;
-		}
-		
-		var i = 1, j = 0, k;
-		k = i; //lite-C doesn't allow me to initialize continuous variables during declaring them so...
-		
-		while(i < 15) {
-			
-			pan_setpos(panMat_Sub1,4,i,vector( BORDER * k + (k-1) * 50, BORDER * 2 + 45 + j,0 ));
-			i++; k++;
-			
-			if(i == 4) {
-				j = 23 + BORDER; // 23 = slider height
-				k = 1;
-			}
-			
-			if(i == 7) {
-				j = (23 + BORDER) * 2;
-				k = 1;
-			}
-			
-			if(i ==  10) {
-				j = (23 + BORDER) * 3;
-				k = 1;
-			}
-			
-			if(i == 13) {
-				j = (23 + BORDER) * 4;
-				k = 1;
-			}
-			
-		}
+		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - 38 - 15,0,0));
 	}
-	
+
 	if(wg == panLight) {
 		
-		pan_setpos(panLight,3,1,vector(bmap_width(panLight.bmap) - BORDER * 2,BORDER,0));
+		pan_setpos(panLight,3,1,vector(bmap_width(panLight.bmap) - 38 - 15,0,0));
 		
-		int i;
-		for(i = 1; i < 5;i++) pan_setpos(panLight,4,i,vector(BORDER * 7,BORDER * 2 + 26 * (i-1),0)); // 21 + 5 (bonus size)
-		for(i = 2;i < 4;i++) pan_setpos(panLight,3,i,vector(BORDER * 2,BORDER * 7 + 25 * i,0));
+	}
+	
+	if(wg == panSnd) {
+		
+		pan_setpos(panSnd,3,1,vector(bmap_width(panSnd.bmap) - 38 - 15,0,0));
+		
+	}
+	
+	if(wg == panParticle) {
+		
+		pan_setpos(panParticle,3,1,vector(bmap_width(panParticle.bmap) - 38 - 15,0,0));
 		
 	}
 }
@@ -947,54 +914,68 @@ this simple ugly hack should do the trick.
 */
 void closewindow(var id, PANEL *p) {
 	id = 1;
-	
+
 	if(p == panHome) {
 		reset(panHome,SHOW);
 	}
-	
+
 	if(p == panMat_Sub1) {
 		reset(panMat_Sub1,SHOW);
 		
-		if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 	}
-	
+
 	if(p == panProp) {		
 		
-		reset(panProp,SHOW);
+		prop(0);
+		
 	}
-	
+
 	if(p == buttonlst_submenu_terrain) {
 		wait(1);
 		
 		reset(buttonlst_submenu_terrain,SHOW);
 	}
-	
+
 	if(p == buttonlst_submenu_object) {
 		wait(1);
 		
 		reset(buttonlst_submenu_object,SHOW);
 	}
-	
+
 	if(p == buttonlst_submenu_path) {
 		wait(1);
 		
 		reset(buttonlst_submenu_path,SHOW);
 	}
 	
-	if(p == panObj_Main) {
+	if(p == panObj_Main_X) { // This is a bit special, since panObj_Main_X will pop up ONLY if panObj_Main pops.
 		
 		reset(panObj_Main,SHOW);
 		reset(panObj_Subbar,SHOW);
 		reset(panObj_Subbar_slider,SHOW);
+		reset(panObj_Main_X,SHOW);
+		
 		ctrl = 0;
 		
 		showGUI();
 		
 	}
-	
+
 	if(p == panLight) {
 		
-		reset(panLight,SHOW);
+		_light(0);
+		
+	}
+	
+	if(p == panSnd) {
+		
+		sound(0);
+		
+	}
+	
+	if(p == panParticle) {
+		
+		_part(0);
 		
 	}
 }
@@ -1002,12 +983,12 @@ void closewindow(var id, PANEL *p) {
 void dragpanel(PANEL *p)
 {
 	var click_offset[2];
-	
+
 	click_offset[0]=p.pos_x - mouse_pos.x;
 	click_offset[1]=p.pos_y - mouse_pos.y;
-	
+
 	panelselect(p);
-	
+
 	while(mouse_left)
 	{
 		proc_mode = PROC_EARLY;
@@ -1021,7 +1002,7 @@ void dragpanel(PANEL *p)
 		
 		wait(1);
 	}
-	
+
 	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
 	if(p == panHome) updategui(panHome);
 	if(p == panProp) updategui(panProp);
@@ -1029,14 +1010,14 @@ void dragpanel(PANEL *p)
 
 void centerpanel(PANEL *p) {
 	while(p == NULL) wait(1);
-	
+
 	p.pos_x = (screen_size.x - bmap_width(p.bmap)) / 2; 
 	p.pos_y = (screen_size.y - bmap_height(p.bmap)) / 2;
 }
 
 void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 	while(p == NULL || s == NULL) wait(1);
-	
+
 	// peform a S comparison
 	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) {
 		
@@ -1044,34 +1025,37 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 		return;
 		
 	}
-	
+
 	if(bmap_width(s.bmap) > bmap_width(p.bmap))
 	p.pos_x = (bmap_width(s.bmap) - bmap_width(p.bmap))/2;
-	
+
 	if(bmap_height(s.bmap) > bmap_height(p.bmap))
 	p.pos_y = (bmap_height(s.bmap) - bmap_height(p.bmap))/2;
 }
 
 void loadGUI() {
-	
-	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * BUTTON_SIZE);
+
+	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * 32);
 	panMain_Top.pos_y = BORDER;
-	
+
 	panMain_Bottom.pos_x = BORDER;
 	panMain_Bottom.pos_y = screen_size.y - bmap_height(panMain_Bottom.bmap) - BORDER;
-	
+
 	panObj_Main.pos_x = 0;
 	panObj_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
 	
+	panObj_Main_X.pos_x = screen_size.x - 40 - BORDER;
+	panObj_Main_X.pos_y = panObj_Main.pos_y + 25;
+
 	// Position the close button for panObj_Main
 	pan_setpos(panObj_Main,3,1,vector(bmap_width(panObj_Main.bmap) - BORDER * 2,BORDER,0));
-	
+
 	pan_resize(panObj_Subbar_slider,'x');
-	
+
 	panObj_Subbar.pos_x = panObj_Subbar_slider.pos_x = 0;
 	panObj_Subbar.pos_y = panObj_Main.pos_y + bmap_height(panObj_Main.bmap) + BORDER;
 	panObj_Subbar_slider.pos_y = panObj_Subbar.pos_y + bmap_height(panObj_Subbar_slider.bmap) + BORDER * 3;
-	
+
 	int i;
 	for(i = 1; i < 10;i++) {
 		
@@ -1084,34 +1068,34 @@ void loadGUI() {
 		pan_setpos(panMain_Top,3,i,vector((i - 1) * (BORDER + 32),0,0));
 		i++;
 	}
-	
+
 	int i = 1;
 	while(i < 6) {
 		pan_setpos(panMain_Bottom,3,i,vector((i-1) * (BORDER + 32),0,0));
 		
 		i++;
 	}
-	
+
 	/*
-	
+
 	setup for submenus
 	* buttonlst_submenu_terrain
 	* buttonlst_submenu_object
 	* buttonlst_submenu_path
-	
+
 	*/
-	
+
 	panMain_Play.pos_x = screen_size.x - BORDER - bmap_width(panMain_Play.bmap);
 	panMain_Play.pos_y = screen_size.y - BORDER - bmap_height(panMain_Play.bmap);
-	
+
 	buttonlst_submenu_terrain.pos_x = 
 	buttonlst_submenu_object.pos_x = 
 	buttonlst_submenu_path.pos_x = BORDER;
-	
+
 	buttonlst_submenu_terrain.pos_y = 
 	buttonlst_submenu_object.pos_y =
 	buttonlst_submenu_path.pos_y = screen_size.y - 2 * BORDER - 64;
-	
+
 	int i = 1;
 	while(i < 5) {
 		
@@ -1121,7 +1105,7 @@ void loadGUI() {
 		
 		i++;
 	}
-	
+
 	var cache = BORDER * 4 + 32 * 4; // the above formula, i = 5
 	pan_setpos(buttonlst_submenu_terrain,3,5,vector(cache,NULL,NULL));
 	pan_setpos(buttonlst_submenu_object,3,5,vector(cache,NULL,NULL));
@@ -1129,11 +1113,12 @@ void loadGUI() {
 }
 
 void sharedGUI_blackscreen(int mode, int sec) {
-	
+
 	pan_resize(blackscreen,'0');
 	set(blackscreen,SHOW);
-	
+
 	if(mode == FADE_IN) {
+		
 		set(blackscreen,TRANSLUCENT);
 		blackscreen->alpha = 0;
 		
@@ -1147,7 +1132,7 @@ void sharedGUI_blackscreen(int mode, int sec) {
 		blackscreen->alpha = 100;
 		
 	}
-	
+
 	if(mode == FADE_OUT) {
 		if(!is(blackscreen,SHOW)) set(blackscreen,SHOW);
 		set(blackscreen,TRANSLUCENT);
@@ -1164,17 +1149,17 @@ void sharedGUI_blackscreen(int mode, int sec) {
 		reset(blackscreen,SHOW);
 		
 	}
-	
+
 }
 
 void sharedGUI_loadlogo(BMAP *logo_bmap) {
 	while(logo_bmap == NULL) wait(1);
-	
+
 	_logo.bmap = logo_bmap;
-	
+
 	_logo->pos_x = screen_size.x - bmap_width(_logo.bmap) - 2 * BORDER;
 	_logo->pos_y = 20;
-	
+
 	set(_logo,SHOW);
 }
 
@@ -1184,7 +1169,7 @@ void sharedGUI__loadlogo() {
 
 void sharedGUI_playintro(STRING *what, var vol) {
 	proc_kill(4);
-	
+
 	var hndl;
 	hndl = media_play(what,NULL,abs(vol));
 
@@ -1192,26 +1177,32 @@ void sharedGUI_playintro(STRING *what, var vol) {
 }
 
 void sharedGUI_mouse(BOOL mode) {
-	
+
 	if(mode) mouse_mode = 4;
 	else mouse_mode = 0;
-	
+
 }
 
 void home() {
-	
+
 	centerpanel(panHome);
 	updategui(panHome);
-	
+
 	set(panHome,SHOW);
 }
 
 void prop(BOOL m) {
-	
+
 	if(m) {
 		
-		panProp.pos_x = xy_panProp.x;
-		panProp.pos_y = xy_panProp.y;
+		if(!lfsp) { // If prop() was launched from switch_panProp, don't re-change window's position.
+			
+			panProp.pos_x = xy_panProp.x;
+			panProp.pos_y = xy_panProp.y;
+			
+		}
+		
+		else lfsp = 0;
 		
 		if(select) {
 			
@@ -1219,12 +1210,55 @@ void prop(BOOL m) {
 			select.obj_type != snd &&
 			select.obj_type != part) {
 				
-				//				panProp.pos_x = BORDER;
-				//				panProp.pos_y = screen_size.y - (2 * BORDER) - 32 - bmap_height(panProp.bmap);
-				
 				set(panProp,SHOW);
 				
-				switch_propmode(2);
+				////////////////////////////////////////////////////////////
+				// Set rules for opening and closing panProp.
+				////////////////////////////////////////////////////////////
+				if(page == 1) { // Properties panel
+					
+					int i = 3;
+					while(i<5) {
+						
+						button_state(panProp,i,0);
+						i++;
+						
+					}
+					
+					panProp.bmap = panProp1_IMG;
+					
+					set(panProp_1,SHOW);
+					reset(panProp_2,SHOW);
+					reset(panProp_3,SHOW);
+					
+				}
+
+				if(page == 2) { // Materials panel
+					
+					button_state(panProp,2,0);
+					button_state(panProp,4,0);
+					
+					panProp.bmap = panProp2_IMG;
+					
+					reset(panProp_1,SHOW);
+					set(panProp_2,SHOW);
+					reset(panProp_3,SHOW);
+					
+				}
+
+				if(page == 3) { // Physics panel
+					
+					button_state(panProp,3,0);
+					button_state(panProp,2,0);
+					
+					panProp.bmap = panProp3_IMG;
+					
+					reset(panProp_1,SHOW);
+					reset(panProp_2,SHOW);
+					set(panProp_3,SHOW);
+					
+				}
+				////////////////////////////////////////////////////////////
 				
 				updategui(panProp);
 				
@@ -1233,46 +1267,50 @@ void prop(BOOL m) {
 		}
 		
 	}
-	
+
 	else { // Object is deactivated/other object has been selected.
 		
-		reset(panProp,SHOW);	
+		// Disable subpanels.
+		// Actually we have only one subpanel opened at a time,
+		// so only one value is passed to page.
+		if(is(panProp_1,SHOW)) { // If something has been opened before.
+			
+			// save it to page.
+			page = 1;
+			// close the panel.
+			reset(panProp_1,SHOW);
+			
+		}
+		if(is(panProp_2,SHOW)) {
+			
+			page = 2;
+			reset(panProp_2,SHOW);
+			
+		}
 		
+		if(is(panProp_3,SHOW)) {
+			
+			page = 3;
+			reset(panProp_3,SHOW);
+			
+		}
+		
+		// Save window's location.
 		xy_panProp.x = panProp.pos_x;
 		xy_panProp.y = panProp.pos_y;	
 		
-	}
-}/*
-
-void mat(BOOL m) {
-	
-	if(m) {
-		
-		panMat.pos_x = xy_panMat.x;
-		panMat.pos_y = xy_panMat.y;
-		
-		//	centerpanel(panMat);
-		updategui(panMat);
-		
-		set(panMat,SHOW);
-	}
-	
-	else {
-		
-		xy_panMat.x = panMat.pos_x;
-		xy_panMat.y = panMat.pos_y;
-		
-		reset(panMat,SHOW);
+		if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+		reset(panProp,SHOW);
 		
 	}
-}*/
+}
 
 void editmat() {
-	
+
 	// Precache panMat_Sub1
 	//	sharedGUI_centerfrom(panMat_Sub1,panMat);
 	updategui(panMat_Sub1);
-	
+
 	// Material editor is available only to custom materials
 	switch(mat_type) {
 		
@@ -1280,10 +1318,6 @@ void editmat() {
 		
 		pass_mat_to_matsub(mat_custom[0]);
 		set(panMat_Sub1,SHOW);
-		
-		// For debug purposes
-		reset(debug,SHOW);
-		set(debug_material,SHOW);
 		
 		break;
 		//////////////////////////////////////////////////////////////
@@ -1293,9 +1327,6 @@ void editmat() {
 		pass_mat_to_matsub(mat_custom[1]);
 		set(panMat_Sub1,SHOW);
 		
-		reset(debug,SHOW);
-		set(debug_material,SHOW);
-		
 		break;
 		//////////////////////////////////////////////////////////////
 		
@@ -1304,9 +1335,6 @@ void editmat() {
 		pass_mat_to_matsub(mat_custom[2]);
 		set(panMat_Sub1,SHOW);
 		
-		reset(debug,SHOW);
-		set(debug_material,SHOW);
-		
 		break;
 		//////////////////////////////////////////////////////////////
 		
@@ -1314,9 +1342,6 @@ void editmat() {
 		
 		pass_mat_to_matsub(mat_custom[3]);
 		set(panMat_Sub1,SHOW);
-		
-		reset(debug,SHOW);
-		set(debug_material,SHOW);
 		
 		break;
 		//////////////////////////////////////////////////////////////
@@ -1327,37 +1352,63 @@ void editmat() {
 	}	
 }
 
-/*
-void phy(BOOL m) {
+void switch_panProp(var mode) {
+	
+	page=mode--;
+	lfsp++;
+	prop(1);
+	
+}
+
+void sound(BOOL m) {
 	
 	if(m) {
 		
-		panPhy.pos_x = xy_panPhy.x;
-		panPhy.pos_y = xy_panPhy.y;
+		panSnd.pos_x = xy_panSnd.x;
+		panSnd.pos_y = xy_panSnd.y;
 		
-		if(select) {
-			
-			//	centerpanel(panPhy);
-			updategui(panPhy);
-			
-			set(panPhy,SHOW);
-			
-		}
+		updategui(panSnd);
+		set(panSnd,SHOW);
 		
 	}
 	
 	else {
 		
-		xy_panPhy.x = panPhy.pos_x;
-		xy_panPhy.y = panPhy.pos_y;
+		xy_panSnd.x = panSnd.pos_x;
+		xy_panSnd.y = panSnd.pos_y;
 		
-		reset(panPhy,SHOW);
+		reset(panSnd,SHOW);
 		
 	}
-}*/
+	
+}
+
+void _part(BOOL m) {
+	
+	if(m) {
+		
+		panParticle.pos_x = xy_panParticle.x;
+		panParticle.pos_y = xy_panParticle.y;
+		
+		updategui(panParticle);
+		
+		set(panParticle,SHOW);
+		
+	}
+
+	else {
+		
+		xy_panParticle.x = panParticle.pos_y;
+		xy_panParticle.y = panParticle.pos_y;
+		
+		reset(panParticle,SHOW);
+		
+	}
+	
+}
 
 void _light(BOOL m) {
-	
+
 	if(m) {
 		
 		panLight.pos_x = xy_panLight.x;
@@ -1380,7 +1431,7 @@ void _light(BOOL m) {
 		if(select.light_mode == disco) button_state(panLight,3,0);
 		
 	}
-	
+
 	else { // !m
 		
 		// Backup
@@ -1407,7 +1458,7 @@ void _light(BOOL m) {
 		reset(panLight,SHOW);
 		
 	}
-	
+
 }
 
 void panelselect(PANEL *p)
@@ -1417,12 +1468,12 @@ void panelselect(PANEL *p)
 		layer_sort(last_pan,2);
 		
 		last_pan = p;
-		layer_sort(last_pan,3);
+		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
 	}
 	else {
 		last_pan = p;
-		layer_sort(last_pan,3);
+		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
 	}
 }
@@ -1430,28 +1481,28 @@ void panelselect(PANEL *p)
 void sharedGUI_launch_terrain() {
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
-	
+
 	set(buttonlst_submenu_terrain,SHOW);
 }
 
 void sharedGUI_launch_object() {
 	reset(buttonlst_submenu_terrain,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
-	
+
 	set(buttonlst_submenu_object,SHOW);
 }
 
 void sharedGUI_launch_path() {
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_terrain,SHOW);
-	
+
 	set(buttonlst_submenu_path,SHOW);
 }
 
 void follow_pointer() {
 	fpsf_marker = me;
 	set(fpsf_marker,PASSABLE);
-	
+
 	while(1) {
 		
 		sharedGUI_cpos1.x = mouse_pos.x;
@@ -1474,38 +1525,35 @@ void follow_pointer() {
 void pass_to_gui(ENTITY *e) {
 	v_ambient = e.ambient;
 	v_alpha = e.alpha;
-
-	////////////////////////////////////////////////////////////
-	// For panProp
-	////////////////////////////////////////////////////////////
+	
 	if(is(e,BRIGHT)) button_state(panProp_1,1,1);
 	else button_state(panProp_1,1,0);
-	
+
 	if(is(e,INVISIBLE)) button_state(panProp_1,2,1);
 	else button_state(panProp_1,2,0);
-	
+
 	if(is(e,NOFOG)) button_state(panProp_1,3,1);
 	else button_state(panProp_1,3,0);
-	
+
 	if(is(e,OVERLAY)) button_state(panProp_1,4,1);
 	else button_state(panProp_1,4,0);
-	
+
 	if(is(e,PASSABLE)) button_state(panProp_1,5,1);
 	else button_state(panProp_1,5,0);
-	
+
 	if(is(e,POLYGON)) button_state(panProp_1,6,1);
 	else button_state(panProp_1,6,0);
-	
+
 	if(is(e,SHADOW)) button_state(panProp_1,7,1);
 	else button_state(panProp_1,7,0);
-	
+
 	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
 	else button_state(panProp_1,8,0);
-	
+
 }
 
 void controlcam() {
-	
+
 	if(button_state(panMain_Bottom,2,-1)) is_camera = 1;
 	else {
 		
@@ -1518,7 +1566,7 @@ void controlcam() {
 		manip_type = scale + 1;
 		
 	}
-	
+
 }
 
 void restore() {
@@ -1534,20 +1582,17 @@ void restore() {
 
 // The simplest function in the kernel. ;)
 void random_pan() {
-	
+
 	if(select) {
 		
 		select.pan = random(360);		
 		
 	}
-	
+
 }
 
-////////////////////////////////////////////////////////////
-// These materials can't be customized. Thus selecting them make panMat_Sub1 disappears.
-////////////////////////////////////////////////////////////
 void _mat_select(var id) {
-	
+
 	// Clear evidence first
 	int i = id;
 	while(i > 0) {
@@ -1566,7 +1611,7 @@ void _mat_select(var id) {
 	}
 
 	button_state(panProp_2,id,1);
-	
+
 	if(select) {
 		
 		switch(id) {
@@ -1579,7 +1624,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1592,7 +1636,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1605,7 +1648,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1618,7 +1660,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1631,7 +1672,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1644,7 +1684,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1657,7 +1696,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1670,7 +1708,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1683,7 +1720,6 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
@@ -1696,14 +1732,13 @@ void _mat_select(var id) {
 			if(is(panMat_Sub1,SHOW)) {
 				reset(panMat_Sub1,SHOW);
 				
-				if(is(debug_material,SHOW)) reset(debug_material,SHOW);
 			}
 			
 			break;
 			
 			case 11: // Custom material #1
 			
-			mat_temp = select_custom_mat1;
+			mat_type = select_custom_mat1;
 			pass_mat_to_object();
 			
 			/*
@@ -1725,7 +1760,7 @@ void _mat_select(var id) {
 			
 			case 12: // Custom material #2
 			
-			mat_temp = select_custom_mat2;
+			mat_type = select_custom_mat2;
 			pass_mat_to_object();
 			
 			if(is(panMat_Sub1,SHOW))
@@ -1735,7 +1770,7 @@ void _mat_select(var id) {
 			
 			case 13: // Custom material #3
 			
-			mat_temp = select_custom_mat3;
+			mat_type = select_custom_mat3;
 			pass_mat_to_object();
 			
 			if(is(panMat_Sub1,SHOW))
@@ -1744,7 +1779,7 @@ void _mat_select(var id) {
 			break;
 			
 			case 14: // Custom material #4
-			mat_temp = select_custom_mat4;
+			mat_type = select_custom_mat4;
 			pass_mat_to_object();
 			
 			if(is(panMat_Sub1,SHOW))
@@ -1766,11 +1801,11 @@ void _mat_select(var id) {
 		}
 		
 	}
-	
+
 }
 
 void pass_mat_to_object() {
-	
+
 	if(select) { // make sure something have been saved to mat_temp
 		
 		switch(mat_type) {
@@ -1843,25 +1878,25 @@ void pass_mat_to_object() {
 		}
 		
 	}
-	
+
 }
 
 void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
-	
+
 	////////////////////////////////////////////////////////////
 	// Pass general information to the clipboard first.
 	////////////////////////////////////////////////////////////
 	of._scale_x = o.scale_x;
 	of._scale_y = o.scale_y;
 	of._scale_z = o.scale_z;
-	
+
 	of._pan = o.pan;
 	of._tilt = o.tilt;
 	of._roll = o.roll;
-	
+
 	of._alpha = o.alpha;
 	of._ambient = o.ambient;
-	
+
 	////////////////////////////////////////////////////////////
 	switch(o.obj_type) {
 		
@@ -1945,25 +1980,25 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		break;
 		
 	}
-	
+
 }
 
 void pass_clipboard_to_object(ENTITY *e) {
-	
+
 	////////////////////////////////////////////////////////////
 	// As usual, pass general data first.
 	////////////////////////////////////////////////////////////
 	e.ambient = clipboard._ambient;
 	e.alpha = clipboard._alpha;
-	
+
 	e.scale_x = clipboard._scale_x;
 	e.scale_y = clipboard._scale_y;
 	e.scale_z = clipboard._scale_z;
-	
+
 	e.pan = clipboard._pan;
 	e.tilt = clipboard._tilt;
 	e.roll = clipboard._roll;
-	
+
 	////////////////////////////////////////////////////////////	
 	switch(clipboard.of_objtype) {
 		
@@ -2048,11 +2083,11 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		
 	}
-	
+
 }
 
 void obj_cut() {
-	
+
 	if(select) {
 		
 		pass_object_to_clipboard(select,clipboard);
@@ -2075,11 +2110,11 @@ void obj_cut() {
 		ptr_remove(select);
 		select = NULL;
 	}
-	
+
 }
 
 void obj_copy() {
-	
+
 	if(select) {
 		
 		pass_object_to_clipboard(select,clipboard);
@@ -2090,13 +2125,13 @@ void obj_copy() {
 			clipboard.m = mat_temp;
 		}
 	}
-	
+
 }
 
 void obj_paste() {
-	
+
 	int _obj_type_old = _obj_type;
-	
+
 	if(clipboard.dp) {
 		
 		_obj_type = clipboard.of_objtype;
@@ -2104,16 +2139,16 @@ void obj_paste() {
 		pass_clipboard_to_object(obj_create());
 		
 	}
-	
+
 	_obj_type = _obj_type_old; // Give me the original int.
-	
+
 }
 
 // Read material properties from a file and pass it to a
 // previously-defined material.
 void pass_file_to_material(MATERIAL *m, STRING *file) {
 	while(m == NULL) wait(1); // wait for m to be completely created
-	
+
 	var vpass = file_open_read(file);
 	if(vpass == 0) {
 		
@@ -2121,37 +2156,37 @@ void pass_file_to_material(MATERIAL *m, STRING *file) {
 		return;
 		
 	}
-	
+
 	// Follow this form :
 	/*
-	
+
 	ambient_red, ambient_green, ambient_blue
 	specular_red, specular_green, specular_blue,
 	diffuse_red, diffuse_green, diffuse_blue,
 	emissive_red, emissive_green, emissive_blue,
 	alpha, power (no need for albedo)
-	
+
 	*/
-	
+
 	m.ambient_red = file_var_read(vpass);
 	m.ambient_green = file_var_read(vpass);
 	m.ambient_blue = file_var_read(vpass);
-	
+
 	m.specular_red = file_var_read(vpass);
 	m.specular_green = file_var_read(vpass);
 	m.specular_blue = file_var_read(vpass);
-	
+
 	m.diffuse_red = file_var_read(vpass);
 	m.diffuse_green = file_var_read(vpass);
 	m.diffuse_blue = file_var_read(vpass);
-	
+
 	m.emissive_red = file_var_read(vpass);
 	m.emissive_green = file_var_read(vpass);
 	m.emissive_blue = file_var_read(vpass);
-	
+
 	m.alpha = file_var_read(vpass);
 	m.power = file_var_read(vpass);
-	
+
 	file_close(vpass);
 }
 
@@ -2179,9 +2214,9 @@ void pass_mat_to_matsub(MATERIAL *m) {
 }
 
 void pass_material_to_file(STRING *file, MATERIAL *m) {
-	
+
 	while(m == NULL) wait(1);
-	
+
 	var vpass = file_open_write(file);
 	if(vpass == 0) {
 		
@@ -2189,54 +2224,55 @@ void pass_material_to_file(STRING *file, MATERIAL *m) {
 		return;
 		
 	}
-	
+
 	// Copy values from the sliders
 	m.ambient_red = v_ambient_r;
 	m.ambient_green = v_ambient_g;
 	m.ambient_blue = v_ambient_b;
-	
+
 	m.specular_red = v_specular_r;
 	m.specular_green = v_specular_g;
 	m.specular_blue = v_specular_b;
-	
+
 	m.diffuse_red = v_diffuse_r;
 	m.diffuse_green = v_diffuse_g;
 	m.diffuse_blue = v_diffuse_b;
-	
+
 	m.emissive_red = v_emissive_r;
 	m.emissive_green = v_emissive_g;
 	m.emissive_blue = v_emissive_b;
-	
+
 	m.alpha = v_alpha_m;
 	m.power = v_power;
-	
+
 	// Write these copied values to vpass handle
 	file_var_write(vpass,m.ambient_red);
 	file_var_write(vpass,m.ambient_green);
 	file_var_write(vpass,m.ambient_blue);
-	
+
 	file_var_write(vpass,m.specular_red);
 	file_var_write(vpass,m.specular_green);
 	file_var_write(vpass,m.specular_blue);
-	
+
 	file_var_write(vpass,m.diffuse_red);
 	file_var_write(vpass,m.diffuse_green);
 	file_var_write(vpass,m.diffuse_blue);
-	
+
 	file_var_write(vpass,m.emissive_red);
 	file_var_write(vpass,m.emissive_green);
 	file_var_write(vpass,m.emissive_blue);
-	
+
 	file_var_write(vpass,m.alpha);
 	file_var_write(vpass,m.power);
-	
+
 	file_close(vpass);
 	
-	printf("Saved successfully.");
+	// close the panel.
+	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 }
 
 void mat_save() {
-	
+
 	// Material saving is available only to custom materials
 	switch(mat_type) {
 		
@@ -2269,7 +2305,7 @@ void mat_save() {
 		printf("Material saving is available only to custom materials.");
 		break;
 	}
-	
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -2337,9 +2373,9 @@ void obj_manip_interface()
 
 		wait (1);
 	}
-	
+
 	showGUI();
-	
+
 }
 
 void obj_manip_setup()
@@ -2355,7 +2391,7 @@ void obj_manip_setup()
 // stupid switchers
 // lite-C compiler: stupid programmer
 void switch_to_move() {
-	
+
 	// Houston we got a problem here !
 	if(!is_camera) {
 		
@@ -2366,7 +2402,7 @@ void switch_to_move() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
-	
+
 	// Check its state first.
 	if(button_state(panMain_Top,1,-1)) {
 		
@@ -2377,7 +2413,7 @@ void switch_to_move() {
 		manip_type = move;
 		
 	}
-	
+
 	else {
 		
 		// The loop can't check this so nothing will be assigned
@@ -2388,7 +2424,7 @@ void switch_to_move() {
 }
 
 void switch_to_rotate() {
-	
+
 	if(!is_camera) {
 		
 		int i;
@@ -2398,7 +2434,7 @@ void switch_to_rotate() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
-	
+
 	if(button_state(panMain_Top,2,-1)) {
 		
 		button_state(panMain_Top,1,0);
@@ -2412,7 +2448,7 @@ void switch_to_rotate() {
 }
 
 void switch_to_scale() {
-	
+
 	if(!is_camera) {
 		
 		int i;
@@ -2422,7 +2458,7 @@ void switch_to_scale() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
-	
+
 	if(button_state(panMain_Top,3,-1)) {
 		
 		button_state(panMain_Top,1,0);
@@ -2431,72 +2467,74 @@ void switch_to_scale() {
 		manip_type = scale;
 		
 	}
-	
+
 	else manip_type = scale+1;
-	
+
 }
 
 void hideGUI() {
-	
+
 	reset(panMain_Top,SHOW);
 	reset(panMain_Bottom,SHOW);
 	reset(panMain_Play,SHOW);
-	
+
 	// Also disables any remaining active content.
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
 	reset(buttonlst_submenu_terrain,SHOW);
-	
+
 }
 
 void showGUI() {
-	
+
 	set(panMain_Top,SHOW);
 	set(panMain_Bottom,SHOW);
 	set(panMain_Play,SHOW);
-	
+
 }
 
 void showr(FONT *f, STRING *r)
 {
 	proc_kill(4);
-	
+
 	TEXT *rt = txt_create(1,1);
-	
+
 	rt->font = f;
 	str_cpy((rt.pstring)[0],r);
-	
+
 	rt->pos_x = screen_size.x -  str_width((rt.pstring)[0],f) - BORDER - 30; // -30 because I'm using the free edition.
 	rt->pos_y = BORDER;
-	
+
 	set(rt,SHOW);
-	
+
 	// It's supposed to be "while(Game Is Running) wait(1);"
 	// but I haven't added into the game yet.
 	while(1) wait(1);
-	
+
 	txt_remove(rt);
 }
 
 void objadd() {
-	
+
 	hideGUI();
-	
+
 	set(panObj_Main,SHOW);
 	set(panObj_Subbar,SHOW);
 	set(panObj_Subbar_slider,SHOW);
-	ctrl = 0;
+	set(panObj_Main_X,SHOW);
 	
+	ctrl = 0;
+
 }
 
 // Just a small function for use within panObj_Subbar_switcher(var).
 // Updates the size of p according to b's size.
 void update_size(PANEL *p, BMAP *b) {
 	while(b == NULL || p == NULL) wait(1);
-	
+
 	p.size_x = bmap_width(b);
 	p.size_y = bmap_height(b);
-	
+
 }
 
 // We met again stupid switcher.
@@ -2504,19 +2542,19 @@ void update_size(PANEL *p, BMAP *b) {
 void panObj_Subbar_switcher(var id) {
 	// 10 = upper limit (9 buttons); 0 = lower limit
 	// This is more efficient than using a bunch of switch..case.
-	
+
 	int i;
-	
+
 	// Switches off all available buttons after id.
 	for(i = id + 1;i < 10;i++) button_state(panObj_Subbar,i,0);
 	// Switches off all available buttons before id.
 	for(i = id - 1;i > 0;i--) button_state(panObj_Subbar,i,0);
-	
+
 	// Switches on id.
 	button_state(panObj_Subbar,id,1);
-	
+
 	// Eeehhh..switch..case..I hate it.
-	
+
 	switch(id) {
 		
 		case 1: // ANMS
@@ -2605,11 +2643,11 @@ void panObj_Subbar_switcher(var id) {
 		break;
 		
 	}
-	
+
 }
 
 void config_write_video(STRING *cf) {
-	
+
 	var file = file_open_write(cf);
 	if(!file) {
 		
@@ -2617,17 +2655,17 @@ void config_write_video(STRING *cf) {
 		return;
 		
 	}
-	
+
 	/*
-	
+
 	Follow this form:
-	
+
 	These variables won't be saved and loaded:
 	- d3d_alphadepth
 	- d3d_shadowdepth
 	- d3d_texdepth 
 	- d3d_skydepth
-	
+
 	These variables will be saved/loaded from the .cfg file:
 	- d3d_anisotropy
 	- d3d_antialias
@@ -2639,9 +2677,9 @@ void config_write_video(STRING *cf) {
 	- video_mode
 	- video_depth
 	- video_screen
-	
+
 	*/
-	
+
 	file_var_write(file,d3d_anisotropy);
 	file_var_write(file,d3d_antialias);
 	file_var_write(file,d3d_mipmapping);
@@ -2652,14 +2690,14 @@ void config_write_video(STRING *cf) {
 	file_var_write(file,video_mode);
 	file_var_write(file,video_depth);
 	file_var_write(file,video_screen);
-	
+
 	file_close(file);
-	
+
 }
 
 // This function must be called prior to loading the level.
 void config_read_video(STRING *cf) {
-	
+
 	var file = file_open_read(cf);
 	if(!file) { // Fail? Then use default settings.
 		
@@ -2670,67 +2708,164 @@ void config_read_video(STRING *cf) {
 		return;
 		
 	}
-	
+
 	d3d_anisotropy = file_var_read(file);
 	d3d_antialias = file_var_read(file);
 	d3d_mipmapping = file_var_read(file);
 	d3d_triplebuffer = file_var_read(file);
 	d3d_lightres = file_var_read(file);
-	
+
 	video_aspect = file_var_read(file);
 	video_gamma = file_var_read(file);
 	video_mode = file_var_read(file);
 	video_depth = file_var_read(file);
 	video_screen = file_var_read(file);
-	
+
 	file_close(file);
 }
 
-void switch_propmode(var mode) {
+void save_level() {
+   
+   if(select) return;
 	
-	if(mode == 2) {
+	var system,
+	mdlobjs = file_open_write("data_entities.txt"),
+	lights = file_open_write("data_lights.txt"),
+	parts = file_open_write("data_particles.txt"),
+	snds = file_open_write("data_sounds.txt"),
+	terrain_data = file_open_write("data_terrain.txt"),
+	node_data = file_open_write("data_node.txt"),
+	garbage = file_open_write("data_trash.txt");
+	
+	you = ent_next(NULL);
+	while(you) {
 		
-		int i = 3;
-		while(i<5) {
+		switch(you.obj_type) {
 			
-			button_state(panProp,i,0);
-			i++;
+			case mdl :
+			/*
+			x,y,z
+			scale_x,scale_y,scale_z
+			pan,tilt,roll
+			alpha,ambient
+			8 flags:
+			- BRIGHT/INVISIBLE/NOFOG/OVERLAY/PASSABLE/POLYGON/SHADOW/TRANSLUCENT
+			object ID
+			// material
+			static/dynamic
+			physics
+			object_type
+			*/
+			file_var_write(mdlobjs,you.x);
+			file_var_write(mdlobjs,you.y);
+			file_var_write(mdlobjs,you.z);
+			
+			file_var_write(mdlobjs,you.scale_x);
+			file_var_write(mdlobjs,you.scale_y);
+			file_var_write(mdlobjs,you.scale_z);
+			
+			file_var_write(mdlobjs,you.pan);
+			file_var_write(mdlobjs,you.tilt);
+			file_var_write(mdlobjs,you.roll);
+			
+			file_var_write(mdlobjs,you.alpha);
+			file_var_write(mdlobjs,you.ambient);
+			
+			if(is(you,BRIGHT)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,INVISIBLE)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,NOFOG)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,OVERLAY)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,PASSABLE)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,POLYGON)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,SHADOW)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			if(is(you,TRANSLUCENT)) file_var_write(mdlobjs,1);
+			else file_var_write(mdlobjs,0);
+			
+			file_var_write(mdlobjs,you.skill4); // Object ID
+			
+			file_var_write(mdlobjs,you.skill2); // Object state, dynamic/static
+			file_var_write(mdlobjs,you.skill3); // Physics flag
+			
+			file_var_write(mdlobjs,you.obj_type);
+			
+			break;
+			
+			case light :
+			/*
+			x,y,z,pan,tilt,roll
+			r/g/b
+			lightrange
+			mode
+			*/
+			
+			file_var_write(lights,you.x);
+			file_var_write(lights,you.y);
+			file_var_write(lights,you.z);
+			
+			file_var_write(lights,you.pan);
+			file_var_write(lights,you.tilt);
+			file_var_write(lights,you.roll);
+			
+			file_var_write(lights,you.red);
+			file_var_write(lights,you.green);
+			file_var_write(lights,you.blue);
+			
+			file_var_write(lights,you.lightrange);
+			file_var_write(lights,you.light_mode);
+			file_var_write(lights,you.flick_time);
+			break;
+			
+			case part :
+			
+			/*x,y,z,pan,tilt,roll*/
+			file_var_write(parts,you.x);
+			file_var_write(parts,you.y);
+			file_var_write(parts,you.z);
+			
+			file_var_write(parts,you.pan);
+			file_var_write(parts,you.tilt);
+			file_var_write(parts,you.roll);
+			
+			break;
+			
+			case snd :
+			/*x,y,z,pan,tilt,roll*/
+			file_var_write(snds,my.x);
+			file_var_write(snds,my.y);
+			file_var_write(snds,my.z);
+			
+			file_var_write(snds,my.pan);
+			file_var_write(snds,my.tilt);
+			file_var_write(snds,my.roll);
+			
+			break;
+			
 			
 		}
 		
-		panProp.bmap = panProp1_IMG;
-		
-		set(panProp_1,SHOW);
-		reset(panProp_2,SHOW);
-		reset(panProp_3,SHOW);
+		you = ent_next(you);
+		wait(1);
 		
 	}
 	
-	if(mode == 3) {
-		
-		button_state(panProp,2,0);
-		button_state(panProp,4,0);
-		
-		panProp.bmap = panProp2_IMG;
-		
-		reset(panProp_1,SHOW);
-		set(panProp_2,SHOW);
-		reset(panProp_3,SHOW);
-		
-	}
-	
-	if(mode == 4) {
-		
-		button_state(panProp,3,0);
-		button_state(panProp,2,0);
-		
-		panProp.bmap = panProp3_IMG;
-		
-		reset(panProp_1,SHOW);
-		reset(panProp_2,SHOW);
-		set(panProp_3,SHOW);
-		
-	}
+	file_close(mdlobjs);
+	file_close(lights);
+	file_close(parts);
+	file_close(snds);
 	
 }
 
@@ -2738,65 +2873,65 @@ void switch_propmode(var mode) {
 // Kernel-related functions.
 ////////////////////////////////////////////////////////////
 void load_kernel(STRING *lvl_str) {
-	
+
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
 	sky_clip = -10;
-	
+
 	// Our own setup
-	
+
 	// Read and setup video settings prior to executing other functions.
 	config_read_video("./src/cfg/video_config.cfg");
-	
+
 	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
-	
-	_obj_type = 1;
+
+	_obj_type = 4;
 	num_mdlobjs = 50;
-	
+
 	mouse_range = 500000;
 	mouse_map = mouse;
 	random_seed(0); // e.g. random light generators.
-	
+
 	// So that we can get access to the database.
 	mdlobjs_table_ptr = mdlobjs_table;
-	
+
 	panHome.alpha = panProp.alpha = DEFAULT_ALPHA;
-	
+
 	// Initialize the databases and load them.
 	init_database();
 	init_database_snd(); // Sound database doesn't require a pointer to access.
-	
+
 	// Intialize and read custom materials' properties.
 	int i;
 	for(i = 0;i < 4;i++) mat_custom[i] = mtl_create();
-	
+
 	pass_file_to_material(mat_custom[0],"./src/cfg/mat_custom_1.cfg");
 	pass_file_to_material(mat_custom[1],"./src/cfg/mat_custom_2.cfg");
 	pass_file_to_material(mat_custom[2],"./src/cfg/mat_custom_3.cfg");
 	pass_file_to_material(mat_custom[3],"./src/cfg/mat_custom_4.cfg");
-	
+
 	////////////////////////////////////////////////////////////
 	// After all stages have done its job, we load the level and pass "something" to it. Actually I don't know what I mean by "something".
 	////////////////////////////////////////////////////////////
-	
+
 	// If we want a video to be played...
 	//		sharedGUI_playintro(100);
 	//		wait_for(sharedGUI_playintro);
-	
+
 	// Intialize and load the GUI system.
 	loadGUI();
 	wait_for(loadGUI);
-	
+
 	// Load the level.
 	level_load(lvl_str);
 	wait_for(level_load); // Wait for level_load to be completed.
-	
+
 	// Some nice effects and further setup before the game can be started.
 	sharedGUI_blackscreen(FADE_OUT,2);
 	wait_for(sharedGUI_blackscreen);
-	
+
 	sharedGUI_mouse(1); // Enables the mouse.
-	
+
 	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
 	def_move();
 	//	
@@ -2834,20 +2969,6 @@ void load_kernel(STRING *lvl_str) {
 				
 				if(select) prop(1);
 				else prop(0);
-				
-			}
-			
-			if(key_m) {
-				
-				while(key_m) wait(1);
-				mat();
-				
-			}
-			
-			if(key_h) {
-				
-				while(key_h) wait(1);
-				phy();
 				
 			}
 			*/
@@ -2890,17 +3011,13 @@ void load_kernel(STRING *lvl_str) {
 		wait(1);
 	}
 	// End of shortcut keys implementation.
-	
+
 }
 
 void loop_kernel() {
-	
-	int divisor=4;
-	
+
 	while(1) 
 	{
-		
-		//	   camera.arc += mickey.z/divisor * time_step;
 		
 		if(key_t) 
 		{
@@ -2943,6 +3060,8 @@ void loop_kernel() {
 						
 						if(select.obj_type == light) _light(0);
 						if(select.obj_type == mdl) prop(0);
+						if(select.obj_type == snd) sound(0);
+						if(select.obj_type == part) _part(0);
 						
 						select.material = mat_temp;
 						select = NULL;
@@ -2959,6 +3078,12 @@ void loop_kernel() {
 					if(select.obj_type == mdl) prop(1);
 					else prop(0);
 					
+					if(select.obj_type == snd) sound(1);
+					else sound(0);
+					
+					if(select.obj_type == part) _part(1);
+					else _part(0);
+					
 					pass_to_gui(select);
 					
 				}
@@ -2970,14 +3095,18 @@ void loop_kernel() {
 						if(mat_temp) select.material = mat_temp;
 						else select.material = NULL;
 						
-						if(select && select.obj_type == light) _light(0);						
-						if(select && select.obj_type == mdl) prop(0);
+						if(select.obj_type == light) _light(0);						
+						if(select.obj_type == mdl) prop(0);
+						if(select.obj_type == snd) sound(0);
+						if(select.obj_type == part) _part(0);
 						
 						select = NULL;
 					}
 					
 					_light(0);	
+					_part(0);
 					prop(0);
+					sound(0);
 					
 					select = NULL;
 				}
@@ -2991,12 +3120,12 @@ void loop_kernel() {
 		wait(1);
 		
 	}
-	
+
 	////////////////////////////////////////////////////////////
 	// Game exit point
 	////////////////////////////////////////////////////////////
 	sys_exit(NULL);
-	
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -3007,12 +3136,19 @@ void loop_kernel() {
 // with _startup prefix execute themshelves automatically.
 ////////////////////////////////////////////////////////////
 void misc_startup() {
-	
+
 	while(1) {
 		
 		if(select) {
 			
-			if(key_del) ptr_remove(select);
+			if(key_del) {
+				
+				ptr_remove(select);
+				
+				// After this nothing is selected so we disable panProp.
+				prop(0);
+				
+			}
 			
 			//////////////////////////////////////////////////////////////
 			// panProp
@@ -3079,6 +3215,14 @@ void misc_startup() {
 			
 		}
 		
+		else { // If select isn't selected.
+			
+			prop(0); // prop() somehow got stuck
+			sound(0);
+			_light(0);
+			
+		}
+		
 		if(key_cul) ctrl--;
 		if(key_cur) ctrl++;
 		
@@ -3097,7 +3241,7 @@ void misc_startup() {
 		wait(1);
 		
 	}
-	
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -3110,13 +3254,13 @@ void misc_startup() {
 ////////////////////////////////////////////////////////////
 // A patroller and a node.
 ////////////////////////////////////////////////////////////
-void a_patroller()
+action a_patroller()
 {
-	while(my == NULL) wait(1);
-	
+	while(my == NULL && node <= 0) wait(1);
+
 	VECTOR temp[3];
 	set(my,POLYGON | SHADOW);
-	
+
 	while(true)
 	{
 		c_scan(my.x, my.pan, vector(360, 60, 1000), IGNORE_ME | SCAN_ENTS | SCAN_LIMIT);
@@ -3154,16 +3298,6 @@ void a_patroller()
 	}
 }
 
-void a_patroller_node()
-{
-	while(my == NULL) wait(1);
-	
-	my_target_node = me;
-	set(my_target_node, PASSABLE | POLYGON);
-	
-	my_target_node.emask |= ENABLE_SCAN;
-}
-
 ////////////////////////////////////////////////////////////
 // This is the camera controller I found when I was tweaking Mystymood.
 ////////////////////////////////////////////////////////////
@@ -3171,7 +3305,7 @@ action free_camera()
 {
 	VECTOR camera_force;
 	set(my, INVISIBLE | POLYGON);
-	
+
 	camera_force.z = 0;
 	vec_set(camera.x,my.x);
 	vec_set(camera.pan,my.pan);
@@ -3196,33 +3330,10 @@ action free_camera()
 ////////////////////////////////////////////////////////////
 PANEL *debug = {
 	layer = 3;
-	
+
 	digits(0,0,99,"arial#25b",1,num_mdlobjs);
 	digits(0,20,99,"arial#25b",1,is_camera);
 	digits(0,40,99,"arial#25b",1,camera.arc);
-	
-	flags = SHOW;
-}
 
-PANEL *debug_material = {
-	layer = 3;
-	
-	digits(0,0,"Ambient red: %f","arial#15b",1,v_ambient_r);
-	digits(0,10,"Ambient green: %f","arial#15b",1,v_ambient_g);
-	digits(0,20,"Ambient blue: %f","arial#15b",1,v_ambient_b);
-	
-	digits(0,30,"Specular red: %f","arial#15b",1,v_specular_r);
-	digits(0,40,"Specular green: %f","arial#15b",1,v_specular_g);
-	digits(0,50,"Specular blue: %f","arial#15b",1,v_specular_b);
-	
-	digits(0,60,"Emissive red: %f","arial#15b",1,v_emissive_r);
-	digits(0,70,"Emissive green: %f","arial#15b",1,v_emissive_g);
-	digits(0,80,"Emissive blue: %f","arial#15b",1,v_emissive_b);
-	
-	digits(0,90,"Diffuse red: %f","arial#15b",1,v_diffuse_r);
-	digits(0,100,"Diffuse green: %f","arial#15b",1,v_diffuse_g);
-	digits(0,110,"Diffuse blue: %f","arial#15b",1,v_diffuse_b);
-	
-	digits(0,120,"Power: %f","arial#15b",1,v_power);
-	digits(0,130,"Alpha: %f","arial#15b",1,v_alpha_m);
+	flags = SHOW;
 }

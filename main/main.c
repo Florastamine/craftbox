@@ -30,6 +30,8 @@
 #include "kernel.c"
 
 void main(void)  {
+   
+	on_s = save_level;
 	
 	load_kernel("sandbox.wmb");
 	loop_kernel();

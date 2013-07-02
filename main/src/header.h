@@ -51,9 +51,7 @@ obj_form clipboard;
 #define FADE_IN 1
 #define FADE_OUT 0
 
-#define BUTTON_SIZE 32
 #define BORDER 10
-#define SPACE BUTTON_SIZE + BORDER
 
 #define DEFAULT_ALPHA 50
 
@@ -65,6 +63,8 @@ obj_form clipboard;
 #define part 2
 #define light 3
 #define snd 4
+#define terrain_edit 5
+#define node_placer 6
 
 #define select_mat_null 15
 #define select_mat_lava 1
@@ -120,19 +120,18 @@ v_alpha_m, // Alpha for materials
 
 v_lred, v_lgreen, v_lblue, v_lrange;
 
-var button_SaveWorld_y,
-button_LoadWorld_y,
-button_NewWorld_y,
-button_QuitWorld_y,
-button_CmpWorld_y,
-button_SetWorld_y;
-
 var ctrl; // This var controls panObj_Main.
 
 var num_mdlobjs, num_partobjs, num_lightobjs, num_sndobjs,
 _obj_type, _obj_type_old;
 
 var upper=125;
+
+var page = 1, lfsp = 0; //launched from switch_panProp
+
+var node = 0;
+
+var particle_array[20];
 
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
@@ -145,6 +144,7 @@ PANEL *buttonlst,
 *panObj_Main,
 *panObj_Subbar,
 *panObj_Subbar_slider,
+*panObj_Main_X,
 *buttonlst_submenu_terrain,
 *buttonlst_submenu_object,
 *buttonlst_submenu_path,
@@ -154,11 +154,12 @@ PANEL *buttonlst,
 *panProp_2,
 *panProp_3,
 *panMat_Sub1,
+*panSnd,
+*panParticle,
 *_logo,
 *blackscreen,
 *panLight,
-*debug,
-*debug_material;
+*debug;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
@@ -176,7 +177,32 @@ VECTOR sharedGUI_cpos1,sharedGUI_cpos2,temp_pos;
 VECTOR v1, v2;
 
 // Vectors for backup purposes
-VECTOR xy_panLight, xy_panProp, xy_panMat, xy_panPhy;
+VECTOR xy_panLight, xy_panProp, xy_panSnd, xy_panParticle;\
+
+/*** Vectors & angles for particle effects ***/
+VECTOR *parted_temp_vec = {
+   
+   x = 0;
+   y = 0;
+   z = 0;
+   
+}
+
+VECTOR *parted_temp2_vec = {
+   
+   x = 0;
+   y = 0;
+   z = 0;
+   
+}
+
+ANGLE *parted_temp_ang = {
+   
+   pan = 0;
+   tilt = 0;
+   roll = 0;
+   
+}
 
 ////////////////////////////////////////////////////////////
 // Fonts and texts' declarations
@@ -205,54 +231,6 @@ SOUND *sndobjs[50];
 // Bitmap declarations
 ////////////////////////////////////////////////////////////
 BMAP* mouse = "mouse_pointer.png";
-
-BMAP *button_Play = "button_play.bmp";
-BMAP *button_Play_over = "button_play_over.bmp";
-BMAP *button_play_off = "button_play_off.bmp";
-
-BMAP *button_Home = "button_Home_on.bmp";
-BMAP *button_Home_Over = "button_Home_over.bmp";
-BMAP *button_Home_Off = "button_Home_off.bmp";
-
-BMAP *button_Cam = "button_Camera_on.bmp";
-BMAP *button_Cam_Over = "button_Camera_over.bmp";
-BMAP *button_Cam_Off = "button_Camera_off.bmp";
-
-BMAP *button_Terrain = "button_Terrain_on.bmp";
-BMAP *button_Terrain_Over = "button_Terrain_over.bmp";
-BMAP *button_Terrain_Off = "button_Terrain_off.bmp";
-
-BMAP *button_Objs = "button_Object_on.bmp";
-BMAP *button_Objs_Over = "button_Object_over.bmp";
-BMAP *button_Objs_Off = "button_Object_off.bmp";
-
-BMAP *button_Path = "button_Path_on.bmp";
-BMAP *button_Path_Over = "button_Path_over.bmp";
-BMAP *button_Path_Off = "button_Path_off.bmp";
-
-BMAP *button_Home_newworld = "button_Home_newworld.bmp";
-BMAP *button_Home_newworld_off = "button_Home_newworld_off.bmp";
-BMAP *button_Home_newworld_over = "button_Home_newworld_over.bmp";
-
-BMAP *button_Home_loadworld = "button_Home_loadworld.bmp";
-BMAP *button_Home_loadworld_off = "button_Home_loadworld_off.bmp";
-BMAP *button_Home_loadworld_over = "button_Home_loadworld_over.bmp";
-
-BMAP *button_Home_saveworld = "button_Home_saveworld.bmp";
-BMAP *button_Home_saveworld_off = "button_Home_saveworld_off.bmp";
-BMAP *button_Home_saveworld_over = "button_Home_saveworld_over.bmp";
-
-BMAP *button_Home_compileworld = "button_Home_compileworld.bmp";
-BMAP *button_Home_compileworld_off = "button_Home_compileworld_off.bmp";
-BMAP *button_Home_compileworld_over = "button_Home_compileworld_over.bmp";
-
-BMAP *button_Home_configworld = "button_Home_configworld.bmp";
-BMAP *button_Home_configworld_off = "button_Home_configworld_off.bmp";
-BMAP *button_Home_configworld_over = "button_Home_configworld_over.bmp";
-
-BMAP *button_Home_quitworld = "button_Home_quitworld.bmp";
-BMAP *button_Home_quitworld_off = "button_Home_quitworld_off.bmp";
-BMAP *button_Home_quitworld_over = "button_Home_quitworld_over.bmp";
 
 BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
 BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
@@ -363,9 +341,6 @@ BMAP *menu3_submenu2_over = "button_nodetype_over.bmp";
 //BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
 //BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
 
-BMAP *button_back = "button_back.bmp";
-BMAP *button_back_over = "button_back_over.bmp";
-
 BMAP *panObj_anms = "panObj_anms.bmp";
 BMAP *panObj_arch = "panObj_arch.bmp";
 BMAP *panObj_chars = "panObj_chars.bmp";
@@ -379,6 +354,14 @@ BMAP *panObj_blands = "panObj_blands.bmp";
 BMAP *panProp1_IMG = "panProp_1.bmp";
 BMAP *panProp2_IMG = "panProp_2.bmp";
 BMAP *panProp3_IMG = "panProp_3.bmp";
+
+/*** For particle effects ***/
+BMAP *point_blue_map = "point_blue.tga";
+BMAP *sparkle1_map = "sparkle1.tga";
+BMAP *fire3_map = "fire3.tga";
+BMAP *fire1_map = "fire1.tga";
+BMAP *blitz1_map = "blitz1.tga";
+BMAP *star1_map = "star1.tga";
 
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
@@ -402,8 +385,8 @@ void objadd();
 
 void prop(BOOL);
 void _light(BOOL);
-void mat(BOOL);
-void phy(BOOL);
+void _part(BOOL);
+void sound(BOOL);
 
 void controlcam();
 
@@ -452,6 +435,7 @@ void update_size(PANEL *, BMAP *);
 ENTITY *obj_create();
 
 void init_database();
+void init_database_snd();
 
 void loadGUI();
 void hideGUI();
@@ -467,7 +451,75 @@ void a_patroller_node();
 
 void generate_light();
 void generate_sound();
+void generate_waypoint();
 
 void fix(ENTITY *);
+void switch_panProp(var);
 
-void switch_propmode(var);
+void save_level();
+
+/*** For particle effects ***/
+void New_Base_Effect_base_event(PARTICLE *);
+void New_Base_Effect_base(PARTICLE *);
+void Base_Effect_base_event(PARTICLE *);
+void Base_Effect_base(PARTICLE *);
+void Base_Effect1_base_event(PARTICLE *);
+void Base_Effect1_base(PARTICLE *);
+void Base_Effect2_base_event(PARTICLE *);
+void Base_Effect2_base(PARTICLE *);
+void Base_Effect15_base_event(PARTICLE *);
+void Base_Effect15_base(PARTICLE *);
+void Base_Effect14_base_event(PARTICLE *);
+void Base_Effect14_base(PARTICLE *);
+void Base_Effect13_base_event(PARTICLE *);
+void Base_Effect13_base(PARTICLE *);
+void Base_Effect12_base_event(PARTICLE *);
+void Base_Effect12_base(PARTICLE *);
+void Base_Effect11_base_event(PARTICLE *);
+void Base_Effect11_base(PARTICLE *);
+void Base_Effect3_base_event(PARTICLE *);
+void Base_Effect3_base(PARTICLE *);
+void New_child2_child_event(PARTICLE *);
+void New_child2_child(PARTICLE *);
+void New_child_child_event(PARTICLE *);
+void New_child_child(PARTICLE *);
+void Base_Effect4_base_event(PARTICLE *);
+void Base_Effect4_base(PARTICLE *);
+void New_effect1_base_event(PARTICLE *);
+void New_effect1_base(PARTICLE *);
+void New_child_child_event2(PARTICLE *);
+void New_child_child2(PARTICLE *);
+void Base_Effect_base_event2(PARTICLE *);
+void Base_Effect_base2(PARTICLE *);
+void Base_Effect_base_event3(PARTICLE *);
+void Base_Effect_base3(PARTICLE *);
+void Base_Effect1_base_event3(PARTICLE *);
+void Base_Effect1_base3(PARTICLE *);
+void star1_base(PARTICLE *);
+void second_base(PARTICLE *);
+void firstb_base_event(PARTICLE *);
+void firstb_base(PARTICLE *);
+void first_base_event(PARTICLE *);
+void first_base(PARTICLE *);
+void standard_base(PARTICLE *);
+void sparkleblue_base(PARTICLE *);
+
+void emit_spark();
+void emit_colorfulspark();
+void emit_spacehole();
+void emit_fountain2();
+void emit_fountain1();
+void emit_fire2();
+void emit_fire1();
+void emit_doublehelix();
+void emit_composition();
+
+void p_spiral_create(VECTOR *);
+void p_spark_colorful_create(VECTOR *);
+void p_space_hole_create(VECTOR *);
+void p_fountain_2_create(VECTOR *);
+void p_fountain_1_create(VECTOR *);
+void p_fire_2_create(VECTOR *);
+void p_fire_1_create(VECTOR *);
+void p_double_helix_create(VECTOR *);
+void p_composition_create(VECTOR *);

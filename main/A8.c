@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////
 // Default key and debug functions
 // (c) jcl / Conitec  2008
@@ -272,7 +273,7 @@
 		}
 	}
 
-	TEXT* def_ctxt = { font = "Arial#15b"; string("Enter var or STRING","#80"); layer = 999; }
+	TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
 
 	void def_console() // Tab
 	{
