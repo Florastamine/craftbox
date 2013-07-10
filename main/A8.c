@@ -3,6 +3,7 @@
 // Default key and debug functions
 // (c) jcl / Conitec  2008
 // Custom default.c <A8.h>, 25.6.2013, Nguyen Ngoc Huy (d3dx9_30.dll/Scifi)
+// 5.7.2013
 /////////////////////////////////////////////////////////////////////
 
 #ifndef default_c
@@ -11,6 +12,8 @@
 
 	var def_dfps,def_dtps,def_dtlv,def_dtcs,def_dtac,def_dtrf,def_dsnd;
 	ANGLE def_cang;
+	
+	BOOL engine_play = 0;
 	
 	VIEW* viewMap = 
 	{
@@ -185,9 +188,9 @@
 		if (mode > 2) 
 		mode = 1;
 		if (video_switch(0,0,mode) == 0) {
-		   
-		   printf("This video mode is not supported.");
-		   
+			
+			printf("This video mode is not supported.");
+			
 		}
 	}
 
@@ -207,70 +210,6 @@
 		}
 		def_mvol = midi_vol; 
 		midi_vol = 0;
-	}
-
-
-	var def_camera = 0;
-	VECTOR* def_cam_dist = { x=100; y=0; z=100; }
-
-	// call this function from a level to enable the free camera movement
-	void def_move()
-	{
-		VECTOR force,speed,dist;
-		ANGLE aforce,aspeed; 
-
-		// initialize speed and distance
-		vec_zero(speed);
-		vec_zero(aspeed);
-		vec_zero(dist);
-
-		if (1 > def_camera)
-		def_camera = 1;
-		if (1 < run_mode && run_mode < 5) 
-		def_camera = 2;	// prevent player movement in entity viewer mode
-
-		while (def_camera) 
-		{
-			aforce.tilt = 5*(key_pgup - key_pgdn + mouse_right*mouse_force.y);
-			if (key_alt==0) {
-				aforce.pan = -5*(key_force.x + mouse_right*mouse_force.x + joy_force.x);
-				aforce.roll = 0;
-				} else {
-				aforce.pan = 0;
-				aforce.roll = 5*(key_force.x + mouse_right*mouse_force.x + joy_force.x);
-			}
-			vec_add(&camera->pan,vec_accelerate(&dist,&aspeed,&aforce,0.8));
-
-			force.x = 7*(key_force.y + key_w - key_s + joy_force.y);
-			force.y = 3*(key_comma - key_period + key_a - key_d);
-			force.z = 3*(key_home - key_end);
-			vec_accelerate(&dist,&speed,&force,0.5);
-			
-			if (NULL != player && 1 == def_camera) {
-				c_move(player,&dist,nullvector,IGNORE_PASSABLE|IGNORE_PASSENTS|GLIDE);
-				camera->genius = player;
-				vec_set(&player->pan,&camera->pan);
-				vec_set(&camera->x,def_cam_dist);
-				vec_rotate(&camera->x,&camera->pan);
-				vec_add(&camera->x,&player->x);
-				} else {
-				camera->genius = NULL;
-				vec_add(&camera->x,vec_rotate(&dist,&camera->pan));
-			}
-			wait(1);
-		}
-	}
-
-	void def_moveset() 
-	{
-		def_camera += 1;
-		if (NULL != player)
-		def_camera = cycle(def_camera,0,3);	// 0-1-2
-		else
-		def_camera = cycle(def_camera,0,2);	// 0-1
-		if (!key_shift && def_camera > 0) {
-			def_move();
-		}
 	}
 
 	TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
@@ -304,8 +243,7 @@
 		if (!on_f6) on_f6 = def_shot;
 		if (!on_f11) on_f11 = def_debug;
 		if (!on_f12) on_f12 = def_sound;
-
-		if (!on_0) on_0 = def_moveset;
+		
 		if (!on_enter) on_enter = def_screen;
 		if (!on_tab) on_tab = def_console;
 		

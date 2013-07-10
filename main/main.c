@@ -31,9 +31,9 @@
 
 void main(void)  {
    
-	on_s = save_level;
+   skCube=1;
 	
-	load_kernel("sandbox.wmb");
+	load_kernel("");
 	loop_kernel();
 	
 }

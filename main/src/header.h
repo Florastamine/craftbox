@@ -1,3 +1,27 @@
+#ifndef HEADER_H
+#define HEADER_H
+
+/***
+
+Mystymood
+The style of organizing scripts that was used in MystyMood was
+terrible so I made a .c and put all the definitions and declarations
+there. Just like I did with craftbox.
+
+I changed some variables that require only 1 or 0 as acceptable
+values to BOOL (not bool you fool) instead of int/var.
+
+readme.txt
+MystyMoods C-Script to Lite-C conversion by Alex Rozhkov (Shadow969)
+http://www.coniserver.net/ubbthreads/showprofile.php?Cat=0&User=20725
+
+Known issues:
+-fps slow down within the particle effects (snow, rain)
+
+Everybody is welcome to help fixing those bugs...THANKS!!!
+
+***/
+
 ///////////////////////////////////////////////////////////
 // This struct is applied to a wide range of objects.
 // It can be used to copy normal objects, lights, or particle
@@ -12,8 +36,7 @@ typedef struct obj_form {
 	int oid; // Object ID
 	int of_objtype; // The type of object that has been copied.
 	
-	var _x, _y, _z, // Do not store these vars if this is passed to the clipboard.
-	_scale_x, _scale_y, _scale_z,
+	var _scale_x, _scale_y, _scale_z,
 	_pan, _tilt, _roll,
 	_alpha, _ambient;
 	
@@ -37,6 +60,8 @@ typedef struct obj_form {
 	
 	////////////// Sound objects
 	
+	////////////// Node placer
+	
 	BOOL dp;
 	
 } obj_form;
@@ -44,21 +69,133 @@ typedef struct obj_form {
 obj_form clipboard;
 
 //////////////////////////////////////////////////////////////
-#define obj_type skill1
-#define light_mode skill5
-#define flick_time skill6
 
+// System
 #define FADE_IN 1
 #define FADE_OUT 0
 
 #define BORDER 10
-
 #define DEFAULT_ALPHA 50
+
+////////////////////////////////////////////////////////////
+// System definitions for Mystymood.
+////////////////////////////////////////////////////////////
+#define snd_vol_rain_max 				50
+#define snd_vol_wind_max 				40
+#define snd_vol_wind_max_when_rainy 10
+#define snd_vol_bg_day_max 80
+#define snd_vol_bg_night_max 80
+
+//day sky
+#define sky_add_red 		  255//color tint of the day_sky.
+#define sky_add_green 	  255
+#define sky_add_blue 	  255
+#define sky_alpha 		 	10//0-100, decrease this to get more fogcolor1 tint
+
+//night sky
+#define night_sky_scale_x 	 0.5//affects size of the stars at night
+#define night_sky_scale_y 	 0.5
+#define night_sky_speed_x	 1//movement speed of the stars
+#define night_sky_speed_y	 1
+#define night_sky_alpha		 0
+
+//cloud layer 1
+#define cloud1_speed_x 	  0.5
+#define cloud1_speed_y 	  	 3
+#define cloud1_scale_x 	  1.5
+#define cloud1_scale_y 	  1.5
+#define cloud1_alpha	 	80//alpha changes can cause various sun/clouds effects
+
+//cloud layer 2
+#define cloud2_speed_x	  	 1
+#define cloud2_speed_y 	  	 5
+#define cloud2_scale_x	  2.5
+#define cloud2_scale_y 	  2.5
+#define cloud2_alpha 	 	60//alpha changes can cause various sun/clouds effects
+
+//bad weather clouds
+#define cloud3_speed_x 	  	 1
+#define cloud3_speed_y 	  	 5
+#define cloud3_scale_x 	  	 2
+#define cloud3_scale_y 	    2
+#define cloud3_alpha 	 	 0//0 = starts at nice weather!
+
+#define sun_grow_z		 1500//z-height of sun-grow/sun-shrink, adjust according to your horizon view
+
+//when your sun elevation is low, big scales (scale_x, scale_y) can look bad (sun-sprites touches the terrain!)
+#define sun_scale_x 		    3//7;////size of the sun, changes all other sun entitys (sun_corona, sun_shine) relative to it
+#define sun_scale_y 		    3//7;//
+
+#define sun_alpha 		 	65//alpha changes can cause various sun/clouds effects
+#define sun_corona_alpha 	40//0;//
+#define sun_shine_alpha  	50//0;//
+
+#define moon_scale_fac 	  1.5
+#define moon_alpha 		  100
+
+#define sun_dist_minus	  1000//evtl. raise this value when you see the sun flickering or disappear, default is 10 (10 quant before land_fog_far/clip_far)
+
+#define land_fog_near	 200//fog above water
+#define land_fog_far	  	 4000//lower values increase the framerate
+
+#define weather_fog_near	  100//bad weather fog
+#define weather_fog_far	  	  1000
+
+//define here the xyz size of the weatherbox around the camera
+#define cx 1000//lenght
+#define cy 1000//width
+#define cz 600//height
+
+#define rain_part_num 2//defines rain density
+#define snow_part_num 1//defines snow density
+
+#define trigg_rain FLAG1
+#define trigg_snow FLAG2
+#define trigg_disable_lightning_thunder FLAG3//1=disables lightning-thunder
+#define trigg_range skill1
+
+#define trigg_rain_wind_x skill2
+#define trigg_rain_wind_y skill3
+#define trigg_rain_fallspeed skill4
+
+#define trigg_snow_wind_x skill5
+#define trigg_snow_wind_y skill6
+#define trigg_snow_fallspeed skill7
+
+#define trigg_rain_random_move_on FLAG4//1=let the wind-strenght change randomly, 0=no wind-strenght changes
+#define trigg_snow_random_move_on FLAG5
+#define trigg_rain_random_move skill8//strength of randomness on the particles x/y movement direction
+#define trigg_snow_random_move skill9
+
+#define trigg_weather_fade_speed skill10//fade-speed of weather change
+
+#define trigg_fog_col_dist FLAG6//these are clear...
+#define trigg_fog_near skill11
+#define trigg_fog_far skill12
+#define trigg_fog_red skill13
+#define trigg_fog_green skill14
+#define trigg_fog_blue skill15
+#define trigg_ID skill100
+
+//(screen center where pivot_dist = 0) and the sun (pivot_dist = 1).
+#define pivot_dist skill99
+////////////////////////////////////////////////////////////
 
 #define move 1
 #define rotate 2
 #define scale 3
 
+// Re-define (a few) skills
+#define obj_type skill1
+#define obj_dynamic skill2
+#define obj_physics skill3
+#define obj_ID skill4
+#define light_mode skill5
+#define flick_time skill6
+#define cam_fp skill7
+#define cam_race skill8
+
+// Object type
 #define mdl 1
 #define part 2
 #define light 3
@@ -66,6 +203,7 @@ obj_form clipboard;
 #define terrain_edit 5
 #define node_placer 6
 
+// Defines for materials
 #define select_mat_null 15
 #define select_mat_lava 1
 #define select_mat_smaragd 2
@@ -83,8 +221,20 @@ obj_form clipboard;
 #define select_custom_mat3 13
 #define select_custom_mat4 14
 
+// Defines for lights
 #define flick 1
 #define disco 2
+
+// Defines for particles
+#define part_spiral 1
+#define part_colorfulspark 2
+#define part_spacehole 3
+#define part_fountain2 4
+#define part_fountain1 5
+#define part_fire2 6
+#define part_fire1 7
+#define part_doublehelix 8
+#define part_composition 9
 
 //////////////////////////////
 // Strings and texts will be declared here.
@@ -100,6 +250,7 @@ TEXT *files_list;
 ////////////////////////////////////////////////////////////
 // Variables/Booleans will be declared here.
 ////////////////////////////////////////////////////////////
+var skCube;
 int mat_type, manip_type;
 int files_found, list_start;
 
@@ -122,7 +273,7 @@ v_lred, v_lgreen, v_lblue, v_lrange;
 
 var ctrl; // This var controls panObj_Main.
 
-var num_mdlobjs, num_partobjs, num_lightobjs, num_sndobjs,
+var num_mdlobjs, num_partobjs/*, num_lightobjs*/, num_sndobjs,
 _obj_type, _obj_type_old;
 
 var upper=125;
@@ -131,7 +282,96 @@ var page = 1, lfsp = 0; //launched from switch_panProp
 
 var node = 0;
 
-var particle_array[20];
+//var engine_play = 0; // I will have to define this in A8.c
+BOOL from_test_play = 0;
+
+// Particle database array
+var partobjs[20];
+
+////////////////////////////////////////////////////////////
+// Variables and booleans related to Mystymood.
+////////////////////////////////////////////////////////////
+var sun_azimuth = 190;//fix sun position when dynamic_day_night is set to "0"
+var sun_elevation = 20;//fix sun position when dynamic_day_night is set to "0"
+
+var time_speed = 30;//day-night transition speed
+var time_speed_night = 50;//time_Speed during night (you can shorten the night!)
+
+var fog_mor[3] = {111,190,250};//b, g, r
+var fog_day[3] = {140,170,160};
+var fog_eve[3] = {72,135,240};
+var fog_night[3] = {30,20,20};
+//applied fogcolor when dynamic_day_night is deactivated
+var fog_dynamic_day_night_off[3] = {160,170,160};
+
+//be carefull with these...
+var fog_fade_speed = 2, sky_fade_speed = 0.03;
+
+var max_zenith = 50;//sets the max sun height (on it's path...when dynamic day/night cycle is on)
+var sun_col_fac = 0.5;//factor of sun_color influence (sun_color is set to fogcolor)
+
+var part_vel_x, part_vel_y, part_vel_z;
+var part_size, part_alpha, part_num; 
+
+//bad weather fog colors...night darker than day
+var fog_weather_day[3] = {50,50,50};//r, g, b
+var fog_weather_night[3] = {15,15,15};
+
+var random_weather_change_frequency = 100;//frequency of weather change...the higher the value the less it changes
+var random_weather_state_time = 40;//the higher the value the longer a weather state remains
+
+var weather_state = 0;//start with good weather...1=rain, 2=snow
+
+var rain_wind_x = 2, rain_wind_y = 1;
+var rain_fallspeed = 25;
+
+var snow_wind_x = 4, snow_wind_y = 2;
+var snow_fallspeed = 4;
+var snow_altitude = 160;//world-coord-z that enables snowfall (in quants)
+
+var rain_random_move = 1;//strength of randomness on the particles x/y movement direction
+var snow_random_move = 8;
+
+var weather_fade_speed = 10;//fade-speed of weather change
+var weather_soundfade_speed = 0.6;//fade-speed of weather-sound on weather changes
+
+var disable_lightning_thunder = 0;//1=disables lightning-thunder
+var lightning_frequency = 1.5;//random of 4000/lightning_frequency (wait)time
+var lightning = 1;//x200...value to enlighten objects on ligtning strikes...use values 0.1-1
+
+var trigg_num_off = 0;
+var trigg_active_id = -1;
+
+var weather_fader = 1;//just an additional fader var
+var fog_col_trigg[3];
+var fog_dist_near_trigg;
+var fog_dist_far_trigg;
+var vel_wind_rain_x;
+var vel_wind_rain_y;
+var vel_wind_snow_x;
+var vel_wind_snow_y;
+
+var stroke_area;//area of lightning stroke
+var temporary;
+var segment_length; // temporary length of the segment line
+var stroke_length; // temporary length of the particle line
+var current_color[3];
+var lightning_on;
+
+// lens_flare.c
+var flare_alpha = 70;
+var flare_fadespeed = 25;
+var lens_active = 0, mystymood_active = 0;
+
+BOOL dynamic_day_night = 1,
+use_moon = 1,
+use_bg_sounds = 1, //if 1, daytime ambiente background sounds are activated
+use_random_weather = 1, //1= weather changes randomly
+rain_random_move_on = 1, //1=on,0=off...sets randomness on the particles x/y movement direction
+snow_random_move_on = 1,
+rain_to_snow_on_altitude = 1;//1=rain morphes to snow when snow_altitude is reached
+
+////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
@@ -145,6 +385,12 @@ PANEL *buttonlst,
 *panObj_Subbar,
 *panObj_Subbar_slider,
 *panObj_Main_X,
+*panObj_Part_Main,
+*panObj_Snd_Main,
+*panObj_Part_Main_X,
+*panObj_Snd_Main_X,
+*panObj_Part_slider,
+*panObj_Snd_slider,
 *buttonlst_submenu_terrain,
 *buttonlst_submenu_object,
 *buttonlst_submenu_path,
@@ -159,19 +405,60 @@ PANEL *buttonlst,
 *_logo,
 *blackscreen,
 *panLight,
-*debug;
+*debug,
+*panRotateHelp,
+*panScaleHelp,
+*panLightNoti;
+
+void free_camera();
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
 ////////////////////////////////////////////////////////////
-ENTITY *select, *fpsf_marker;
+ENTITY *select, *fpsf_marker, *cam, *_cube;
 
 ENTITY *my_target_node;
+
+ENTITY *ent_mystymood_trigg,
+*sky_horizon,
+*sky_cloud1,
+*sky_cloud2,
+*sky_cloud3,
+*sky_day,
+*sky_sun,
+*sky_suncorona,
+*sky_sunshine,
+*sky_night,
+*sky_moon,
+*flare1_ent,
+*flare2_ent,
+*flare4_ent,
+*flare5_ent,
+*flare6_ent,
+*flare7_ent,
+*flare8_ent,
+*flare9_ent,
+*flare10_ent,
+*flare11_ent,
+*flare12_ent,
+*flare13_ent,
+*flare14_ent,
+*flare15_ent,
+*flare16_ent,
+*flare17_ent,
+*flare18_ent,
+*flare19_ent,
+*flare20_ent;
+////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 // Vectors will be declared here.
 ////////////////////////////////////////////////////////////
 VECTOR sharedGUI_cpos1,sharedGUI_cpos2,temp_pos;
+VECTOR segment_start, segment_end;
+VECTOR stroke_start, stroke_end;
+VECTOR particle_seedbox;
+VECTOR temp2, ctemp;
 
 // Vectors for dragging entities
 VECTOR v1, v2;
@@ -181,27 +468,27 @@ VECTOR xy_panLight, xy_panProp, xy_panSnd, xy_panParticle;\
 
 /*** Vectors & angles for particle effects ***/
 VECTOR *parted_temp_vec = {
-   
-   x = 0;
-   y = 0;
-   z = 0;
-   
+	
+	x = 0;
+	y = 0;
+	z = 0;
+	
 }
 
 VECTOR *parted_temp2_vec = {
-   
-   x = 0;
-   y = 0;
-   z = 0;
-   
+	
+	x = 0;
+	y = 0;
+	z = 0;
+	
 }
 
 ANGLE *parted_temp_ang = {
-   
-   pan = 0;
-   tilt = 0;
-   roll = 0;
-   
+	
+	pan = 0;
+	tilt = 0;
+	roll = 0;
+	
 }
 
 ////////////////////////////////////////////////////////////
@@ -226,6 +513,16 @@ MATERIAL *mat_custom[4];
 // Sounds will be declared here.
 ////////////////////////////////////////////////////////////
 SOUND *sndobjs[50];
+
+SOUND *rain_wav = "rain.wav";
+SOUND *wind_wav = "wind.wav";
+SOUND *day_wav = "ambiente_day.wav";
+SOUND *night_wav = "ambiente_night.wav";
+SOUND *thunder1_wav = "thunder1.wav";
+SOUND *thunder2_wav = "thunder2.wav";
+SOUND *thunder3_wav = "thunder3.wav";
+SOUND *thunder4_wav = "thunder4.wav";
+SOUND *thunder5_wav = "thunder5.wav";
 
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
@@ -268,32 +565,32 @@ BMAP *flag_ROTATE_on = "flag_ROTATE_on.png";
 BMAP *flag_SCALE = "flag_SCALE.png";
 BMAP *flag_SCALE_on = "flag_SCALE_on.png";
 
-BMAP *flag_ANMS = "flag_ANMS.bmp";
-BMAP *flag_ANMS_on = "flag_ANMS_on.bmp";
+BMAP *flag_ANMS = "flag_ANMS.png";
+BMAP *flag_ANMS_on = "flag_ANMS_on.png";
 
-BMAP *flag_ARCH = "flag_ARCH.bmp";
-BMAP *flag_ARCH_on = "flag_ARCH_on.bmp";
+BMAP *flag_ARCH = "flag_ARCH.png";
+BMAP *flag_ARCH_on = "flag_ARCH_on.png";
 
-BMAP *flag_BLANDS = "flag_BLANDS.bmp";
-BMAP *flag_BLANDS_on = "flag_BLANDS_on.bmp";
+BMAP *flag_BLANDS = "flag_BLANDS.png";
+BMAP *flag_BLANDS_on = "flag_BLANDS_on.png";
 
-BMAP *flag_CHARS = "flag_CHARS.bmp";
-BMAP *flag_CHARS_on = "flag_CHARS_on.bmp";
+BMAP *flag_CHARS = "flag_CHARS.png";
+BMAP *flag_CHARS_on = "flag_CHARS_on.png";
 
-BMAP *flag_ETC = "flag_ETC.bmp";
-BMAP *flag_ETC_on = "flag_ETC_on.bmp";
+BMAP *flag_ETC = "flag_ETC.png";
+BMAP *flag_ETC_on = "flag_ETC_on.png";
 
-BMAP *flag_FOOD = "flag_FOOD.bmp";
-BMAP *flag_FOOD_on = "flag_FOOD_on.bmp";
+BMAP *flag_FOOD = "flag_FOOD.png";
+BMAP *flag_FOOD_on = "flag_FOOD_on.png";
 
-BMAP *flag_MACHS = "flag_MACHS.bmp";
-BMAP *flag_MACHS_on = "flag_MACHS_on.bmp";
+BMAP *flag_MACHS = "flag_MACHS.png";
+BMAP *flag_MACHS_on = "flag_MACHS_on.png";
 
-BMAP *flag_PLANTS = "flag_PLANTS.bmp";
-BMAP *flag_PLANTS_on = "flag_PLANTS_on.bmp";
+BMAP *flag_PLANTS = "flag_PLANTS.png";
+BMAP *flag_PLANTS_on = "flag_PLANTS_on.png";
 
-BMAP *flag_TPORTTS = "flag_TPORTTS.bmp";
-BMAP *flag_TPORTTS_on = "flag_TPORTTS_on.bmp";
+BMAP *flag_TPORTTS = "flag_TPORTTS.png";
+BMAP *flag_TPORTTS_on = "flag_TPORTTS_on.png";
 
 BMAP *flag_DISCO = "flag_DISCO.bmp";
 BMAP *flag_DISCO_on = "flag_DISCO_on.bmp";
@@ -363,11 +660,23 @@ BMAP *fire1_map = "fire1.tga";
 BMAP *blitz1_map = "blitz1.tga";
 BMAP *star1_map = "star1.tga";
 
+/*** For Mystymood ***/
+BMAP *part_bmp_weather;
+BMAP *bmp_rain = "rain.tga";
+BMAP *bmp_snow = "snow.tga";
+BMAP *bmp_lightning = "lightning.tga";    // change
+
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
 void load_kernel(STRING *);
 void loop_kernel();
+void test_play();
+
+/*** First person camera ***/
+void fpcam_update();
+void fpcam_input();
+void fpcam_push(var,var);
 
 /**/void sharedGUI_playintro(STRING *, var);
 /**/void sharedGUI_blackscreen(int, int);
@@ -382,13 +691,14 @@ void pan_rotate(PANEL *,var,var,BOOL);
 void home();
 void editmat();
 void objadd();
+void objpartadd();
+void objsndadd();
+void objlightadd();
 
 void prop(BOOL);
 void _light(BOOL);
 void _part(BOOL);
 void sound(BOOL);
-
-void controlcam();
 
 void sharedGUI_launch_terrain();
 void sharedGUI_launch_object();
@@ -436,6 +746,7 @@ ENTITY *obj_create();
 
 void init_database();
 void init_database_snd();
+void init_database_part();
 
 void loadGUI();
 void hideGUI();
@@ -452,11 +763,33 @@ void a_patroller_node();
 void generate_light();
 void generate_sound();
 void generate_waypoint();
+void generate_particle();
 
 void fix(ENTITY *);
 void switch_panProp(var);
 
-void save_level();
+void func_particle_segment();
+void func_lightning_effect();
+void func_increase_brightness();
+void weather_change();
+void sky_day_fade_in();
+void sky_day_state();
+void sky_night_fade_in();
+void sky_night_state();
+void act_mystymood_trigg_label1();
+void lensflare_create();
+void lensflare_start();
+void flare_init(ENTITY *);
+void flare_place(ENTITY *);
+
+//void save_level(STRING *);
+//void load_level(STRING *);
+void new_level();
+
+void cleaner();
+
+void load_mystymood(BOOL, BOOL); // This will load the Mystymood engine.
+void load_lensflare();
 
 /*** For particle effects ***/
 void New_Base_Effect_base_event(PARTICLE *);
@@ -504,7 +837,7 @@ void first_base(PARTICLE *);
 void standard_base(PARTICLE *);
 void sparkleblue_base(PARTICLE *);
 
-void emit_spark();
+void emit_spiral();
 void emit_colorfulspark();
 void emit_spacehole();
 void emit_fountain2();
@@ -523,3 +856,14 @@ void p_fire_2_create(VECTOR *);
 void p_fire_1_create(VECTOR *);
 void p_double_helix_create(VECTOR *);
 void p_composition_create(VECTOR *);
+
+void func_fade_colors(var *, var *, var *);
+void func_particle_seed_infinity(PARTICLE *);
+void func_effect_particle_seed(PARTICLE *);
+void func_fade_lightning(PARTICLE *);
+void func_particle_lightning(PARTICLE *);
+void func_particle_segment();
+void func_increase_brightness();
+void weather_change();
+
+#endif HEADER_H

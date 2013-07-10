@@ -1,3 +1,12 @@
+/***
+
+http://mp3.zing.vn/bai-hat/Silent-Hill-Promise-Reprise-Piano-Unknow/IW9OIZD6.html
+http://mp3.zing.vn/album/Piano-Spa-In-Love-Mr-Tuk-Bo-Tree/ZWZACZFW.html?st=12
+http://mp3.zing.vn/tim-kiem/bai-hat.html?q=Various+Artists
+http://www.youtube.com/watch?v=evSwhNl-HhQ
+
+***/
+
 var percentage;
 
 PANEL *perc = {
@@ -187,6 +196,24 @@ void init_database_snd() {
 	for(i = 1;i < 50;i++) sndobjs[i] = snd_create("beep.wav");
 	
 }
+
+void init_database_part() {
+	
+	int i;
+	
+	partobjs[0] = part_spiral;
+	partobjs[1] = part_colorfulspark;
+	partobjs[2] = part_spacehole;
+	partobjs[3] = part_fountain2;
+	partobjs[4] = part_fountain1;
+	partobjs[5] = part_fire2;
+	partobjs[6] = part_fire1;
+	partobjs[7] = part_doublehelix;
+	partobjs[8] = part_composition;
+	
+	// Unallocated space
+	for(i = 9;i < 20;i++) partobjs[i] = 0;
+} 
 
 void init_database() {
 	
@@ -637,8 +664,8 @@ void init_database() {
 	// Allocated space
 	mdlobjs_table[830] = str_create("l_desertgeneric.hmp");
 	mdlobjs_table[831] = str_create("l_greenland.hmp");
-	mdlobjs_table[832] = str_create("l_greenland1.hmp");
-	mdlobjs_table[833] = str_create("l_greenland_fat.hmp");
+	mdlobjs_table[832] = str_create("l_greenland1.mdl");
+	mdlobjs_table[833] = str_create("l_greenland_fat.mdl");
 	mdlobjs_table[834] = str_create("l_marssurface.hmp");
 	mdlobjs_table[835] = str_create("l_ocean1.hmp");
 	mdlobjs_table[836] = str_create("l_ocean2.hmp");
@@ -677,9 +704,18 @@ void fix(ENTITY *e) {
 	if(num_mdlobjs == 55) // wood entrance
 	e.scale_x = e.scale_y = e.scale_z *= 2;
 	
+	if(e.obj_ID == 835 || e.obj_ID == 836) {
+		
+		e.z += 525;
+		
+	}
+	
 }
 
 ENTITY *obj_create() { // This inherits a lot from place_me
+
+	// Stupid objects couldn't float
+	if(!temp_pos.x && !temp_pos.y && !temp_pos.z) return;
 
 	ENTITY *tmp;
 
@@ -699,8 +735,6 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		
 		while(tmp == NULL) wait(1); // wait for tmp to be completely created.
 		
-		fix(tmp);
-		
 		set(tmp, POLYGON);
 		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
 		
@@ -708,13 +742,15 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		tmp.ambient = 50;
 		tmp.pan = random(360); // Give it a random pan value.
 		
-		tmp.material = mat_model;
+		tmp.material = mtl_model;
 		
 		tmp.obj_type = mdl;
-		tmp.skill4 = num_mdlobjs;
+		tmp.obj_ID = num_mdlobjs;
 		
-		tmp.skill2 = 1; // This is a static object
-		tmp.skill3 = 0; // And physics aren't enabled by default.
+		tmp.obj_dynamic = 0; // This is a static object
+		tmp.obj_physics = 0; // And physics aren't enabled by default.		
+		
+		fix(tmp);
 		
 		return tmp;
 		
@@ -730,7 +766,8 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		tmp = ent_create("jabber.png",temp_pos.x,generate_light);
 		
 		tmp.obj_type = light; // Du sao thi light cung ngan hon _obj_type
-		tmp.skill4 = num_lightobjs;
+		// Lights don't have IDs so passing them is redundant.
+		//		num_lightobjs
 		
 		return tmp;
 		
@@ -740,12 +777,30 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		////////////////////////////////////////////////////////////
 		case part :
 		
-		tmp = ent_create("desktop_effect.png",temp_pos.x,NULL);
+		switch(num_partobjs) {
+			
+			case part_spiral: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_spiral); break;
+			case part_colorfulspark: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_colorfulspark); break;
+			case part_spacehole: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_spacehole); break;
+			case part_fountain2: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fountain2); break;
+			case part_fountain1: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fountain1); break;
+			case part_fire2: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fire2); break;
+			case part_fire1: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fire1); break;
+			case part_doublehelix: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_doublehelix); break;
+			case part_composition: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_composition); break;
+			
+			default:
+			
+			printf("num_partobjs outside range.");
+			
+			break;
+			
+		}
 		
 		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 		
 		tmp.obj_type = part;
-		tmp.skill4 = num_partobjs;
+		tmp.obj_ID = num_partobjs;
 		
 		tmp.scale_x = tmp.scale_y = tmp.scale_z /= 2;
 		
@@ -780,7 +835,7 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		tmp.ambient = 100;
 		
 		tmp.obj_type = snd;
-		tmp.skill4 = num_sndobjs;
+		tmp.obj_ID = num_sndobjs;
 		
 		return tmp;
 		
@@ -801,6 +856,12 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		return tmp;
 		
 		break;
+		////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////
+		case terrain_edit :
+		
+		return;
 		////////////////////////////////////////////////////////////
 		
 		default:
@@ -922,6 +983,9 @@ void closewindow(var id, PANEL *p) {
 	if(p == panMat_Sub1) {
 		reset(panMat_Sub1,SHOW);
 		
+		
+		/* code to save changes */
+		
 	}
 
 	if(p == panProp) {		
@@ -954,6 +1018,30 @@ void closewindow(var id, PANEL *p) {
 		reset(panObj_Subbar,SHOW);
 		reset(panObj_Subbar_slider,SHOW);
 		reset(panObj_Main_X,SHOW);
+		
+		ctrl = 0;
+		
+		showGUI();
+		
+	}
+	
+	if(p == panObj_Part_Main_X ) {
+		
+		reset(panObj_Part_Main,SHOW);
+		reset(panObj_Part_slider,SHOW);
+		reset(panObj_Part_Main_X,SHOW);
+		
+		ctrl = 0;
+		
+		showGUI();
+		
+	}
+	
+	if(p == panObj_Snd_Main_X) {
+		
+		reset(panObj_Snd_Main,SHOW);
+		reset(panObj_Snd_slider,SHOW);
+		reset(panObj_Snd_Main_X,SHOW);
 		
 		ctrl = 0;
 		
@@ -1043,18 +1131,39 @@ void loadGUI() {
 
 	panObj_Main.pos_x = 0;
 	panObj_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
+
+	panObj_Part_Main.pos_x = 0;
+	panObj_Part_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
+
+	panObj_Snd_Main.pos_x = 0;
+	panObj_Snd_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
 	
 	panObj_Main_X.pos_x = screen_size.x - 40 - BORDER;
 	panObj_Main_X.pos_y = panObj_Main.pos_y + 25;
-
-	// Position the close button for panObj_Main
-	pan_setpos(panObj_Main,3,1,vector(bmap_width(panObj_Main.bmap) - BORDER * 2,BORDER,0));
-
+	
+	panObj_Part_Main_X.pos_x = panObj_Main_X.pos_x;
+	panObj_Part_Main_X.pos_y = panObj_Main_X.pos_y;
+	
+	panObj_Snd_Main_X.pos_x = panObj_Main_X.pos_x;
+	panObj_Snd_Main_X.pos_y = panObj_Main_X.pos_y;
+	
 	pan_resize(panObj_Subbar_slider,'x');
+	pan_resize(panObj_Part_slider,'x');
+	pan_resize(panObj_Snd_slider,'x');
 
-	panObj_Subbar.pos_x = panObj_Subbar_slider.pos_x = 0;
+	panObj_Subbar.pos_x = panObj_Subbar_slider.pos_x = panObj_Part_slider.pos_x = 0;
+	
 	panObj_Subbar.pos_y = panObj_Main.pos_y + bmap_height(panObj_Main.bmap) + BORDER;
 	panObj_Subbar_slider.pos_y = panObj_Subbar.pos_y + bmap_height(panObj_Subbar_slider.bmap) + BORDER * 3;
+	
+	panObj_Part_slider.pos_y = panObj_Subbar_slider.pos_y;
+	panObj_Snd_slider.pos_y = panObj_Subbar_slider.pos_y;
+	
+	panRotateHelp.pos_x = screen_size.x - bmap_width(panRotateHelp.bmap) - BORDER * 2;
+	panRotateHelp.pos_y = panMain_Top.pos_y + BORDER * 2;
+	
+	panScaleHelp.pos_x = screen_size.x - bmap_width(panScaleHelp.bmap) - BORDER * 2;
+	panScaleHelp.pos_y = panRotateHelp.pos_y;
 
 	int i;
 	for(i = 1; i < 10;i++) {
@@ -1427,8 +1536,8 @@ void _light(BOOL m) {
 		v_lrange = select.lightrange;
 		
 		// 'cause no#1 is the close button so we start from 2.
-		if(select.light_mode == flick) button_state(panLight,2,0);
-		if(select.light_mode == disco) button_state(panLight,3,0);
+		if(select.light_mode == disco) button_state(panLight,2,1);
+		if(select.light_mode == flick) button_state(panLight,3,1);
 		
 	}
 
@@ -1452,8 +1561,8 @@ void _light(BOOL m) {
 		// So we obtain C first, in this case is v_lrange
 		olrange = select.lightrange = v_lrange;
 		
-		if(button_state(panLight,2,-1)) select.skill5 = disco;
-		if(button_state(panLight,3,-1)) select.skill5 = flick;
+		if(button_state(panLight,2,-1)) select.light_mode = disco;
+		if(button_state(panLight,3,-1)) select.light_mode = flick;
 		
 		reset(panLight,SHOW);
 		
@@ -1549,23 +1658,6 @@ void pass_to_gui(ENTITY *e) {
 
 	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
 	else button_state(panProp_1,8,0);
-
-}
-
-void controlcam() {
-
-	if(button_state(panMain_Bottom,2,-1)) is_camera = 1;
-	else {
-		
-		is_camera = 0;
-		
-		/* Free all checked flags */
-		int i;
-		for(i = 1;i < 4;i++) button_state(panMain_Top,i,0);
-		
-		manip_type = scale + 1;
-		
-	}
 
 }
 
@@ -1811,7 +1903,7 @@ void pass_mat_to_object() {
 		switch(mat_type) {
 			
 			case select_mat_null :
-			mat_temp = mat_model;
+			mat_temp = mtl_model;
 			break;
 			
 			case select_mat_lava :
@@ -1882,6 +1974,8 @@ void pass_mat_to_object() {
 }
 
 void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
+	
+	if(o.obj_type == terrain_edit) return;
 
 	////////////////////////////////////////////////////////////
 	// Pass general information to the clipboard first.
@@ -1927,11 +2021,11 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		if(is(o,TRANSLUCENT)) of._flags[7] = 1;
 		else of._flags[7] = 0;
 		
-		of.oid = o.skill4;
+		of.oid = o.obj_ID;
 		of.of_objtype = o.obj_type;
 		
-		of.pStatic = o.skill2;
-		of.pPhysics = o.skill3;
+		of.pStatic = o.obj_dynamic;
+		of.pPhysics = o.obj_physics;
 		
 		// Flag indicates that the copy progress has done.
 		// Also, it can be used to determine if the clipboard has any piece of data or not.
@@ -1947,8 +2041,10 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		of._green = o.green;
 		of._blue = o.blue;
 		of._range = o.lightrange;
+		of._light_mode = o.light_mode;
 		
 		of.of_objtype = o.obj_type;
+		
 		of.dp = 1;
 		
 		break;
@@ -1958,7 +2054,7 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		case snd:
 		
 		of.of_objtype = o.obj_type;
-		of.oid = o.skill4;
+		of.oid = o.obj_ID;
 		
 		of.dp = 1;
 		
@@ -1967,6 +2063,17 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 		
 		////////////////////////////////////////////////////////////
 		case part:
+		
+		of.of_objtype = o.obj_type;
+		of.oid = o.obj_ID;
+		
+		of.dp = 1;
+		
+		break;
+		////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////
+		case node_placer:
 		
 		of.of_objtype = o.obj_type;
 		
@@ -1984,6 +2091,8 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 }
 
 void pass_clipboard_to_object(ENTITY *e) {
+	
+	if(e.obj_type == terrain_edit) return;
 
 	////////////////////////////////////////////////////////////
 	// As usual, pass general data first.
@@ -2005,10 +2114,8 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		case mdl:
 		
-		num_mdlobjs = clipboard.oid;
-		
 		e.obj_type = clipboard.of_objtype;
-		e.skill4 = clipboard.oid;
+		e.obj_ID = clipboard.oid;
 		
 		e.skill2 = clipboard.pStatic;
 		e.skill3 = clipboard.pPhysics;
@@ -2044,14 +2151,13 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		case light:
 		
-		num_lightobjs = clipboard.oid;
-		
 		e.red = clipboard._red;
 		e.green = clipboard._green;
 		e.blue = clipboard._blue;
 		e.lightrange = clipboard._range;
+		e.light_mode = clipboard._light_mode;
 		
-		e.material = mat_model;
+		e.material = mtl_model;
 		
 		break;
 		////////////////////////////////////////////////////////////
@@ -2059,9 +2165,7 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		case part:
 		
-		num_partobjs = clipboard.oid;
-		
-		e.material = mat_model;
+		e.material = mtl_model;
 		
 		break;
 		////////////////////////////////////////////////////////////
@@ -2069,9 +2173,7 @@ void pass_clipboard_to_object(ENTITY *e) {
 		////////////////////////////////////////////////////////////
 		case snd:
 		
-		e.material = mat_model;
-		
-		num_sndobjs = clipboard.oid;
+		e.material = mtl_sprite;
 		
 		break;
 		////////////////////////////////////////////////////////////
@@ -2130,17 +2232,39 @@ void obj_copy() {
 
 void obj_paste() {
 
-	int _obj_type_old = _obj_type;
-
 	if(clipboard.dp) {
+		
+		int _obj_type_old = _obj_type, obj_ID_old;
+		
+		if(clipboard.of_objtype == part) {
+			
+			obj_ID_old = num_partobjs;
+			num_partobjs = clipboard.oid;
+			
+		}
+		if(clipboard.of_objtype == mdl) {
+			
+			obj_ID_old = num_mdlobjs;
+			num_mdlobjs = clipboard.oid;
+			
+		}
+		
+		if(clipboard.of_objtype == snd) {
+			
+			obj_ID_old = num_sndobjs;
+			num_sndobjs = clipboard.oid;
+			
+		}
 		
 		_obj_type = clipboard.of_objtype;
 		
 		pass_clipboard_to_object(obj_create());
 		
+		if(clipboard.of_objtype == part) num_partobjs = obj_ID_old;
+		if(clipboard.of_objtype == mdl) num_mdlobjs = obj_ID_old;
+		if(clipboard.of_objtype == snd) num_sndobjs = obj_ID_old;
+		
 	}
-
-	_obj_type = _obj_type_old; // Give me the original int.
 
 }
 
@@ -2319,8 +2443,9 @@ void mat_save() {
 ////////////////////////////////////////////////////////////
 void obj_manip_interface()
 {
-	while(mouse_left && is_camera && (manip_type > 0 && manip_type < 4))
+	while(mouse_left && (manip_type > 0 && manip_type < 4))
 	{
+		
 		if(manip_type == scale) 
 		{
 			hideGUI();
@@ -2370,6 +2495,7 @@ void obj_manip_interface()
 			
 		}
 		
+		
 
 		wait (1);
 	}
@@ -2391,7 +2517,8 @@ void obj_manip_setup()
 // stupid switchers
 // lite-C compiler: stupid programmer
 void switch_to_move() {
-
+	
+	/*
 	// Houston we got a problem here !
 	if(!is_camera) {
 		
@@ -2402,6 +2529,7 @@ void switch_to_move() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
+	*/
 
 	// Check its state first.
 	if(button_state(panMain_Top,1,-1)) {
@@ -2411,6 +2539,9 @@ void switch_to_move() {
 		
 		// Switch to ' object move ' state.
 		manip_type = move;
+		
+		reset(panRotateHelp,SHOW);
+		reset(panScaleHelp,SHOW);
 		
 	}
 
@@ -2424,7 +2555,8 @@ void switch_to_move() {
 }
 
 void switch_to_rotate() {
-
+	
+	/*
 	if(!is_camera) {
 		
 		int i;
@@ -2434,6 +2566,7 @@ void switch_to_rotate() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
+	*/
 
 	if(button_state(panMain_Top,2,-1)) {
 		
@@ -2442,13 +2575,22 @@ void switch_to_rotate() {
 		
 		manip_type = rotate;
 		
+		set(panRotateHelp,SHOW);
+		reset(panScaleHelp,SHOW);
+		
 	}
 
-	else manip_type = scale+1;
+	else {
+		
+		manip_type = scale+1;
+		reset(panRotateHelp,SHOW);
+		
+	}
 }
 
 void switch_to_scale() {
-
+	
+	/*
 	if(!is_camera) {
 		
 		int i;
@@ -2458,7 +2600,8 @@ void switch_to_scale() {
 		return; // Kill him (stop him from doing bad things)
 		
 	}
-
+	*/
+	
 	if(button_state(panMain_Top,3,-1)) {
 		
 		button_state(panMain_Top,1,0);
@@ -2466,13 +2609,34 @@ void switch_to_scale() {
 		
 		manip_type = scale;
 		
+		reset(panRotateHelp,SHOW);
+		set(panScaleHelp,SHOW);
+		
 	}
 
-	else manip_type = scale+1;
+	else {
+		
+		manip_type=scale+1;
+		reset(panScaleHelp,SHOW);
+		
+	}
 
 }
 
 void hideGUI() {
+	
+	if(select) {
+		
+		// Deselect any selected entity first
+		if(select.obj_type == light) _light(0);
+		if(select.obj_type == mdl) prop(0);
+		if(select.obj_type == snd) sound(0);
+		if(select.obj_type == part) _part(0);
+		
+		select.material = mat_temp;
+		select = NULL;
+		
+	}
 
 	reset(panMain_Top,SHOW);
 	reset(panMain_Bottom,SHOW);
@@ -2482,7 +2646,8 @@ void hideGUI() {
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
 	reset(buttonlst_submenu_terrain,SHOW);
-
+	reset(panRotateHelp,SHOW);
+	reset(panScaleHelp,SHOW);
 }
 
 void showGUI() {
@@ -2527,6 +2692,37 @@ void objadd() {
 
 }
 
+void objpartadd() {
+	
+	hideGUI();
+	set(panObj_Part_Main,SHOW);
+	set(panObj_Part_Main_X,SHOW);
+	set(panObj_Part_slider,SHOW);
+	
+	ctrl = 0;
+}
+
+void objsndadd() {
+	
+	hideGUI();
+	set(panObj_Snd_Main,SHOW);
+	set(panObj_Snd_Main_X,SHOW);
+	set(panObj_Snd_slider,SHOW);
+	
+	ctrl = 0;
+	
+}
+
+void objlightadd() {
+	
+	set(panLightNoti,SHOW);
+	
+	wait(-5);
+	
+	reset(panLightNoti,SHOW);
+	
+}
+
 // Just a small function for use within panObj_Subbar_switcher(var).
 // Updates the size of p according to b's size.
 void update_size(PANEL *p, BMAP *b) {
@@ -2536,6 +2732,23 @@ void update_size(PANEL *p, BMAP *b) {
 	p.size_y = bmap_height(b);
 
 }
+
+/*
+////////////////////////////////////////////////////////////
+// This struct was created by trial and error.
+// Sucks to be that developer.
+// Wait...I'm the developer.
+////////////////////////////////////////////////////////////
+VECTOR *vt = {
+	
+	x = 250;
+	y = 135;
+	z = -30;
+	
+}
+
+ENTITY *creat[500];
+*/
 
 // We met again stupid switcher.
 // lite-C compiler: Without me you're nothing bitch.
@@ -2563,6 +2776,33 @@ void panObj_Subbar_switcher(var id) {
 		update_size(panObj_Main,panObj_anms);
 		
 		ctrl = 0;
+		
+		/*
+		int i;
+		
+		for(i = 0;i < 50;i++) {
+			
+			if(str_cmp(mdlobjs_table_ptr[i],"  ")) {
+			   
+			   i++;
+			   continue;
+			   
+			}
+			
+			creat[i] = ent_createlayer(mdlobjs_table_ptr[i],SHOW,NULL);
+			layer_sort(creat[i],999);
+			
+			vec_set(creat[i].x,vt.x);
+			vt.y -= 30;
+			vec_set(creat[i].y,vt.y);
+			
+			vec_set(creat[i].z,vt.z);
+			
+			set(creat, PASSABLE | OVERLAY);
+			creat[i].scale_x = creat[i].scale_y = creat[i].scale_z /= 2.5;
+			
+		}
+		*/
 		
 		break;
 		
@@ -2724,150 +2964,428 @@ void config_read_video(STRING *cf) {
 	file_close(file);
 }
 
-void save_level() {
-   
-   if(select) return;
+//void save_level(STRING *filef) {
+	//	
+	//	STRING *filef_original = str_create("#300");
+	//	str_cpy(filef_original,filef);
+	//	
+	//	var hndl_sys = file_open_write(str_cat(filef,"_sys.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_mdlobjs = file_open_write(str_cat(filef,"_ents.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_lights = file_open_write(str_cat(filef,"_lights.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_parts = file_open_write(str_cat(filef,"_parts.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_snds = file_open_write(str_cat(filef,"_snds.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_terraindata = file_open_write(str_cat(filef,"_tdata.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_nodedata = file_open_write(str_cat(filef,"_ndata.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_garbage = file_open_write(str_cat(filef,"_trash.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	// Get the first entity in entities list
+	//	you = ent_next(NULL);
+	//	
+	//	// Begin checking and writing entities data into various file handles.
+	//	while(you) {
+		//		
+		//		switch(you.obj_type) {
+			//			
+			//			case mdl :
+			//			/*
+			//			x,y,z
+			//			scale_x,scale_y,scale_z
+			//			pan,tilt,roll
+			//			alpha,ambient
+			//			8 flags:
+			//			- BRIGHT/INVISIBLE/NOFOG/OVERLAY/PASSABLE/POLYGON/SHADOW/TRANSLUCENT
+			//			object ID
+			//			// material
+			//			static/dynamic
+			//			physics
+			//			object_type
+			//			*/
+			//			file_var_write(hndl_mdlobjs,you.obj_ID); // Object ID
+			//			file_var_write(hndl_mdlobjs,you.obj_type); // The type of the object
+			//			
+			//			file_var_write(hndl_mdlobjs,you.x);
+			//			file_var_write(hndl_mdlobjs,you.y);
+			//			file_var_write(hndl_mdlobjs,you.z);
+			//			
+			//			file_var_write(hndl_mdlobjs,you.scale_x);
+			//			file_var_write(hndl_mdlobjs,you.scale_y);
+			//			file_var_write(hndl_mdlobjs,you.scale_z);
+			//			
+			//			file_var_write(hndl_mdlobjs,you.pan);
+			//			file_var_write(hndl_mdlobjs,you.tilt);
+			//			file_var_write(hndl_mdlobjs,you.roll);
+			//			
+			//			file_var_write(hndl_mdlobjs,you.alpha);
+			//			file_var_write(hndl_mdlobjs,you.ambient);
+			//			
+			//			if(is(you,BRIGHT)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,INVISIBLE)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,NOFOG)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,OVERLAY)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,PASSABLE)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,POLYGON)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,SHADOW)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			if(is(you,TRANSLUCENT)) file_var_write(hndl_mdlobjs,1);
+			//			else file_var_write(hndl_mdlobjs,0);
+			//			
+			//			file_var_write(hndl_mdlobjs,you.obj_dynamic); // Object state, dynamic/static
+			//			file_var_write(hndl_mdlobjs,you.obj_physics); // Physics flag
+			//			
+			//			break;
+			//			
+			//			case light :
+			//			/*
+			//			x,y,z,pan,tilt,roll, alpha,ambient
+			//			r/g/b
+			//			lightrange
+			//			mode
+			//			*/
+			//			
+			//			file_var_write(hndl_lights,you.x);
+			//			file_var_write(hndl_lights,you.y);
+			//			file_var_write(hndl_lights,you.z);
+			//			
+			//			file_var_write(hndl_lights,you.pan);
+			//			file_var_write(hndl_lights,you.tilt);
+			//			file_var_write(hndl_lights,you.roll);
+			//			
+			//			file_var_write(hndl_lights,you.ambient);
+			//			file_var_write(hndl_lights,you.alpha);
+			//			
+			//			file_var_write(hndl_lights,you.red);
+			//			file_var_write(hndl_lights,you.green);
+			//			file_var_write(hndl_lights,you.blue);
+			//			
+			//			file_var_write(hndl_lights,you.lightrange);
+			//			file_var_write(hndl_lights,you.light_mode);
+			//			file_var_write(hndl_lights,you.flick_time);
+			//			break;
+			//			
+			//			case part :
+			//			
+			//			file_var_write(hndl_parts,you.obj_ID);
+			//			file_var_write(hndl_parts,you.obj_type);
+			//			
+			//			/*x,y,z,pan,tilt,roll,ambient,alpha
+			//			obj_ID,obj_type*/
+			//			file_var_write(hndl_parts,you.x);
+			//			file_var_write(hndl_parts,you.y);
+			//			file_var_write(hndl_parts,you.z);
+			//			
+			//			file_var_write(hndl_parts,you.pan);
+			//			file_var_write(hndl_parts,you.tilt);
+			//			file_var_write(hndl_parts,you.roll);
+			//			
+			//			file_var_write(hndl_parts,you.ambient);
+			//			file_var_write(hndl_parts,you.alpha);
+			//			
+			//			break;
+			//			
+			//			case snd :
+			//			
+			//			file_var_write(hndl_snds,you.obj_ID);
+			//			file_var_write(hndl_snds,you.obj_type);
+			//			
+			//			/*x,y,z,pan,tilt,roll, ambient, alpha, obj_ID, obj_type */
+			//			file_var_write(hndl_snds,you.x);
+			//			file_var_write(hndl_snds,you.y);
+			//			file_var_write(hndl_snds,you.z);
+			//			
+			//			file_var_write(hndl_snds,you.pan);
+			//			file_var_write(hndl_snds,you.tilt);
+			//			file_var_write(hndl_snds,you.roll);
+			//			
+			//			file_var_write(hndl_snds,you.ambient);
+			//			file_var_write(hndl_snds,you.alpha);
+			//			
+			//			break;
+			//			
+			//			case node_placer :
+			//			/*x,y,z*/
+			//			file_var_write(hndl_nodedata,you.x);
+			//			file_var_write(hndl_nodedata,you.y);
+			//			file_var_write(hndl_nodedata,you.z);
+			//			break;
+			//			
+			//			case terrain_edit :
+			//			break;
+			//			
+			//			default: // garbage entities
+			//			/* x,y,z, scale_x/y/z,pan,tilt,roll,
+			//			alpha,ambient, +8 flags, */
+			//			
+			//			//you!=NULL
+			//			file_var_write(hndl_garbage,you.x);
+			//			file_var_write(hndl_garbage,you.y);
+			//			file_var_write(hndl_garbage,you.z);
+			//			
+			//			file_var_write(hndl_garbage,you.scale_x);
+			//			file_var_write(hndl_garbage,you.scale_y);
+			//			file_var_write(hndl_garbage,you.scale_z);
+			//			
+			//			file_var_write(hndl_garbage,you.pan);
+			//			file_var_write(hndl_garbage,you.tilt);
+			//			file_var_write(hndl_garbage,you.roll);
+			//			
+			//			file_var_write(hndl_garbage,you.alpha);
+			//			file_var_write(hndl_garbage,you.ambient);
+			//			
+			//			if(is(you,BRIGHT)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,INVISIBLE)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,NOFOG)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,OVERLAY)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,PASSABLE)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,POLYGON)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,SHADOW)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			if(is(you,TRANSLUCENT)) file_var_write(hndl_garbage,1);
+			//			else file_var_write(hndl_garbage,0);
+			//			
+			//			break;
+			//			
+		//		}
+		//		
+		//		you = ent_next(you);
+		//		wait(1);
+		//		
+	//	}
+	//	
+	//	file_var_write(hndl_mdlobjs,999999);
+	//	
+	//	// Write to system.
+	//	file_var_write(hndl_sys,camera.x);
+	//	file_var_write(hndl_sys,camera.y);
+	//	file_var_write(hndl_sys,camera.z);
+	//	file_var_write(hndl_sys,camera.pan);
+	//	file_var_write(hndl_sys,camera.tilt);
+	//	file_var_write(hndl_sys,camera.roll);
+	//	file_var_write(hndl_sys,camera.aspect);
+	//	file_var_write(hndl_sys,camera.arc);
+	//	file_var_write(hndl_sys,camera.ambient);
+	//	file_var_write(hndl_sys,sun_light);
+	//	file_var_write(hndl_sys,sun_angle.pan);
+	//	file_var_write(hndl_sys,sun_angle.tilt);
+	//	file_var_write(hndl_sys,sun_color.blue);
+	//	file_var_write(hndl_sys,sun_color.green);
+	//	file_var_write(hndl_sys,sun_color.red);
+	//	file_var_write(hndl_sys,fog_color);
+	//	file_var_write(hndl_sys,d3d_fogcolor1.red);
+	//	file_var_write(hndl_sys,d3d_fogcolor1.green);
+	//	file_var_write(hndl_sys,d3d_fogcolor1.blue);
+	//	file_var_write(hndl_sys,d3d_fogcolor2.red);
+	//	file_var_write(hndl_sys,d3d_fogcolor2.green);
+	//	file_var_write(hndl_sys,d3d_fogcolor2.blue);
+	//	file_var_write(hndl_sys,d3d_fogcolor3.red);
+	//	file_var_write(hndl_sys,d3d_fogcolor3.green);
+	//	file_var_write(hndl_sys,d3d_fogcolor3.blue);
+	//	file_var_write(hndl_sys,d3d_fogcolor4.red);
+	//	file_var_write(hndl_sys,d3d_fogcolor4.green);
+	//	file_var_write(hndl_sys,d3d_fogcolor4.blue);
+	//	file_var_write(hndl_sys,camera.fog_start);
+	//	file_var_write(hndl_sys,camera.fog_end);
+	//	file_var_write(hndl_sys,skCube);
+	//	
+	//	// Close
+	//	file_close(hndl_sys);
+	//	file_close(hndl_mdlobjs);
+	//	file_close(hndl_lights);
+	//	file_close(hndl_parts);
+	//	file_close(hndl_snds);
+	//	file_close(hndl_terraindata);
+	//	file_close(hndl_nodedata);
+	//	file_close(hndl_garbage);
+//}
+
+// Loads a new level
+void new_level() {
 	
-	var system,
-	mdlobjs = file_open_write("data_entities.txt"),
-	lights = file_open_write("data_lights.txt"),
-	parts = file_open_write("data_particles.txt"),
-	snds = file_open_write("data_sounds.txt"),
-	terrain_data = file_open_write("data_terrain.txt"),
-	node_data = file_open_write("data_node.txt"),
-	garbage = file_open_write("data_trash.txt");
+	level_load("dry.wmb");
+	/*
+	switch(skCube) {
+		
+		case 0:
+		
+		_cube = ent_createlayer("s_shamrock+6.tga",SKY | CUBE | SHOW,5);
+		layer_sort(_cube,6);
+		
+		break;
+		
+		case 1:
+		
+		_cube = ent_createlayer("s_ocean_sunset+6.tga",SKY | CUBE | SHOW,5);
+		layer_sort(_cube,6);
+		
+		break;
+	}
+	*/
+	camera.ambient = 50;
 	
+	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
+}
+
+//void load_level(STRING *filef) {
+	//	
+	//	int i = _obj_type;
+	//	ENTITY *tmp;
+	//	
+	//	int tmpID, tmpobjtype;
+	//	VECTOR tmpVector;
+	//	
+	//	vec_zero(tmpVector);
+	//	
+	//	// Use the same stupid core as save_level
+	//	STRING *filef_original = str_create("#300");
+	//	str_cpy(filef_original,filef);
+	//	
+	//	var hndl_sys = file_open_read(str_cat(filef,"_sys.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_mdlobjs = file_open_read(str_cat(filef,"_ents.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_lights = file_open_read(str_cat(filef,"_lights.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_parts = file_open_read(str_cat(filef,"_parts.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_snds = file_open_read(str_cat(filef,"_snds.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_terraindata = file_open_read(str_cat(filef,"_tdata.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_nodedata = file_open_read(str_cat(filef,"_ndata.txt"));
+	//	str_cpy(filef,filef_original);
+	//	
+	//	var hndl_garbage = file_open_read(str_cat(filef,"_trash.txt"));
+	//	str_cpy(filef,filef_original);
+	//	//////////////////////////////////////////////////////////////
+	//	
+	//	level_load("dry.wmb");
+	//	
+	//	// System
+	//	camera.x = file_var_read(hndl_sys);
+	//	camera.y = file_var_read(hndl_sys);
+	//	camera.z = file_var_read(hndl_sys);
+	//	camera.pan = file_var_read(hndl_sys);
+	//	camera.tilt = file_var_read(hndl_sys);
+	//	camera.roll = file_var_read(hndl_sys);
+	//	camera.aspect = file_var_read(hndl_sys);
+	//	camera.arc = file_var_read(hndl_sys);
+	//	camera.ambient = file_var_read(hndl_sys);
+	//	sun_light = file_var_read(hndl_sys);
+	//	sun_angle.pan = file_var_read(hndl_sys);
+	//	sun_angle.tilt = file_var_read(hndl_sys);
+	//	sun_color.blue = file_var_read(hndl_sys);
+	//	sun_color.green = file_var_read(hndl_sys);
+	//	sun_color.red = file_var_read(hndl_sys);
+	//	fog_color = file_var_read(hndl_sys);
+	//	d3d_fogcolor1.red = file_var_read(hndl_sys);
+	//	d3d_fogcolor1.green = file_var_read(hndl_sys);
+	//	d3d_fogcolor1.blue = file_var_read(hndl_sys);
+	//	d3d_fogcolor2.red = file_var_read(hndl_sys);
+	//	d3d_fogcolor2.green = file_var_read(hndl_sys);
+	//	d3d_fogcolor2.blue = file_var_read(hndl_sys);
+	//	d3d_fogcolor3.red = file_var_read(hndl_sys);
+	//	d3d_fogcolor3.green = file_var_read(hndl_sys);
+	//	d3d_fogcolor3.blue = file_var_read(hndl_sys);
+	//	d3d_fogcolor4.red = file_var_read(hndl_sys);
+	//	d3d_fogcolor4.green = file_var_read(hndl_sys);
+	//	d3d_fogcolor4.blue = file_var_read(hndl_sys);
+	//	camera.fog_start = file_var_read(hndl_sys);
+	//	camera.fog_end = file_var_read(hndl_sys);
+	//	skCube = file_var_read(hndl_sys);
+	//	
+	//	file_close(hndl_sys);
+	//	
+	//	// filef_ents.txt
+	//	var j = num_mdlobjs;
+	//	
+	//	tmpID = file_var_read(hndl_mdlobjs);
+	//	tmpobjtype = file_var_read(hndl_mdlobjs);
+	//	
+	//	tmpVector.x = file_var_read(hndl_mdlobjs);
+	//	tmpVector.y = file_var_read(hndl_mdlobjs);
+	//	tmpVector.z = file_var_read(hndl_mdlobjs);
+	//	
+	//	tmp = ent_create(_str(mdlobjs_table_ptr[tmpID]),tmpVector,NULL);
+	//	
+	//	tmp.obj_ID = num_mdlobjs;
+	//	tmp.obj_type = file_var_read(hndl_mdlobjs);
+	//	
+	//	camera.ambient = 50;
+	//	
+	//	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+	//	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
+	//	
+//}
+
+// Cleaner
+void clean() {
+	
+	// Scan through all entities in the current level.
 	you = ent_next(NULL);
 	while(you) {
 		
-		switch(you.obj_type) {
+		// scale_x = scale_y = scale_z so only scale_x is enough.
+		if(you.scale_x < .001) {
 			
-			case mdl :
-			/*
-			x,y,z
-			scale_x,scale_y,scale_z
-			pan,tilt,roll
-			alpha,ambient
-			8 flags:
-			- BRIGHT/INVISIBLE/NOFOG/OVERLAY/PASSABLE/POLYGON/SHADOW/TRANSLUCENT
-			object ID
-			// material
-			static/dynamic
-			physics
-			object_type
-			*/
-			file_var_write(mdlobjs,you.x);
-			file_var_write(mdlobjs,you.y);
-			file_var_write(mdlobjs,you.z);
-			
-			file_var_write(mdlobjs,you.scale_x);
-			file_var_write(mdlobjs,you.scale_y);
-			file_var_write(mdlobjs,you.scale_z);
-			
-			file_var_write(mdlobjs,you.pan);
-			file_var_write(mdlobjs,you.tilt);
-			file_var_write(mdlobjs,you.roll);
-			
-			file_var_write(mdlobjs,you.alpha);
-			file_var_write(mdlobjs,you.ambient);
-			
-			if(is(you,BRIGHT)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,INVISIBLE)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,NOFOG)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,OVERLAY)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,PASSABLE)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,POLYGON)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,SHADOW)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			if(is(you,TRANSLUCENT)) file_var_write(mdlobjs,1);
-			else file_var_write(mdlobjs,0);
-			
-			file_var_write(mdlobjs,you.skill4); // Object ID
-			
-			file_var_write(mdlobjs,you.skill2); // Object state, dynamic/static
-			file_var_write(mdlobjs,you.skill3); // Physics flag
-			
-			file_var_write(mdlobjs,you.obj_type);
-			
-			break;
-			
-			case light :
-			/*
-			x,y,z,pan,tilt,roll
-			r/g/b
-			lightrange
-			mode
-			*/
-			
-			file_var_write(lights,you.x);
-			file_var_write(lights,you.y);
-			file_var_write(lights,you.z);
-			
-			file_var_write(lights,you.pan);
-			file_var_write(lights,you.tilt);
-			file_var_write(lights,you.roll);
-			
-			file_var_write(lights,you.red);
-			file_var_write(lights,you.green);
-			file_var_write(lights,you.blue);
-			
-			file_var_write(lights,you.lightrange);
-			file_var_write(lights,you.light_mode);
-			file_var_write(lights,you.flick_time);
-			break;
-			
-			case part :
-			
-			/*x,y,z,pan,tilt,roll*/
-			file_var_write(parts,you.x);
-			file_var_write(parts,you.y);
-			file_var_write(parts,you.z);
-			
-			file_var_write(parts,you.pan);
-			file_var_write(parts,you.tilt);
-			file_var_write(parts,you.roll);
-			
-			break;
-			
-			case snd :
-			/*x,y,z,pan,tilt,roll*/
-			file_var_write(snds,my.x);
-			file_var_write(snds,my.y);
-			file_var_write(snds,my.z);
-			
-			file_var_write(snds,my.pan);
-			file_var_write(snds,my.tilt);
-			file_var_write(snds,my.roll);
-			
-			break;
-			
+			ptr_remove(you);
 			
 		}
-		
+
 		you = ent_next(you);
+
 		wait(1);
 		
 	}
 	
-	file_close(mdlobjs);
-	file_close(lights);
-	file_close(parts);
-	file_close(snds);
-	
 }
+
 
 ////////////////////////////////////////////////////////////
 // Kernel-related functions.
@@ -2879,14 +3397,15 @@ void load_kernel(STRING *lvl_str) {
 	sky_clip = -10;
 
 	// Our own setup
+	//	load_mystymood(1,0);
 
 	// Read and setup video settings prior to executing other functions.
 	config_read_video("./src/cfg/video_config.cfg");
 
 	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
 
-	_obj_type = 4;
-	num_mdlobjs = 50;
+	_obj_type = 2;
+	num_partobjs = 1;
 
 	mouse_range = 500000;
 	mouse_map = mouse;
@@ -2900,6 +3419,7 @@ void load_kernel(STRING *lvl_str) {
 	// Initialize the databases and load them.
 	init_database();
 	init_database_snd(); // Sound database doesn't require a pointer to access.
+	init_database_part(); // So does particle database.
 
 	// Intialize and read custom materials' properties.
 	int i;
@@ -2922,19 +3442,17 @@ void load_kernel(STRING *lvl_str) {
 	loadGUI();
 	wait_for(loadGUI);
 
-	// Load the level.
-	level_load(lvl_str);
-	wait_for(level_load); // Wait for level_load to be completed.
-
+	// Load a blank level.
+	new_level();
+	
 	// Some nice effects and further setup before the game can be started.
 	sharedGUI_blackscreen(FADE_OUT,2);
 	wait_for(sharedGUI_blackscreen);
 
 	sharedGUI_mouse(1); // Enables the mouse.
 
-	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
-	def_move();
-	//	
+	//	def_move();
+	
 	// Shortcut keys implementation
 	while(1) {
 		
@@ -2959,6 +3477,13 @@ void load_kernel(STRING *lvl_str) {
 				
 				while(key_v) wait(1);
 				obj_paste();
+				
+			}
+			
+			if(key_n) {
+				
+				while(key_n) wait(1);
+				new_level();
 				
 			}
 			
@@ -3001,7 +3526,7 @@ void load_kernel(STRING *lvl_str) {
 		// I seperately defined key_esc here
 		// so I must disable the one that has been defined 
 		// in ka7def2.c/default.c
-		if(key_esc) {
+		if(key_esc && !from_test_play) { // If ESC is pressed and we're not pressing ESC while we were in testing mode.
 			
 			while(key_esc) wait(1);
 			home();
@@ -3019,15 +3544,20 @@ void loop_kernel() {
 	while(1) 
 	{
 		
+		// Prevent the cursor from going outside the level border
+		if(!temp_pos.x) temp_pos.x = level_ent.max_x;
+		if(!temp_pos.y) temp_pos.y = level_ent.max_y;
+		if(!temp_pos.z) temp_pos.z = level_ent.max_z;
+		
 		if(key_t) 
 		{
 			while(key_t) wait(1);
-			num_mdlobjs++;
+			num_partobjs++;
 		}
 		
 		if(key_y) {
 			while(key_y) wait(1);
-			num_mdlobjs--;
+			num_partobjs--;
 		}
 		
 		if(key_r) {
@@ -3042,6 +3572,7 @@ void loop_kernel() {
 			}
 			
 			ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+			cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 			
 		}
 		
@@ -3051,9 +3582,9 @@ void loop_kernel() {
 			
 			if(!mouse_panel)
 			{
-				if(!is_camera) obj_create();
+				if(!mouse_ent) obj_create();
 				
-				if(mouse_ent)
+				else
 				{
 					if(select)
 					{
@@ -3088,6 +3619,7 @@ void loop_kernel() {
 					
 				}
 				
+				/*
 				else
 				{
 					if(select)
@@ -3110,6 +3642,7 @@ void loop_kernel() {
 					
 					select = NULL;
 				}
+				*/
 				
 				wait(1);
 				
@@ -3138,6 +3671,9 @@ void loop_kernel() {
 void misc_startup() {
 
 	while(1) {
+		
+		
+		
 		
 		if(select) {
 			
@@ -3190,14 +3726,14 @@ void misc_startup() {
 			if(button_state(panLight,2,-1)) {
 				
 				button_state(panLight,3,-1);
-				select.skill5 = disco;
+				select.light_mode = disco;
 				
 			}
 			
 			if(button_state(panLight,3,-1)) {
 				
 				button_state(panLight,2,-1);
-				select.skill5 = flick;
+				select.light_mode = flick;
 				
 			}
 			
@@ -3205,7 +3741,7 @@ void misc_startup() {
 				
 				button_state(panLight,2,0);
 				button_state(panLight,3,0);
-				select.skill5 = 0;
+				select.light_mode = 0;
 				
 			}
 			
@@ -3223,18 +3759,36 @@ void misc_startup() {
 			
 		}
 		
+		/*
 		if(key_cul) ctrl--;
 		if(key_cur) ctrl++;
+		*/
 		
 		if(ctrl<0) ctrl=0; // prevent unexpected situations
 		if(ctrl>100) ctrl=100;
 		
 		panObj_Main.pos_x = (ctrl * (-bmap_width(panObj_Main.bmap) + screen_size.x))/100;
+		panObj_Part_Main.pos_x = (ctrl * (-bmap_width(panObj_Part_Main.bmap) + screen_size.x))/100;
+		panObj_Snd_Main.pos_x = (ctrl * (-bmap_width(panObj_Snd_Main.bmap) + screen_size.x))/100;
 		
 		if(panObj_Main.pos_x > 0) panObj_Main.pos_x = 0;
 		if(panObj_Main.pos_x < -bmap_width(panObj_Main.bmap) + screen_size.x) {
 			
 			panObj_Main.pos_x = -bmap_width(panObj_Main.bmap) + screen_size.x;
+			
+		}
+		
+		if(panObj_Part_Main.pos_x > 0) panObj_Part_Main.pos_x = 0;
+		if(panObj_Part_Main.pos_x < -bmap_width(panObj_Part_Main.bmap) + screen_size.x) {
+			
+			panObj_Part_Main.pos_x = -bmap_width(panObj_Part_Main.bmap) + screen_size.x;
+			
+		}
+		
+		if(panObj_Snd_Main.pos_x > 0) panObj_Snd_Main.pos_x = 0;
+		if(panObj_Snd_Main.pos_x < -bmap_width(panObj_Snd_Main.bmap) + screen_size.x) {
+			
+			panObj_Snd_Main.pos_x = -bmap_width(panObj_Snd_Main.bmap) + screen_size.x;
 			
 		}
 		
@@ -3300,25 +3854,38 @@ action a_patroller()
 
 ////////////////////////////////////////////////////////////
 // This is the camera controller I found when I was tweaking Mystymood.
+// 5.7.2013 : This camera is good, but I have to partly rewrite it
+// because...well, I won't explain, find out for yourself.
+// This code won't be checked against engine_play because
+// it will be killed prior to set engine_play to 1.
+// and restored later when engine_play has been set to 0.
 ////////////////////////////////////////////////////////////
-action free_camera()
-{
-	VECTOR camera_force;
-	set(my, INVISIBLE | POLYGON);
+VECTOR *camera_force = { z = 0; }
 
-	camera_force.z = 0;
+void free_camera()
+{
+	var rotatespeed = 5;
+	var speed = 40;
+	
+	set(my, INVISIBLE | POLYGON);
+	
 	vec_set(camera.x,my.x);
 	vec_set(camera.pan,my.pan);
+	vec_set(camera.tilt,my.tilt);
 
 	while(1)
-	{
-		camera_force.x = (key_w - key_s)*10*time_step;
-		camera_force.y = (key_a - key_d)*10*time_step;
-		vec_add(my.pan,vector(mouse_force.x*(-7)*time_step,mouse_force.y*7*time_step,0));
+	{	
+		camera_force.x = (key_w - key_s)*speed*time_step;
+		camera_force.y = (key_a - key_d)*speed*time_step;
 		
 		c_move(my,camera_force,nullvector,GLIDE+IGNORE_PASSABLE+IGNORE_PASSENTS+IGNORE_PUSH);
 		vec_set(camera.x,vector(my.x,my.y,my.z+15));
-		vec_set(camera.pan,my.pan);
+		
+		camera.tilt += rotatespeed * mouse_right*mouse_force.y * time_step;
+		camera.pan += rotatespeed * mouse_right*-mouse_force.x * time_step;
+		
+		vec_set(my.tilt,camera.tilt);
+		vec_set(my.pan,camera.pan);
 		
 		wait(1);
 	}
@@ -3332,8 +3899,1304 @@ PANEL *debug = {
 	layer = 3;
 
 	digits(0,0,99,"arial#25b",1,num_mdlobjs);
-	digits(0,20,99,"arial#25b",1,is_camera);
+	//	digits(0,20,99,"arial#25b",1,is_camera);
 	digits(0,40,99,"arial#25b",1,camera.arc);
 
+
 	flags = SHOW;
+}
+
+// Mystymood
+// Template file v5.202 (02/20/02)
+////////////////////////////////////////////////////////////////////////
+// File: lflare.wdl
+//	WDL code for lens flare and lighting effects
+//
+// 2007 Modified by David Lancaster and Loopix, based on ideas of HeelX
+// Lite-C conversion by Alexis Rozhkov aka Shadow
+//
+// www.loopix-project.com
+////////////////////////////////////////////////////////////////////////
+
+void flare_init(ENTITY *flare_ent)
+{
+	my = flare_ent;
+	my.flags2 &= ~SHOW;
+	my.flags |= (BRIGHT|PASSABLE|TRANSLUCENT);
+}
+
+// Desc: places a flare at temp.x/temp.y deviations from screen center
+void flare_place(ENTITY *flare_ent)
+{
+	my = flare_ent;
+	my.flags2 |= SHOW;
+	
+	camera.pan%=360;//needed to keep the correct sun_angle for lensflare visibility
+	
+	// multiply the pixel deviation with the pivot factor,
+	// and add the screen center
+	my.x = ctemp.x*my.pivot_dist + 0.5*screen_size.x;
+	my.y = ctemp.y*my.pivot_dist + 0.5*screen_size.y;
+	my.z = 1000;	// screen distance, determines the size of the flare
+	
+	if(my == flare1_ent)
+	{
+		vec_set(temp2,sun_pos);
+		you = player;	
+		
+		c_trace(camera.x,temp2.x,IGNORE_ME | IGNORE_YOU | IGNORE_PASSABLE | IGNORE_SPRITES | SCAN_TEXTURE);
+		if(trace_hit)
+		{
+			
+			if(flare1_ent.alpha > 0) flare1_ent.alpha -= flare_fadespeed * time_step;
+			else flare1_ent.alpha = 0;
+			
+		}
+		else
+		{
+			if((camera.pan > sun_angle.pan + 25) || (camera.pan < sun_angle.pan - 25) || (camera.tilt < sun_angle.tilt - 20) || (camera.tilt > sun_angle.tilt + 20))
+			{
+				
+				if(flare1_ent.alpha > 0) flare1_ent.alpha -= flare_fadespeed * time_step;
+				else flare1_ent.alpha = 0;
+				
+			}
+			else
+			{	
+				temp2.x = sqrt(abs(((my.x - (0.5*screen_size.x))*(my.x - (0.5*screen_size.x)))+((my.y - (0.5*screen_size.y))*(my.y - (0.5*screen_size.y)))));
+				if(abs(temp2.x) > (0.5*screen_size.x))
+				{
+					
+					flare1_ent.alpha = flare_alpha - (abs(temp2.x) - (0.5*screen_size.x));
+					if(flare1_ent.alpha < 0) flare1_ent.alpha = 0;
+					
+				}
+				else
+				{
+					
+					if(flare1_ent.alpha < flare_alpha) flare1_ent.alpha += flare_fadespeed * time_step;
+					else flare1_ent.alpha = flare_alpha;
+					
+				}
+			}
+		}
+		
+		if (flare1_ent.alpha < 0) flare1_ent.alpha = 0;
+		if (flare1_ent.alpha > flare_alpha) flare1_ent.alpha = flare_alpha;
+	}
+	rel_for_screen(my.x,camera);
+}
+
+void load_lensflare()
+{
+	
+	flare_init(flare1_ent);
+	flare_init(flare2_ent);
+	flare_init(flare4_ent);
+	flare_init(flare5_ent);
+	flare_init(flare6_ent);
+	flare_init(flare7_ent);
+	flare_init(flare8_ent);
+	flare_init(flare9_ent);
+	flare_init(flare10_ent);
+	flare_init(flare11_ent);
+	flare_init(flare12_ent);
+	flare_init(flare13_ent);
+	flare_init(flare14_ent);
+	flare_init(flare15_ent);
+	flare_init(flare16_ent);
+	flare_init(flare17_ent);
+	flare_init(flare18_ent);
+	flare_init(flare19_ent);
+	flare_init(flare20_ent);
+	
+	wait(1);
+	
+	lens_active = 1;
+	
+	while(1)
+	{
+		vec_set(ctemp,sun_pos);
+		vec_to_screen(ctemp,camera);
+		
+		ctemp.x -= 0.5 * screen_size.x;
+		ctemp.y -= 0.5 * screen_size.y;
+		
+		flare_place(flare1_ent);
+		flare_place(flare2_ent);	
+		flare_place(flare4_ent);
+		flare_place(flare5_ent);
+		flare_place(flare6_ent);
+		flare_place(flare7_ent);
+		flare_place(flare8_ent);
+		flare_place(flare9_ent);
+		flare_place(flare10_ent);
+		flare_place(flare11_ent);
+		flare_place(flare12_ent);
+		flare_place(flare13_ent);
+		flare_place(flare14_ent);
+		flare_place(flare15_ent);
+		flare_place(flare16_ent);
+		flare_place(flare17_ent);
+		flare_place(flare18_ent);
+		flare_place(flare19_ent);
+		flare_place(flare20_ent);
+		
+		flare1_ent.alpha = flare1_ent.alpha - (sky_cloud3.alpha/10);
+		flare2_ent.alpha = flare1_ent.alpha;		
+		flare4_ent.alpha = flare1_ent.alpha;
+		flare5_ent.alpha = flare1_ent.alpha;
+		flare6_ent.alpha = flare1_ent.alpha;
+		flare7_ent.alpha = flare1_ent.alpha;
+		flare8_ent.alpha = flare1_ent.alpha;
+		flare9_ent.alpha = flare1_ent.alpha;
+		flare10_ent.alpha = flare1_ent.alpha;
+		flare11_ent.alpha = flare1_ent.alpha;
+		flare12_ent.alpha = flare1_ent.alpha;
+		flare13_ent.alpha = flare1_ent.alpha;
+		flare14_ent.alpha = flare1_ent.alpha;
+		flare15_ent.alpha = flare1_ent.alpha;
+		flare16_ent.alpha = flare1_ent.alpha;
+		flare17_ent.alpha = flare1_ent.alpha;
+		flare18_ent.alpha = flare1_ent.alpha;
+		flare19_ent.alpha = flare1_ent.alpha;
+		flare20_ent.alpha = flare1_ent.alpha;
+		wait(1);
+	}
+	
+	lens_active = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////MystyMood sky/sun/weather template...works without shader, uses 3dgs sky entitys!
+////
+////Note: All sky/weather values must be adjusted in this script...exept from the mysty_mood trigger values 
+////that can be adjusted for each trigger dummy via the behaviour panel in WED.
+////
+////Jun 07 by www.loopix-project.com
+////Nov 07 Lite-C conversion by Alexis Rozhkov aka Shadow
+/////////////////////////////////////////////////////////////
+
+void func_fade_colors(var *col_target, var *col1, var *col2)
+{
+	var i = 0;
+	if(i < 100)
+	{
+		i = minv(i + fog_fade_speed*time_step, 100);
+		vec_lerp(col_target, col1, col2, i/100);
+	}
+}
+
+//start rain/snow particle effects////
+
+void func_particle_seed_infinity(PARTICLE *p)
+{
+	
+	vec_set(p.x,vector(cycle(p.x,camera.x-particle_seedbox.x,camera.x+particle_seedbox.x),
+	cycle(p.y,camera.y-particle_seedbox.y,camera.y+particle_seedbox.y),
+	cycle(p.z,camera.z-particle_seedbox.z,camera.z+particle_seedbox.z)));
+	
+	if(p.z<camera.z-100) p.lifespan = 0;
+	
+}
+
+void func_effect_particle_seed(PARTICLE *p) {
+
+	vec_set(p.x,vector(camera.x+random(particle_seedbox.x*2)-particle_seedbox.x,
+	camera.y+random(particle_seedbox.y*2)-particle_seedbox.y,
+	camera.z+random(particle_seedbox.z*2)-particle_seedbox.z));
+	
+	p.flags |= MOVE;
+	
+	if(sky_cloud3.alpha > 0) {
+		
+		p.bmap = part_bmp_weather;	
+		p.vel_x = part_vel_x;
+		p.vel_y = part_vel_y;
+		p.vel_z = part_vel_z;
+		p.size = part_size;
+		p.alpha = part_alpha;
+		
+		p.event  = func_particle_seed_infinity;	
+	}	
+}
+////end rain/snow particle setup////
+
+////start thunder lighning////
+void func_fade_lightning(PARTICLE *p)  { p.lifespan = 0; }
+
+void func_particle_lightning(PARTICLE *p)
+{
+	VECTOR temp;
+	temp.x = random(2) - 1;
+	temp.y = random(2) - 1;
+	temp.z = random(2) - 1;
+	vec_set(p.vel_x, temp);
+	p.bmap = bmp_lightning;
+	p.size = 3;
+	p.flags |= (MOVE|BRIGHT|TRANSLUCENT);
+	p.lifespan = 1;
+	p.event  = func_fade_lightning;
+}
+
+void func_particle_segment()
+{
+	vec_set(temporary, segment_end);
+	vec_sub(segment_end, segment_start);
+	segment_length = vec_length(segment_end);
+	segment_end.x = (segment_end.x * 2) / segment_length; // create particles every 2. quant
+	segment_end.y = (segment_end.y * 2) / segment_length;
+	segment_end.z = (segment_end.z * 2) / segment_length;
+	while(segment_length > 0)
+	{
+		
+		effect(func_particle_lightning, 2, segment_start.x, nullvector);	
+		vec_add(segment_start, segment_end);
+		segment_length -= 2;
+		
+	}
+}
+
+void func_particle_segment()
+{
+	vec_set(temporary, stroke_start);
+	vec_sub(stroke_end, stroke_start);
+	stroke_length = vec_length(stroke_end);
+	stroke_end.x = (stroke_end.x * 100) / stroke_length; // create segments every 200 quants
+	stroke_end.y = (stroke_end.y * 100) / stroke_length;
+	stroke_end.z = (stroke_end.z * 100) / stroke_length;
+	while(stroke_length > 0)
+	{
+		vec_add(stroke_start, stroke_end);
+		vec_set(segment_start, temporary);
+		vec_set(segment_end, stroke_start);
+		segment_end.x += random(60) - 30; // displace the lightning segments (don't make the lightning look like a straight stroke)
+		segment_end.y += random(60) - 30;
+		segment_end.z += random(60) - 30;
+		func_particle_segment();
+		stroke_length -= 100; // keep the same value here
+	}
+}
+
+void func_increase_brightness()
+{
+	lightning_on = 1;
+	
+	lightning = 255;
+	wait(2+random(3));
+	lightning = 1;
+	wait(2+random(2));
+	lightning = 255;
+	wait(1+random(2));
+	lightning = 1;
+	wait(2+random(2));
+	lightning = 255;
+	wait(2+random(5));
+	lightning = 1;
+	
+	wait(random(50));	
+	lightning_on = 0;
+}
+
+////end thunder lightning////
+
+void toggle_weather()//just for testing
+{
+	weather_state += 1;
+	if(weather_state > 2) weather_state = 0;
+}
+
+void good_weather()  { weather_state = 0; }
+
+void weather_change() {
+	
+	VECTOR temp;
+	
+	// Sound handlers.
+	var snd_handle_thunder, snd_handle_rain, snd_handle_wind, snd_handle_bg_day, snd_handle_bg_night;
+	var snd_vol_rain = 2, snd_vol_wind = 2, snd_vol_bg_day = 2, snd_vol_bg_night = 2;
+	
+	var rand_count, rand_count_state;
+	var outer_radius, inner_radius;
+	
+	var eff_density = 1;
+	
+	snd_handle_wind = snd_loop(wind_wav,snd_vol_wind,0);
+	snd_handle_rain = snd_loop(rain_wav,snd_vol_rain,0);
+	
+	outer_radius = weather_fog_far;
+	inner_radius = weather_fog_far-(weather_fog_far/8);
+
+	if(use_bg_sounds) {
+		
+		snd_handle_bg_day = snd_loop(day_wav,snd_vol_bg_day,0);
+		snd_handle_bg_night = snd_loop(night_wav,snd_vol_bg_night,0);
+		
+	}
+	
+	weather_state = 0;
+	
+	while(1)
+	{
+		
+		random_seed(0);
+		rand_count = integer(random(6));//creates a integer random number 0-4		
+		
+		//////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
+		
+		if(use_random_weather) {
+			
+			var i = random(random_weather_change_frequency);
+			
+			if(i>(random_weather_change_frequency/1.3)) {
+				
+				weather_state = 1;
+				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));	
+				
+			}
+			if(i>(random_weather_change_frequency/1.3)) {
+				
+				weather_state = 2;
+				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));
+				
+			}	
+			
+			if(i>(random_weather_change_frequency/6)) {
+				
+				weather_state = 0;
+				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));
+				
+			}
+		}	
+		
+		//////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
+		
+		if(weather_state == 1) {
+			
+			part_bmp_weather = bmp_rain;
+			
+			if(rain_random_move_on) {	
+				
+				part_vel_x = rain_wind_x + ((rain_random_move/2)-random(rain_random_move));
+				part_vel_y = rain_wind_y + ((rain_random_move/2)-random(rain_random_move));	
+				
+			}
+			
+			else {
+				
+				part_vel_x = rain_wind_x;
+				part_vel_y = rain_wind_y;
+				
+			}	
+			
+			part_vel_z = -rain_fallspeed;
+			part_size=random(2)+8;
+			part_alpha=random(10)+60;	
+			
+		}
+		
+		if(weather_state == 2) {
+			
+			part_bmp_weather = bmp_snow;
+			
+			if(snow_random_move_on == 1) {
+				
+				part_vel_x = snow_wind_x + ((snow_random_move/2)-random(snow_random_move));
+				part_vel_y = snow_wind_y + ((snow_random_move/2)-random(snow_random_move));	
+				
+			}
+			
+			else {
+				
+				part_vel_x = snow_wind_x;
+				part_vel_y = snow_wind_y;
+				
+			}	
+			
+			part_vel_z = -snow_fallspeed;
+			part_size=random(1)+2;
+			part_alpha=random(50)+40;	
+		}
+		
+		//////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
+		
+		if(weather_state == 1 && disable_lightning_thunder == 0)
+		{	
+			func_increase_brightness();
+			
+			vec_set(temp,vector(inner_radius+random(outer_radius-inner_radius),0,0));
+			vec_rotate(temp,vector(random(360),0,0));
+			vec_add(temp,camera.x); //Camera.x is center now. Maybe you want "player.x" here or something different altogether, depending on your game
+			//Temp now is a random position somewhere on your "ring"
+			//In your case:
+			vec_set(stroke_start,temp);
+			stroke_start.z += 600;
+			vec_set(stroke_end,vector(temp.x+random(100)-200,temp.y+random(100)-200,temp.z));
+			stroke_end.z -= 200;
+			
+			func_lightning_effect();
+			while(lightning_on>0) wait(1); //thunder comes after lightning...
+			
+			if(rand_count == 1 && rand_count_state != 1)
+			{
+				snd_handle_thunder = snd_play(thunder1_wav, 100, 0);
+				rand_count_state = 1;
+			}
+			if(rand_count == 2 && rand_count_state != 2)
+			{
+				snd_handle_thunder = snd_play(thunder2_wav, 100, 0);
+				rand_count_state = 2;
+			}
+			if(rand_count == 3 && rand_count_state != 3)
+			{
+				snd_handle_thunder = snd_play(thunder3_wav, 100, 0);
+				rand_count_state = 3;	
+			}
+			if(rand_count == 4 && rand_count_state != 4)
+			{
+				snd_handle_thunder = snd_play(thunder4_wav, 100, 0);
+				rand_count_state = 4;	
+			}
+			if(rand_count == 5 && rand_count_state != 5)
+			{
+				snd_handle_thunder = snd_play(thunder5_wav, 100, 0);
+				rand_count_state = 5;	
+			}	
+		}
+		
+		wait(-random(5));
+		
+		//////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////
+		
+		particle_seedbox.x=cx/2;
+		particle_seedbox.y=cy/2;
+		particle_seedbox.z=cz/2;
+		
+		if(weather_state>0) {
+			
+			reset(sky_cloud3,SHOW);
+			if (sky_cloud3.alpha < 90) sky_cloud3.alpha += weather_fade_speed/20*time_step;
+			
+			if(sky_cloud3.alpha>40) {
+				
+				if(weather_fader<100 && weather_state>0)  weather_fader += weather_fade_speed/20*time_step;
+				
+				if(weather_state == 0) {
+					
+					if(weather_fader>1) weather_fader -= weather_fade_speed/20*time_step;
+					
+				}
+				
+				eff_density = (weather_fader*part_num);
+			}
+			
+			if(weather_state == 1) {
+				
+				if(rain_to_snow_on_altitude && camera.z>snow_altitude && trigg_active_id == -1)
+				weather_state = 2;
+				
+				part_num = rain_part_num;
+				
+				if(snd_vol_bg_day>2 || snd_vol_bg_night>2) {
+
+					snd_vol_bg_day -= weather_soundfade_speed*time_step;
+					snd_vol_bg_night -= weather_soundfade_speed*time_step;
+					
+				}	
+				
+				if(sky_cloud3.alpha>40) {
+					
+					if(snd_vol_rain<snd_vol_rain_max) snd_vol_rain += weather_soundfade_speed*time_step;
+					if(snd_vol_wind<snd_vol_wind_max_when_rainy) snd_vol_wind += weather_soundfade_speed*time_step;
+					
+					else snd_vol_wind -= weather_soundfade_speed*time_step;
+					
+					effect(func_effect_particle_seed,eff_density,nullvector,nullvector);
+					
+				}
+			}	
+			
+			if(weather_state == 2) {
+				
+				if(rain_to_snow_on_altitude == 1 && camera.z<snow_altitude && trigg_active_id == -1)
+				weather_state = 1;
+				
+				part_num = snow_part_num;
+				
+				if(sky_cloud3.alpha>40) {
+					
+					if(snd_vol_rain>2) snd_vol_rain -= weather_soundfade_speed*time_step*2;
+					if(snd_vol_wind<snd_vol_wind_max) snd_vol_wind += (eff_density/50)*weather_soundfade_speed*time_step;
+					
+					if(snd_vol_bg_day>2 || snd_vol_bg_night>2) {
+						
+						snd_vol_bg_day -= weather_soundfade_speed*time_step;
+						snd_vol_bg_night -= weather_soundfade_speed*time_step;
+						
+					}
+					
+					effect(func_effect_particle_seed,eff_density,nullvector,nullvector);
+				}
+			}
+			
+			if(trigg_active_id < 0) {
+				
+				if(camera.fog_start>weather_fog_near) camera.fog_start -= weather_fade_speed*time_step;
+				else camera.fog_start += weather_fade_speed*time_step;
+				
+				if(camera.fog_end>weather_fog_far) camera.fog_end -= weather_fade_speed*time_step;
+				else camera.fog_end += weather_fade_speed*time_step;
+				
+			}
+			
+			
+		}
+		
+		if(weather_state == 0) {
+			
+			if(sky_cloud3.alpha > 1) sky_cloud3.alpha -= weather_fade_speed/60*time_step;
+			if(sky_cloud3.alpha<1) reset(sky_cloud3,SHOW);
+			
+			if(sky_cloud3.alpha > 40) {
+				
+				if(snd_vol_rain>2 || snd_vol_wind>2) {
+					
+					snd_vol_rain -= weather_soundfade_speed*time_step;
+					snd_vol_wind -= weather_soundfade_speed*time_step;
+					
+					effect(func_effect_particle_seed,eff_density/4,nullvector,nullvector);
+					
+				}		
+			}
+			
+			if(sky_cloud3.alpha < 60) {
+				
+				if(sun_angle.pan > 160 && sun_angle.pan < 360) {
+					
+					if(snd_vol_bg_night<snd_vol_bg_night_max) {
+						
+						snd_vol_bg_night += weather_soundfade_speed*time_step;
+						
+						if(snd_vol_bg_day > 2) snd_vol_bg_day -= weather_soundfade_speed*time_step;
+						
+					}			
+				}
+				
+				if(sun_angle.pan>0 && sun_angle.pan<160) {
+					
+					if(snd_vol_bg_day<snd_vol_bg_day_max) {
+						
+						snd_vol_bg_day += weather_soundfade_speed*time_step;
+						if(snd_vol_bg_night > 2) snd_vol_bg_night -= weather_soundfade_speed*time_step;
+						
+					}	
+				}
+			}
+			
+			if(trigg_active_id < 0) {
+				
+				if(camera.fog_start>land_fog_near) camera.fog_start -= weather_fade_speed*time_step;
+				else camera.fog_start += weather_fade_speed*time_step;
+				
+				if(camera.fog_end>land_fog_far) camera.fog_end -= weather_fade_speed*time_step;
+				else camera.fog_end += weather_fade_speed*time_step;
+				
+			}	
+		}
+		
+		sky_sun.alpha = clamp((90-sky_cloud3.alpha),2,100);
+		
+		
+		snd_tune(snd_handle_rain,snd_vol_rain,0,0);
+		snd_tune(snd_handle_wind,snd_vol_wind,0,0);	
+		snd_tune(snd_handle_bg_day,snd_vol_bg_day,0,0);
+		snd_tune(snd_handle_bg_night,snd_vol_bg_night,0,0);
+		
+		wait(1);		
+	}	
+}
+
+/*** load_mystymood(BOOL on, BOOL load_lens) 
+
+Set on = 1, load mystymood
+Set load_lens = 1, load lens flare
+
+***/
+void load_mystymood(BOOL on, BOOL load_lens)
+{
+	
+	if(!on) { // Unload mystymood & lensflare effect
+		
+		// macros work only with flag1? :-? (idk)
+		// so we use the inverse flag to control flags2.
+		sky_horizon.flags2 &= ~SHOW;
+		sky_cloud1.flags2 &= ~SHOW;
+		sky_cloud2.flags2 &= ~SHOW;
+		sky_cloud3.flags2 &= ~SHOW;
+		sky_day.flags2 &= ~SHOW;
+		sky_sun.flags2 &= ~SHOW;
+		sky_suncorona.flags2 &= ~SHOW;
+		sky_sunshine.flags2 &= ~SHOW;
+		sky_night.flags2 &= ~SHOW;
+		sky_moon.flags2 &= ~SHOW;
+		
+		lens_active = 0;
+		mystymood_active = 0;
+		
+		return;
+		
+	}
+	
+	// else, if on != 0
+	if(load_lens) load_lensflare();
+	
+	////////////////////////////////////////////////////////////
+	// Setup for lensflare
+	////////////////////////////////////////////////////////////
+	flare1_ent.pivot_dist = 1.278;
+	flare2_ent.pivot_dist = 1.200;
+	flare4_ent.pivot_dist = 0.522;
+	flare5_ent.pivot_dist = 0.434;
+	flare6_ent.pivot_dist = 0.348;
+	flare7_ent.pivot_dist = 0.306;
+	flare8_ent.pivot_dist = 0.262;	
+	flare9_ent.pivot_dist = 0.174;
+	flare10_ent.pivot_dist = 0.114;
+	flare11_ent.pivot_dist = 0.044;
+	flare12_ent.pivot_dist = 0.002;
+	flare13_ent.pivot_dist = -0.128;
+	flare14_ent.pivot_dist = -0.258;
+	flare15_ent.pivot_dist = -0.304;
+	flare16_ent.pivot_dist = -0.372;
+	flare17_ent.pivot_dist = -0.390;
+	flare18_ent.pivot_dist = -0.432;
+	flare19_ent.pivot_dist = -0.654;
+	flare20_ent.pivot_dist = -1.000;
+	////////////////////////////////////////////////////////////
+	
+	sky_horizon.flags2 |= SHOW;
+	sky_cloud1.flags2 |= SHOW;
+	sky_cloud2.flags2 |= SHOW;
+	sky_cloud3.flags2 |= SHOW;
+	sky_day.flags2 |= SHOW;
+	sky_sun.flags2 |= SHOW;
+	sky_suncorona.flags2 |= SHOW;
+	sky_sunshine.flags2 |= SHOW;
+	sky_night.flags2 |= SHOW;
+	sky_moon.flags2 |= SHOW;
+	
+	VECTOR temp;
+	
+	on_space = toggle_weather;
+	on_alt = good_weather;
+
+	weather_change();
+	
+	sky_sun.scale_x = sun_scale_x;
+	sky_sun.scale_y = sun_scale_y;
+
+	camera.fog_start = land_fog_near;//-50;
+	camera.fog_end = land_fog_far;//300;
+
+	vec_set(d3d_fogcolor1,fog_day);//set the default day fog-color 
+	
+	mystymood_active = 1;
+
+	while(1) {
+
+		camera.fog_start = land_fog_near;
+		camera.fog_end = land_fog_far;
+		
+		fog_color = 1;
+		
+		vec_set(sun_color.blue,vector(d3d_fogcolor1.blue*sun_col_fac,d3d_fogcolor1.green*sun_col_fac,d3d_fogcolor1.red*sun_col_fac));
+		vec_set(sky_color.blue,d3d_fogcolor1.blue);	
+		vec_set(sky_horizon.blue,d3d_fogcolor1.blue);
+		
+		if(weather_state == 0 && trigg_active_id < 0) {
+			
+			if(!dynamic_day_night) func_fade_colors(d3d_fogcolor1,current_color,fog_dynamic_day_night_off);
+			
+			if(camera.fog_start>land_fog_near) camera.fog_start -= weather_fade_speed*time_step;
+			else camera.fog_start += weather_fade_speed*time_step;
+			
+			if(camera.fog_end>land_fog_far) camera.fog_end -= weather_fade_speed*time_step;
+			else camera.fog_end += weather_fade_speed*time_step;
+			
+		}	
+		
+		vec_set(current_color,d3d_fogcolor1);
+		
+		//		camera.clip_near = 0; 
+		//		camera.clip_far = land_fog_far+10;//camera.fog_end+10;//
+		
+		vec_set(temp,sun_pos); 
+		vec_set(sky_sun.x,temp);  // copy the sun_pos location
+		vec_sub(temp,camera.x); // direction vector from camera to our sun_pos
+		vec_normalize(temp,land_fog_far-sun_dist_minus); // chop our direction vector to a set distance	
+		
+		vec_set(sky_sun.x,temp);
+		
+		if(use_moon) {
+			
+			vec_set(temp,sky_sun.x); 
+			vec_inverse(temp);
+			vec_set(sky_moon.x,temp);  // copy the sun_pos location
+		}
+		
+		if(dynamic_day_night) {
+			
+			if(sun_angle.pan > 230 && sun_angle.pan < 360) {sun_angle.pan += 0.01*time_speed_night*time_step;}
+			else{sun_angle.pan += 0.01*time_speed*time_step;}
+			
+			sun_angle.pan %= 360;
+			sun_angle.tilt = fsin(sun_angle.pan, max_zenith);
+			
+			//sun "grows" at low azimut
+			if(sky_sun.z<sun_grow_z) {
+				
+				if(sky_sun.scale_x<sun_scale_x+1 && sky_sun.scale_y<sun_scale_y+1) {
+					
+					sky_sun.scale_x += 0.01*time_step*time_speed/10;
+					sky_sun.scale_y += 0.01*time_step*time_speed/10;
+					
+				}	
+				
+			}
+			
+			else {
+				
+				if(sky_sun.scale_x>sun_scale_x && sky_sun.scale_y>sun_scale_y) {
+					
+					sky_sun.scale_x -= 0.01*time_step*time_speed/10;
+					sky_sun.scale_y -= 0.01*time_step*time_speed/10;
+					
+				}
+			}
+		}
+		
+		else {
+			
+			sun_angle.pan = sun_azimuth;
+			sun_angle.tilt = sun_elevation;
+			
+		}
+		
+		if(sun_angle.pan > 0 && sun_angle.pan < 40) {
+			
+			if (sky_cloud1.alpha < 80) {sky_cloud1.alpha += sky_fade_speed*time_step*time_speed;} 
+			if (sky_cloud2.alpha < 60) {sky_cloud2.alpha += sky_fade_speed*time_step*time_speed;}
+			if (sky_day.alpha < 60) {sky_day.alpha += sky_fade_speed*time_step*time_speed;}
+			if (sky_night.alpha > 1) {sky_night.alpha -= sky_fade_speed*time_step*time_speed;}	
+			
+		}
+		
+		if(sun_angle.pan > 10 && sun_angle.pan < 160) func_fade_colors(d3d_fogcolor1,current_color,fog_day);
+		
+		if(sun_angle.pan > 40 && sun_angle.pan < 160) {
+			
+			sky_cloud1.alpha = 80;
+			sky_cloud2.alpha = 60;
+			sky_day.alpha = 60;
+			sky_night.alpha = 1;
+			
+		}
+		
+		if(sun_angle.pan > 160 && sun_angle.pan < 190) {
+			
+			if (sky_cloud1.alpha > 10) {sky_cloud1.alpha -= sky_fade_speed*time_step*time_speed;} 
+			if (sky_cloud2.alpha > 10) {sky_cloud2.alpha -= sky_fade_speed*time_step*time_speed;} 
+			if (sky_night.alpha < 100) {sky_night.alpha += sky_fade_speed*time_step*time_speed;}
+			if (sky_day.alpha > 1) {sky_day.alpha -= sky_fade_speed*time_step*time_speed;}		
+			
+			func_fade_colors(d3d_fogcolor1,current_color,fog_eve);
+			
+		}
+		
+		if(sun_angle.pan > 190 && sun_angle.pan < 340) func_fade_colors(d3d_fogcolor1,current_color,fog_night);
+		
+		if(sun_angle.pan > 190 && sun_angle.pan < 340) {
+			
+			sky_cloud1.alpha = 10;
+			sky_cloud2.alpha = 10;
+			sky_day.alpha = 10;
+			sky_night.alpha = 100;
+			
+		}
+		
+		if(sun_angle.pan > 340 && sun_angle.pan < 360) func_fade_colors(d3d_fogcolor1,current_color,fog_mor);
+		
+		if(sun_angle.pan > 190 && sun_angle.pan < 350) {
+			
+			if(weather_state>0) func_fade_colors(d3d_fogcolor1,current_color,fog_weather_night);
+			
+		}
+		
+		else {
+			
+			if(weather_state>0) func_fade_colors(d3d_fogcolor1,current_color,fog_weather_day);
+			
+		}
+		
+		vec_set(sky_sunshine.x,sky_sun.x);	
+		vec_set(sky_suncorona.x,sky_sun.x);
+		
+		sky_suncorona.scale_x = sun_scale_x*5;//15;
+		sky_suncorona.scale_y = sun_scale_y*4;//7;
+		
+		sky_sunshine.scale_x = sun_scale_x*10;
+		sky_sunshine.scale_y = sun_scale_y*4;
+		
+		sky_moon.scale_x = sun_scale_x*moon_scale_fac;
+		sky_moon.scale_y = sun_scale_y*moon_scale_fac;	 
+		
+		sky_night.scale_x = night_sky_scale_x;
+		sky_night.scale_y = night_sky_scale_y;
+		
+		wait(1);
+	}	
+}
+
+//title:MystyMood Sky Template
+//image:loopix_logo.pcx
+//action:act_mystymood_trigg  
+//skill1:trigg_range 300.000
+//help: sets  range within the mood-trigger is activated
+//skill2:trigg_rain_wind_x 2.000
+//help: wind strenght on direction x
+//skill3:trigg_rain_wind_y 0.000
+//help:  wind strenght on direction y
+//skill4:trigg_rain_fallspeed 20.000
+//help: fallingspeed of the raindrops
+// section:
+//skill5:trigg_snow_wind_x 4.000
+//help: wind strenght on direction x
+//skill6:trigg_snow_wind_y 0.000
+//help: wind strenght on direction y
+//skill7:trigg_snow_fallspeed 5.000
+//help: fallingspeed of the snowflakes
+// section:
+//skill8:trigg_rain_random_move 2.000
+//help: random-xy movement of the rain particle
+//skill9:trigg_snow_random_move 4.000
+//help: random-xy movement of the snow particle
+// section:
+//skill10:trigg_weather_fade_speed 10.000
+//help: speed of fading one weather/mood state into the next
+//section:
+//skill11:trigg_fog_near 0.000
+//help: sets the fog_near distance...use negative values for starting the fog behind the camera
+//skill12:trigg_fog_far 0.000
+//help: sets the fog_far distance
+//skill13: trigg_fog_red 140.000
+//help: fog color red
+//skill14: trigg_fog_green 170.000
+//help: fog color green
+//skill15: trigg_fog_blue 160.000
+//help: fog color blue
+//section:
+//text: flag to enable rain
+//flag1:trigg_rain 0.000
+//text: flag to enable snow
+//flag2:trigg_snow 0.000
+//text: flag to disable lightning and thunder
+//flag3:trigg_disable_lightning_thunder
+// section:
+//text: flag to enable random-xy movement of the rain particle
+//flag4:trigg_rain_random_move_on 1.000
+//text: flag to enable random-xy movement of the snow particle
+//flag5:trigg_snow_random_move_on 1.000
+// section:
+//text: flag to enable fog distance/density change
+//flag6:trigg_fog_col_dist 1.000
+//uses:trigg_range,trigg_rain,trigg_snow,trigg_rain_wind_x,trigg_rain_wind_y,trigg_rain_fallspeed
+//uses:trigg_snow_wind_x,trigg_snow_wind_y,trigg_snow_fallspeed
+//uses:trigg_rain_random_move_on,trigg_snow_random_move_on,trigg_rain_random_move,trigg_snow_random_move
+//uses:trigg_weather_fade_speed,trigg_disable_lightning_thunder
+//uses:trigg_fog_col_dist,trigg_fog_near,trigg_fog_far,trigg_fog_red,trigg_fog_green,trigg_fog_blue
+action act_mystymood_trigg()
+{
+	ent_mystymood_trigg = me;
+	
+	set(my,PASSABLE);
+	
+	//set default skills
+	if(!my.trigg_range) my.trigg_range = 300;
+	if(!my.trigg_rain_fallspeed) my.trigg_rain_fallspeed = 20;
+	if(!my.trigg_snow_fallspeed) my.trigg_snow_fallspeed = 5;
+	if(!my.trigg_weather_fade_speed) my.trigg_weather_fade_speed = 10;
+
+	my.trigg_ID = trigg_num_off;
+	trigg_num_off += 1;
+
+	my.skill70 = weather_state;	
+	my.skill71 = rain_random_move_on;
+	my.skill72 = rain_random_move;
+	my.skill73 = rain_wind_x;
+	my.skill74 = rain_wind_y;
+	my.skill75 = rain_fallspeed;
+	my.skill76 = disable_lightning_thunder;
+	my.skill77 = snow_random_move_on;
+	my.skill78 = snow_random_move;
+	my.skill79 = snow_wind_x;
+	my.skill80 = snow_wind_y;
+	my.skill81 = snow_fallspeed;
+	my.skill82 = weather_fade_speed;	
+
+	while(1)
+	{
+		if(vec_dist(my.x,camera.x) < my.trigg_range)
+		{
+			trigg_active_id = my.trigg_ID;
+			
+			if(is(my,trigg_rain)) weather_state = 1;
+			if(is(my,trigg_snow)) weather_state = 2;
+			if(!is(my,trigg_snow) && !is(my,trigg_rain)) weather_state = 0;
+			
+			weather_fade_speed = my.trigg_weather_fade_speed;
+			
+			if(weather_state > 0)
+			{
+				
+				rain_random_move_on = is(my,trigg_rain_random_move_on);
+				rain_random_move = my.trigg_rain_random_move;
+				
+				rain_wind_x = my.trigg_rain_wind_x;
+				rain_wind_y = my.trigg_rain_wind_y;
+				
+				rain_fallspeed = my.trigg_rain_fallspeed;
+				
+				disable_lightning_thunder = is(my,trigg_disable_lightning_thunder);
+				
+				snow_random_move_on = is(my,trigg_snow_random_move_on);
+				snow_random_move = my.trigg_snow_random_move;
+				
+				snow_wind_x = my.trigg_snow_wind_x;
+				snow_wind_y = my.trigg_snow_wind_y;
+				
+				snow_fallspeed = my.trigg_snow_fallspeed;		
+				
+			}
+			
+			if(is(my,trigg_fog_col_dist))
+			{
+				func_fade_colors(d3d_fogcolor1,current_color,fog_col_trigg);
+				
+				fog_dist_near_trigg = my.trigg_fog_near;
+				fog_dist_far_trigg= my.trigg_fog_far;
+				
+				if(camera.fog_start>fog_dist_near_trigg) camera.fog_start -= weather_fade_speed*time_step;
+				else camera.fog_start += weather_fade_speed*time_step;
+				
+				if(camera.fog_end>fog_dist_far_trigg) camera.fog_end -= weather_fade_speed*time_step;
+				else camera.fog_end += weather_fade_speed*time_step;
+				
+				fog_col_trigg[2] = my.trigg_fog_red;
+				fog_col_trigg[1] = my.trigg_fog_green;
+				fog_col_trigg[0] = my.trigg_fog_blue;
+				
+				
+			}
+		}
+		else
+		{
+			if(trigg_active_id == my.trigg_ID)
+			{
+				trigg_active_id = -1;		
+				act_mystymood_trigg_label1();	
+				break;
+			}
+		}
+		
+		wait(1);	
+	}
+}
+
+void act_mystymood_trigg_label1()
+{
+	weather_fader = 1;//reset this var
+
+	weather_state = my.skill70;
+	rain_random_move_on = my.skill71;
+	rain_random_move = my.skill72;
+	rain_wind_x = my.skill73;
+	rain_wind_y = my.skill74;
+	rain_fallspeed = my.skill75;
+	disable_lightning_thunder = my.skill76;
+	snow_random_move_on = my.skill77;
+	snow_random_move = my.skill78;
+	snow_wind_x = my.skill79;
+	snow_wind_y = my.skill80;
+	snow_fallspeed = my.skill81;
+	weather_fade_speed = my.skill82;
+	
+	act_mystymood_trigg();
+}
+
+
+VECTOR dist, absdist, force, camera_center;
+var my_height; //
+var step_height = 8; //
+var overallspeed = 7.9; // Overall player's movement speed
+var mouse_spd = 9; // Mouse sensivity
+var cam_height = 110; // Camera's Z-height
+var temp_cam = 0;
+
+void fpcam_push(var Speed,var Amount)
+{
+	dist.x = Speed * Amount * time_step;
+	force.x = Speed * time_step;
+	accelerate(dist.x,force.x,0.7);
+}
+
+void fpcam_update()
+{
+	vec_lerp(camera.x,camera.x,camera_center.x,0.3);
+	vec_lerp(camera_center,camera_center,vector(0,0,cam_height),1);
+	vec_rotate(camera_center,my.pan);
+	vec_add(camera_center,my.x);
+	camera.pan -= mouse_spd * mouse_force.x * time_step;
+	camera.tilt += mouse_spd * mouse_force.y * time_step;
+	if(camera.tilt > 70) camera.tilt = 70;
+	if(camera.tilt < -70) camera.tilt = -70;
+}
+
+void fpcam_input()
+{
+	if(key_z)
+	{
+		while(camera->arc >= 45)
+		{
+			camera->arc -= .2 * time_step;
+			wait(1);
+		}
+	}
+	else
+	{
+		while(camera->arc <= 60)
+		{
+			camera->arc += .2 * time_step;
+			wait(1);
+		}
+	}
+	
+	if(my_height <= 10)
+	{
+		force.x = overallspeed * (key_w - key_s) * time_step;
+		
+		if(key_shift && (key_w)) accelerate(dist.x,force.x + 3.5,0.5);
+		else accelerate(dist.x,force.x,0.7);
+		
+		force.y = overallspeed * (key_a - key_d) * time_step;
+		
+		if(key_shift && (key_w)) accelerate(dist.x,force.x + 1.5,0.5);
+		else accelerate(dist.y,force.y,0.7);
+	}
+	
+	move_friction = 0.2;
+	move_min_z = -1;
+
+}
+
+action a_visitor_foot()
+{
+	player = my;
+	set(my,POLYGON | SHADOW | INVISIBLE);
+	my.scale_x = 4.5;
+	my.scale_y = my.scale_x;
+	my.scale_z = my.scale_x;
+	
+	my.cam_fp = 1;
+	
+	while(my)
+	{
+		if(engine_play && my.cam_fp && !my.cam_race)
+		{
+			if(my_height <= 10) my.pan = camera.pan;
+			my_height = c_trace(my.x,vector(my.x,my.y,my.z-9999),IGNORE_MODELS|IGNORE_PASSABLE|IGNORE_ME|USE_BOX);
+			if(my_height > 10) accelerate(absdist.z,-10 * time_step,-1);    
+			
+			else
+			{
+				absdist.z = -(my_height/1.2)+ step_height;
+				absdist.z = clamp(absdist.z,-step_height,step_height);
+				if((my_height + absdist.z) > 10){ absdist.z = -my_height -10; }
+			} 
+			
+			c_move(my,dist,absdist, IGNORE_PASSABLE|GLIDE);	
+			
+			fpcam_update();
+			fpcam_input();
+		}
+		wait(1);
+	} 
+}
+
+action a_visitor_bike() {
+	
+	var movement_speed = 0; // initial movement speed
+	var rotation_speed = 3; // rotation speed
+	
+	my.cam_race = 1;
+
+	VECTOR bike_speed, temp;
+	player = my;
+	
+	set(my,SHADOW | POLYGON);
+
+	while(my)
+	{
+		if(engine_play && my.cam_race && !my.cam_fp) {
+			
+			if(key_w || key_s) {
+				
+				ent_animate(my,"run",my.skill5,ANM_CYCLE);
+				my.skill5 += 4 * time_step;
+				
+			}
+			
+			my.pan += rotation_speed * (key_a - key_d) * time_step;
+			if (key_a)
+			{
+				if (my.roll > -20) my.roll -= 5 * time_step;
+			}
+			else
+			{
+				if (my.roll < 0) my.roll += 5 * time_step;
+			}
+
+			if (key_d)
+			{
+				if (my.roll < 20) my.roll += 5 * time_step;      
+			}
+			else
+			{
+				if (my.roll > 0) my.roll -= 5 * time_step;
+			}
+
+			// 15 gives the acceleration, 0.1 gives the frictiob
+			vec_set(bike_speed.x, accelerate (movement_speed, 15 * (key_w - key_s), 0.1));
+
+			bike_speed.y = 0;
+
+			vec_set (temp.x, my.x);
+
+			temp.z -= 10000;
+			bike_speed.z = -c_trace (my.x, temp.x, IGNORE_ME | IGNORE_PASSABLE | USE_BOX) + 5;
+
+			c_move (my, bike_speed.x, nullvector, IGNORE_PASSABLE | GLIDE);                
+
+			camera.x = my.x - 250 * cos(my.pan); // put the camera 250 quants behind the bike
+			camera.y = my.y - 250 * sin(my.pan);
+			camera.pan = my.pan; // the camera and the bike have the same pan angle
+			camera.z = my.z + 140; // place the camera above the bike, play with this value
+			camera.tilt = -10; // look downwards   
+			
+		}             
+
+		wait (1);
+
+	}
+
+
+}
+
+////////////////////////////////////////////////////////////
+// This function will set up and manage the playground.
+////////////////////////////////////////////////////////////
+void test_play() {
+	
+	// Deselect any selected entity first
+	if(select.obj_type == light) _light(0);
+	if(select.obj_type == mdl) prop(0);
+	if(select.obj_type == snd) sound(0);
+	if(select.obj_type == part) _part(0);
+	
+	select.material = mat_temp;
+	select = NULL;
+	
+	/***
+	
+	This code will scan through all available entities
+	
+	***/
+	you = ent_next(NULL);
+	while(you) {
+		
+		if(you.cam_fp) you.cam_race = 0;
+		if(you.cam_race) you.cam_fp = 0;
+		
+		// Scan for any light, particle, or sound entity
+		if(you.obj_type == light || you.obj_type == part || you.obj_type == snd) {
+			
+			// I wonder how I couldn't just use reset(you,SHOW) or you.flags &= ~SHOW here
+			set(you,INVISIBLE); 
+			
+		}
+		
+		you = ent_next(you);
+		
+		wait(1);
+		
+	}
+	
+	mouse_mode = 0;
+	
+	ent_remove(fpsf_marker);
+	ent_remove(cam);
+	
+	hideGUI();
+	
+	engine_play = 1;
+	
+	while(engine_play) {
+		
+		temp_cam += 3 * time_step;
+		camera.z += .5 * sin(temp_cam);
+		
+		if(key_esc) {
+			
+			from_test_play = 1;
+			
+			while(key_esc) wait(1);
+			
+			engine_play = 0;
+			from_test_play = 0; // reset
+			
+		}
+		
+		wait(1);
+		
+	}
+	
+	mouse_mode = 4;
+	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
+	
+	showGUI();
+	//	def_move();
+	
+	/***
+	
+	Scan through all available entities in the level
+	and set them to their original state.
+	
+	***/
+	you = ent_next(NULL);
+	
+	while(you) {
+		
+		if(you.obj_type == light || you.obj_type == part || you.obj_type == snd) {
+			
+			reset(you,INVISIBLE);
+			
+		}
+		
+		you = ent_next(you);
+		
+	}
 }

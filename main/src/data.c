@@ -23,9 +23,9 @@ PANEL *buttonlst_submenu_object = {
 	bmap = "button_submenu_black.bmp";
 	
 	button(0,0,"tree.png","tree.png","tree.png",objadd,NULL,NULL);
-	button(0,0,"fireworks256.png","fireworks256.png","fireworks256.png",NULL,NULL,NULL);
-	button(0,0,"music.png","music.png","music.png",NULL,NULL,NULL);
-	button(0,0,"tips.png","tips.png","tips.png",NULL,NULL,NULL);
+	button(0,0,"fireworks256.png","fireworks256.png","fireworks256.png",objpartadd,NULL,NULL);
+	button(0,0,"music.png","music.png","music.png",objsndadd,NULL,NULL);
+	button(0,0,"tips.png","tips.png","tips.png",objlightadd,NULL,NULL);
 	
 	button(0,0,"button_back.png","button_back.png","button_back.png",closewindow,NULL,NULL);
 	
@@ -230,7 +230,7 @@ PANEL *panMain_Bottom = {
 	bmap = "panMain_Bottom.bmp";
 	
 	button(0,0,"home.png","home.png","home.png",home,NULL,NULL);
-	button_toggle(0,0,"mouse_pointer_on.png","mouse_pointer.png","mouse_pointer_on.png","mouse_pointer_on.png",controlcam,NULL,NULL);
+	//	button_toggle(0,0,"mouse_pointer_on.png","mouse_pointer.png","mouse_pointer_on.png","mouse_pointer_on.png",controlcam,NULL,NULL);
 	button(0,0,"pathing.png","pathing.png","pathing.png",sharedGUI_launch_terrain,NULL,NULL);
 	button(0,0,"objects.png","objects.png","objects.png",sharedGUI_launch_object,NULL,NULL);
 	button(0,0,"path_32.png","path_32.png","path_32.png",sharedGUI_launch_path,NULL,NULL);
@@ -244,7 +244,7 @@ PANEL *panMain_Play = {
 	
 	bmap = "panMain_Play.bmp";
 	
-	button(0,0,"v.png","button_ok.png","button_ok.png",NULL,NULL,NULL);
+	button(0,0,"v.png","button_ok.png","button_ok.png",test_play,NULL,NULL);
 	
 	flags = OVERLAY | SHOW;
 }
@@ -309,6 +309,64 @@ PANEL *panObj_Main_X = { // So that it won't get sticked with panObj_Main
 	
 }
 
+PANEL *panObj_Part_Main = {
+	
+	layer = 5;
+	bmap = "panObj_parts.bmp";
+	
+}
+
+PANEL *panObj_Part_Main_X = {
+	
+	layer = 6;
+	
+	bmap = "button_cover.bmp";
+	
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panObj_Part_slider = {
+	
+	layer = 5;
+	bmap = "big_slider.bmp";
+	
+	// 800 = default
+	hslider(0,0,800,"slider_panobj.bmp",0,100,ctrl);
+	
+}
+
+PANEL *panObj_Snd_Main = {
+	
+	layer = 5;
+	bmap = "panObj_snds.bmp";
+	
+}
+
+PANEL *panObj_Snd_Main_X = {
+	
+	layer = 6;
+	
+	bmap = "button_cover.bmp";
+	
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panObj_Snd_slider = {
+	
+	layer = 5;
+	bmap = "big_slider.bmp";
+	
+	// 800 = default
+	hslider(0,0,800,"slider_panobj.bmp",0,100,ctrl);
+	
+}
+
 PANEL *panLight = {
 	
 	layer = 2;
@@ -328,6 +386,36 @@ PANEL *panLight = {
 	on_click = dragpanel;
 	
 	flags = OVERLAY; // because of the checkboxes...
+	
+}
+
+PANEL *panLightNoti = {
+	
+	layer = 5;
+	bmap = "noti_light.bmp";
+	
+	pos_x = 10;
+	pos_y = 10;
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panRotateHelp = {
+	
+	layer = 5;
+	bmap = "panRotateHelp.png";
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panScaleHelp = {
+	
+	layer = 5;
+	bmap = "panRotateHelp.png";
+	
+	flags = OVERLAY;
 	
 }
 
@@ -519,7 +607,7 @@ void New_Base_Effect_base(PARTICLE* p) {
 	p.event = New_Base_Effect_base_event;
 }
 
-void emit_spark() {
+void emit_spiral() {
 	var eff_frac; eff_frac = 0;
 	wait(1);
 	while(my) {
@@ -537,7 +625,7 @@ void emit_spark() {
 void p_spiral_create(VECTOR *position) {
 	if(!position)position = nullvector;
 	wait(3);
-	you = ent_create(NULL,position,emit_spark);
+	you = ent_create(NULL,position,emit_spiral);
 	if(you) {
 		vec_add(you.x,vector(371.551,349.278,0.000));
 		vec_set(you.pan,vector(0.000,0.000,0.000));
@@ -1657,7 +1745,294 @@ void p_composition_create(VECTOR *position) {
 		set(you,INVISIBLE);
 	}
 }
+// End of particle definition
 
 ////////////////////////////////////////////////////////////
-// End of particle definition
+// Entities will be defined here.
 ////////////////////////////////////////////////////////////
+ENTITY *sky_horizon =
+{ //this is needed to fix the bad 3dgs horizon merging
+	type = "horizon.tga";
+	layer = 5; 
+	scale_x = 0.25;
+	scale_y = 0.25;
+	tilt = -60;//adjust this when you change sky_curve or sky_clip settings
+	alpha = 100; 
+	flags2 = SKY|SCENE;
+	flags = TRANSLUCENT|PASSABLE;
+}
+
+ENTITY *sky_cloud1 =
+{ 
+	type = "clouds.tga";
+	layer = 2;  
+	u = cloud1_speed_x; 
+	v = cloud1_speed_y; 
+	scale_y = cloud1_scale_x; 
+	scale_x = cloud1_scale_y; 
+	tilt = -12;//-6; 
+	flags2 = SKY|DOME; 
+	flags = TRANSLUCENT|PASSABLE;
+	alpha = cloud1_alpha; 
+} 
+
+ENTITY *sky_cloud2 =
+{ 
+	type = "clouds.tga";
+	layer = 3;//4; 
+	u = cloud2_speed_x; 
+	v = cloud2_speed_y; 
+	scale_x = cloud2_scale_x; 
+	scale_y = cloud2_scale_y; 
+	tilt = -10;//-5;
+	flags2 = SKY|DOME; 
+	flags = TRANSLUCENT|PASSABLE; 
+	alpha = cloud2_alpha; 
+}
+
+//bad weather clouds
+ENTITY *sky_cloud3 =
+{ 
+	type = "clouds_bad.tga";
+	layer = 4; 
+	u = cloud3_speed_x; 
+	v = cloud3_speed_y; 
+	scale_x = cloud3_scale_x; 
+	scale_y = cloud3_scale_y; 
+	tilt = -10;//-5;
+	flags2 = SKY|DOME;
+	flags = TRANSLUCENT|PASSABLE; 
+	alpha = 0;//cloud3_alpha; 
+}
+`
+
+ENTITY *sky_day =
+{ 
+	type = "sky_day.tga";
+	layer = 1; 
+	scale_x = 0.25;
+	tilt = -20;//-10;
+	red = sky_add_red;
+	green = sky_add_green;
+	blue = sky_add_blue;
+	alpha = 60;//sky_alpha; 
+	flags2 = SKY|SCENE; 
+	flags = TRANSLUCENT|PASSABLE;
+}
+
+ENTITY *sky_sun =
+{
+	type = "sky_sun.tga";
+	layer = 6;
+	alpha = sun_alpha;
+	flags2 = SKY;
+	flags = TRANSLUCENT|PASSABLE|BRIGHT;
+}
+
+ENTITY *sky_suncorona =
+{
+	type = "sky_suncorona.tga";
+	layer = 3;
+	alpha = sun_corona_alpha;
+	flags2 = SKY;
+	flags = TRANSLUCENT|PASSABLE|BRIGHT;
+}
+
+ENTITY *sky_sunshine =
+{
+	type = "sky_sunshine.tga";
+	layer = 7;
+	alpha = sun_shine_alpha;
+	flags2 = SKY;
+	flags = TRANSLUCENT|PASSABLE|BRIGHT;
+}
+
+ENTITY *sky_night =
+{ 
+	type = "sky_night.tga"; 
+	u = night_sky_speed_x; 
+	v = night_sky_speed_y; 
+	layer = 1; 
+	alpha = 0;//night_sky_alpha; 
+	flags2 = SKY|DOME; 
+	flags = TRANSLUCENT|PASSABLE; 
+} 
+
+ENTITY *sky_moon =
+{
+	type = "sky_moon.tga";
+	layer = 2;
+	alpha = moon_alpha;
+	flags2 = SKY;
+	flags = TRANSLUCENT|PASSABLE;
+}
+
+ENTITY *flare1_ent =
+{
+	type = "lens_01.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare2_ent =
+{
+	type = "lens_02.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare4_ent =
+{
+	type = "lens_04.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare5_ent =
+{
+	type = "lens_05.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare6_ent =
+{
+	type = "lens_06.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare7_ent =
+{
+	type = "lens_07.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare8_ent =
+{
+	type = "lens_08.tga";
+	view = camera;
+	layer = 8;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare9_ent =
+{
+	type = "lens_09.tga";
+	view = camera;
+	layer = 8;
+	scale_x = 2;
+	scale_y = 2;
+}
+ENTITY *flare10_ent =
+{
+	type = "lens_10.tga";
+	view = camera;
+	layer = 8;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare11_ent =
+{
+	type = "lens_11.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare12_ent =
+{
+	type = "lens_12.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare13_ent =
+{
+	type = "lens_13.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare14_ent =
+{
+	type = "lens_14.tga";
+	layer = 8;
+	view = camera;	
+	scale_x = 2.5;
+	scale_y = 2.5;
+}
+
+ENTITY *flare15_ent =
+{
+	type = "lens_15.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare16_ent =
+{
+	type = "lens_16.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare17_ent =
+{
+	type = "lens_17.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare18_ent =
+{
+	type = "lens_18.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare19_ent =
+{
+	type = "lens_19.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2;
+	scale_y = 2;
+}
+
+ENTITY *flare20_ent =
+{
+	type = "lens_20.tga";
+	layer = 8;
+	view = camera;
+	scale_x = 2.8;
+	scale_y = 2.8;
+}
