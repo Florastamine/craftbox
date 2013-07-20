@@ -7,60 +7,23 @@ http://www.youtube.com/watch?v=evSwhNl-HhQ
 
 ***/
 
-var percentage;
-
-PANEL *perc = {
-	digits(0,0,99,"Arial#25b",1,percentage);
-	layer=5555;
-	flags=SHOW;
-	pos_x=10;
-	pos_y=10;
-}
-
-void timebar(var _TimeRemain,var _DecrTime)
-{
-	/*
-	_GameLoaderDigitCover.pos_x = (screen_size.x - bmap_width(_GameLoaderDigitCover.bmap)) - 45;
-	_GameLoaderDigitCover.pos_y = 15;
+void sys_screenshot() {
 	
-	_GameLoader.pos_x = _GameLoaderPOSX;
-	_GameLoader.pos_y = _GameLoaderPOSY;
+	file_for_screen(pref_shot,shot);
+	shot++;
 	
-	getx__GameLoader = _GameLoader.pos_x;
-	gety__GameLoader = _GameLoader.pos_y;
+	set(panScreenshot,SHOW);
 	
-	_GameLoaderFrame.pos_x = getx__GameLoader;
-	_GameLoaderFrame.pos_y = gety__GameLoader;
-	_GameLoaderFrame.layer = _GameLoader.layer + 1;
-	
-	if(!is(_GameLoader,SHOW)) set(_GameLoader,SHOW);
-	if(!is(_GameLoaderFrame,SHOW)) set(_GameLoaderFrame,SHOW);
-	if(!is(_GameLoaderDigit,SHOW)) set(_GameLoaderDigit,SHOW);
-	if(!is(_GameLoaderDigitCover,SHOW)) set(_GameLoaderDigitCover,SHOW);
-	
-	set(_GameLoaderDigitCover,TRANSLUCENT);
-	_GameLoaderDigitCover.alpha = 75;
-	_GameLoaderDigitCover.layer = _GameLoaderDigit.layer + 1;
-	
-	if(_TimeRemain > screen_size.x) printf("In OSGP.c -> kgame.c -> osgp_time_decr(var _TimeRemain,var _DecrTime, var _GameLoaderPOSX, var _GameLoaderPOSY)\nYou've exceeded screen_size.x. OSGP will ignore it, but you'll have to fix it manually.");
-	_TimeRemain = abs(_TimeRemain);
-	
-	_GameLoader.scale_x = maxv(.01,_TimeRemain / 100);
-	_GameLoaderFrame.scale_x = _GameLoader.scale_x;
-	
-	_GameLoader.scale_x = .01;*/
-	var __TimeRemain = _TimeRemain;
-	
-	while(abs(_TimeRemain) > 0 && percentage > 0) 
-	{
-		_TimeRemain -= _DecrTime;
-		percentage = (_TimeRemain / __TimeRemain) * 100;
-
-		//		_GameLoader.scale_x = maxv(.01,_TimeRemain / 100);
+	while(panScreenshot.alpha > 0) {
+		
+		panScreenshot.alpha -= 10 * time_step;
 		wait(1);
+		
 	}
+
+	reset(panScreenshot,SHOW);
+	panScreenshot.alpha = 100;
 	
-	//	sys_exit(NULL);
 }
 
 void generate_waypoint()
@@ -99,7 +62,7 @@ void generate_light() {
 	
 	// Like men and women, lights should equal to normal entities.
 	// They have the rights to be manipulated by the mouse.
-	// oooh, wait, was the mouse belonged to the government??
+	// oooh, wait, isn't the mouse belonged to the government??
 	// ...
 	// oh no.
 	my.emask |= ENABLE_CLICK;
@@ -138,8 +101,7 @@ void generate_light() {
 ////////////////////////////////////////////////////////////
 void pan_rotate(PANEL *p,var lim,var speed,BOOL rotate_on_center)
 {
-	while(p == NULL) wait(1);
-	while(!is(p,SHOW)) wait(1);
+	while(p == NULL && !is(p,SHOW)) wait(1);
 	
 	if(rotate_on_center)
 	{
@@ -463,39 +425,23 @@ void init_database() {
 	mdlobjs_table[334] = str_create("e_sign_turnscrossing.mdl");
 	mdlobjs_table[335] = str_create("e_sign_yield.mdl");
 	mdlobjs_table[336] = str_create("e_sofa.mdl");
-	mdlobjs_table[337] = str_create("e_strange_boar_toy.mdl");
-	mdlobjs_table[338] = str_create("e_strange_bowl.mdl");
-	mdlobjs_table[339] = str_create("e_strange_canvas.mdl");
-	mdlobjs_table[340] = str_create("e_strange_canvas2.mdl");
-	mdlobjs_table[341] = str_create("e_strange_crate.mdl");
-	mdlobjs_table[342] = str_create("e_strange_decorator.mdl");
-	mdlobjs_table[343] = str_create("e_strange_drums.mdl");
-	mdlobjs_table[344] = str_create("e_strange_flag.mdl");
-	mdlobjs_table[345] = str_create("e_strange_house.mdl");
-	mdlobjs_table[346] = str_create("e_strange_machine.mdl");
-	mdlobjs_table[347] = str_create("e_strange_placeholder.mdl");
-	mdlobjs_table[348] = str_create("e_strange_shelf.mdl");
-	mdlobjs_table[349] = str_create("e_strange_trough.mdl");
-	mdlobjs_table[350] = str_create("e_strange_umbrella.mdl");
-	mdlobjs_table[351] = str_create("e_strange_wine_barrel.mdl");
-	mdlobjs_table[352] = str_create("e_strange_wine_barrel2.mdl");
-	mdlobjs_table[353] = str_create("e_streetlight.mdl");
-	mdlobjs_table[354] = str_create("e_table.mdl");
-	mdlobjs_table[355] = str_create("e_table1.mdl");
-	mdlobjs_table[356] = str_create("e_table_blood.mdl");
-	mdlobjs_table[357] = str_create("e_target.mdl");
-	mdlobjs_table[358] = str_create("e_target1.mdl");
-	mdlobjs_table[359] = str_create("e_torch.mdl");
-	mdlobjs_table[360] = str_create("e_trashcan.mdl");
-	mdlobjs_table[361] = str_create("e_trashcan1.mdl");
-	mdlobjs_table[362] = str_create("e_trashcan2.mdl");
-	mdlobjs_table[363] = str_create("e_treasure_chest.mdl");
-	mdlobjs_table[364] = str_create("e_wheatpack.mdl");
-	mdlobjs_table[365] = str_create("e_woodchair.mdl");
-	mdlobjs_table[366] = str_create("e_woodchair2.mdl");
+	mdlobjs_table[337] = str_create("e_streetlight.mdl");
+	mdlobjs_table[338] = str_create("e_table.mdl");
+	mdlobjs_table[339] = str_create("e_table1.mdl");
+	mdlobjs_table[340] = str_create("e_table_blood.mdl");
+	mdlobjs_table[341] = str_create("e_target.mdl");
+	mdlobjs_table[342] = str_create("e_target1.mdl");
+	mdlobjs_table[343] = str_create("e_torch.mdl");
+	mdlobjs_table[344] = str_create("e_trashcan.mdl");
+	mdlobjs_table[345] = str_create("e_trashcan1.mdl");
+	mdlobjs_table[346] = str_create("e_trashcan2.mdl");
+	mdlobjs_table[347] = str_create("e_treasure_chest.mdl");
+	mdlobjs_table[348] = str_create("e_wheatpack.mdl");
+	mdlobjs_table[349] = str_create("e_woodchair.mdl");
+	mdlobjs_table[350] = str_create("e_woodchair2.mdl");
 
 	// Unallocated space
-	for (i = 367;i < 480;i++) mdlobjs_table[i] = str_create("#2");
+	for (i = 351;i < 480;i++) mdlobjs_table[i] = str_create("#2");
 	
 	// Food 90 [480-569]
 	// Allocated space
@@ -664,8 +610,8 @@ void init_database() {
 	// Allocated space
 	mdlobjs_table[830] = str_create("l_desertgeneric.hmp");
 	mdlobjs_table[831] = str_create("l_greenland.hmp");
-	mdlobjs_table[832] = str_create("l_greenland1.mdl");
-	mdlobjs_table[833] = str_create("l_greenland_fat.mdl");
+	mdlobjs_table[832] = str_create("l_greenland1.hmp");
+	mdlobjs_table[833] = str_create("l_greenland_fat.hmp");
 	mdlobjs_table[834] = str_create("l_marssurface.hmp");
 	mdlobjs_table[835] = str_create("l_ocean1.hmp");
 	mdlobjs_table[836] = str_create("l_ocean2.hmp");
@@ -689,24 +635,47 @@ void init_database() {
 ////////////////////////////////////////////////////////////
 void fix(ENTITY *e) {
 	
-	if(num_mdlobjs == 52) // church/temple model
-	e.scale_x = e.scale_y = e.scale_z *= 3;
-	
-	if(num_mdlobjs == 51) // big building
-	e.scale_x = e.scale_y = e.scale_z *= 2;
-	
-	if(num_mdlobjs == 53) // [big] fence
-	e.scale_x = e.scale_y = e.scale_z /= 1.5;
-	
-	if(num_mdlobjs == 54) // [big] fence bar
-	e.scale_x = e.scale_y = e.scale_z /= 1.5;
-	
-	if(num_mdlobjs == 55) // wood entrance
-	e.scale_x = e.scale_y = e.scale_z *= 2;
-	
-	if(e.obj_ID == 835 || e.obj_ID == 836) {
+	switch(num_mdlobjs) {
 		
-		e.z += 525;
+		case 52: // church/temple model
+		e.scale_x = e.scale_y = e.scale_z *= 3;
+		
+		break;
+		/////////////////////////////////////////////////////////////// 
+		case 51: // big building
+		e.scale_x = e.scale_y = e.scale_z *= 2;
+		
+		break;
+		///////////////////////////////////////////////////////////////
+		case 53: // [big] fence
+		e.scale_x = e.scale_y = e.scale_z /= 1.5;
+		
+		break;
+		///////////////////////////////////////////////////////////////		
+		case 54: // [big] fence bar
+		e.scale_x = e.scale_y = e.scale_z /= 1.5;
+		
+		break;
+		///////////////////////////////////////////////////////////////		
+		case 55: // wood entrance
+		e.scale_x = e.scale_y = e.scale_z *= 2;
+		
+		break;
+		///////////////////////////////////////////////////////////////
+		case 2: // bird
+		e.scale_x = e.scale_y = e.scale_z /= 2;
+		
+		break;
+		///////////////////////////////////////////////////////////////
+		case 12: // idk what is this
+		e.scale_x = e.scale_y = e.scale_z *= 2;
+		
+		break;
+		///////////////////////////////////////////////////////////////
+		case 55: // generic wood gate
+		e.scale_x = e.scale_y = e.scale_z *= 3;
+		
+		break;
 		
 	}
 	
@@ -735,6 +704,8 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		
 		while(tmp == NULL) wait(1); // wait for tmp to be completely created.
 		
+		fix(tmp);
+		
 		set(tmp, POLYGON);
 		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
 		
@@ -749,8 +720,6 @@ ENTITY *obj_create() { // This inherits a lot from place_me
 		
 		tmp.obj_dynamic = 0; // This is a static object
 		tmp.obj_physics = 0; // And physics aren't enabled by default.		
-		
-		fix(tmp);
 		
 		return tmp;
 		
@@ -922,7 +891,7 @@ void updategui(PANEL *wg) {
 	}
 	
 	if(wg == panProp) 
-	{ 
+	{
 		
 		int i;
 		for(i = 2;i < 6;i++) pan_setpos(panProp,3,i,vector(4, 20 + 35*(i-2),0));
@@ -964,6 +933,24 @@ void updategui(PANEL *wg) {
 		pan_setpos(panParticle,3,1,vector(bmap_width(panParticle.bmap) - 38 - 15,0,0));
 		
 	}
+	
+	if(wg == panNewGame) {
+		
+		pan_setpos(panNewGame,3,1,vector(bmap_width(panNewGame.bmap) - 38 - 15,0,0));
+		
+	}
+	
+	if(wg == panLoadGame) {
+		
+		pan_setpos(panLoadGame,3,1,vector(bmap_width(panLoadGame.bmap) - 38 - 15,0,0));
+		
+	}
+	
+	if(wg == panSaveGame) {
+		
+		pan_setpos(panSaveGame,3,1,vector(bmap_width(panSaveGame.bmap) - 38 - 15,0,0));
+		
+	}
 }
 
 /* 
@@ -975,6 +962,12 @@ this simple ugly hack should do the trick.
 */
 void closewindow(var id, PANEL *p) {
 	id = 1;
+	
+	if(p == panNewGame) {
+		
+		reset(panNewGame,SHOW);
+		
+	}
 
 	if(p == panHome) {
 		reset(panHome,SHOW);
@@ -983,8 +976,8 @@ void closewindow(var id, PANEL *p) {
 	if(p == panMat_Sub1) {
 		reset(panMat_Sub1,SHOW);
 		
-		
 		/* code to save changes */
+		mat_save(); // So that I don't have to rewrite the saving code.
 		
 	}
 
@@ -995,19 +988,16 @@ void closewindow(var id, PANEL *p) {
 	}
 
 	if(p == buttonlst_submenu_terrain) {
-		wait(1);
 		
 		reset(buttonlst_submenu_terrain,SHOW);
 	}
 
 	if(p == buttonlst_submenu_object) {
-		wait(1);
 		
 		reset(buttonlst_submenu_object,SHOW);
 	}
 
 	if(p == buttonlst_submenu_path) {
-		wait(1);
 		
 		reset(buttonlst_submenu_path,SHOW);
 	}
@@ -1066,10 +1056,93 @@ void closewindow(var id, PANEL *p) {
 		_part(0);
 		
 	}
+	
+	if(p == panSaveGame) {
+		
+		reset(panSaveGame,SHOW);
+		
+	}
+	
+	if(p == panLoadGame) {
+		
+		reset(panLoadGame,SHOW);
+		
+	}
+	
+	if(p == panMMenu_exit) {
+		
+		sys_exit(NULL);
+		
+	}
+}
+
+void stf_1() {
+	
+	button_state(panNewGame,3,0);
+	
+}
+
+void stf_2() {
+	
+	button_state(panNewGame,2,0);
+	
+}
+
+void newworld() {
+	
+	if(!is(panNewGame,SHOW)) {
+		
+		updategui(panNewGame);
+		centerpanel(panNewGame);
+		
+		set(panNewGame,SHOW);
+		
+		panelselect(panNewGame); // Bring me to the TOP ! =))
+		
+		// Set some default parameters
+		
+		stf_1();
+		button_state(panNewGame,2,1); // Static sky by default
+		
+		v_fogdensity = 3000; // Make fog_end a bit larger
+		v_fogr = v_fogg = v_fogb = 255/2;
+		
+		_moon_scale_fac = moon_scale_fac;
+		_time_speed_night = time_speed_night;
+		_night_sky_scale_x = night_sky_scale_x;
+		_night_sky_speed_x = night_sky_speed_x;
+		
+		//		button_state (panNewGame,5,1); // Lensflare on by default
+		//		button_state (panNewGame,7,1); // Moon too
+	}
+	
+}
+
+void loadgame() {
+	
+	centerpanel(panSaveGame);   
+	updategui(panLoadGame);
+	
+	set(panLoadGame,SHOW);
+	
+	panelselect(panLoadGame);
+	
+}
+
+void savegame() {
+	
+	centerpanel(panSaveGame);
+	updategui(panSaveGame);
+	
+	set(panSaveGame,SHOW);
+	
+	panelselect(panSaveGame);
+	
 }
 
 void dragpanel(PANEL *p)
 {
+
 	var click_offset[2];
 
 	click_offset[0]=p.pos_x - mouse_pos.x;
@@ -1087,6 +1160,7 @@ void dragpanel(PANEL *p)
 		//hack hack hack!!!!
 		if(p == panHome) updategui(panHome);
 		if(p == panProp) updategui(panProp);
+		if(p == panNewGame) updategui(panNewGame);
 		
 		wait(1);
 	}
@@ -1094,6 +1168,7 @@ void dragpanel(PANEL *p)
 	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
 	if(p == panHome) updategui(panHome);
 	if(p == panProp) updategui(panProp);
+	if(p == panNewGame) updategui(panNewGame);
 }
 
 void centerpanel(PANEL *p) {
@@ -1122,6 +1197,12 @@ void sharedGUI_centerfrom(PANEL *p, PANEL *s) {
 }
 
 void loadGUI() {
+	
+	pan_resize(panCAMRecorder,'t'); // x+y-scale
+	pan_resize(panScreenshot,'t');
+	
+	int i;
+	for(i = 3;i > 0;i--) pan_setpos(panCAMRecorder_digits,1,i,vector(screen_size.x - 35 - 30 * i,BORDER,0));
 
 	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * 32);
 	panMain_Top.pos_y = BORDER;
@@ -1137,31 +1218,31 @@ void loadGUI() {
 
 	panObj_Snd_Main.pos_x = 0;
 	panObj_Snd_Main.pos_y = (screen_size.y - bmap_height(panObj_Main.bmap))/2 - 3 * BORDER;
-	
+
 	panObj_Main_X.pos_x = screen_size.x - 40 - BORDER;
 	panObj_Main_X.pos_y = panObj_Main.pos_y + 25;
-	
+
 	panObj_Part_Main_X.pos_x = panObj_Main_X.pos_x;
 	panObj_Part_Main_X.pos_y = panObj_Main_X.pos_y;
-	
+
 	panObj_Snd_Main_X.pos_x = panObj_Main_X.pos_x;
 	panObj_Snd_Main_X.pos_y = panObj_Main_X.pos_y;
-	
+
 	pan_resize(panObj_Subbar_slider,'x');
 	pan_resize(panObj_Part_slider,'x');
 	pan_resize(panObj_Snd_slider,'x');
 
 	panObj_Subbar.pos_x = panObj_Subbar_slider.pos_x = panObj_Part_slider.pos_x = 0;
-	
+
 	panObj_Subbar.pos_y = panObj_Main.pos_y + bmap_height(panObj_Main.bmap) + BORDER;
 	panObj_Subbar_slider.pos_y = panObj_Subbar.pos_y + bmap_height(panObj_Subbar_slider.bmap) + BORDER * 3;
-	
+
 	panObj_Part_slider.pos_y = panObj_Subbar_slider.pos_y;
 	panObj_Snd_slider.pos_y = panObj_Subbar_slider.pos_y;
-	
+
 	panRotateHelp.pos_x = screen_size.x - bmap_width(panRotateHelp.bmap) - BORDER * 2;
 	panRotateHelp.pos_y = panMain_Top.pos_y + BORDER * 2;
-	
+
 	panScaleHelp.pos_x = screen_size.x - bmap_width(panScaleHelp.bmap) - BORDER * 2;
 	panScaleHelp.pos_y = panRotateHelp.pos_y;
 
@@ -1221,61 +1302,6 @@ void loadGUI() {
 	pan_setpos(buttonlst_submenu_path,3,5,vector(cache,NULL,NULL));
 }
 
-void sharedGUI_blackscreen(int mode, int sec) {
-
-	pan_resize(blackscreen,'0');
-	set(blackscreen,SHOW);
-
-	if(mode == FADE_IN) {
-		
-		set(blackscreen,TRANSLUCENT);
-		blackscreen->alpha = 0;
-		
-		wait(-sec);
-		
-		while(blackscreen->alpha <= 100) {
-			blackscreen->alpha += 10 * time_step;
-			wait(1);
-		}
-		
-		blackscreen->alpha = 100;
-		
-	}
-
-	if(mode == FADE_OUT) {
-		if(!is(blackscreen,SHOW)) set(blackscreen,SHOW);
-		set(blackscreen,TRANSLUCENT);
-		blackscreen->alpha = 100;
-		
-		wait(-sec);
-		
-		while(blackscreen->alpha >= 0) {
-			blackscreen->alpha -= 10 * time_step;
-			wait(1);
-		}
-		
-		blackscreen->alpha = 0;
-		reset(blackscreen,SHOW);
-		
-	}
-
-}
-
-void sharedGUI_loadlogo(BMAP *logo_bmap) {
-	while(logo_bmap == NULL) wait(1);
-
-	_logo.bmap = logo_bmap;
-
-	_logo->pos_x = screen_size.x - bmap_width(_logo.bmap) - 2 * BORDER;
-	_logo->pos_y = 20;
-
-	set(_logo,SHOW);
-}
-
-void sharedGUI__loadlogo() {
-	if(is(_logo,SHOW)) reset(_logo,SHOW);
-}
-
 void sharedGUI_playintro(STRING *what, var vol) {
 	proc_kill(4);
 
@@ -1298,6 +1324,7 @@ void home() {
 	updategui(panHome);
 
 	set(panHome,SHOW);
+	panelselect(panHome);
 }
 
 void prop(BOOL m) {
@@ -1320,6 +1347,7 @@ void prop(BOOL m) {
 			select.obj_type != part) {
 				
 				set(panProp,SHOW);
+				panelselect(panProp);
 				
 				////////////////////////////////////////////////////////////
 				// Set rules for opening and closing panProp.
@@ -1336,7 +1364,7 @@ void prop(BOOL m) {
 					
 					panProp.bmap = panProp1_IMG;
 					
-					set(panProp_1,SHOW);
+					set(panProp_1,SHOW);		
 					reset(panProp_2,SHOW);
 					reset(panProp_3,SHOW);
 					
@@ -1428,6 +1456,8 @@ void editmat() {
 		pass_mat_to_matsub(mat_custom[0]);
 		set(panMat_Sub1,SHOW);
 		
+		panelselect(panMat_Sub1);
+		
 		break;
 		//////////////////////////////////////////////////////////////
 		
@@ -1435,6 +1465,8 @@ void editmat() {
 		
 		pass_mat_to_matsub(mat_custom[1]);
 		set(panMat_Sub1,SHOW);
+		
+		panelselect(panMat_Sub1);
 		
 		break;
 		//////////////////////////////////////////////////////////////
@@ -1444,6 +1476,8 @@ void editmat() {
 		pass_mat_to_matsub(mat_custom[2]);
 		set(panMat_Sub1,SHOW);
 		
+		panelselect(panMat_Sub1);
+		
 		break;
 		//////////////////////////////////////////////////////////////
 		
@@ -1451,6 +1485,8 @@ void editmat() {
 		
 		pass_mat_to_matsub(mat_custom[3]);
 		set(panMat_Sub1,SHOW);
+		
+		panelselect(panMat_Sub1);
 		
 		break;
 		//////////////////////////////////////////////////////////////
@@ -1462,15 +1498,15 @@ void editmat() {
 }
 
 void switch_panProp(var mode) {
-	
+
 	page=mode--;
 	lfsp++;
 	prop(1);
-	
+
 }
 
 void sound(BOOL m) {
-	
+
 	if(m) {
 		
 		panSnd.pos_x = xy_panSnd.x;
@@ -1479,8 +1515,10 @@ void sound(BOOL m) {
 		updategui(panSnd);
 		set(panSnd,SHOW);
 		
+		panelselect(panSnd);
+		
 	}
-	
+
 	else {
 		
 		xy_panSnd.x = panSnd.pos_x;
@@ -1489,11 +1527,11 @@ void sound(BOOL m) {
 		reset(panSnd,SHOW);
 		
 	}
-	
+
 }
 
 void _part(BOOL m) {
-	
+
 	if(m) {
 		
 		panParticle.pos_x = xy_panParticle.x;
@@ -1502,6 +1540,7 @@ void _part(BOOL m) {
 		updategui(panParticle);
 		
 		set(panParticle,SHOW);
+		
 		
 	}
 
@@ -1513,7 +1552,7 @@ void _part(BOOL m) {
 		reset(panParticle,SHOW);
 		
 	}
-	
+
 }
 
 void _light(BOOL m) {
@@ -1527,6 +1566,8 @@ void _light(BOOL m) {
 		updategui(panLight);
 		
 		set(panLight,SHOW);
+		
+		panelselect(panLight);
 		
 		// Surely, select has been selected already.
 		
@@ -1572,18 +1613,47 @@ void _light(BOOL m) {
 
 void panelselect(PANEL *p)
 {
+	
 	if(last_pan) {
 		last_pan.alpha = DEFAULT_ALPHA;
 		layer_sort(last_pan,2);
 		
+		// Idk why I inserted the fix here but it worked.
+		if(last_pan == panProp) {
+			
+			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
+			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
+			if(is(panProp_3,SHOW)) layer_sort(panProp_3,panProp.layer+1);
+			
+		}
+		
 		last_pan = p;
 		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
+		
+		if(p == panProp) {
+			
+			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
+			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
+			if(is(panProp_3,SHOW)) layer_sort(panProp_3,panProp.layer+1);
+			
+		}
+		
 	}
+	
 	else {
 		last_pan = p;
 		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
+		
+		if(p == panProp) {
+			
+			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
+			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
+			if(is(panProp_3,SHOW)) layer_sort(panProp_3,panProp.layer+1);
+			
+		}
+		
 	}
 }
 
@@ -1633,8 +1703,8 @@ void follow_pointer() {
 
 void pass_to_gui(ENTITY *e) {
 	v_ambient = e.ambient;
-	v_alpha = e.alpha;
-	
+	v_alpha = 100 - e.alpha;
+
 	if(is(e,BRIGHT)) button_state(panProp_1,1,1);
 	else button_state(panProp_1,1,0);
 
@@ -1974,7 +2044,7 @@ void pass_mat_to_object() {
 }
 
 void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
-	
+
 	if(o.obj_type == terrain_edit) return;
 
 	////////////////////////////////////////////////////////////
@@ -2091,7 +2161,7 @@ void pass_object_to_clipboard(ENTITY *o, obj_form *of) {
 }
 
 void pass_clipboard_to_object(ENTITY *e) {
-	
+
 	if(e.obj_type == terrain_edit) return;
 
 	////////////////////////////////////////////////////////////
@@ -2334,7 +2404,7 @@ void pass_mat_to_matsub(MATERIAL *m) {
 	v_emissive_b = m.emissive_blue;
 
 	v_power = m.power;
-	v_alpha_m = m.alpha;
+	v_alpha_m = 100 - m.alpha;
 }
 
 void pass_material_to_file(STRING *file, MATERIAL *m) {
@@ -2366,7 +2436,7 @@ void pass_material_to_file(STRING *file, MATERIAL *m) {
 	m.emissive_green = v_emissive_g;
 	m.emissive_blue = v_emissive_b;
 
-	m.alpha = v_alpha_m;
+	m.alpha = 100 - v_alpha_m;
 	m.power = v_power;
 
 	// Write these copied values to vpass handle
@@ -2390,7 +2460,7 @@ void pass_material_to_file(STRING *file, MATERIAL *m) {
 	file_var_write(vpass,m.power);
 
 	file_close(vpass);
-	
+
 	// close the panel.
 	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 }
@@ -2517,7 +2587,7 @@ void obj_manip_setup()
 // stupid switchers
 // lite-C compiler: stupid programmer
 void switch_to_move() {
-	
+
 	/*
 	// Houston we got a problem here !
 	if(!is_camera) {
@@ -2555,7 +2625,7 @@ void switch_to_move() {
 }
 
 void switch_to_rotate() {
-	
+
 	/*
 	if(!is_camera) {
 		
@@ -2589,7 +2659,7 @@ void switch_to_rotate() {
 }
 
 void switch_to_scale() {
-	
+
 	/*
 	if(!is_camera) {
 		
@@ -2601,7 +2671,7 @@ void switch_to_scale() {
 		
 	}
 	*/
-	
+
 	if(button_state(panMain_Top,3,-1)) {
 		
 		button_state(panMain_Top,1,0);
@@ -2624,7 +2694,7 @@ void switch_to_scale() {
 }
 
 void hideGUI() {
-	
+
 	if(select) {
 		
 		// Deselect any selected entity first
@@ -2648,6 +2718,15 @@ void hideGUI() {
 	reset(buttonlst_submenu_terrain,SHOW);
 	reset(panRotateHelp,SHOW);
 	reset(panScaleHelp,SHOW);
+	
+	/*
+	if(is(panHome,SHOW)) {
+		
+		panHome.USEDTOBELOVED = 1;
+		reset(panHome,SHOW);
+		
+	}
+	*/
 }
 
 void showGUI() {
@@ -2655,6 +2734,8 @@ void showGUI() {
 	set(panMain_Top,SHOW);
 	set(panMain_Bottom,SHOW);
 	set(panMain_Play,SHOW);
+	
+	//	if(panHome.USEDTOBELOVED) set(panHome,SHOW);
 
 }
 
@@ -2687,40 +2768,40 @@ void objadd() {
 	set(panObj_Subbar,SHOW);
 	set(panObj_Subbar_slider,SHOW);
 	set(panObj_Main_X,SHOW);
-	
+
 	ctrl = 0;
 
 }
 
 void objpartadd() {
-	
+
 	hideGUI();
 	set(panObj_Part_Main,SHOW);
 	set(panObj_Part_Main_X,SHOW);
 	set(panObj_Part_slider,SHOW);
-	
+
 	ctrl = 0;
 }
 
 void objsndadd() {
-	
+
 	hideGUI();
 	set(panObj_Snd_Main,SHOW);
 	set(panObj_Snd_Main_X,SHOW);
 	set(panObj_Snd_slider,SHOW);
-	
+
 	ctrl = 0;
-	
+
 }
 
 void objlightadd() {
-	
+
 	set(panLightNoti,SHOW);
-	
+
 	wait(-5);
-	
+
 	reset(panLightNoti,SHOW);
-	
+
 }
 
 // Just a small function for use within panObj_Subbar_switcher(var).
@@ -2740,11 +2821,11 @@ void update_size(PANEL *p, BMAP *b) {
 // Wait...I'm the developer.
 ////////////////////////////////////////////////////////////
 VECTOR *vt = {
-	
+
 	x = 250;
 	y = 135;
 	z = -30;
-	
+
 }
 
 ENTITY *creat[500];
@@ -2783,10 +2864,10 @@ void panObj_Subbar_switcher(var id) {
 		for(i = 0;i < 50;i++) {
 			
 			if(str_cmp(mdlobjs_table_ptr[i],"  ")) {
-			   
-			   i++;
-			   continue;
-			   
+				
+				i++;
+				continue;
+				
 			}
 			
 			creat[i] = ent_createlayer(mdlobjs_table_ptr[i],SHOW,NULL);
@@ -2936,7 +3017,7 @@ void config_write_video(STRING *cf) {
 }
 
 // This function must be called prior to loading the level.
-void config_read_video(STRING *cf) {
+void config_read(STRING *cf) {
 
 	var file = file_open_read(cf);
 	if(!file) { // Fail? Then use default settings.
@@ -3240,7 +3321,7 @@ void config_read_video(STRING *cf) {
 
 // Loads a new level
 void new_level() {
-	
+
 	level_load("dry.wmb");
 	/*
 	switch(skCube) {
@@ -3260,8 +3341,8 @@ void new_level() {
 		break;
 	}
 	*/
-	camera.ambient = 50;
-	
+	camera.ambient = -75;
+
 	ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
 	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 }
@@ -3366,7 +3447,7 @@ void new_level() {
 
 // Cleaner
 void clean() {
-	
+
 	// Scan through all entities in the current level.
 	you = ent_next(NULL);
 	while(you) {
@@ -3383,9 +3464,75 @@ void clean() {
 		wait(1);
 		
 	}
+
+}
+
+void init_savedbmaps() {
+	
+	save_array[0] = handle(slot1);
+	save_array[1] = handle(slot2);
+	save_array[2] = handle(slot3);
+	save_array[3] = handle(slot4);
+	save_array[4] = handle(slot5);
+	save_array[5] = handle(slot6);
+	save_array[6] = handle(slot7);
+	save_array[7] = handle(slot8);
+	save_array[8] = handle(slot9);
+	//	save_array[9] = handle(slot10);
+	//	save_array[10] = handle(slot11);
+	//	save_array[11] = handle(slot12);
+	//	save_array[12] = handle(slot13);
+	//	save_array[13] = handle(slot14);
+	//	save_array[14] = handle(slot15);
+	//	save_array[15] = handle(slot16);
+	//	save_array[16] = handle(slot17);
+	//	save_array[17] = handle(slot18);
+	//	save_array[18] = handle(slot19);
+	//	save_array[19] = handle(slot20);
+	
+	game_load(pref_savebmaps,0);
 	
 }
 
+void save(var slot) {
+	
+	BOOL t;
+	
+	slot-=2;
+	
+	hideGUI();
+	
+	reset(panSaveGame,SHOW);
+	
+	if(is(panLoadGame,SHOW)) {
+		
+		t++;
+		reset(panLoadGame,SHOW);
+		
+	}
+	else t = 0;
+	
+	wait(2);
+	
+	bmap_for_screen(ptr_for_handle(save_array[slot]),1,1);
+	
+	game_save(pref_savebmaps,0,SV_INFO + SV_BMAPS);
+	
+	game_save(pref_savegames,slot,SV_ALL - SV_INFO);
+	
+	showGUI();
+	set(panSaveGame,SHOW);
+	if(t) set(panLoadGame,SHOW);
+	
+}
+
+void load(var slot) {
+	
+	slot-=2; // 1 for array (count from 0), 1 for closebutton
+	
+	game_load(pref_savegames,slot);
+	
+}
 
 ////////////////////////////////////////////////////////////
 // Kernel-related functions.
@@ -3396,16 +3543,14 @@ void load_kernel(STRING *lvl_str) {
 	sky_curve = 2;
 	sky_clip = -10;
 
-	// Our own setup
-	//	load_mystymood(1,0);
-
 	// Read and setup video settings prior to executing other functions.
-	config_read_video("./src/cfg/video_config.cfg");
+	config_read("./src/cfg/cfg.cfg");
+	
+	on_bksp = sys_screenshot;
 
 	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
 
-	_obj_type = 2;
-	num_partobjs = 1;
+	_obj_type = 1;
 
 	mouse_range = 500000;
 	mouse_map = mouse;
@@ -3420,6 +3565,8 @@ void load_kernel(STRING *lvl_str) {
 	init_database();
 	init_database_snd(); // Sound database doesn't require a pointer to access.
 	init_database_part(); // So does particle database.
+	
+	init_savedbmaps();
 
 	// Intialize and read custom materials' properties.
 	int i;
@@ -3441,62 +3588,80 @@ void load_kernel(STRING *lvl_str) {
 	// Intialize and load the GUI system.
 	loadGUI();
 	wait_for(loadGUI);
-
+	
+	/*
 	// Load a blank level.
 	new_level();
 	
-	// Some nice effects and further setup before the game can be started.
-	sharedGUI_blackscreen(FADE_OUT,2);
-	wait_for(sharedGUI_blackscreen);
-
-	sharedGUI_mouse(1); // Enables the mouse.
+	//	load_mystymood(1,1);
 
 	//	def_move();
+	*/
 	
+	sys_loadmenu();
+	
+	sharedGUI_mouse(1); // Enables the mouse.
+
 	// Shortcut keys implementation
 	while(1) {
 		
-		// These keys are combined together with the Ctrl key.
-		if(key_ctrl) {
+		if(in) {
 			
-			if(key_c) {
+			// These keys are combined together with the Ctrl key.
+			if(key_ctrl) {
 				
-				while(key_c) wait(1);
-				obj_copy();
+				if(key_c) {
+					
+					while(key_c) wait(1);
+					obj_copy();
+					
+				}
+				
+				if(key_x) {
+					
+					while(key_x) wait(1);
+					obj_cut();
+					
+				}
+				
+				if(key_v) {
+					
+					while(key_v) wait(1);
+					obj_paste();
+					
+				}
+				
+				if(key_n) {
+					
+					while(key_n) wait(1);
+					new_level();
+					
+				}
+				
+				/*
+				if(key_p) {
+					
+					while(key_p) wait(1);
+					
+					if(select) prop(1);
+					else prop(0);
+					
+				}
+				*/
 				
 			}
 			
-			if(key_x) {
-				
-				while(key_x) wait(1);
-				obj_cut();
-				
-			}
+			// These keys are pressed solely.
 			
-			if(key_v) {
+			// I seperately defined key_esc here
+			// so I must disable the one that has been defined 
+			// in ka7def2.c/default.c
+			if(key_esc && !from_test_play) { // If ESC is pressed and we're not pressing ESC while we were in testing mode.
 				
-				while(key_v) wait(1);
-				obj_paste();
-				
-			}
-			
-			if(key_n) {
-				
-				while(key_n) wait(1);
-				new_level();
+				while(key_esc) wait(1);
+				home();
 				
 			}
-			
-			/*
-			if(key_p) {
-				
-				while(key_p) wait(1);
-				
-				if(select) prop(1);
-				else prop(0);
-				
-			}
-			*/
 			
 		}
 		
@@ -3513,23 +3678,11 @@ void load_kernel(STRING *lvl_str) {
 				*/
 				
 				// Operation #1
-				printf(" I don't want to die =(( ");
+				//				printf(" I don't want to die =(( ");
 				
 				sys_exit(NULL);
 				
 			}
-			
-		}
-		
-		// These keys are pressed solely.
-		
-		// I seperately defined key_esc here
-		// so I must disable the one that has been defined 
-		// in ka7def2.c/default.c
-		if(key_esc && !from_test_play) { // If ESC is pressed and we're not pressing ESC while we were in testing mode.
-			
-			while(key_esc) wait(1);
-			home();
 			
 		}
 		
@@ -3540,124 +3693,134 @@ void load_kernel(STRING *lvl_str) {
 }
 
 void loop_kernel() {
-
-	while(1) 
-	{
+	while(1) {
 		
-		// Prevent the cursor from going outside the level border
-		if(!temp_pos.x) temp_pos.x = level_ent.max_x;
-		if(!temp_pos.y) temp_pos.y = level_ent.max_y;
-		if(!temp_pos.z) temp_pos.z = level_ent.max_z;
-		
-		if(key_t) 
+		if(in) 
 		{
-			while(key_t) wait(1);
-			num_partobjs++;
-		}
-		
-		if(key_y) {
-			while(key_y) wait(1);
-			num_partobjs--;
-		}
-		
-		if(key_r) {
 			
-			while(key_r) wait(1);
-			you = ent_next(NULL); // Point to the first entity in the list
-			while(you) {
+			// Prevent the cursor from going outside the level border
+			if(!temp_pos.x) temp_pos.x = level_ent.max_x;
+			if(!temp_pos.y) temp_pos.y = level_ent.max_y;
+			if(!temp_pos.z) temp_pos.z = level_ent.max_z;
+			
+			if(key_t) 
+			{
+				while(key_t) wait(1);
+				num_mdlobjs++;
+			}
+			
+			if(key_y) {
+				while(key_y) wait(1);
+				num_mdlobjs--;
+			}
+			
+			if(key_r) {
 				
-				ptr_remove(you);
-				you = ent_next(you);
+				while(key_r) wait(1);
+				you = ent_next(NULL); // Point to the first entity in the list
+				while(you) {
+					
+					ptr_remove(you);
+					you = ent_next(you);
+					
+				}
+				
+				ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
+				cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 				
 			}
 			
-			ent_create("marker.mdl",nullvector,follow_pointer); // Create a mouse pointer.
-			cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
-			
-		}
-		
-		if(mouse_left) 
-		{
-			while(mouse_left) wait(1);
-			
-			if(!mouse_panel)
+			if(mouse_left) 
 			{
-				if(!mouse_ent) obj_create();
+				while(mouse_left) wait(1);
 				
-				else
+				if(!mouse_panel)
 				{
-					if(select)
+					if(!mouse_ent) obj_create();
+					
+					else
 					{
+						if(select)
+						{
+							
+							if(select.obj_type == light) _light(0);
+							if(select.obj_type == mdl) prop(0);
+							if(select.obj_type == snd) sound(0);
+							if(select.obj_type == part) _part(0);
+							
+							select.material = mat_temp;
+							select = NULL;
+						}
 						
-						if(select.obj_type == light) _light(0);
-						if(select.obj_type == mdl) prop(0);
-						if(select.obj_type == snd) sound(0);
-						if(select.obj_type == part) _part(0);
+						select = mouse_ent;
 						
-						select.material = mat_temp;
-						select = NULL;
+						mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
+						select.material = mat_select;
+						
+						if(select.obj_type == light) _light(1);
+						else _light(0);
+						
+						if(select.obj_type == mdl) prop(1);
+						else prop(0);
+						
+						if(select.obj_type == snd) sound(1);
+						else sound(0);
+						
+						if(select.obj_type == part) _part(1);
+						else _part(0);
+						
+						pass_to_gui(select);
+						
 					}
 					
-					select = mouse_ent;
-					
-					mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
-					select.material = mat_select;
-					
-					if(select.obj_type == light) _light(1);
-					else _light(0);
-					
-					if(select.obj_type == mdl) prop(1);
-					else prop(0);
-					
-					if(select.obj_type == snd) sound(1);
-					else sound(0);
-					
-					if(select.obj_type == part) _part(1);
-					else _part(0);
-					
-					pass_to_gui(select);
-					
-				}
-				
-				/*
-				else
-				{
-					if(select)
+					/*
+					else
 					{
-						if(mat_temp) select.material = mat_temp;
-						else select.material = NULL;
+						if(select)
+						{
+							if(mat_temp) select.material = mat_temp;
+							else select.material = NULL;
+							
+							if(select.obj_type == light) _light(0);						
+							if(select.obj_type == mdl) prop(0);
+							if(select.obj_type == snd) sound(0);
+							if(select.obj_type == part) _part(0);
+							
+							select = NULL;
+						}
 						
-						if(select.obj_type == light) _light(0);						
-						if(select.obj_type == mdl) prop(0);
-						if(select.obj_type == snd) sound(0);
-						if(select.obj_type == part) _part(0);
+						_light(0);	
+						_part(0);
+						prop(0);
+						sound(0);
 						
 						select = NULL;
 					}
+					*/
 					
-					_light(0);	
-					_part(0);
-					prop(0);
-					sound(0);
+					wait(1);
 					
-					select = NULL;
-				}
-				*/
+				}		
 				
-				wait(1);
+			}
+			
+			if(engine_play && play_as_fp) {
 				
-			}		
+				wait(-1);
+				reset(panCAMRecorderREC,SHOW);
+				wait(-1);
+				set(panCAMRecorderREC,SHOW);
+				
+			}
 			
 		}
-		
 		wait(1);
-		
 	}
 
 	////////////////////////////////////////////////////////////
 	// Game exit point
 	////////////////////////////////////////////////////////////
-	sys_exit(NULL);
+	//	sys_exit(NULL);
 
 }
 
@@ -3688,7 +3851,7 @@ void misc_startup() {
 			
 			//////////////////////////////////////////////////////////////
 			// panProp
-			select.alpha = v_alpha;
+			select.alpha = 100 - v_alpha;
 			select.ambient = v_ambient;
 			
 			if(button_state(panProp_1,1,-1)) set(select,BRIGHT);
@@ -3866,9 +4029,9 @@ void free_camera()
 {
 	var rotatespeed = 5;
 	var speed = 40;
-	
+
 	set(my, INVISIBLE | POLYGON);
-	
+
 	vec_set(camera.x,my.x);
 	vec_set(camera.pan,my.pan);
 	vec_set(camera.tilt,my.tilt);
@@ -3930,15 +4093,15 @@ void flare_place(ENTITY *flare_ent)
 {
 	my = flare_ent;
 	my.flags2 |= SHOW;
-	
+
 	camera.pan%=360;//needed to keep the correct sun_angle for lensflare visibility
-	
+
 	// multiply the pixel deviation with the pivot factor,
 	// and add the screen center
 	my.x = ctemp.x*my.pivot_dist + 0.5*screen_size.x;
 	my.y = ctemp.y*my.pivot_dist + 0.5*screen_size.y;
 	my.z = 1000;	// screen distance, determines the size of the flare
-	
+
 	if(my == flare1_ent)
 	{
 		vec_set(temp2,sun_pos);
@@ -3989,7 +4152,7 @@ void flare_place(ENTITY *flare_ent)
 
 void load_lensflare()
 {
-	
+
 	flare_init(flare1_ent);
 	flare_init(flare2_ent);
 	flare_init(flare4_ent);
@@ -4009,12 +4172,12 @@ void load_lensflare()
 	flare_init(flare18_ent);
 	flare_init(flare19_ent);
 	flare_init(flare20_ent);
-	
+
 	wait(1);
-	
+
 	lens_active = 1;
-	
-	while(1)
+
+	while(lens_active)
 	{
 		vec_set(ctemp,sun_pos);
 		vec_to_screen(ctemp,camera);
@@ -4063,7 +4226,7 @@ void load_lensflare()
 		flare20_ent.alpha = flare1_ent.alpha;
 		wait(1);
 	}
-	
+
 	lens_active = 0;
 }
 
@@ -4091,13 +4254,13 @@ void func_fade_colors(var *col_target, var *col1, var *col2)
 
 void func_particle_seed_infinity(PARTICLE *p)
 {
-	
+
 	vec_set(p.x,vector(cycle(p.x,camera.x-particle_seedbox.x,camera.x+particle_seedbox.x),
 	cycle(p.y,camera.y-particle_seedbox.y,camera.y+particle_seedbox.y),
 	cycle(p.z,camera.z-particle_seedbox.z,camera.z+particle_seedbox.z)));
-	
+
 	if(p.z<camera.z-100) p.lifespan = 0;
-	
+
 }
 
 void func_effect_particle_seed(PARTICLE *p) {
@@ -4105,9 +4268,9 @@ void func_effect_particle_seed(PARTICLE *p) {
 	vec_set(p.x,vector(camera.x+random(particle_seedbox.x*2)-particle_seedbox.x,
 	camera.y+random(particle_seedbox.y*2)-particle_seedbox.y,
 	camera.z+random(particle_seedbox.z*2)-particle_seedbox.z));
-	
+
 	p.flags |= MOVE;
-	
+
 	if(sky_cloud3.alpha > 0) {
 		
 		p.bmap = part_bmp_weather;	
@@ -4181,7 +4344,7 @@ void func_particle_segment()
 void func_increase_brightness()
 {
 	lightning_on = 1;
-	
+
 	lightning = 255;
 	wait(2+random(3));
 	lightning = 1;
@@ -4193,7 +4356,7 @@ void func_increase_brightness()
 	lightning = 255;
 	wait(2+random(5));
 	lightning = 1;
-	
+
 	wait(random(50));	
 	lightning_on = 0;
 }
@@ -4209,21 +4372,21 @@ void toggle_weather()//just for testing
 void good_weather()  { weather_state = 0; }
 
 void weather_change() {
-	
+
 	VECTOR temp;
-	
+
 	// Sound handlers.
 	var snd_handle_thunder, snd_handle_rain, snd_handle_wind, snd_handle_bg_day, snd_handle_bg_night;
 	var snd_vol_rain = 2, snd_vol_wind = 2, snd_vol_bg_day = 2, snd_vol_bg_night = 2;
-	
+
 	var rand_count, rand_count_state;
 	var outer_radius, inner_radius;
-	
+
 	var eff_density = 1;
-	
+
 	snd_handle_wind = snd_loop(wind_wav,snd_vol_wind,0);
 	snd_handle_rain = snd_loop(rain_wav,snd_vol_rain,0);
-	
+
 	outer_radius = weather_fog_far;
 	inner_radius = weather_fog_far-(weather_fog_far/8);
 
@@ -4233,9 +4396,9 @@ void weather_change() {
 		snd_handle_bg_night = snd_loop(night_wav,snd_vol_bg_night,0);
 		
 	}
-	
+
 	weather_state = 0;
-	
+
 	while(1)
 	{
 		
@@ -4529,6 +4692,41 @@ Set load_lens = 1, load lens flare
 void load_mystymood(BOOL on, BOOL load_lens)
 {
 	
+	int step = 0;
+	
+	if(!load_lens) {
+		
+		flare1_ent.flags2 &= ~SHOW;
+		flare2_ent.flags2 &= ~SHOW;
+		//			flare3_ent.flags2 &= ~SHOW; <-- You suck, Mr. Sun.
+		flare4_ent.flags2 &= ~SHOW;
+		flare5_ent.flags2 &= ~SHOW;
+		flare6_ent.flags2 &= ~SHOW;
+		flare7_ent.flags2 &= ~SHOW;
+		flare8_ent.flags2 &= ~SHOW;
+		flare9_ent.flags2 &= ~SHOW;
+		flare10_ent.flags2 &= ~SHOW;
+		flare11_ent.flags2 &= ~SHOW;
+		flare12_ent.flags2 &= ~SHOW;
+		flare13_ent.flags2 &= ~SHOW;
+		flare14_ent.flags2 &= ~SHOW;
+		flare15_ent.flags2 &= ~SHOW;
+		flare16_ent.flags2 &= ~SHOW;
+		flare17_ent.flags2 &= ~SHOW;
+		flare18_ent.flags2 &= ~SHOW;
+		flare19_ent.flags2 &= ~SHOW;
+		flare20_ent.flags2 &= ~SHOW;
+		
+		lens_active = 0;
+		
+		step++;
+		
+		} else {
+		
+		load_lensflare();
+		
+	}
+
 	if(!on) { // Unload mystymood & lensflare effect
 		
 		// macros work only with flag1? :-? (idk)
@@ -4544,16 +4742,14 @@ void load_mystymood(BOOL on, BOOL load_lens)
 		sky_night.flags2 &= ~SHOW;
 		sky_moon.flags2 &= ~SHOW;
 		
-		lens_active = 0;
 		mystymood_active = 0;
 		
-		return;
+		step++;
 		
 	}
 	
-	// else, if on != 0
-	if(load_lens) load_lensflare();
-	
+	if(step>=2) return;
+
 	////////////////////////////////////////////////////////////
 	// Setup for lensflare
 	////////////////////////////////////////////////////////////
@@ -4577,7 +4773,7 @@ void load_mystymood(BOOL on, BOOL load_lens)
 	flare19_ent.pivot_dist = -0.654;
 	flare20_ent.pivot_dist = -1.000;
 	////////////////////////////////////////////////////////////
-	
+
 	sky_horizon.flags2 |= SHOW;
 	sky_cloud1.flags2 |= SHOW;
 	sky_cloud2.flags2 |= SHOW;
@@ -4588,30 +4784,27 @@ void load_mystymood(BOOL on, BOOL load_lens)
 	sky_sunshine.flags2 |= SHOW;
 	sky_night.flags2 |= SHOW;
 	sky_moon.flags2 |= SHOW;
-	
+
 	VECTOR temp;
-	
+
 	on_space = toggle_weather;
 	on_alt = good_weather;
 
 	weather_change();
-	
+
 	sky_sun.scale_x = sun_scale_x;
 	sky_sun.scale_y = sun_scale_y;
+	
+	fog_color = 1;
 
 	camera.fog_start = land_fog_near;//-50;
 	camera.fog_end = land_fog_far;//300;
 
 	vec_set(d3d_fogcolor1,fog_day);//set the default day fog-color 
-	
+
 	mystymood_active = 1;
 
-	while(1) {
-
-		camera.fog_start = land_fog_near;
-		camera.fog_end = land_fog_far;
-		
-		fog_color = 1;
+	while(mystymood_active) {
 		
 		vec_set(sun_color.blue,vector(d3d_fogcolor1.blue*sun_col_fac,d3d_fogcolor1.green*sun_col_fac,d3d_fogcolor1.red*sun_col_fac));
 		vec_set(sky_color.blue,d3d_fogcolor1.blue);	
@@ -4630,9 +4823,6 @@ void load_mystymood(BOOL on, BOOL load_lens)
 		}	
 		
 		vec_set(current_color,d3d_fogcolor1);
-		
-		//		camera.clip_near = 0; 
-		//		camera.clip_far = land_fog_far+10;//camera.fog_end+10;//
 		
 		vec_set(temp,sun_pos); 
 		vec_set(sky_sun.x,temp);  // copy the sun_pos location
@@ -4755,10 +4945,15 @@ void load_mystymood(BOOL on, BOOL load_lens)
 		sky_moon.scale_y = sun_scale_y*moon_scale_fac;	 
 		
 		sky_night.scale_x = night_sky_scale_x;
-		sky_night.scale_y = night_sky_scale_y;
+		sky_night.scale_y = night_sky_scale_x;
+		
+		sky_night.u = night_sky_speed_x; 
+		sky_night.v = night_sky_speed_y;
 		
 		wait(1);
 	}	
+	
+	mystymood_active = 0;
 }
 
 //title:MystyMood Sky Template
@@ -4937,6 +5132,30 @@ void act_mystymood_trigg_label1()
 	act_mystymood_trigg();
 }
 
+void fpcam_flashlight() {
+	
+	proc_mode = PROC_LATE;
+	
+	flashlight = me;
+	set(flashlight,PASSABLE | SPOTLIGHT | CAST | LIGHT);
+	flashlight.lightrange = 1500;
+	vec_set(flashlight.blue,vector(255,100,100));
+	
+	while(1)
+	{
+		if(key_t) flashlight.lightrange += 25;
+		if(key_y) flashlight.lightrange -= 25;
+		
+		flashlight.x = player.x + 15 * cos(player.pan) + 20 * sin(player.pan);
+		flashlight.y = player.y + 50 * sin(player.pan) - 20 * cos(player.pan);
+		flashlight.z = player.z + 10; 
+		flashlight.pan = player.pan;
+		flashlight.tilt = player.tilt;
+		flashlight.roll = player.roll;
+		wait(1);
+	}  
+	
+}
 
 VECTOR dist, absdist, force, camera_center;
 var my_height; //
@@ -4961,6 +5180,7 @@ void fpcam_update()
 	vec_add(camera_center,my.x);
 	camera.pan -= mouse_spd * mouse_force.x * time_step;
 	camera.tilt += mouse_spd * mouse_force.y * time_step;
+	camera.z = -25;
 	if(camera.tilt > 70) camera.tilt = 70;
 	if(camera.tilt < -70) camera.tilt = -70;
 }
@@ -4997,6 +5217,47 @@ void fpcam_input()
 		else accelerate(dist.y,force.y,0.7);
 	}
 	
+	if(key_w) {
+		
+		ent_animate(my,"ComNwForward",my.skill65,ANM_CYCLE);
+		my.skill65+=5*time_step;
+		
+		if(key_shift) {
+			
+			ent_animate(my,"ComNrForward",my.skill65,ANM_CYCLE);
+			my.skill65+=5*time_step;
+			
+		}
+		
+	}
+	
+	else if(key_s) {
+		
+		ent_animate(my,"ComNwBackward",my.skill65,ANM_CYCLE);
+		my.skill65+=5*time_step;
+	}
+	
+	else if(key_a) {
+		
+		ent_animate(my,"ComNwLeft",my.skill65,ANM_CYCLE);
+		my.skill65 += 5 * time_step;
+		
+	}
+	
+	else if (key_d) {
+		
+		ent_animate(my,"ComNwRight",my.skill65,ANM_CYCLE);
+		my.skill65 += 5 * time_step;
+		
+	}
+	
+	else {
+		
+		ent_animate(my,"ComNormalStand",my.skill65,ANM_CYCLE);
+		my.skill65 += 5 * time_step;
+		
+	}
+	
 	move_friction = 0.2;
 	move_min_z = -1;
 
@@ -5005,12 +5266,14 @@ void fpcam_input()
 action a_visitor_foot()
 {
 	player = my;
-	set(my,POLYGON | SHADOW | INVISIBLE);
-	my.scale_x = 4.5;
-	my.scale_y = my.scale_x;
-	my.scale_z = my.scale_x;
+	set(my,POLYGON | SHADOW);
+	//	my.scale_x = 4.5;
+	//	my.scale_y = my.scale_x;
+	//	my.scale_z = my.scale_x;
 	
 	my.cam_fp = 1;
+	
+	flashlight = ent_create("Torch.mdl",my.x,fpcam_flashlight);
 	
 	while(my)
 	{
@@ -5110,14 +5373,18 @@ action a_visitor_bike() {
 ////////////////////////////////////////////////////////////
 void test_play() {
 	
-	// Deselect any selected entity first
-	if(select.obj_type == light) _light(0);
-	if(select.obj_type == mdl) prop(0);
-	if(select.obj_type == snd) sound(0);
-	if(select.obj_type == part) _part(0);
-	
-	select.material = mat_temp;
-	select = NULL;
+	if(select) {
+		
+		// Deselect any selected entity first
+		if(select.obj_type == light) _light(0);
+		if(select.obj_type == mdl) prop(0);
+		if(select.obj_type == snd) sound(0);
+		if(select.obj_type == part) _part(0);
+		
+		select.material = mat_temp;
+		select = NULL;
+		
+	}
 	
 	/***
 	
@@ -5127,8 +5394,23 @@ void test_play() {
 	you = ent_next(NULL);
 	while(you) {
 		
-		if(you.cam_fp) you.cam_race = 0;
-		if(you.cam_race) you.cam_fp = 0;
+		if(you.cam_fp) {
+			
+			you.cam_race = 0;
+			
+			play_as_bike = 0;
+			play_as_fp = 1;
+			
+		}
+		
+		if(you.cam_race) {
+			
+			you.cam_fp = 0;
+			
+			play_as_fp = 0;
+			play_as_bike = 1;
+			
+		}
 		
 		// Scan for any light, particle, or sound entity
 		if(you.obj_type == light || you.obj_type == part || you.obj_type == snd) {
@@ -5153,6 +5435,13 @@ void test_play() {
 	
 	engine_play = 1;
 	
+	if(play_as_fp) {
+		
+		set(panCAMRecorder,SHOW);
+		set(panCAMRecorder_digits,SHOW);
+		
+	}
+	
 	while(engine_play) {
 		
 		temp_cam += 3 * time_step;
@@ -5168,6 +5457,18 @@ void test_play() {
 			from_test_play = 0; // reset
 			
 		}
+		
+		wait(1);
+		
+	}
+	
+	if(play_as_fp) {
+		
+		reset(panCAMRecorder,SHOW);
+		reset(panCAMRecorder_digits,SHOW);
+		
+	}
+	else { //play_as_bike
 		
 		wait(1);
 		
@@ -5199,4 +5500,314 @@ void test_play() {
 		you = ent_next(you);
 		
 	}
+}
+
+void load_new_level() {
+	
+	// Redirect to another function because we're in main menu now.
+	if(launch_newgame_from_main) {
+		
+		load_new_level_menu();
+		return;
+		
+	}
+	
+	ent_remove(cam);
+	
+	new_level();
+	
+	// Left
+	if(button_state(panNewGame,2,-1)) {
+		
+		load_mystymood(0,0);
+		
+		if(button_state(panNewGame,4,-1)) {
+			
+			fog_color = 1;
+			d3d_fogcolor1.red = v_fogr;
+			d3d_fogcolor1.green = v_fogg;
+			d3d_fogcolor1.blue = v_fogb;
+			
+			camera.fog_start = 10;
+			camera.fog_end = (FOG_END_LIM - v_fogdensity) + 2 * camera.fog_start ; 
+			
+		}
+		
+		else fog_color = 0;
+		
+		return ;
+		
+	}
+	
+	// Right
+	if(button_state(panNewGame,3,-1)) {
+		
+		load_mystymood(0,0);
+		
+		wait(1.5);
+		
+		// Mystymood w/ lensflare
+		load_mystymood(1,button_state(panNewGame,5,-1));
+		
+		// Thunder
+		if(button_state(panNewGame,6,-1)) disable_lightning_thunder = 1;
+		else disable_lightning_thunder = 0;
+		
+		// Use moon
+		if(button_state(panNewGame,7,-1)) use_moon = 1;
+		else use_moon = 0;
+		
+		moon_scale_fac = _moon_scale_fac;
+		time_speed_night = _time_speed_night;
+		night_sky_scale_x = _night_sky_scale_x;
+		night_sky_speed_x = _night_sky_speed_x;
+		
+		return;
+		
+	}
+	
+}
+
+void load_new_level_menu() {
+	
+	in = 1;
+	
+	reset(panMMenu,SHOW);
+	reset(panMMenu_exit,SHOW);
+	reset(panNewGame,SHOW);
+	//	
+	//	loadGUI();
+	//	wait_for(loadGUI);
+	
+	showGUI();
+	
+	new_level();
+	
+	launch_newgame_from_main = 0;
+	
+	// Left
+	if(button_state(panNewGame,2,-1)) {
+		
+		load_mystymood(0,0);
+		
+		if(button_state(panNewGame,4,-1)) {
+			
+			fog_color = 1;
+			d3d_fogcolor1.red = v_fogr;
+			d3d_fogcolor1.green = v_fogg;
+			d3d_fogcolor1.blue = v_fogb;
+			
+			camera.fog_start = 10;
+			camera.fog_end = (FOG_END_LIM - v_fogdensity) + 2 * camera.fog_start ; 
+			
+		}
+		
+		else fog_color = 0;
+		
+		return ;
+		
+	}
+	
+	// Right
+	if(button_state(panNewGame,3,-1)) {
+		
+		load_mystymood(0,0);
+		
+		wait(1.5);
+		
+		// Mystymood w/ lensflare
+		load_mystymood(1,button_state(panNewGame,5,-1));
+		
+		// Thunder
+		if(button_state(panNewGame,6,-1)) disable_lightning_thunder = 1;
+		else disable_lightning_thunder = 0;
+		
+		// Use moon
+		if(button_state(panNewGame,7,-1)) use_moon = 1;
+		else use_moon = 0;
+		
+		moon_scale_fac = _moon_scale_fac;
+		time_speed_night = _time_speed_night;
+		night_sky_scale_x = _night_sky_scale_x;
+		night_sky_speed_x = _night_sky_speed_x;
+		
+		return;
+		
+	}
+	
+}
+
+void sys_loadmenu() {
+	
+	in = 0;
+	
+	panMMenu_exit.pos_x = screen_size.x - 38 - BORDER;
+	panMMenu_exit.pos_y = BORDER;
+	
+	hideGUI();
+	centerpanel(panMMenu);
+	
+	launch_newgame_from_main = 1;
+	
+	level_load("_tech.wmb");
+	game_load(pref_savebmaps,0);
+	
+	// captured
+	camera.x = 886;
+	camera.y = 1944;
+	camera.z = -28;
+	camera.pan = 261;
+	camera.tilt = 15;
+	camera.roll = 0;
+	
+	set(panMMenu,SHOW);
+	set(panMMenu_exit,SHOW);
+	
+	panelselect(panMMenu);
+	
+	layer_sort(panMMenu_exit,panMMenu.layer+1);
+	
+	panMMenu.alpha = 50;
+	
+	// dev text goes here
+}
+
+var cam_speed = 1; // initial speed
+var dist_to_node;
+var current_node = 1;
+var angle_difference = 0;
+var temp_angle;
+var pos_node; // stores the position of the node
+
+ENTITY *dummy_ent;
+
+void move_dummy()
+{
+	set(my,PASSABLE | INVISIBLE);
+	while (1)
+	{
+		vec_set (my.x, you.x);
+		wait (1);
+	}
+}
+
+void move_target()
+{
+	while(1)
+
+	{ 
+
+		cam_speed = minv(15, cam_speed + 5 * time_step); // 15 gives the movement speed
+
+		c_move(my, vector(cam_speed * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE);
+
+		vec_to_angle (dummy_ent.pan, vec_diff (temp_angle, pos_node, my.x));
+
+		if(my.pan != dummy_ent.pan)
+
+		{
+
+			angle_difference = ang(dummy_ent.pan - my.pan);
+
+			my.pan += angle_difference * 0.2 * time_step;
+
+		}
+
+		vec_set (camera.x, my.x);
+
+		camera.pan = my.pan;
+
+		camera.tilt = my.tilt;
+
+		wait(1);
+
+	}
+
+}
+
+action dummy_target()
+{        
+
+	dummy_ent = ent_create ("dummy.mdl", nullvector, move_dummy);
+
+	move_target();
+
+	result = path_scan(me, my.x, my.pan, vector(360, 180, 1000));
+
+	if (!result) {return;}
+
+	path_getnode (my, 1, pos_node, NULL);
+
+	vec_to_angle (my.pan, vec_diff (temp_angle, pos_node, my.x)); // rotate towards the node
+
+	vec_to_angle (dummy_ent.pan, vec_diff (temp_angle, pos_node, my.x)); // rotate dummy_ent towards the node as well
+
+	while (1)
+
+	{
+
+		dist_to_node = vec_dist(my.x, pos_node);
+
+		if(dist_to_node < 300) // close to the node?
+
+		{
+
+			current_node = path_nextnode(my, current_node, 1);
+
+			if (!current_node) {current_node = 1;} // reached the end of the path? Then start over!
+
+			path_getnode (my, current_node, pos_node, NULL);
+
+		}
+
+		wait(1);
+
+	}
+
+} 
+
+void sys_show_credits() {
+	
+	var rollspeed = .5;
+	
+	reset(panMMenu,SHOW);
+	reset(panMMenu_exit,SHOW);
+	reset(panNewGame,SHOW);
+	
+	level_load("_arena1.wmb");
+	
+	TEXT *import = txt_create(100,1);
+	TEXT *end = txt_create(1,1);
+	
+	import.font = font_create("Arial #25b");
+	end.font = import.font;
+	
+	txt_loadw(import,"./src/txt/c.txt");
+	txt_loadw(end,"./src/txt/c.t.txt");
+	
+	import.pos_x = 15;
+	import.pos_y = 15;
+	
+	end.pos_x = screen_size.x - str_width((end.pstring)[0],end.font);
+	end.pos_y = import.pos_y;
+	
+	set(import,SHOW);
+	set(end,SHOW);
+	
+	while(!key_esc) {
+		
+		import.pos_y -= rollspeed * time_step;
+		
+		//		if(key_cuu) rollspeed = 4; else rollspeed = .5;
+		//		if(key_cud) rollspeed = -4; else rollspeed = .5;
+		
+		wait(1);
+		
+	}
+	
+	txt_remove(import);
+	txt_remove(end);
+	
+	sys_loadmenu();
+	
 }

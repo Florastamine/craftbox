@@ -29,9 +29,7 @@
 #include "data.c"
 #include "kernel.c"
 
-void main(void)  {
-   
-   skCube=1;
+void main(void)  { 
 	
 	load_kernel("");
 	loop_kernel();

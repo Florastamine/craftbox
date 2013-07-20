@@ -117,7 +117,7 @@
 			}
 			return;
 		}
-
+		
 		if(d3d_lines) {
 			reset(def_debug_pan,SHOW);
 			d3d_lines = 0;
@@ -194,27 +194,9 @@
 		}
 	}
 
-	var def_mvol = 50;
-	var def_svol = 50;
-	void def_sound() 
-	{
-		if (sound_vol==0) { 
-			sound_vol = def_svol; 
-			midi_vol = def_mvol; 
-			return; 
-		}
-		if (midi_vol==0) { 
-			def_svol = sound_vol; 
-			sound_vol = 0; 
-			return; 
-		}
-		def_mvol = midi_vol; 
-		midi_vol = 0;
-	}
-
 	TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
 
-	void def_console() // Tab
+	void def_console() /* ~ */
 	{
 		def_ctxt->pos_x = 2;
 		def_ctxt->pos_y = screen_size.y/4;
@@ -242,10 +224,9 @@
 		if (!on_f5) on_f5 = def_video;
 		if (!on_f6) on_f6 = def_shot;
 		if (!on_f11) on_f11 = def_debug;
-		if (!on_f12) on_f12 = def_sound;
 		
 		if (!on_enter) on_enter = def_screen;
-		if (!on_tab) on_tab = def_console;
+		if (!on_grave) on_grave = def_console;
 		
 		//		if (!on_close) on_close = def_exit;
 	}

@@ -54,9 +54,9 @@ PANEL *panHome = {
 	
 	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
 	
-	button(88,35,"button_saveworld_on.png","button_saveworld_off.png","button_saveworld_over.png",NULL,NULL,NULL);
-	button(119,80,"button_loadworld_on.png","button_loadworld_off.png","button_loadworld_over.png",NULL,NULL,NULL);
-	button(113,123,"button_newworld_on.png","button_newworld_off.png","button_newworld_over.png",NULL,NULL,NULL);
+	button(88,35,"button_saveworld_on.png","button_saveworld_off.png","button_saveworld_over.png",savegame,NULL,NULL);
+	button(119,80,"button_loadworld_on.png","button_loadworld_off.png","button_loadworld_over.png",loadgame,NULL,NULL);
+	button(113,123,"button_newworld_on.png","button_newworld_off.png","button_newworld_over.png",newworld,NULL,NULL);
 	button(108,166,"button_worldset_on.png","button_worldset_off.png","button_worldset_over.png",NULL,NULL,NULL);
 	button(34,212,"button_compileworld_on.png","button_compileworld_off.png","button_compileworld_over.png",NULL,NULL,NULL);
 	button(50,255,"button_exitworld_on.png","button_exitworld_off.png","button_exitworld_over.png",NULL,NULL,NULL);
@@ -162,7 +162,6 @@ PANEL *panMat_Sub1 = {
 	hslider(134,41,100,"slider.bmp",0,255,v_emissive_r);
 	hslider(134,57,100,"slider.bmp",0,255,v_emissive_g);
 	hslider(134,75,100,"slider.bmp",0,255,v_emissive_b);
-	
 	hslider(134,108,100,"slider.bmp",0,255,v_ambient_r);
 	hslider(134,126,100,"slider.bmp",0,255,v_ambient_g);
 	hslider(134,143,100,"slider.bmp",0,255,v_ambient_b);
@@ -312,7 +311,7 @@ PANEL *panObj_Main_X = { // So that it won't get sticked with panObj_Main
 PANEL *panObj_Part_Main = {
 	
 	layer = 5;
-	bmap = "panObj_parts.bmp";
+	bmap = "panObj_parts.png";
 	
 }
 
@@ -341,7 +340,7 @@ PANEL *panObj_Part_slider = {
 PANEL *panObj_Snd_Main = {
 	
 	layer = 5;
-	bmap = "panObj_snds.bmp";
+	bmap = "panObj_snds.png";
 	
 }
 
@@ -417,6 +416,191 @@ PANEL *panScaleHelp = {
 	
 	flags = OVERLAY;
 	
+}
+
+PANEL *panNewGame = {
+	
+	layer = 2;
+	
+	bmap = "panNewGame.bmp";
+	
+	// 1
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	// 2
+	button_toggle(145,60,"flag_new_on.bmp","flag_new_.bmp","flag_new_on.bmp","flag_new_on.bmp",stf_1,NULL,NULL);
+	
+	// 3
+	button_toggle(465,60,"flag_new_on.bmp","flag_new_.bmp","flag_new_on.bmp","flag_new_on.bmp",stf_2,NULL,NULL);
+	
+	// Left
+	hslider(66,400,100,"slider.bmp",1,255,v_fogr);
+	hslider(66,419,100,"slider.bmp",1,255,v_fogg);
+	hslider(66,438,100,"slider.bmp",1,255,v_fogb);
+	hslider(138,464,100,"slider.bmp",100,8000,v_fogdensity);
+	
+	// 4
+	button_toggle(150,365,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
+	
+	// Right
+	
+	// 5
+	button_toggle(546,87,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
+	// 6
+	button_toggle(546,104,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
+	// 7
+	button_toggle(546,120,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
+	
+	hslider(546,173,100,"slider.bmp",.125,5,_moon_scale_fac);
+	hslider(546,188,100,"slider.bmp",.1,255,_time_speed_night);
+	hslider(546,203,100,"slider.bmp",.5,4,_night_sky_scale_x);
+	hslider(546,218,100,"slider.bmp",1,500,_night_sky_speed_x);
+	
+	// 8
+	button(605,460,"button_creatworld_on.bmp","button_creatworld_off.bmp","button_creatworld_on.bmp",load_new_level,NULL,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+	
+	on_click = dragpanel;
+	
+}
+
+PANEL *panSaveGame = {
+	
+	layer = 2;
+	
+	bmap = "panSaveGame.bmp";
+	
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	button(20,25,slot1,slot1,slot1,save,NULL,NULL);
+	button(126,25,slot2,slot2,slot2,save,NULL,NULL);
+	button(232,25,slot3,slot3,slot3,save,NULL,NULL);
+	button(20,131,slot4,slot4,slot4,save,NULL,NULL);
+	button(126,131,slot5,slot5,slot5,save,NULL,NULL);
+	button(232,131,slot6,slot6,slot6,save,NULL,NULL);
+	button(20,237,slot7,slot7,slot7,save,NULL,NULL);
+	button(126,237,slot8,slot8,slot8,save,NULL,NULL);
+	button(232,237,slot9,slot9,slot9,save,NULL,NULL);
+	//	button(0,180,slot10,slot10,slot10,save,NULL,NULL);
+	//	button(0,200,slot11,slot11,slot11,save,NULL,NULL);
+	//	button(0,220,slot12,slot12,slot12,save,NULL,NULL);
+	//	button(0,240,slot13,slot13,slot13,save,NULL,NULL);
+	//	button(0,260,slot14,slot14,slot14,save,NULL,NULL);
+	//	button(0,280,slot15,slot15,slot15,save,NULL,NULL);
+	//	button(0,300,slot16,slot16,slot16,save,NULL,NULL);
+	//	button(0,320,slot17,slot17,slot17,save,NULL,NULL);
+	//	button(0,340,slot18,slot18,slot18,save,NULL,NULL);
+	//	button(0,360,slot19,slot19,slot19,save,NULL,NULL);
+	//	button(0,380,slot20,slot20,slot20,save,NULL,NULL);
+	
+	flags = TRANSLUCENT;
+	
+	on_click = dragpanel;
+	
+}
+
+PANEL *panLoadGame = {
+	
+	layer = 2;
+	bmap = "panLoadGame.bmp";
+	
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	button(20,25,slot1,slot1,slot1,load,NULL,NULL);
+	button(126,25,slot2,slot2,slot2,load,NULL,NULL);
+	button(232,25,slot3,slot3,slot3,load,NULL,NULL);
+	button(20,131,slot4,slot4,slot4,load,NULL,NULL);
+	button(126,131,slot5,slot5,slot5,load,NULL,NULL);
+	button(232,131,slot6,slot6,slot6,load,NULL,NULL);
+	button(20,237,slot7,slot7,slot7,load,NULL,NULL);
+	button(126,237,slot8,slot8,slot8,load,NULL,NULL);
+	button(232,237,slot9,slot9,slot9,load,NULL,NULL);
+	//		button(100,180,slot10,slot10,slot10,load,NULL,NULL);
+	//		button(100,200,slot11,slot11,slot11,load,NULL,NULL);
+	//		button(100,220,slot12,slot12,slot12,load,NULL,NULL);
+	//		button(100,240,slot13,slot13,slot13,load,NULL,NULL);
+	//		button(100,260,slot14,slot14,slot14,load,NULL,NULL);
+	//		button(100,280,slot15,slot15,slot15,load,NULL,NULL);
+	//		button(100,300,slot16,slot16,slot16,load,NULL,NULL);
+	//		button(100,320,slot17,slot17,slot17,load,NULL,NULL);
+	//		button(100,340,slot18,slot18,slot18,load,NULL,NULL);
+	//		button(100,360,slot19,slot19,slot19,load,NULL,NULL);
+	//		button(100,380,slot20,slot20,slot20,load,NULL,NULL);
+	
+	flags = TRANSLUCENT;
+	
+	on_click = dragpanel;
+	
+}
+
+PANEL *panMMenu = {
+	
+	layer = 1;
+	bmap = "panMMenu_Main.bmp";
+	
+	button(20,25,slot1,slot1,slot1,load,NULL,NULL);
+	button(126,25,slot2,slot2,slot2,load,NULL,NULL);
+	button(232,25,slot3,slot3,slot3,load,NULL,NULL);
+	button(20,131,slot4,slot4,slot4,load,NULL,NULL);
+	button(126,131,slot5,slot5,slot5,load,NULL,NULL);
+	button(232,131,slot6,slot6,slot6,load,NULL,NULL);
+	button(20,237,slot7,slot7,slot7,load,NULL,NULL);
+	button(126,237,slot8,slot8,slot8,load,NULL,NULL);
+	button(232,237,slot9,slot9,slot9,load,NULL,NULL);
+	
+	button(5,359,"button_MMenu_New_on.png","button_MMenu_New_off.png","button_MMenu_New_on.png",newworld,NULL,NULL);
+	button(165,359,"button_MMenu_opt_on.png","button_MMenu_opt_off.png","button_MMenu_opt_on.png",NULL,NULL,NULL);
+	button(5,402,"button_MMenu_cmp_on.png","button_MMenu_cmp_off.png","button_MMenu_cmp_on.png",NULL,NULL,NULL);
+	button(165,402,"button_MMenu_dev_on.png","button_MMenu_dev_off.png","button_MMenu_dev_on.png",sys_show_credits,NULL,NULL);
+	
+	flags = TRANSLUCENT;
+	
+}
+
+PANEL *panMMenu_exit = {
+	
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",closewindow,NULL,NULL);
+	
+	flags = TRANSLUCENT;
+	
+}
+
+PANEL *panCAMRecorder = {
+	
+	layer = 3;
+	bmap = "panCAMRecorder.bmp";
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *panCAMRecorder_digits = {
+	
+	layer = 4;
+	digits(0,0,2,"Arial#25b",1,sys_seconds);
+	digits(0,0,2,"Arial#25b",1,sys_minutes);	
+	digits(0,0,2,"Arial#25b",1,sys_hours);
+	
+}
+
+PANEL *panCAMRecorderREC = {
+   
+   layer = 4;
+   bmap = "panCAMRecorderREC.bmp";
+   
+   flags = OVERLAY;
+   
+}
+
+PANEL *panScreenshot = {
+   
+   layer = 999;
+   bmap = "panScreenshot.bmp";
+   
+   flags = TRANSLUCENT;
+   alpha = 100;
+   
 }
 
 ////////////////////////////////////////////////////////////
@@ -1849,9 +2033,7 @@ ENTITY *sky_sunshine =
 
 ENTITY *sky_night =
 { 
-	type = "sky_night.tga"; 
-	u = night_sky_speed_x; 
-	v = night_sky_speed_y; 
+	type = "sky_night.tga";  
 	layer = 1; 
 	alpha = 0;//night_sky_alpha; 
 	flags2 = SKY|DOME; 

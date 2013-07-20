@@ -77,6 +77,9 @@ obj_form clipboard;
 #define BORDER 10
 #define DEFAULT_ALPHA 50
 
+#define FOG_END_LIM 8000
+#define SAVE_TARGETS 9
+
 ////////////////////////////////////////////////////////////
 // System definitions for Mystymood.
 ////////////////////////////////////////////////////////////
@@ -92,11 +95,18 @@ obj_form clipboard;
 #define sky_add_blue 	  255
 #define sky_alpha 		 	10//0-100, decrease this to get more fogcolor1 tint
 
+var _moon_scale_fac,
+_time_speed_night,
+_night_sky_scale_x,
+_night_sky_speed_x;
+
 //night sky
-#define night_sky_scale_x 	 0.5//affects size of the stars at night
-#define night_sky_scale_y 	 0.5
-#define night_sky_speed_x	 1//movement speed of the stars
-#define night_sky_speed_y	 1
+// lim(night_sky_scale_x) = 4
+// lim(moon_scale_fac) = 5;
+var night_sky_scale_x = .5;//affects size of the stars at night
+var night_sky_scale_y = .5;
+var night_sky_speed_x = 1;//movement speed of the stars
+var night_sky_speed_y = 1;
 #define night_sky_alpha		 0
 
 //cloud layer 1
@@ -130,7 +140,7 @@ obj_form clipboard;
 #define sun_corona_alpha 	40//0;//
 #define sun_shine_alpha  	50//0;//
 
-#define moon_scale_fac 	  1.5
+var moon_scale_fac = 1.5;
 #define moon_alpha 		  100
 
 #define sun_dist_minus	  1000//evtl. raise this value when you see the sun flickering or disappear, default is 10 (10 quant before land_fog_far/clip_far)
@@ -247,9 +257,15 @@ STRING *current_folder = "a",
 
 TEXT *files_list;
 
+STRING *pref_savebmaps = "./src/system";
+STRING *pref_savegames = "./src/txt/cgame";
+
 ////////////////////////////////////////////////////////////
 // Variables/Booleans will be declared here.
 ////////////////////////////////////////////////////////////
+
+BOOL in;
+
 var skCube;
 int mat_type, manip_type;
 int files_found, list_start;
@@ -269,7 +285,9 @@ v_emissive_r, v_emissive_g, v_emissive_b,
 v_power, 
 v_alpha_m, // Alpha for materials
 
-v_lred, v_lgreen, v_lblue, v_lrange;
+v_lred, v_lgreen, v_lblue, v_lrange,
+
+v_fogr, v_fogg, v_fogb, v_fogdensity;
 
 var ctrl; // This var controls panObj_Main.
 
@@ -283,7 +301,9 @@ var page = 1, lfsp = 0; //launched from switch_panProp
 var node = 0;
 
 //var engine_play = 0; // I will have to define this in A8.c
-BOOL from_test_play = 0;
+BOOL from_test_play = 0, lens = 0;
+
+BOOL launch_newgame_from_main;
 
 // Particle database array
 var partobjs[20];
@@ -408,7 +428,11 @@ PANEL *buttonlst,
 *debug,
 *panRotateHelp,
 *panScaleHelp,
-*panLightNoti;
+*panLightNoti,
+*panNewGame,
+*panSaveGame,
+*panLoadGame,
+*panMMenu;
 
 void free_camera();
 
@@ -527,6 +551,28 @@ SOUND *thunder5_wav = "thunder5.wav";
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
 ////////////////////////////////////////////////////////////
+BMAP *save_array[SAVE_TARGETS];
+BMAP *slot1 = "button_save_slot_interface.bmp";
+BMAP *slot2 = "button_save_slot_interface.bmp";
+BMAP *slot3 = "button_save_slot_interface.bmp";
+BMAP *slot4 = "button_save_slot_interface.bmp";
+BMAP *slot5 = "button_save_slot_interface.bmp";
+BMAP *slot6 = "button_save_slot_interface.bmp";
+BMAP *slot7 = "button_save_slot_interface.bmp";
+BMAP *slot8 = "button_save_slot_interface.bmp";
+BMAP *slot9 = "button_save_slot_interface.bmp";
+//BMAP *slot10 = "button_save_slot_interface.bmp";
+//BMAP *slot11 = "button_save_slot_interface.bmp";
+//BMAP *slot12 = "button_save_slot_interface.bmp";
+//BMAP *slot13 = "button_save_slot_interface.bmp";
+//BMAP *slot14 = "button_save_slot_interface.bmp";
+//BMAP *slot15 = "button_save_slot_interface.bmp";
+//BMAP *slot16 = "button_save_slot_interface.bmp";
+//BMAP *slot17 = "button_save_slot_interface.bmp";
+//BMAP *slot18 = "button_save_slot_interface.bmp";
+//BMAP *slot19 = "button_save_slot_interface.bmp";
+//BMAP *slot20 = "button_save_slot_interface.bmp";
+
 BMAP* mouse = "mouse_pointer.png";
 
 BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
@@ -638,15 +684,15 @@ BMAP *menu3_submenu2_over = "button_nodetype_over.bmp";
 //BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
 //BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
 
-BMAP *panObj_anms = "panObj_anms.bmp";
-BMAP *panObj_arch = "panObj_arch.bmp";
-BMAP *panObj_chars = "panObj_chars.bmp";
-BMAP *panObj_etc = "panObj_etc.bmp";
-BMAP *panObj_food = "panObj_food.bmp";
-BMAP *panObj_machs = "panObj_machs.bmp";
-BMAP *panObj_plants = "panObj_plants.bmp";
-BMAP *panObj_tportts = "panObj_tportts.bmp";
-BMAP *panObj_blands = "panObj_blands.bmp";
+BMAP *panObj_anms = "panObj_anms.png";
+BMAP *panObj_arch = "panObj_arch.png";
+BMAP *panObj_chars = "panObj_chars.png";
+BMAP *panObj_etc = "panObj_etc.png";
+BMAP *panObj_food = "panObj_food.png";
+BMAP *panObj_machs = "panObj_machs.png";
+BMAP *panObj_plants = "panObj_plants.png";
+BMAP *panObj_tportts = "panObj_tportts.png";
+BMAP *panObj_blands = "panObj_blands.png";
 
 BMAP *panProp1_IMG = "panProp_1.bmp";
 BMAP *panProp2_IMG = "panProp_2.bmp";
@@ -694,6 +740,8 @@ void objadd();
 void objpartadd();
 void objsndadd();
 void objlightadd();
+void loadgame();
+void savegame();
 
 void prop(BOOL);
 void _light(BOOL);
@@ -705,7 +753,13 @@ void sharedGUI_launch_object();
 void sharedGUI_launch_path();
 
 void updategui(PANEL *);
+
 void closewindow(var, PANEL *);
+void newworld();
+
+void stf_1();
+void stf_2();
+
 void panelselect(PANEL *);
 void scan_folder(STRING *,STRING *);
 void centerpanel(PANEL *);
@@ -747,6 +801,10 @@ ENTITY *obj_create();
 void init_database();
 void init_database_snd();
 void init_database_part();
+void init_savedbmaps();
+
+void save(var);
+void load(var);
 
 void loadGUI();
 void hideGUI();
@@ -785,6 +843,8 @@ void flare_place(ENTITY *);
 //void save_level(STRING *);
 //void load_level(STRING *);
 void new_level();
+void load_new_level();
+void load_new_level_menu();
 
 void cleaner();
 
@@ -865,5 +925,8 @@ void func_particle_lightning(PARTICLE *);
 void func_particle_segment();
 void func_increase_brightness();
 void weather_change();
+
+void sys_loadmenu();
+
 
 #endif HEADER_H
