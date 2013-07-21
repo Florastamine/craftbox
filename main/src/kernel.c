@@ -4,6 +4,7 @@ http://mp3.zing.vn/bai-hat/Silent-Hill-Promise-Reprise-Piano-Unknow/IW9OIZD6.htm
 http://mp3.zing.vn/album/Piano-Spa-In-Love-Mr-Tuk-Bo-Tree/ZWZACZFW.html?st=12
 http://mp3.zing.vn/tim-kiem/bai-hat.html?q=Various+Artists
 http://www.youtube.com/watch?v=evSwhNl-HhQ
+http://mp3.zing.vn/bai-hat/Power-Kanye-West/ZWZA707C.html
 
 ***/
 
@@ -1071,6 +1072,7 @@ void closewindow(var id, PANEL *p) {
 	
 	if(p == panMMenu_exit) {
 		
+		config_write("./src/cfg/cfg.cfg");
 		sys_exit(NULL);
 		
 	}
@@ -1203,7 +1205,36 @@ void loadGUI() {
 	
 	int i;
 	for(i = 3;i > 0;i--) pan_setpos(panCAMRecorder_digits,1,i,vector(screen_size.x - 35 - 30 * i,BORDER,0));
-
+	
+	anms.size_x = bmap_width(panObj_anms);
+	arch.size_x = bmap_width(panObj_arch);
+	blands.size_x = bmap_width(panObj_blands);
+	chars.size_x = bmap_width(panObj_chars);
+	etc.size_x = bmap_width(panObj_etc);
+	food.size_x = bmap_width(panObj_food);
+	machs.size_x = bmap_width(panObj_machs);
+	plants.size_x = bmap_width(panObj_plants);
+	tportts.size_x = bmap_width(panObj_tportts);
+	
+	anms.pos_y = arch.pos_y = blands.pos_y = 
+	chars.pos_y = etc.pos_y = food.pos_y = 
+	machs.pos_y = plants.pos_y = tportts.pos_y = 
+	bmap_height(panObj_Main.bmap) - BORDER;
+	
+	anms.size_y = arch.size_y = blands.size_y = 
+	chars.size_y = etc.size_y = food.size_y = 
+	machs.size_y = plants.size_y = tportts.size_y = 82;
+	
+	for(i = 1;i <= 50;i++) pan_setpos(anms,3,i,vector(BORDER*i + 82 * (i-1),0,0));
+	for(i = 1;i <= 80;i++) pan_setpos(arch,3,i,vector(BORDER*i + 82 * (i-1),0,0));
+	for(i = 1;i <= 50;i++) pan_setpos(blands,3,i,vector(BORDER*i + 82 * (i-1),0,0))
+	for(i = 1;i <= 300;i++) pan_setpos(chars,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	for(i = 1;i <= 90;i++) pan_setpos(etc,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	for(i = 1;i <= 50;i++) pan_setpos(food,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	for(i = 1;i <= 160;i++) pan_setpos(machs,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	for(i = 1;i <= 50;i++) pan_setpos(plants,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	for(i = 1;i <= 50;i++) pan_setpos(tportts,3,i,vector(BORDER*i + 82*(i-1),0,0));
+	
 	panMain_Top.pos_x = screen_size.x - bmap_width(panMain_Top.bmap) - (BORDER + 3 * 32);
 	panMain_Top.pos_y = BORDER;
 
@@ -2761,7 +2792,7 @@ void showr(FONT *f, STRING *r)
 }
 
 void objadd() {
-
+	
 	hideGUI();
 
 	set(panObj_Main,SHOW);
@@ -2855,6 +2886,8 @@ void panObj_Subbar_switcher(var id) {
 		
 		panObj_Main.bmap = panObj_anms;
 		update_size(panObj_Main,panObj_anms);
+		
+		set(anms,SHOW);
 		
 		ctrl = 0;
 		
@@ -2967,7 +3000,7 @@ void panObj_Subbar_switcher(var id) {
 
 }
 
-void config_write_video(STRING *cf) {
+void config_write(STRING *cf) {
 
 	var file = file_open_write(cf);
 	if(!file) {
@@ -3000,7 +3033,8 @@ void config_write_video(STRING *cf) {
 	- video_screen
 
 	*/
-
+	
+	// Graphics + system
 	file_var_write(file,d3d_anisotropy);
 	file_var_write(file,d3d_antialias);
 	file_var_write(file,d3d_mipmapping);
@@ -3011,6 +3045,8 @@ void config_write_video(STRING *cf) {
 	file_var_write(file,video_mode);
 	file_var_write(file,video_depth);
 	file_var_write(file,video_screen);
+	
+	file_var_write(file,shot);
 
 	file_close(file);
 
@@ -3029,7 +3065,8 @@ void config_read(STRING *cf) {
 		return;
 		
 	}
-
+	
+	// Graphics + system first
 	d3d_anisotropy = file_var_read(file);
 	d3d_antialias = file_var_read(file);
 	d3d_mipmapping = file_var_read(file);
@@ -3041,6 +3078,8 @@ void config_read(STRING *cf) {
 	video_mode = file_var_read(file);
 	video_depth = file_var_read(file);
 	video_screen = file_var_read(file);
+	
+	shot = file_var_read(file);
 
 	file_close(file);
 }
@@ -3679,6 +3718,7 @@ void load_kernel(STRING *lvl_str) {
 				
 				// Operation #1
 				//				printf(" I don't want to die =(( ");
+				config_write("./src/cfg/cfg.cfg");
 				
 				sys_exit(NULL);
 				
@@ -3736,6 +3776,7 @@ void loop_kernel() {
 				
 				if(!mouse_panel)
 				{
+					
 					if(!mouse_ent) obj_create();
 					
 					else
@@ -3835,8 +3876,7 @@ void misc_startup() {
 
 	while(1) {
 		
-		
-		
+		anms.pos_x = panObj_Main.pos_x;
 		
 		if(select) {
 			
@@ -5809,5 +5849,74 @@ void sys_show_credits() {
 	txt_remove(end);
 	
 	sys_loadmenu();
+	
+}
+
+void load_ent_anms(var id) {
+	
+	/*
+	error("load_ent_anms");
+	*/
+	
+	num_mdlobjs=id--;
+	
+	reset(panObj_Main,SHOW);
+	reset(panObj_Subbar,SHOW);
+	reset(panObj_Subbar_slider,SHOW);
+	reset(panObj_Main_X,SHOW);
+	
+	reset(anms,SHOW);
+	
+	showGUI();
+	
+	ctrl = 0;
+	
+}
+
+void load_ent_arch(var id) {
+	
+	error("load_ent_arch");
+	
+}
+
+void load_ent_blands(var id) {
+	
+	error("load_ent_blands");
+	
+}
+
+void load_ent_chars(var id) {
+	
+	error("load_ent_chars");
+	
+}
+
+void load_ent_etc(var id) {
+	
+	error("load_ent_etc");
+	
+}
+
+void load_ent_food(var id) {
+	
+	error("load_ent_food");
+	
+}
+
+void load_ent_machs(var id) {
+	
+	error("load_ent_machs");
+	
+}
+
+void load_ent_plants(var id) {
+	
+	error("load_ent_plants");
+	
+}
+
+void load_ent_tportts(var id) {
+	
+	error("load_ent_tportts");
 	
 }

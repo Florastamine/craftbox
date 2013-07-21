@@ -296,6 +296,486 @@ PANEL *panObj_Main = {
 	
 }
 
+PANEL *anms = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"A_BADGER.bmp","A_BADGER.bmp","A_BADGER.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BAT.bmp","A_BAT.bmp","A_BAT.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BLUEBIRD.bmp","A_BLUEBIRD.bmp","A_BLUEBIRD.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BOAR.bmp","A_BOAR.bmp","A_BOAR.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BUG.bmp","A_BUG.bmp","A_BUG.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BURKEL.bmp","A_BURKEL.bmp","A_BURKEL.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_BUTTTERFLY.bmp","A_BUTTTERFLY.bmp","A_BUTTTERFLY.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_CROW.bmp","A_CROW.bmp","A_CROW.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH1.bmp","A_FISH1.bmp","A_FISH1.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH2.bmp","A_FISH2.bmp","A_FISH2.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH3.bmp","A_FISH3.bmp","A_FISH3.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH4.bmp","A_FISH4.bmp","A_FISH4.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH5.bmp","A_FISH5.bmp","A_FISH5.bmp",load_ent_anms,NULL,NULL);
+	button(0,0,"A_FISH6.bmp","A_FISH6.bmp","A_FISH6.bmp",load_ent_anms,NULL,NULL);	
+	button(0,0,"A_FISH7.bmp","A_FISH7.bmp","A_FISH7.bmp",load_ent_anms,NULL,NULL);	
+	button(0,0,"A_FISH8.bmp","A_FISH8.bmp","A_FISH8.bmp",load_ent_anms,NULL,NULL);	
+	button(0,0,"A_RAT.bmp","A_RAT.bmp","A_RAT.bmp",load_ent_anms,NULL,NULL);	
+	button(0,0,"A_SNAKE.bmp","A_SNAKE.bmp","A_SNAKE.bmp",load_ent_anms,NULL,NULL);	
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *arch = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"A__FRAME.bmp","A__FRAME.bmp","A__FRAME.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_BUILDING1.bmp","A_BUILDING1.bmp","A_BUILDING1.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"a_buildingwmb.bmp","a_buildingwmb.bmp","a_buildingwmb.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"a_buildingwmb.bmp","a_buildingwmb.bmp","a_buildingwmb.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_CHURCH.bmp","A_CHURCH.bmp","A_CHURCH.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_CHURCH.bmp","A_CHURCH.bmp","A_CHURCH.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_FENCE.bmp","A_FENCE.bmp","A_FENCE.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_FENCE_CYLINDER.bmp","A_FENCE_CYLINDER.bmp","A_FENCE_CYLINDER.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_GATE.bmp","A_GATE.bmp","A_GATE.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_HOUSE1.bmp","A_HOUSE1.bmp","A_HOUSE1.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_HOUSE2.bmp","A_HOUSE2.bmp","A_HOUSE2.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_HOUSE3.bmp","A_HOUSE3.bmp","A_HOUSE3.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_HUT.bmp","A_HUT.bmp","A_HUT.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_TEMPLE_ENTRANCE.bmp","A_TEMPLE_ENTRANCE.bmp","A_TEMPLE_ENTRANCE.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_WAREHOUSE.bmp","A_WAREHOUSE.bmp","A_WAREHOUSE.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_WAREHOUSE1.bmp","A_WAREHOUSE1.bmp","A_WAREHOUSE1.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_WAREHOUSE2.bmp","A_WAREHOUSE2.bmp","A_WAREHOUSE2.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_WAREHOUSE3.bmp","A_WAREHOUSE3.bmp","A_WAREHOUSE3.bmp",load_ent_arch,NULL,NULL);
+	button(0,0,"A_WAREHOUSE4.bmp","A_WAREHOUSE4.bmp","A_WAREHOUSE4.bmp",load_ent_arch,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *blands = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"L_DESERTGENERIC.bmp","L_DESERTGENERIC.bmp","L_DESERTGENERIC.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_GREENLAND.bmp","L_GREENLAND.bmp","L_GREENLAND.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_GREENLAND1.bmp","L_GREENLAND1.bmp","L_GREENLAND1.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_GREENLAND_FAT.bmp","L_GREENLAND_FAT.bmp","L_GREENLAND_FAT.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_MARSSURFACE.bmp","L_MARSSURFACE.bmp","L_MARSSURFACE.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_OCEAN1.bmp","L_OCEAN1.bmp","L_OCEAN1.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_OCEAN2.bmp","L_OCEAN2.bmp","L_OCEAN2.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_STEPPEGENERIC.bmp","L_STEPPEGENERIC.bmp","L_STEPPEGENERIC.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_STONEGENERIC.bmp","L_STONEGENERIC.bmp","L_STONEGENERIC.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_WATER1.bmp","L_WATER1.bmp","L_WATER1.bmp",load_ent_blands,NULL,NULL);
+	button(0,0,"L_WATER2.bmp","L_WATER2.bmp","L_WATER2.bmp",load_ent_blands,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *chars = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"C__007.bmp","C__007.bmp","C__007.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_BADGUY.bmp","C_BADGUY.bmp","C_BADGUY.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_BERZERKA.bmp","C_BERZERKA.bmp","C_BERZERKA.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_CGIRL.bmp","C_CGIRL.bmp","C_CGIRL.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_GUARD.bmp","C_GUARD.bmp","C_GUARD.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_HCS_WARRIOR_C.bmp","C_HCS_WARRIOR_C.bmp","C_HCS_WARRIOR_C.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_INMATE.bmp","C_INMATE.bmp","C_INMATE.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_NINJA.bmp","C_NINJA.bmp","C_NINJA.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_KING_OCHAN.bmp","C_P_KING_OCHAN.bmp","C_P_KING_OCHAN.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_LOBSTER_MUTANT.bmp","C_P_LOBSTER_MUTANT.bmp","C_P_LOBSTER_MUTANT.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_MARIO_H.bmp","C_P_MARIO_H.bmp","C_P_MARIO_H.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_PIRATE.bmp","C_P_PIRATE.bmp","C_P_PIRATE.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_R2_ROBOT.bmp","C_P_R2_ROBOT.bmp","C_P_R2_ROBOT.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_SAUCER.bmp","C_P_SAUCER.bmp","C_P_SAUCER.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_P_SKEL.bmp","C_P_SKEL.bmp","C_P_SKEL.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_RABBIT.bmp","C_RABBIT.bmp","C_RABBIT.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_SOLDIER.bmp","C_SOLDIER.bmp","C_SOLDIER.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_TROOPER.bmp","C_TROOPER.bmp","C_TROOPER.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_WARLOCK.bmp","C_WARLOCK.bmp","C_WARLOCK.bmp",load_ent_chars,NULL,NULL);
+	button(0,0,"C_WITCH.bmp","C_WITCH.bmp","C_WITCH.bmp",load_ent_chars,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *etc = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"E_BALL10.bmp","E_BALL10.bmp","E_BALL10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL20.bmp","E_BALL20.bmp","E_BALL20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL30.bmp","E_BALL30.bmp","E_BALL30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL40.bmp","E_BALL40.bmp","E_BALL40.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL50.bmp","E_BALL50.bmp","E_BALL50.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL60.bmp","E_BALL60.bmp","E_BALL60.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL70.bmp","E_BALL70.bmp","E_BALL70.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL80.bmp","E_BALL80.bmp","E_BALL80.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL90.bmp","E_BALL90.bmp","E_BALL90.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL100.bmp","E_BALL100.bmp","E_BALL100.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL110.bmp","E_BALL110.bmp","E_BALL110.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL120.bmp","E_BALL120.bmp","E_BALL120.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL130.bmp","E_BALL130.bmp","E_BALL130.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL140.bmp","E_BALL140.bmp","E_BALL140.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL150.bmp","E_BALL150.bmp","E_BALL150.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALL_WHITE0.bmp","E_BALL_WHITE0.bmp","E_BALL_WHITE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BALLOON0.bmp","E_BALLOON0.bmp","E_BALLOON0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL0.bmp","E_BARREL0.bmp","E_BARREL0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL010.bmp","E_BARREL010.bmp","E_BARREL010.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL020.bmp","E_BARREL020.bmp","E_BARREL020.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL030.bmp","E_BARREL030.bmp","E_BARREL030.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL040.bmp","E_BARREL040.bmp","E_BARREL040.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL050.bmp","E_BARREL050.bmp","E_BARREL050.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL060.bmp","E_BARREL060.bmp","E_BARREL060.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL070.bmp","E_BARREL070.bmp","E_BARREL070.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL080.bmp","E_BARREL080.bmp","E_BARREL080.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARREL90.bmp","E_BARREL90.bmp","E_BARREL90.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BARRIER0.bmp","E_BARRIER0.bmp","E_BARRIER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BASKETBALLBASKET0.bmp","E_BASKETBALLBASKET0.bmp","E_BASKETBALLBASKET0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BATTERY0.bmp","E_BATTERY0.bmp","E_BATTERY0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH0.bmp","E_BENCH0.bmp","E_BENCH0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH10.bmp","E_BENCH10.bmp","E_BENCH10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH20.bmp","E_BENCH20.bmp","E_BENCH20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH30.bmp","E_BENCH30.bmp","E_BENCH30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH40.bmp","E_BENCH40.bmp","E_BENCH40.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH50.bmp","E_BENCH50.bmp","E_BENCH50.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH60.bmp","E_BENCH60.bmp","E_BENCH60.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH70.bmp","E_BENCH70.bmp","E_BENCH70.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BENCH80.bmp","E_BENCH80.bmp","E_BENCH80.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLARD10.bmp","E_BILLARD10.bmp","E_BILLARD10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLARDLAMP0.bmp","E_BILLARDLAMP0.bmp","E_BILLARDLAMP0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLIARD0.bmp","E_BILLIARD0.bmp","E_BILLIARD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLIARD20.bmp","E_BILLIARD20.bmp","E_BILLIARD20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLIARD30.bmp","E_BILLIARD30.bmp","E_BILLIARD30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BILLIARD_QUEUE0.bmp","E_BILLIARD_QUEUE0.bmp","E_BILLIARD_QUEUE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOOK10.bmp","E_BOOK10.bmp","E_BOOK10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOOKS0.bmp","E_BOOKS0.bmp","E_BOOKS0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOOKS20.bmp","E_BOOKS20.bmp","E_BOOKS20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOOKS30.bmp","E_BOOKS30.bmp","E_BOOKS30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOOKSHELF0.bmp","E_BOOKSHELF0.bmp","E_BOOKSHELF0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOX0.bmp","E_BOX0.bmp","E_BOX0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_BOX10.bmp","E_BOX10.bmp","E_BOX10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CABINET0.bmp","E_CABINET0.bmp","E_CABINET0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CABINET_CORNER0.bmp","E_CABINET_CORNER0.bmp","E_CABINET_CORNER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CD0.bmp","E_CD0.bmp","E_CD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CEMENT_BAG0.bmp","E_CEMENT_BAG0.bmp","E_CEMENT_BAG0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CHAIR0.bmp","E_CHAIR0.bmp","E_CHAIR0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CHAIR10.bmp","E_CHAIR10.bmp","E_CHAIR10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CHAIR20.bmp","E_CHAIR20.bmp","E_CHAIR20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CIGA0.bmp","E_CIGA0.bmp","E_CIGA0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CLOCK0.bmp","E_CLOCK0.bmp","E_CLOCK0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CLOUD0.bmp","E_CLOUD0.bmp","E_CLOUD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_COIN0.bmp","E_COIN0.bmp","E_COIN0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_COLAMACH0.bmp","E_COLAMACH0.bmp","E_COLAMACH0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CRATE0.bmp","E_CRATE0.bmp","E_CRATE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CRATE10.bmp","E_CRATE10.bmp","E_CRATE10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CRATE20.bmp","E_CRATE20.bmp","E_CRATE20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_CRYSTAL0.bmp","E_CRYSTAL0.bmp","E_CRYSTAL0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_D_BOOTH_010.bmp","E_D_BOOTH_010.bmp","E_D_BOOTH_010.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DOOR0.bmp","E_DOOR0.bmp","E_DOOR0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DOOR10.bmp","E_DOOR10.bmp","E_DOOR10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DOOR20.bmp","E_DOOR20.bmp","E_DOOR20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DOOR30.bmp","E_DOOR30.bmp","E_DOOR30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DOOR40.bmp","E_DOOR40.bmp","E_DOOR40.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_DUMPSTER0.bmp","E_DUMPSTER0.bmp","E_DUMPSTER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_EXTINGUISHER0.bmp","E_EXTINGUISHER0.bmp","E_EXTINGUISHER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_EXTINGUISHER10.bmp","E_EXTINGUISHER10.bmp","E_EXTINGUISHER10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_FENCE0.bmp","E_FENCE0.bmp","E_FENCE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_FIRE0.bmp","E_FIRE0.bmp","E_FIRE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_FLAG0.bmp","E_FLAG0.bmp","E_FLAG0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_FRIDGE0.bmp","E_FRIDGE0.bmp","E_FRIDGE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_FRYING_PAN0.bmp","E_FRYING_PAN0.bmp","E_FRYING_PAN0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_GIFT_BOX0.bmp","E_GIFT_BOX0.bmp","E_GIFT_BOX0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_HYDRANT0.bmp","E_HYDRANT0.bmp","E_HYDRANT0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_IPOD0.bmp","E_IPOD0.bmp","E_IPOD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LAMP10.bmp","E_LAMP10.bmp","E_LAMP10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LAMP20.bmp","E_LAMP20.bmp","E_LAMP20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LAMP30.bmp","E_LAMP30.bmp","E_LAMP30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LAMP40.bmp","E_LAMP40.bmp","E_LAMP40.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LEON_ARMOIRE0.bmp","E_LEON_ARMOIRE0.bmp","E_LEON_ARMOIRE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LEON_DESK0.bmp","E_LEON_DESK0.bmp","E_LEON_DESK0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_LIGHT0.bmp","E_LIGHT0.bmp","E_LIGHT0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_MIRROR0.bmp","E_MIRROR0.bmp","E_MIRROR0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_MIRROR10.bmp","E_MIRROR10.bmp","E_MIRROR10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PALETTE0.bmp","E_PALETTE0.bmp","E_PALETTE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PALETTE10.bmp","E_PALETTE10.bmp","E_PALETTE10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PARKINGMETER0.bmp","E_PARKINGMETER0.bmp","E_PARKINGMETER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PIANO0.bmp","E_PIANO0.bmp","E_PIANO0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE0.bmp","E_PICTURE0.bmp","E_PICTURE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE10.bmp","E_PICTURE10.bmp","E_PICTURE10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE20.bmp","E_PICTURE20.bmp","E_PICTURE20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE30.bmp","E_PICTURE30.bmp","E_PICTURE30.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE40.bmp","E_PICTURE40.bmp","E_PICTURE40.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE50.bmp","E_PICTURE50.bmp","E_PICTURE50.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE60.bmp","E_PICTURE60.bmp","E_PICTURE60.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE70.bmp","E_PICTURE70.bmp","E_PICTURE70.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PICTURE80.bmp","E_PICTURE80.bmp","E_PICTURE80.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PIPE0.bmp","E_PIPE0.bmp","E_PIPE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PIPE10.bmp","E_PIPE10.bmp","E_PIPE10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PIPE20.bmp","E_PIPE20.bmp","E_PIPE20.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_PLATFORM0.bmp","E_PLATFORM0.bmp","E_PLATFORM0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAIL_LORE10.bmp","E_RAIL_LORE10.bmp","E_RAIL_LORE10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_45LEFT0.bmp","E_RAILWAY_45LEFT0.bmp","E_RAILWAY_45LEFT0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_45RIGHT0.bmp","E_RAILWAY_45RIGHT0.bmp","E_RAILWAY_45RIGHT0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_DOUBLESWITCH0.bmp","E_RAILWAY_DOUBLESWITCH0.bmp","E_RAILWAY_DOUBLESWITCH0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_DOWN0.bmp","E_RAILWAY_DOWN0.bmp","E_RAILWAY_DOWN0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_END0.bmp","E_RAILWAY_END0.bmp","E_RAILWAY_END0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_SINGLESWITCH0.bmp","E_RAILWAY_SINGLESWITCH0.bmp","E_RAILWAY_SINGLESWITCH0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_STRAIGHT0.bmp","E_RAILWAY_STRAIGHT0.bmp","E_RAILWAY_STRAIGHT0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_RAILWAY_UP0.bmp","E_RAILWAY_UP0.bmp","E_RAILWAY_UP0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_ROPE0.bmp","E_ROPE0.bmp","E_ROPE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SALONCH10.bmp","E_SALONCH10.bmp","E_SALONCH10.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_300.bmp","E_SIGN_300.bmp","E_SIGN_300.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_600.bmp","E_SIGN_600.bmp","E_SIGN_600.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_900.bmp","E_SIGN_900.bmp","E_SIGN_900.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_BICYCLELANE0.bmp","E_SIGN_BICYCLELANE0.bmp","E_SIGN_BICYCLELANE0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_BOULDER0.bmp","E_SIGN_BOULDER0.bmp","E_SIGN_BOULDER0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_BUMPY_ROAD0.bmp","E_SIGN_BUMPY_ROAD0.bmp","E_SIGN_BUMPY_ROAD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_CHURCH0.bmp","E_SIGN_CHURCH0.bmp","E_SIGN_CHURCH0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_CROSSWINDS0.bmp","E_SIGN_CROSSWINDS0.bmp","E_SIGN_CROSSWINDS0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_CURVE_AHEAD0.bmp","E_SIGN_CURVE_AHEAD0.bmp","E_SIGN_CURVE_AHEAD0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_ENDMINIMUMSPEED0.bmp","E_SIGN_ENDMINIMUMSPEED0.bmp","E_SIGN_ENDMINIMUMSPEED0.bmp",load_ent_etc,NULL,NULL);
+	button(0,0,"E_SIGN_EXIT0.bmp","E_SIGN_EXIT0.bmp","E_SIGN_EXIT0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_FOOTPATH0.bmp","E_SIGN_FOOTPATH0.bmp","E_SIGN_FOOTPATH0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_HOSPITAL0.bmp","E_SIGN_HOSPITAL0.bmp","E_SIGN_HOSPITAL0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_MINIMUMSPEED0.bmp","E_SIGN_MINIMUMSPEED0.bmp","E_SIGN_MINIMUMSPEED0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOENTRY0.bmp","E_SIGN_NOENTRY0.bmp","E_SIGN_NOENTRY0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOPARKING0.bmp","E_SIGN_NOPARKING0.bmp","E_SIGN_NOPARKING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOPASSING0.bmp","E_SIGN_NOPASSING0.bmp","E_SIGN_NOPASSING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOSTOPPING0.bmp","E_SIGN_NOSTOPPING0.bmp","E_SIGN_NOSTOPPING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOVEHICLES0.bmp","E_SIGN_NOVEHICLES0.bmp","E_SIGN_NOVEHICLES0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_NOVISITOR0.bmp","E_SIGN_NOVISITOR0.bmp","E_SIGN_NOVISITOR0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_ONESIDE_ROAD_NARROW0.bmp","E_SIGN_ONESIDE_ROAD_NARROW0.bmp","E_SIGN_ONESIDE_ROAD_NARROW0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_PARKING0.bmp","E_SIGN_PARKING0.bmp","E_SIGN_PARKING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_PEDCROSSING0.bmp","E_SIGN_PEDCROSSING0.bmp","E_SIGN_PEDCROSSING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_PEDESTRIAN0.bmp","E_SIGN_PEDESTRIAN0.bmp","E_SIGN_PEDESTRIAN0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_PHONE0.bmp","E_SIGN_PHONE0.bmp","E_SIGN_PHONE0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_RAILROAD0.bmp","E_SIGN_RAILROAD0.bmp","E_SIGN_RAILROAD0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_ROAD_NARROW0.bmp","E_SIGN_ROAD_NARROW0.bmp","E_SIGN_ROAD_NARROW0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_ROUNDABOUT0.bmp","E_SIGN_ROUNDABOUT0.bmp","E_SIGN_ROUNDABOUT0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_SLIPPERY0.bmp","E_SIGN_SLIPPERY0.bmp","E_SIGN_SLIPPERY0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_TRAFFIC0.bmp","E_SIGN_TRAFFIC0.bmp","E_SIGN_TRAFFIC0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_TRAFFICLIGHTS0.bmp","E_SIGN_TRAFFICLIGHTS0.bmp","E_SIGN_TRAFFICLIGHTS0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_TURNSCROSSING0.bmp","E_SIGN_TURNSCROSSING0.bmp","E_SIGN_TURNSCROSSING0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SIGN_YIELD0.bmp","E_SIGN_YIELD0.bmp","E_SIGN_YIELD0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_SOFA0.bmp","E_SOFA0.bmp","E_SOFA0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_STREETLIGHT0.bmp","E_STREETLIGHT0.bmp","E_STREETLIGHT0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TABLE0.bmp","E_TABLE0.bmp","E_TABLE0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TABLE10.bmp","E_TABLE10.bmp","E_TABLE10.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TABLE_BLOOD0.bmp","E_TABLE_BLOOD0.bmp","E_TABLE_BLOOD0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TARGET0.bmp","E_TARGET0.bmp","E_TARGET0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TARGET10.bmp","E_TARGET10.bmp","E_TARGET10.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TORCH0.bmp","E_TORCH0.bmp","E_TORCH0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TRASHCAN0.bmp","E_TRASHCAN0.bmp","E_TRASHCAN0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TRASHCAN10.bmp","E_TRASHCAN10.bmp","E_TRASHCAN10.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TRASHCAN20.bmp","E_TRASHCAN20.bmp","E_TRASHCAN20.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_TREASURE_CHEST0.bmp","E_TREASURE_CHEST0.bmp","E_TREASURE_CHEST0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_WHEATPACK0.bmp","E_WHEATPACK0.bmp","E_WHEATPACK0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_WOODCHAIR0.bmp","E_WOODCHAIR0.bmp","E_WOODCHAIR0.bmp",load_ent_etc,NULL,NULL);	
+	button(0,0,"E_WOODCHAIR20.bmp","E_WOODCHAIR20.bmp","E_WOODCHAIR20.bmp",load_ent_etc,NULL,NULL);	
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *food = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"F_APPLE_GREEN.bmp","F_APPLE_GREEN.bmp","F_APPLE_GREEN.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_APPLE_RED.bmp","F_APPLE_RED.bmp","F_APPLE_RED.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_BAGEL.bmp","F_BAGEL.bmp","F_BAGEL.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_BANANA.bmp","F_BANANA.bmp","F_BANANA.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_BREAD.bmp","F_BREAD.bmp","F_BREAD.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_BREAD_LOAF.bmp","F_BREAD_LOAF.bmp","F_BREAD_LOAF.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_CARROT.bmp","F_CARROT.bmp","F_CARROT.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_COOKIE.bmp","F_COOKIE.bmp","F_COOKIE.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_COOKIE1.bmp","F_COOKIE1.bmp","F_COOKIE1.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_COOKIE2.bmp","F_COOKIE2.bmp","F_COOKIE2.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_COOKIE3.bmp","F_COOKIE3.bmp","F_COOKIE3.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_CORN.bmp","F_CORN.bmp","F_CORN.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_CROISSAINT.bmp","F_CROISSAINT.bmp","F_CROISSAINT.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_APPLE_GREEN.bmp","F_APPLE_GREEN.bmp","F_APPLE_GREEN.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_DONUT.bmp","F_DONUT.bmp","F_DONUT.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_DONUT1.bmp","F_DONUT1.bmp","F_DONUT1.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_FOODSACK.bmp","F_FOODSACK.bmp","F_FOODSACK.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_GENERICF.bmp","F_GENERICF.bmp","F_GENERICF.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_HAMBURGER.bmp","F_HAMBURGER.bmp","F_HAMBURGER.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_HOTDOG.bmp","F_HOTDOG.bmp","F_HOTDOG.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_ICECREAM.bmp","F_ICECREAM.bmp","F_ICECREAM.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_NECTARINE.bmp","F_NECTARINE.bmp","F_NECTARINE.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_ORANGE.bmp","F_ORANGE.bmp","F_ORANGE.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_PEAR.bmp","F_PEAR.bmp","F_PEAR.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_PIZZA.bmp","F_PIZZA.bmp","F_PIZZA.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_SQUASH.bmp","F_SQUASH.bmp","F_SQUASH.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_STEAK.bmp","F_STEAK.bmp","F_STEAK.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_TOMATO.bmp","F_TOMATO.bmp","F_TOMATO.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_WATERMELON.bmp","F_WATERMELON.bmp","F_WATERMELON.bmp",load_ent_food,NULL,NULL);
+	button(0,0,"F_WATERMELON_PIECE.bmp","F_WATERMELON_PIECE.bmp","F_WATERMELON_PIECE.bmp",load_ent_food,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *machs = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"M_CONSOLE.bmp","M_CONSOLE.bmp","M_CONSOLE.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_GENERATOR.bmp","M_GENERATOR.bmp","M_GENERATOR.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_GENERATOR1.bmp","M_GENERATOR1.bmp","M_GENERATOR1.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_GENERATOR2.bmp","M_GENERATOR2.bmp","M_GENERATOR2.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_HATCH.bmp","M_HATCH.bmp","M_HATCH.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_POWERPLANT.bmp","M_POWERPLANT.bmp","M_POWERPLANT.bmp",load_ent_machs,NULL,NULL);
+	button(0,0,"M_TURRET02.bmp","M_TURRET02.bmp","M_TURRET02.bmp",load_ent_machs,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *plants = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"BIGTREE2.bmp","BIGTREE2.bmp","BIGTREE2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"BSTONE1.bmp","BSTONE1.bmp","BSTONE1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"BSTONE2.bmp","BSTONE2.bmp","BSTONE2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"BUSH1.bmp","BUSH1.bmp","BUSH1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"BUSH3.bmp","BUSH3.bmp","BUSH3.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"BUSH7.bmp","BUSH7.bmp","BUSH7.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"D_14_LOD0.bmp","D_14_LOD0.bmp","D_14_LOD0.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"D_FANTASY_TREE1.bmp","D_FANTASY_TREE1.bmp","D_FANTASY_TREE1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"D_FLOWER_10.bmp","D_FLOWER_10.bmp","D_FLOWER_10.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"D_FLOWER_6.bmp","D_FLOWER_6.bmp","D_FLOWER_6.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"D_LITGR.bmp","D_LITGR.bmp","D_LITGR.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"FERN_1.bmp","FERN_1.bmp","FERN_1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"FLOWER_1.bmp","FLOWER_1.bmp","FLOWER_1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GPALM1.bmp","GPALM1.bmp","GPALM1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GRASS.bmp","GRASS.bmp","GRASS.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GRASS1.bmp","GRASS1.bmp","GRASS1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GRASS2.bmp","GRASS2.bmp","GRASS2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GRASS3.bmp","GRASS3.bmp","GRASS3.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"GRASS_SCATT.bmp","GRASS_SCATT.bmp","GRASS_SCATT.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"INDOORPLANT.bmp","INDOORPLANT.bmp","INDOORPLANT.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"KAVA_PLANT.bmp","KAVA_PLANT.bmp","KAVA_PLANT.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"KAYA2.bmp","KAYA2.bmp","KAYA2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"KAYA3.bmp","KAYA3.bmp","KAYA3.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LIGHTRAY1.bmp","LIGHTRAY1.bmp","LIGHTRAY1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_BIRKE_KR.bmp","LP_BIRKE_KR.bmp","LP_BIRKE_KR.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_BIRKE_ST.bmp","LP_BIRKE_ST.bmp","LP_BIRKE_ST.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_BUSCH1.bmp","LP_BUSCH1.bmp","LP_BUSCH1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_CHUNK1.bmp","LP_CHUNK1.bmp","LP_CHUNK1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_FARN.bmp","LP_FARN.bmp","LP_FARN.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_GRASS.bmp","LP_GRASS.bmp","LP_GRASS.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_PINE1_KR.bmp","LP_PINE1_KR.bmp","LP_PINE1_KR.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_PINE1_ST.bmp","LP_PINE1_ST.bmp","LP_PINE1_ST.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_SPRUCE_KR.bmp","LP_SPRUCE_KR.bmp","LP_SPRUCE_KR.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_SPRUCE_ST.bmp","LP_SPRUCE_ST.bmp","LP_SPRUCE_ST.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_STONES.bmp","LP_STONES.bmp","LP_STONES.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_TREE2_KR.bmp","LP_TREE2_KR.bmp","LP_TREE2_KR.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_TREE2_ST.bmp","LP_TREE2_ST.bmp","LP_TREE2_ST.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"LP_TREE_TRCK.bmp","LP_TREE_TRCK.bmp","LP_TREE_TRCK.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"MUSHROOM1.bmp","MUSHROOM1.bmp","MUSHROOM1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"MUSHROOM2.bmp","MUSHROOM2.bmp","MUSHROOM2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"MUSHROOM3.bmp","MUSHROOM3.bmp","MUSHROOM3.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"MUSHROOMS1.bmp","MUSHROOMS1.bmp","MUSHROOMS1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"MUSHROOMS2.bmp","MUSHROOMS2.bmp","MUSHROOMS2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"PLANT1.bmp","PLANT1.bmp","PLANT1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"PLATANE.bmp","PLATANE.bmp","PLATANE.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"RAYS1.bmp","RAYS1.bmp","RAYS1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"RAYS2.bmp","RAYS2.bmp","RAYS2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"SHRUB.bmp","SHRUB.bmp","SHRUB.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"SSTONE1.bmp","SSTONE1.bmp","SSTONE1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"STONE_FOUNTAIN.bmp","STONE_FOUNTAIN.bmp","STONE_FOUNTAIN.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"STONE_GROUND_SMALL.bmp","STONE_GROUND_SMALL.bmp","STONE_GROUND_SMALL.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE1.bmp","TREE1.bmp","TREE1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE2.bmp","TREE2.bmp","TREE2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE4.bmp","TREE4.bmp","TREE4.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE5.bmp","TREE5.bmp","TREE5.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE5_2.bmp","TREE5_2.bmp","TREE5_2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE_LO.bmp","TREE_LO.bmp","TREE_LO.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"TREE_LOG1.bmp","TREE_LOG1.bmp","TREE_LOG1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WATERFALL.bmp","WATERFALL.bmp","WATERFALL.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED1.bmp","WEED1.bmp","WEED1.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED2.bmp","WEED2.bmp","WEED2.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED3.bmp","WEED3.bmp","WEED3.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED4.bmp","WEED4.bmp","WEED4.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED5.bmp","WEED5.bmp","WEED5.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED6.bmp","WEED6.bmp","WEED6.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED7.bmp","WEED7.bmp","WEED7.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED8.bmp","WEED8.bmp","WEED8.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED9.bmp","WEED9.bmp","WEED9.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED10.bmp","WEED10.bmp","WEED10.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED11.bmp","WEED11.bmp","WEED11.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED12.bmp","WEED12.bmp","WEED12.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED13.bmp","WEED13.bmp","WEED13.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED14.bmp","WEED14.bmp","WEED14.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED15.bmp","WEED15.bmp","WEED15.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED16.bmp","WEED16.bmp","WEED16.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED17.bmp","WEED17.bmp","WEED17.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED18.bmp","WEED18.bmp","WEED18.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEED24.bmp","WEED24.bmp","WEED24.bmp",load_ent_plants,NULL,NULL);
+	button(0,0,"WEEDM.bmp","WEEDM.bmp","WEEDM.bmp",load_ent_plants,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *tportts = {
+	
+	layer = 6;
+	bmap = "cover.bmp";
+	
+	pos_x = 0;
+	
+	button(0,0,"T_BOMBER0.bmp","T_BOMBER0.bmp","T_BOMBER0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_BOMBER10.bmp","T_BOMBER10.bmp","T_BOMBER10.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_CAR10.bmp","T_CAR10.bmp","T_CAR10.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_CAR20.bmp","T_CAR20.bmp","T_CAR20.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_CAR30.bmp","T_CAR30.bmp","T_CAR30.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_CAR40.bmp","T_CAR40.bmp","T_CAR40.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_CAR_MR20.bmp","T_CAR_MR20.bmp","T_CAR_MR20.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_F105_THUG0.bmp","T_F105_THUG0.bmp","T_F105_THUG0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_F160.bmp","T_F160.bmp","T_F160.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_HOVER10.bmp","T_HOVER10.bmp","T_HOVER10.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_LANCASTER0.bmp","T_LANCASTER0.bmp","T_LANCASTER0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_MCDF4_PHANTOM0.bmp","T_MCDF4_PHANTOM0.bmp","T_MCDF4_PHANTOM0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_SHOPPINGCADDY0.bmp","T_SHOPPINGCADDY0.bmp","T_SHOPPINGCADDY0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_TANK0.bmp","T_TANK0.bmp","T_TANK0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_TANK10.bmp","T_TANK10.bmp","T_TANK10.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_TRAINPART0.bmp","T_TRAINPART0.bmp","T_TRAINPART0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_VIPER0.bmp","T_VIPER0.bmp","T_VIPER0.bmp",load_ent_tportts,NULL,NULL);
+	button(0,0,"T_WAGON0.bmp","T_WAGON0.bmp","T_WAGON0.bmp",load_ent_tportts,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
 PANEL *panObj_Main_X = { // So that it won't get sticked with panObj_Main
 	
 	layer = 6;
@@ -585,22 +1065,22 @@ PANEL *panCAMRecorder_digits = {
 }
 
 PANEL *panCAMRecorderREC = {
-   
-   layer = 4;
-   bmap = "panCAMRecorderREC.bmp";
-   
-   flags = OVERLAY;
-   
+	
+	layer = 4;
+	bmap = "panCAMRecorderREC.bmp";
+	
+	flags = OVERLAY;
+	
 }
 
 PANEL *panScreenshot = {
-   
-   layer = 999;
-   bmap = "panScreenshot.bmp";
-   
-   flags = TRANSLUCENT;
-   alpha = 100;
-   
+	
+	layer = 999;
+	bmap = "panScreenshot.bmp";
+	
+	flags = TRANSLUCENT;
+	alpha = 100;
+	
 }
 
 ////////////////////////////////////////////////////////////
