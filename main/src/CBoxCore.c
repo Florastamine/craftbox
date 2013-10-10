@@ -23,6 +23,15 @@ http://mp3.zing.vn/album/Piano-Spa-In-Love-Mr-Tuk-Bo-Tree/ZWZACZFW.html?st=12
 http://www.youtube.com/watch?v=evSwhNl-HhQ
 http://mp3.zing.vn/bai-hat/Power-Kanye-West/ZWZA707C.html
 http://mp3.zing.vn/bai-hat/Viva-la-Vida-Coldplay/ZW60CI7D.html
+http://mp3.zing.vn/bai-hat/I-m-On-One-DJ-Khaled-ft-Drake-Rick-Ross/ZWZCCCU9.html
+
+- Objects
+- Sounds
+- Particles
+- Lights
+- Sprites (Decals)
+- Terrains
+- Nodes
 
 >+++
 --------------------------------------------------
@@ -45,6 +54,8 @@ Returns: -
 */
 void TakeScreenshot() {
 	
+	WriteLog("Executing TakeScreenshot()...");
+	
 	file_for_screen(FILE_SCREENSHOT,shot);
 	shot++;
 	
@@ -59,6 +70,8 @@ void TakeScreenshot() {
 
 	reset(panScreenshot,SHOW);
 	panScreenshot.alpha = 100;
+	
+	WriteLog("Finished executing TakeScreenshot().");
 	
 }
 
@@ -76,7 +89,17 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateWaypoint()
 {
-	if(!my) return -1;
+	WriteLog("Executing GenerateWaypoint()...");
+	
+	if(!my) {
+		
+		_beep();
+		WriteLog("*[ERROR] GenerateWaypoint() doesn't have any entity to be assigned to. ");
+		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateWaypoint(), returns -1.");
+		
+		return -1;
+		
+	}
 
 	my_target_node = me;
 	my_target_node.emask |= ENABLE_SCAN;
@@ -86,6 +109,8 @@ int GenerateWaypoint()
 		wait(1);
 		
 	}
+	
+	WriteLog("Finished executing GenerateWaypoint(). Or, in the other hand, the entity that was carrying GenerateWaypoint() was killed...");
 }
 
 /*
@@ -101,15 +126,27 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateSound() {
 	
-	if(!my) return -1;
+	WriteLog("Executing GenerateSound()...");
 	
-	ent_playloop(my,sndobjs[num_sndobjs],100);
+	if(!my) {
+		
+		_beep();
+		WriteLog("*[ERROR] GenerateSound() doesn't have any entity to be assigned to. ");
+		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateSound(), returns -1.");
+		
+		return -1;
+		
+	}
+	
+	ent_playloop(my,snd_create(TEMPSTR),VOL_EFFECTS);
 	
 	while(my) {
 		
 		wait(1);
 		
 	}
+	
+	WriteLog("Finished executing GenerateSound(). Or, in the other hand, the entity that was carrying GenerateSound() was killed...");
 }
 
 /*
@@ -125,7 +162,17 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateLight() {
 	
-	if(!my) return -1;
+	WriteLog("Executing GenerateLight()...");
+	
+	if(!my) {
+		
+		_beep();
+		WriteLog("*[ERROR] GenerateLight() doesn't have any entity to be assigned to. ");
+		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateLight(), returns -1.");
+		
+		return -1;
+		
+	}
 	
 	set(my, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 	
@@ -136,7 +183,10 @@ int GenerateLight() {
 	my.ambient = 100;
 	
 	my.lightrange = random(500);
-	vec_set(my.red,vector(random(255),random(255),random(255)));
+	
+	my.red = temp_light.red;
+	my.green = temp_light.green;
+	my.blue = temp_light.blue;
 	
 	my.z += 100;
 	
@@ -175,66 +225,75 @@ int GenerateLight() {
 		
 		wait(1);
 	}
+	
+	WriteLog("Finished executing GenerateLight(). Or, in the other hand, the entity that was carrying GenerateLight() was killed...");
 }
 
 /*
 --------------------------------------------------
-void FixObjectScale(ENTITY *e)
+void AddToTextureProjectionArray(ENTITY *Ent)
 
-Desc: This function will fix incorrect scale ratio on models.
-Actually, I borrowed models from various source, and surely,
-they don't have the same scale ratio. So this quick fix
-will re-scale the models.
 
-Returns: -
 --------------------------------------------------
 */
-void FixObjectScale(ENTITY *e) {
+void AddToTextureProjectionArray(ENTITY *Ent) {
 	
-	switch(num_mdlobjs) {
+	while(!Ent) wait(1);
+	
+	if(rEntCount < MAX_rEnts) {
 		
-		case 52: // church/temple model
-		e.scale_x = e.scale_y = e.scale_z *= 3;
-		
-		break;
-		/////////////////////////////////////////////////////////////// 
-		case 51: // big building
-		e.scale_x = e.scale_y = e.scale_z *= 2;
-		
-		break;
-		///////////////////////////////////////////////////////////////
-		case 53: // [big] fence
-		e.scale_x = e.scale_y = e.scale_z /= 1.5;
-		
-		break;
-		///////////////////////////////////////////////////////////////		
-		case 54: // [big] fence bar
-		e.scale_x = e.scale_y = e.scale_z /= 1.5;
-		
-		break;
-		///////////////////////////////////////////////////////////////		
-		case 55: // wood entrance
-		e.scale_x = e.scale_y = e.scale_z *= 2;
-		
-		break;
-		///////////////////////////////////////////////////////////////
-		case 2: // bird
-		e.scale_x = e.scale_y = e.scale_z /= 2;
-		
-		break;
-		///////////////////////////////////////////////////////////////
-		case 12: // idk what is this
-		e.scale_x = e.scale_y = e.scale_z *= 2;
-		
-		break;
-		///////////////////////////////////////////////////////////////
-		case 55: // generic wood gate
-		e.scale_x = e.scale_y = e.scale_z *= 3;
-		
-		break;
+		rEntCount += 1;
+		rEnt[rEntCount] = Ent;
 		
 	}
 	
+}
+
+/*
+--------------------------------------------------
+void RemoveFromTextureProjectionArray(ENTITY *Ent)
+
+
+--------------------------------------------------
+*/
+void RemoveFromTextureProjectionArray(ENTITY *Ent) {
+	
+	// Test for deletion of the newest created entity.
+	if(rEnt[rEntCount] == Ent) {
+		
+		rEnt[rEntCount] = NULL;
+		rEntCount -= 1;
+		
+		return;
+		
+	}
+
+	if(rEntCount == -1) return;
+
+	int temprEntCount = 0;
+
+	// Check if this entity exists in the rEnt array.
+	for( ; temprEntCount <= rEntCount; temprEntCount++)
+	if(rEnt[temprEntCount] == Ent) break;
+
+	ptr_remove(rEnt[temprEntCount]);
+
+	if(rEnt[temprEntCount+1]) { // Shift 'em
+		
+		int temprEntCount2 = temprEntCount + 2;
+		
+		while(rEnt[temprEntCount2]) {
+			
+			rEnt[temprEntCount2 - 1] = rEnt[temprEntCount2];
+			temprEntCount2 -= 1;
+			
+			wait(1);
+			
+		}
+		
+	}
+	
+	rEntCount -= 1;
 }
 
 /*
@@ -251,33 +310,49 @@ Returns:
 - Fail: NULL object.
 --------------------------------------------------
 */
-ENTITY *CreateObject() { // This inherits a lot from place_me
+ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateObject.
 
+	WriteLog("Executing CreateObject()...");
+	
+	if(str_cmp(TEMPSTR[0]," ")) {
+		
+		_beep();
+		WriteLog("*[ERROR] Somehow TEMPSTR is empty, cannot create object, returns NULL.");
+		
+		return NULL;
+		
+	}
+	
 	// Stupid object couldn't float
-	if(!temp_pos.x && !temp_pos.y && !temp_pos.z) return;
+	if(!temp_pos.x && !temp_pos.y && !temp_pos.z) {
+		
+		_beep();
+		WriteLog("*[ERROR] The cursor's position is out of range, returns a NULL object.");
+		WriteLog("* Point the cursor to the correct position and try again. Solid ground, for example.");
+		
+		return NULL;
+		
+	}
 	
 	ENTITY *tmp;
-
-	switch(_ObjectType) {
+	
+	if(TEMP_OBJECT_TYPE > Object && TEMP_OBJECT_TYPE < ObjectNode) {
 		
-		////////////////////////////////////////////////////////////
-		case NormalObject:
+		tmp = ent_create(TEMPSTR,temp_pos,ObjectManipulationInterface);
 		
-		if(str_len(mdlobjs_table_ptr[num_mdlobjs]) == 0) {
-			
-			printf("Wrong object ID.\nMaybe you're trying to access unallocated space in the object database.");
-			return NULL;
-			
-		}
+		while(!tmp) wait(1);
+		WriteLog("Finished creating the temporary neutral object. Passing values...");
 		
-		tmp = ent_create(mdlobjs_table_ptr[num_mdlobjs],temp_pos.x,ObjectManipulationInterface);
+		AddToTextureProjectionArray(tmp);
 		
-		while(tmp == NULL) wait(1); // wait for tmp to be completely created.
+		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		FixObjectScale(tmp);
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
 		
+		// Begin passing values for the neutral object.
 		set(tmp, POLYGON);
-		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot
+		reset(tmp, NOFOG | INVISIBLE | TRANSLUCENT); // Tha giet nham con hon bo sot	
 		
 		tmp.alpha = 0;
 		tmp.ambient = 50;
@@ -285,61 +360,94 @@ ENTITY *CreateObject() { // This inherits a lot from place_me
 		
 		tmp.material = mtl_model;
 		
-		tmp.ObjectType = NormalObject;
-		tmp.ObjectID = num_mdlobjs;
-		
 		tmp.ObjectDynamic = 0; // This is a static object
 		tmp.ObjectPhysics = 0; // And physics aren't enabled by default.		
+		WriteLog("Finished executing CreateObject(), released a new neutral object.");
 		
 		return tmp;
 		
-		break;
-		////////////////////////////////////////////////////////////
+	}
+	
+	if(TEMP_OBJECT_TYPE == Particle) {
 		
-		////////////////////////////////////////////////////////////
-		// Lights don't have a database. So the "unallocated space"
-		// error would never happen.
-		
-		case Light:
-		
-		tmp = ent_create("jabber.png",temp_pos.x,GenerateLight);
-		
-		tmp.ObjectType = Light; // Du sao thi light cung ngan hon _ObjectType
-		// Lights don't have IDs so passing them is redundant.
-		
-		return tmp;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case Particle :
-		
-		switch(num_partobjs) {
+		switch(ParticleIDNumber) {
 			
-			case part_spiral: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_spiral); break;
-			case part_colorfulspark: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_colorfulspark); break;
-			case part_spacehole: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_spacehole); break;
-			case part_fountain2: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fountain2); break;
-			case part_fountain1: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fountain1); break;
-			case part_fire2: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fire2); break;
-			case part_fire1: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_fire1); break;
-			case part_doublehelix: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_doublehelix); break;
-			case part_composition: tmp = ent_create("desktop_effect.png",temp_pos.x,emit_composition); break;
+			case part_spiral: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_spiral);
+			
+			break;
+			
+			case part_colorfulspark: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_colorfulspark);
+			
+			break;
+			
+			case part_spacehole: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_spacehole);
+			
+			break;
+			
+			case part_fountain2: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain2);
+			
+			break;
+			
+			case part_fountain1: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain1);
+			
+			break;
+			
+			case part_fire2: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire2);
+			
+			break;
+			
+			case part_fire1: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire1);
+			
+			break;
+			
+			case part_doublehelix: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_doublehelix);
+			
+			break;
+			
+			case part_composition: 
+			
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_composition);
+			
+			break;
 			
 			default:
 			
-			printf("num_partobjs outside range.");
+			_beep();
+			WriteLog("*[ERROR] ParticleIDNumber out of range, returns a NULL object.");
+			
 			return NULL;
 			
 			break; // redundant, maybe.
 			
 		}
 		
+		while(!tmp) wait(1);
+		WriteLog("Finished creating the temporary particle object. Passing values...");
+		
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
+		
+		tmp.ObjectType = TEMP_OBJECT_TYPE;		
+		
 		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 		
-		tmp.ObjectType = Particle;
-		tmp.ObjectID = num_partobjs;
+		tmp.ParticleID = ParticleIDNumber;
 		
 		tmp.scale_x = tmp.scale_y = tmp.scale_z /= 2;
 		
@@ -347,22 +455,39 @@ ENTITY *CreateObject() { // This inherits a lot from place_me
 		tmp.alpha = DEFAULT_ALPHA+25;
 		tmp.ambient = 100;
 		
+		WriteLog("Finished executing CreateObject(), released a new particle object.");
+		
+		return tmp;	
+		
+	}
+	
+	if(TEMP_OBJECT_TYPE == Light) {
+		
+		tmp = ent_create("jabber.png",temp_pos,GenerateLight);
+		
+		while(tmp == NULL) wait(1);
+		WriteLog("Finished creating the temporary light object. Passing values...");
+		
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
+		
+		tmp.ObjectType = TEMP_OBJECT_TYPE;
+		// Lights don't have IDs so passing them is redundant.
+		WriteLog("Finished executing CreateObject(), released a new light object.");
+		
 		return tmp;
 		
-		break;	
-		////////////////////////////////////////////////////////////
+	}
+	
+	if(TEMP_OBJECT_TYPE == Sound) {
 		
-		////////////////////////////////////////////////////////////
-		case Sound:
+		tmp = ent_create("sound_32.png",temp_pos,GenerateSound);
 		
-		if(!sndobjs[num_sndobjs] || num_sndobjs < 0 || num_sndobjs > 50) {
-			
-			printf("Wrong sound ID or damaged sound file.\nMaybe you're trying to access unallocated space in the sound database.");
-			return NULL;
-			
-		}
+		while(tmp == NULL) wait(1);
+		WriteLog("Finished creating the temporary sound object. Passing values...");
 		
-		tmp = ent_create("sound_32.png",temp_pos.x,GenerateSound);
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
 		
 		set(tmp, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 		
@@ -373,47 +498,78 @@ ENTITY *CreateObject() { // This inherits a lot from place_me
 		tmp.alpha = DEFAULT_ALPHA+25;
 		tmp.ambient = 100;
 		
-		tmp.ObjectType = Sound;
-		tmp.ObjectID = num_sndobjs;
+		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
+		WriteLog("Finished executing CreateObject(), released a new sound object.");
 		return tmp;
 		
-		break;
-		////////////////////////////////////////////////////////////
+	}
+	
+	if(TEMP_OBJECT_TYPE == Sprite) {
 		
-		////////////////////////////////////////////////////////////
-		case Node:
-		tmp = ent_create("ix_waypoint.mdl",temp_pos.x,GenerateWaypoint);
+		tmp = ent_create(TEMPSTR,temp_pos,ObjectManipulationInterface);
+		
+		while(!tmp) wait(1);
+		WriteLog("Finished creating the temporary sprite object. Passing values...");
+		
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
+		
+		set(tmp,OVERLAY | BRIGHT | PASSABLE | POLYGON);
+		
+		tmp.ObjectType = TEMP_OBJECT_TYPE;
+		
+		WriteLog("Finished executing CreateObject(), released a new sprite object.");
+		return tmp;
+		
+	}
+	
+	if(TEMP_OBJECT_TYPE == Terrain) {
+		
+		tmp = ent_create(TEMPSTR,temp_pos,NULL);
+		
+		while(!tmp) wait(1);
+		WriteLog("Finished creating the temporary terrain object. Passing values...");
+		
+		AddToTextureProjectionArray(tmp);
+		
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
+		
+		set(tmp,POLYGON);
+		
+		tmp.ObjectType = TEMP_OBJECT_TYPE;
+		
+		WriteLog("Finished executing CreateObject(), released a new terrain object.");
+		return tmp;
+		
+	}
+	
+	if(TEMP_OBJECT_TYPE == ObjectNode) {
+		
+		tmp = ent_create("ix_waypoint.mdl",temp_pos,GenerateWaypoint);
+		
+		while(tmp == NULL) wait(1);
+		WriteLog("Finished creating the temporary waypoint object. Passing values...");
+		
+		tmp.filename = str_create("#300");
+		str_cpy(tmp.filename,TEMPSTR);
 		
 		set(tmp, BRIGHT | PASSABLE);
 		tmp.ambient = 100;
 		
 		tmp.scale_x = tmp.scale_y = tmp.scale_z *= 1.5;
 		
-		tmp.ObjectType = Node;
+		tmp.ObjectType = ObjectNode;
+		
+		WriteLog("Finished executing CreateObject(), released a new waypoint object.");
 		
 		return tmp;
 		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case Terrain :
-		
-		return NULL;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		default:
-		
-		printf("_ObjectType outside range.");
-		return NULL;
-		
-		break;
-		
-		
 	}
+	
+	return NULL; // For objects those fall out of range.
+	
 }
 
 /*
@@ -425,12 +581,12 @@ void main(void) {
 
 /*
 --------------------------------------------------
-void FolderScan(STRING *dir, STRING *ext)
+void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 
 
 --------------------------------------------------
 */
-void FolderScan(STRING *dir, STRING *ext)
+void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 {
 	TEXT *read_files = txt_create(1000,1);
 	
@@ -447,14 +603,14 @@ void FolderScan(STRING *dir, STRING *ext)
 	var num = files_already;
 	while(num<999)
 	{
-		str_cpy((files_list.pstring)[num],"");
+		str_cpy((filler.pstring)[num],"");
 		num++;
 	}
 	
 	num=0;
 	while(num<files_found)
 	{
-		str_cpy((files_list.pstring)[num+files_already],(read_files.pstring)[num]);
+		str_cpy((filler.pstring)[num+files_already],(read_files.pstring)[num]);
 		num++;
 	}
 	list_start=0;
@@ -474,14 +630,26 @@ Returns: -1 if the file couldn't be opened.
 --------------------------------------------------
 */
 int PlayVideo(STRING *what, var vol) {
+	
+	WriteLog("Executing PlayVideo(STRING *what, var vol)...");
+	
 	proc_kill(4);
 
 	var hndl;
 	
-	if(!media_play(what,NULL,0)) return -1;
+	if(!media_play(what,NULL,0)) {
+		
+		_beep();
+		WriteLog("*[ERROR] The file couldn't be opened.");
+		
+		return -1;
+		
+	}
 	else hndl = media_play(what,NULL,abs(vol));
 
 	while(media_playing(hndl)) wait(1);
+	
+	WriteLog("Finished executing PlayVideo(STRING *what, var vol).");
 }
 
 /* 
@@ -496,13 +664,27 @@ it was partly rewritten and used as the base code for craftbox.
 Returns: -
 --------------------------------------------------
 */
+
 void FollowPointer() {
+	
 	proc_mode = PROC_LATE  ; // I'm so stupid...
 	
+	WriteLog("Executing FollowPointer() (followed by proc_mode)...");
+	
+	if(!KERNEL_IS_RUNNING) {
+		
+		_beep();
+		WriteLog("*[ERROR] You must first start the kernel before executing FollowPointer().");
+		
+		return;
+		
+	}
+	
+	
 	fpsf_marker = me;
-	set(fpsf_marker,PASSABLE);
+	set(fpsf_marker,PASSABLE | POLYGON);
 
-	while(1) {
+	while(KERNEL_IS_RUNNING) {
 		
 		cpos1.x = mouse_pos.x;
 		cpos1.y = mouse_pos.y;
@@ -513,13 +695,23 @@ void FollowPointer() {
 		cpos2.z = 200000;
 		vec_for_screen(cpos2,camera);
 
-		c_trace(cpos1.x,cpos2.x,IGNORE_ME | IGNORE_PASSABLE | IGNORE_MODELS);
+		c_trace(cpos1.x,cpos2.x,
+		IGNORE_ME | IGNORE_PASSABLE | IGNORE_SPRITES | IGNORE_PUSH | 
+		USE_BOX | USE_POLYGON);
+		
 		vec_set(fpsf_marker.x,hit.x);
+		vec_set(fpsf_marker.y,hit.y);
+		vec_set(fpsf_marker.z,hit.z);
+		
 		vec_set(temp_pos.x,hit.x);
+		vec_set(temp_pos.y,hit.y);
+		vec_set(temp_pos.z,hit.z);
 		
 		wait(1);
 		
 	}
+	
+	WriteLog("FollowPointer() was closed. Probably because of the termination of the kernel.");
 }
 
 /*
@@ -534,8 +726,18 @@ yet been opened.
 */
 int PassObjectPropertiesToGUI(ENTITY *e) {
 	
-	if(!is(panProp,SHOW)) return -1;
+	WriteLog("Executing PassObjectPropertiesToGUI(ENTITY *e)...");
 	
+	if(!is(panProp,SHOW)) {
+		
+		_beep();
+		WriteLog("panProp hasn't been opened yet. Cancelling PassObjectPropertiesToGUI(...).");
+		
+		return -1;
+		
+	}
+	
+	v_objectz = 3000 - e.z;
 	v_ambient = e.ambient;
 	v_alpha = 100 - e.alpha;
 
@@ -562,6 +764,8 @@ int PassObjectPropertiesToGUI(ENTITY *e) {
 
 	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
 	else button_state(panProp_1,8,0);
+	
+	WriteLog("Finished executing PassObjectPropertiesToGUI(ENTITY *e).");
 
 }
 
@@ -581,6 +785,10 @@ Returns: -
 */
 void ObjectRestoreDefault() {
 	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("Executing ObjectRestoreDefault()...");
+	
 	if(select) {
 		select.alpha = 0;
 		select.ambient = 0;
@@ -589,6 +797,8 @@ void ObjectRestoreDefault() {
 		
 		PassObjectPropertiesToGUI(select); // update the properties panel
 	}
+	
+	WriteLog("Finished executing ObjectRestoreDefault().");
 	
 }
 
@@ -600,9 +810,44 @@ void ObjectRandomPan()
 --------------------------------------------------
 */
 void ObjectRandomPan() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("Executing ObjectRandomPan()...");
 
 	if(select) select.pan = random(360);
+	
+	WriteLog("Finished executing ObjectRandomPan().");
 
+}
+
+/*
+--------------------------------------------------
+void MaterialCopy(MATERIAL *dest, MATERIAL *source)
+
+
+--------------------------------------------------
+*/
+void MaterialCopy(MATERIAL *dest, MATERIAL *source) {
+   
+   while(!dest || !source) wait(1);
+   
+   dest.ambient_red = source.ambient_red;
+   dest.ambient_green = source.ambient_green;
+   dest.ambient_blue = source.ambient_blue;
+   
+   dest.specular_red = source.specular_red;
+   dest.specular_green = source.specular_green;
+   dest.specular_blue = source.specular_blue;
+   
+   dest.diffuse_red = source.diffuse_red;
+   dest.diffuse_green = source.diffuse_green;
+   dest.diffuse_blue = source.diffuse_blue;
+   
+   dest.emissive_red = source.emissive_red;
+   dest.emissive_green = source.emissive_green;
+   dest.emissive_blue = source.emissive_blue;
+   
 }
 
 /*
@@ -619,6 +864,10 @@ Returns: -1 if id is out of range.
 --------------------------------------------------
 */
 int MaterialSelect(var id) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("Executing MaterialSelect()...");
 
 	// Clear evidence first
 	int i = id;
@@ -640,6 +889,8 @@ int MaterialSelect(var id) {
 	button_state(panProp_2,id,1);
 
 	if(select) {
+		
+		WriteLog("Begin selecting the proper ID for passing to mat_temp...");
 		
 		switch(id) {
 			
@@ -773,6 +1024,8 @@ int MaterialSelect(var id) {
 			
 			default:
 			
+			WriteLog("id fell out of range, returns -1.");  
+			
 			return -1;
 			
 			break;
@@ -780,6 +1033,8 @@ int MaterialSelect(var id) {
 		}
 		
 	}
+	
+	WriteLog("Finished executing MaterialSelect().");
 
 }
 
@@ -796,8 +1051,9 @@ then be assigned to -1, which indicates neutral object.
 */
 int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 	
-	// This is an exception - an unplanned feature.
-	if(o.ObjectType == Terrain) return -1;
+	WriteLog("Executing PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of)...");
+	
+	of.name = str_create("#300");
 
 	////////////////////////////////////////////////////////////
 	// Pass general information to the clipboard first.
@@ -812,12 +1068,17 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 
 	of._alpha = o.alpha;
 	of._ambient = o.ambient;
-
-	////////////////////////////////////////////////////////////
-	switch(o.ObjectType) {
+	
+	// TOO LAZY TO USE MULTIPLE CASES IN A SWITCH STATMENT
+	// SO I SPLIT THEM INTO DIFFERENT IFs. IF IT SUCCESS,
+	// IT WILL RETURN, THUS PREVENTS THE FUNCTION FROM EXECUTING
+	// OTHER IFs.
+	
+	if(o.ObjectType > Object && o.ObjectType <= ObjectNode) {
 		
-		////////////////////////////////////////////////////////////
-		case NormalObject:
+		WriteLog("Passing information of a neutral object into clipboard.");
+		
+		str_cpy(of.name,o.filename);
 		
 		if(is(o,BRIGHT)) of._flags[0] = 1;
 		else of._flags[0] = 0;
@@ -843,7 +1104,6 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		if(is(o,TRANSLUCENT)) of._flags[7] = 1;
 		else of._flags[7] = 0;
 		
-		of.oid = o.ObjectID;
 		of.of_objtype = o.ObjectType;
 		
 		of.pStatic = o.ObjectDynamic;
@@ -853,11 +1113,17 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		// Also, it can be used to determine if the clipboard has any piece of data or not.
 		of.dp = 1;
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Passing done.");
 		
-		////////////////////////////////////////////////////////////
-		case Light:
+		return 1;
+		
+	}
+	
+	if(o.ObjectType == Light) {
+		
+		WriteLog("Passing information of a light object into clipboard.");
+		
+		str_cpy(of.name,o.filename);
 		
 		of._red = o.red;
 		of._green = o.green;
@@ -869,66 +1135,100 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.dp = 1;
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Passing done.");
 		
-		////////////////////////////////////////////////////////////
-		case Sound:
-		
-		of.of_objtype = o.ObjectType;
-		of.oid = o.ObjectID;
-		
-		of.dp = 1;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case Particle:
-		
-		of.of_objtype = o.ObjectType;
-		of.oid = o.ObjectID;
-		
-		of.dp = 1;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////
-		case Node:
-		
-		of.of_objtype = o.ObjectType;
-		
-		of.dp = 1;
-		
-		break;
-		////////////////////////////////////////////////////////////
-		
-		default:
-		
-		of.of_objtype = -1; // Neutral object
-		return -1;
-		
-		break;
+		return 1;
 		
 	}
+	
+	if(o.ObjectType == Sound) {
+		
+		WriteLog("Passing information of a sound object into clipboard.");
+		
+		str_cpy(of.name,o.filename);
+		
+		of.of_objtype = o.ObjectType;
+		
+		of.dp = 1;
+		
+		WriteLog("Passing done.");
+		
+		return 1;
+		
+	}
+	
+	if(o.ObjectType == Particle) {
+		
+		WriteLog("Passing information of a particle object into clipboard.");
+		
+		str_cpy(of.name,o.filename);
+		
+		of.of_objtype = o.ObjectType;
+		
+		of.dp = 1;
+		
+		WriteLog("Passing done.");
+		
+		return 1;
+		
+	}
+	
+	if(o.ObjectType == ObjectNode) {
+		
+		str_cpy(of.name,o.filename);
+		
+		return 1;
+		
+	}
+	
+	if(o.ObjectType == Sprite) {
+		
+		str_cpy(of.name,o.filename);
+		
+		return 1;
+		
+	}
+	
+	if(o.ObjectType == Terrain) {
+		
+		str_cpy(of.name,o.filename);
+		
+		return 1;
+		
+	}
+	
+	return -1;
+	
+	// need a fix here.
+	WriteLog("Finished executing PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of).");
 
 }
 
 /*
 --------------------------------------------------
-void PassClipboardDataToObject(ENTITY *e)
+int PassClipboardDataToObject(ENTITY *e)
 
 Desc: Copies general information from the clipboard 
 struct to ENTITY *e, and continues to copy the remaining 
 unique characteristics information based on clipboard.of_objtype.
 
-Returns: -
+Returns: -1 if e.ObjectType falls out of range (rare) or 
+the clipboard is empty. (clipboard.dp = 0)
 --------------------------------------------------
 */
-void PassClipboardDataToObject(ENTITY *e) {
+int PassClipboardDataToObject(ENTITY *e) {
 
-	if(e.ObjectType == Terrain) return;
+	WriteLog("Executing PassClipboardDataToObject(ENTITY *e)...");
+	
+	// Double check
+	if(!clipboard.dp) {
+		
+		_beep();
+		WriteLog("*[ERROR] Clipboard contains no data, returns -1.");
+		
+		return -1;
+		
+	}
 
 	////////////////////////////////////////////////////////////
 	// As usual, pass general data first.
@@ -943,22 +1243,12 @@ void PassClipboardDataToObject(ENTITY *e) {
 	e.pan = clipboard._pan;
 	e.tilt = clipboard._tilt;
 	e.roll = clipboard._roll;
-
-	////////////////////////////////////////////////////////////	
-	switch(clipboard.of_objtype) {
+	
+	if(clipboard.of_objtype > Object && clipboard.of_objtype <= ObjectNode) {
 		
-		// Neutral object
-		case -1:
-		
-		// Do nothing
-		
-		break;
-		
-		////////////////////////////////////////////////////////////
-		case NormalObject:
+		WriteLog("Clipboard contains information of a neutral object.");
 		
 		e.ObjectType = clipboard.of_objtype;
-		e.ObjectID = clipboard.oid;
 		
 		e.skill2 = clipboard.pStatic;
 		e.skill3 = clipboard.pPhysics;
@@ -988,11 +1278,15 @@ void PassClipboardDataToObject(ENTITY *e) {
 		if(clipboard._flags[7]) set(e,TRANSLUCENT);
 		else reset(e,TRANSLUCENT);
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Successfully passed clipboard data to object.");
 		
-		////////////////////////////////////////////////////////////
-		case Light:
+		return 1;
+		
+	}
+	
+	if(clipboard.of_objtype == Light) {
+		
+		WriteLog("Clipboard contains information of a light object.");
 		
 		e.red = clipboard._red;
 		e.green = clipboard._green;
@@ -1002,26 +1296,56 @@ void PassClipboardDataToObject(ENTITY *e) {
 		
 		e.material = mtl_model;
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Successfully passed clipboard data to object.");
 		
-		////////////////////////////////////////////////////////////
-		case Particle:
+		return 1;
+		
+	}
+	
+	if(clipboard.of_objtype == Particle) {
+		
+		WriteLog("Clipboard contains information of a particle object.");
 		
 		e.material = mtl_model;
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Successfully passed clipboard data to object.");
 		
-		////////////////////////////////////////////////////////////
-		case Sound:
+		return 1;
+		
+	}
+	
+	if(clipboard.of_objtype == Sound) {
+		
+		WriteLog("Clipboard contains information of a sound object.");
 		
 		e.material = mtl_sprite;
 		
-		break;
-		////////////////////////////////////////////////////////////
+		WriteLog("Successfully passed clipboard data to object.");
+		
+		return 1;
 		
 	}
+	
+	if(clipboard.of_objtype == Sprite) {
+		
+		return 1;
+		
+	}
+	
+	if(clipboard.of_objtype == Terrain) {
+		
+		return 1;
+		
+	}
+	
+	if(clipboard.of_objtype == ObjectNode) {
+		
+		return 1;
+		
+	}
+	
+	// need another fix here.
+	WriteLog("Finished executing PassClipboardDataToObject(ENTITY *e).");
 
 }
 
@@ -1039,13 +1363,16 @@ programming mistakes.
 --------------------------------------------------
 */
 void ObjectCut() {
+	
+	WriteLog("Executing ObjectCut()...");
 
 	if(select) {
 		
 		PassObjectDataToClipboard(select,clipboard);
 		
-		if(select.ObjectType == NormalObject) 
+		if(select.ObjectType > Object && select.ObjectType <= ObjectNode) 
 		{
+			
 			// Perform manual access to clipboard to copy material
 			
 			/*
@@ -1062,6 +1389,8 @@ void ObjectCut() {
 		ptr_remove(select);
 		select = NULL;
 	}
+	
+	WriteLog("Finished executing ObjectCut().");
 
 }
 
@@ -1078,17 +1407,21 @@ programming mistakes.
 --------------------------------------------------
 */
 void ObjectCopy() {
+	
+	WriteLog("Executing ObjectCopy()...");
 
 	if(select) {
 		
 		PassObjectDataToClipboard(select,clipboard);
 		
-		if(select.ObjectType == NormalObject) 
+		if(select.ObjectType == Object) 
 		{
 			//		// Perform manual access to clipboard to copy material
 			clipboard.m = mat_temp;
 		}
 	}
+	
+	WriteLog("Finished executing ObjectCopy().");
 
 }
 
@@ -1104,40 +1437,26 @@ Returns: -
 --------------------------------------------------
 */
 void ObjectPaste() {
-
+	
+	WriteLog("Executing ObjectPaste()...");
+	
 	if(clipboard.dp) {
 		
-		int _ObjectType_old = _ObjectType, ObjectID_old;
+		int TEMP_OBJECT_TYPE_old = clipboard.of_objtype;
+		STRING *TEMPSTR_old = str_create ( TEMPSTR );
 		
-		if(clipboard.of_objtype == Particle) {
-			
-			ObjectID_old = num_partobjs;
-			num_partobjs = clipboard.oid;
-			
-		}
-		if(clipboard.of_objtype == NormalObject) {
-			
-			ObjectID_old = num_mdlobjs;
-			num_mdlobjs = clipboard.oid;
-			
-		}
-		
-		if(clipboard.of_objtype == Sound) {
-			
-			ObjectID_old = num_sndobjs;
-			num_sndobjs = clipboard.oid;
-			
-		}
-		
-		_ObjectType = clipboard.of_objtype;
+		TEMP_OBJECT_TYPE = clipboard.of_objtype;
+		str_cpy(TEMPSTR,clipboard.name);
 		
 		PassClipboardDataToObject(CreateObject());
+		wait_for(PassClipboardDataToObject);
 		
-		if(clipboard.of_objtype == Particle) num_partobjs = ObjectID_old;
-		if(clipboard.of_objtype == NormalObject) num_mdlobjs = ObjectID_old;
-		if(clipboard.of_objtype == Sound) num_sndobjs = ObjectID_old;
+		str_cpy(TEMPSTR,TEMPSTR_old);
+		TEMP_OBJECT_TYPE = TEMP_OBJECT_TYPE_old;
 		
 	}
+	
+	WriteLog("Finished executing ObjectPaste().");
 
 }
 
@@ -1152,12 +1471,17 @@ Returns: -
 --------------------------------------------------
 */
 void ReadMaterialDataFromFile(MATERIAL *m, STRING *file) {
+	
+	WriteLog("Executing ReadMaterialDataFromFile(MATERIAL *m, STRING *file)...");
+	
 	while(m == NULL) wait(1); // wait for m to be completely created
 
 	var vpass = file_open_read(file);
 	if(vpass == 0) {
 		
-		printf("Failed to open %s for passing parameters.",file);
+		_beep();
+		WriteLog("*[ERROR] Failed to open <file> for reading material data, return.");
+		
 		return;
 		
 	}
@@ -1193,6 +1517,8 @@ void ReadMaterialDataFromFile(MATERIAL *m, STRING *file) {
 	m.power = file_var_read(vpass);
 
 	file_close(vpass);
+	
+	WriteLog("Finished executing ReadMaterialDataFromFile(MATERIAL *m, STRING *file).");
 }
 
 /*
@@ -1206,9 +1532,19 @@ Returns: -
 --------------------------------------------------
 */
 void PassMaterialDataToWindow(MATERIAL *m) {
+	
+	WriteLog("Executing PassMaterialDataToWindow(MATERIAL *m)...");
+	
 	while(m == NULL) wait(1);
 	
-	if(!is(panMat_Sub1,SHOW)) return;
+	if(!is(panMat_Sub1,SHOW)) {
+		
+		_beep();
+		WriteLog("*[ERROR] panMat_Sub1 hasn't been opened yet, return.");
+		
+		return;
+		
+	}
 
 	v_ambient_r = m.ambient_red;
 	v_ambient_g = m.ambient_green;
@@ -1228,6 +1564,8 @@ void PassMaterialDataToWindow(MATERIAL *m) {
 
 	v_power = m.power;
 	v_alpha_m = 100 - m.alpha;
+	
+	WriteLog("Finished executing PassMaterialDataToWindow(MATERIAL *m).");
 }
 
 /*
@@ -1243,13 +1581,17 @@ Returns: -
 --------------------------------------------------
 */
 void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
+	
+	WriteLog("Executing WriteMaterialDataToFile(STRING *file, MATERIAL *m)...");
 
 	while(m == NULL) wait(1);
 
 	var vpass = file_open_write(file);
 	if(vpass == 0) {
 		
-		printf("Failed to open %s for writing data.",file);
+		_beep();
+		WriteLog("*[ERROR] Failed to open <file> for writing material data to, return.");
+		
 		return;
 		
 	}
@@ -1298,6 +1640,8 @@ void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
 
 	// close the panel.
 	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+	
+	WriteLog("Finished executing WriteMaterialDataToFile(STRING *file, MATERIAL *m).");
 }
 
 /*
@@ -1312,6 +1656,10 @@ Returns: -
 --------------------------------------------------
 */
 void MaterialSave() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("Executing MaterialSave()...");
 
 	// Material saving is available only to custom materials
 	switch(mat_type) {
@@ -1342,9 +1690,11 @@ void MaterialSave() {
 		
 		default:
 		// This line will never be executed.
-		printf("Material saving is available only to custom materials.");
+		//		printf("Material saving is available only to custom materials.");
 		break;
 	}
+	
+	WriteLog("Finished executing MaterialSave().");
 
 }
 
@@ -1365,18 +1715,24 @@ Returns: -
 */
 void ObjectManipulationCore()
 {
-	while(mouse_left && (manip_type > 0 && manip_type < 4))
+	WriteLog("Executing ObjectManipulationCore()...");
+	
+	while(mouse_left && (manip_type > 0 && manip_type < 4)) // [0..4]
 	{
 		
 		if(manip_type == scale) 
 		{
 			GGUIHide();
 			
-			if(key_alt) {
+			if(key_alt) { // i don't place the checker here 'cause it can create jerky effect
 				
-				my.scale_x -= .05;
-				my.scale_y -= .05;
-				my.scale_z -= .05;
+				if(my.scale_x >= MINIMUM_SCALE_CONSTANT) {
+					
+					my.scale_x -= .05;
+					my.scale_y -= .05;
+					my.scale_z -= .05;
+					
+				}
 				
 			}
 			
@@ -1404,7 +1760,10 @@ void ObjectManipulationCore()
 			vec_for_screen(v2,camera);
 			
 			c_trace(v1.x,v2.x,IGNORE_ME | IGNORE_PASSABLE | IGNORE_MODELS);
+			
 			vec_set(my.x,hit.x);
+			vec_set(my.y,hit.y);
+			vec_set(my.z,hit.z);
 			
 		}
 		
@@ -1417,12 +1776,13 @@ void ObjectManipulationCore()
 			
 		}
 		
-		
 
 		wait (1);
 	}
 
 	GGUIShow();
+	
+	WriteLog("Finished executing ObjectManipulationCore().");
 
 }
 
@@ -1447,6 +1807,8 @@ Returns: -
 */
 void ObjectManipulationInterface()
 {
+	WriteLog("Executing ObjectManipulationInterface()...");
+	
 	my.emask |= ENABLE_CLICK;
 	my.event = ObjectManipulationCore;
 	
@@ -1524,6 +1886,8 @@ void ObjectManipulationInterface()
 		wait(1);
 		
 	}
+	
+	WriteLog("Finished executing ObjectManipulationInterface() (an entity that was carrying ObjectManipulationInterface() was killed).");
 }
 
 /*
@@ -1538,8 +1902,16 @@ Returns: -
 */
 void ExitEvent() {
 	
+	WriteLog("*[SYS] ExitEvent() was triggered.");
+	
+	if( str_stri(command_str," -dev") ) CloseDebug();
+	
+	WriteLog("*[SYS] Saving configuration...");
 	ConfigFileWrite(FILE_CONFIG);
 	wait_for(ConfigFileWrite);
+	
+	WriteLog("*[SYS] Closing LOGFILEHNDL and exiting craftbox!");
+	if(LOGFILEHNDL) file_close(LOGFILEHNDL);
 	
 	sys_exit(NULL);
 	
@@ -1560,7 +1932,9 @@ Returns: -
 */
 void OptimizeFramerate(var dfr) {
 	
-	wait(1);
+	WriteLog("Executing OptimizeFramerate(var dfr)...");
+	
+	WriteLog("Finished executing OptimizeFramerate(var dfr).");
 	
 }
 
@@ -1574,12 +1948,16 @@ Returns: -1 if "cf" couldn't be opened.
 --------------------------------------------------
 */
 int ConfigFileWrite(STRING *cf) {
+	
+	WriteLog("Executing ConfigFileWrite(STRING *cf)...");
 
 	var file = file_open_write(cf);
 	
 	if(!file) {
 		
-		printf("Failed to open file handle for writing configuration to %s",cf);
+		_beep();
+		WriteLog("*[ERROR] The file couldn't be opened, returns -1.");
+		
 		return -1;
 		
 	}
@@ -1602,13 +1980,13 @@ int ConfigFileWrite(STRING *cf) {
 	- d3d_lightres
 	- video_aspect
 	- video_gamma
-	- video_mode
+	- sys_metrics(0), sys_metrics(1)
 	- video_depth
 	- video_screen
 
 	*/
 	
-	// Graphics + system
+	// -> Graphics + system
 	file_var_write(file,d3d_anisotropy);
 	file_var_write(file,d3d_antialias);
 	file_var_write(file,d3d_mipmapping);
@@ -1616,13 +1994,26 @@ int ConfigFileWrite(STRING *cf) {
 	file_var_write(file,d3d_lightres);
 	file_var_write(file,video_aspect);
 	file_var_write(file,video_gamma);
-	file_var_write(file,video_mode);
-	file_var_write(file,video_depth);
+	
+	//	file_var_write(file,video_mode);
+	file_var_write(file,sys_metrics(0));
+	file_var_write(file,sys_metrics(1));
+	
 	file_var_write(file,video_screen);
 	
+	file_var_write(file,video_depth);
+	
 	file_var_write(file,shot);
-
+	
+	// -> Sound effects' volume
+	file_var_write(file,VOL_EFFECTS);
+	file_var_write(file,VOL_MUSIC);
+	
+	// -> Shaders + PPs parameters
+	
 	file_close(file);
+	
+	WriteLog("Finished executing ConfigFileWrite(STRING *cf).");
 
 }
 
@@ -1638,11 +2029,15 @@ then be used.
 --------------------------------------------------
 */
 int ConfigFileRead(STRING *cf) {
+	
+	WriteLog("Executing ConfigFileWrite(STRING *cf)...");
 
 	var file = file_open_read(cf);
 	if(!file) { // Fail? Then use default settings.
 		
-		printf("Failed to open file handle for reading configuration from %s.\nDefault configuration will now be applied.",cf);
+		_beep();
+		WriteLog("*[ERROR] The file couldn't be opened, returns -1.");
+		WriteLog("* Use default configuration.");
 		
 		/* Default config. goes here. */
 		
@@ -1650,7 +2045,7 @@ int ConfigFileRead(STRING *cf) {
 		
 	}
 	
-	// Graphics + system first
+	// -> Graphics + system
 	d3d_anisotropy = file_var_read(file);
 	d3d_antialias = file_var_read(file);
 	d3d_mipmapping = file_var_read(file);
@@ -1659,288 +2054,24 @@ int ConfigFileRead(STRING *cf) {
 
 	video_aspect = file_var_read(file);
 	video_gamma = file_var_read(file);
-	video_mode = file_var_read(file);
+	
+	video_set( file_var_read(file), file_var_read(file),
+	0 , file_var_read(file));
+	
 	video_depth = file_var_read(file);
-	video_screen = file_var_read(file);
 	
 	shot = file_var_read(file);
+	
+	// -> Sound effects' volume
+	VOL_EFFECTS = file_var_read(file);
+	VOL_MUSIC = file_var_read(file);
+	
+	// -> Shaders + PPs parameters
 
 	file_close(file);
+	
+	WriteLog("Finished executing ConfigFileWrite(STRING *cf).");
 }
-
-//void save_level(STRING *filef) {
-	//	
-	//	STRING *filef_original = str_create("#300");
-	//	str_cpy(filef_original,filef);
-	//	
-	//	var hndl_sys = file_open_write(str_cat(filef,"_sys.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_mdlobjs = file_open_write(str_cat(filef,"_ents.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_lights = file_open_write(str_cat(filef,"_lights.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_parts = file_open_write(str_cat(filef,"_parts.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_snds = file_open_write(str_cat(filef,"_snds.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_terraindata = file_open_write(str_cat(filef,"_tdata.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_nodedata = file_open_write(str_cat(filef,"_ndata.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_garbage = file_open_write(str_cat(filef,"_trash.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	// Get the first entity in entities list
-	//	you = ent_next(NULL);
-	//	
-	//	// Begin checking and writing entities data into various file handles.
-	//	while(you) {
-		//		
-		//		switch(you.ObjectType) {
-			//			
-			//			case NormalObject :
-			//			/*
-			//			x,y,z
-			//			scale_x,scale_y,scale_z
-			//			pan,tilt,roll
-			//			alpha,ambient
-			//			8 flags:
-			//			- BRIGHT/INVISIBLE/NOFOG/OVERLAY/PASSABLE/POLYGON/SHADOW/TRANSLUCENT
-			//			object ID
-			//			// material
-			//			static/dynamic
-			//			physics
-			//			object_type
-			//			*/
-			//			file_var_write(hndl_mdlobjs,you.ObjectID); // Object ID
-			//			file_var_write(hndl_mdlobjs,you.ObjectType); // The type of the object
-			//			
-			//			file_var_write(hndl_mdlobjs,you.x);
-			//			file_var_write(hndl_mdlobjs,you.y);
-			//			file_var_write(hndl_mdlobjs,you.z);
-			//			
-			//			file_var_write(hndl_mdlobjs,you.scale_x);
-			//			file_var_write(hndl_mdlobjs,you.scale_y);
-			//			file_var_write(hndl_mdlobjs,you.scale_z);
-			//			
-			//			file_var_write(hndl_mdlobjs,you.pan);
-			//			file_var_write(hndl_mdlobjs,you.tilt);
-			//			file_var_write(hndl_mdlobjs,you.roll);
-			//			
-			//			file_var_write(hndl_mdlobjs,you.alpha);
-			//			file_var_write(hndl_mdlobjs,you.ambient);
-			//			
-			//			if(is(you,BRIGHT)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,INVISIBLE)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,NOFOG)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,OVERLAY)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,PASSABLE)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,POLYGON)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,SHADOW)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			if(is(you,TRANSLUCENT)) file_var_write(hndl_mdlobjs,1);
-			//			else file_var_write(hndl_mdlobjs,0);
-			//			
-			//			file_var_write(hndl_mdlobjs,you.ObjectDynamic); // Object state, dynamic/static
-			//			file_var_write(hndl_mdlobjs,you.ObjectPhysics); // Physics flag
-			//			
-			//			break;
-			//			
-			//			case Light :
-			//			/*
-			//			x,y,z,pan,tilt,roll, alpha,ambient
-			//			r/g/b
-			//			lightrange
-			//			mode
-			//			*/
-			//			
-			//			file_var_write(hndl_lights,you.x);
-			//			file_var_write(hndl_lights,you.y);
-			//			file_var_write(hndl_lights,you.z);
-			//			
-			//			file_var_write(hndl_lights,you.pan);
-			//			file_var_write(hndl_lights,you.tilt);
-			//			file_var_write(hndl_lights,you.roll);
-			//			
-			//			file_var_write(hndl_lights,you.ambient);
-			//			file_var_write(hndl_lights,you.alpha);
-			//			
-			//			file_var_write(hndl_lights,you.red);
-			//			file_var_write(hndl_lights,you.green);
-			//			file_var_write(hndl_lights,you.blue);
-			//			
-			//			file_var_write(hndl_lights,you.lightrange);
-			//			file_var_write(hndl_lights,you.LightMode);
-			//			file_var_write(hndl_lights,you.FlickSpeed);
-			//			break;
-			//			
-			//			case Particle :
-			//			
-			//			file_var_write(hndl_parts,you.ObjectID);
-			//			file_var_write(hndl_parts,you.ObjectType);
-			//			
-			//			/*x,y,z,pan,tilt,roll,ambient,alpha
-			//			ObjectID,ObjectType*/
-			//			file_var_write(hndl_parts,you.x);
-			//			file_var_write(hndl_parts,you.y);
-			//			file_var_write(hndl_parts,you.z);
-			//			
-			//			file_var_write(hndl_parts,you.pan);
-			//			file_var_write(hndl_parts,you.tilt);
-			//			file_var_write(hndl_parts,you.roll);
-			//			
-			//			file_var_write(hndl_parts,you.ambient);
-			//			file_var_write(hndl_parts,you.alpha);
-			//			
-			//			break;
-			//			
-			//			case Sound :
-			//			
-			//			file_var_write(hndl_snds,you.ObjectID);
-			//			file_var_write(hndl_snds,you.ObjectType);
-			//			
-			//			/*x,y,z,pan,tilt,roll, ambient, alpha, ObjectID, ObjectType */
-			//			file_var_write(hndl_snds,you.x);
-			//			file_var_write(hndl_snds,you.y);
-			//			file_var_write(hndl_snds,you.z);
-			//			
-			//			file_var_write(hndl_snds,you.pan);
-			//			file_var_write(hndl_snds,you.tilt);
-			//			file_var_write(hndl_snds,you.roll);
-			//			
-			//			file_var_write(hndl_snds,you.ambient);
-			//			file_var_write(hndl_snds,you.alpha);
-			//			
-			//			break;
-			//			
-			//			case Node :
-			//			/*x,y,z*/
-			//			file_var_write(hndl_nodedata,you.x);
-			//			file_var_write(hndl_nodedata,you.y);
-			//			file_var_write(hndl_nodedata,you.z);
-			//			break;
-			//			
-			//			case Terrain :
-			//			break;
-			//			
-			//			default: // garbage entities
-			//			/* x,y,z, scale_x/y/z,pan,tilt,roll,
-			//			alpha,ambient, +8 flags, */
-			//			
-			//			//you!=NULL
-			//			file_var_write(hndl_garbage,you.x);
-			//			file_var_write(hndl_garbage,you.y);
-			//			file_var_write(hndl_garbage,you.z);
-			//			
-			//			file_var_write(hndl_garbage,you.scale_x);
-			//			file_var_write(hndl_garbage,you.scale_y);
-			//			file_var_write(hndl_garbage,you.scale_z);
-			//			
-			//			file_var_write(hndl_garbage,you.pan);
-			//			file_var_write(hndl_garbage,you.tilt);
-			//			file_var_write(hndl_garbage,you.roll);
-			//			
-			//			file_var_write(hndl_garbage,you.alpha);
-			//			file_var_write(hndl_garbage,you.ambient);
-			//			
-			//			if(is(you,BRIGHT)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,INVISIBLE)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,NOFOG)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,OVERLAY)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,PASSABLE)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,POLYGON)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,SHADOW)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			if(is(you,TRANSLUCENT)) file_var_write(hndl_garbage,1);
-			//			else file_var_write(hndl_garbage,0);
-			//			
-			//			break;
-			//			
-		//		}
-		//		
-		//		you = ent_next(you);
-		//		wait(1);
-		//		
-	//	}
-	//	
-	//	file_var_write(hndl_mdlobjs,999999);
-	//	
-	//	// Write to system.
-	//	file_var_write(hndl_sys,camera.x);
-	//	file_var_write(hndl_sys,camera.y);
-	//	file_var_write(hndl_sys,camera.z);
-	//	file_var_write(hndl_sys,camera.pan);
-	//	file_var_write(hndl_sys,camera.tilt);
-	//	file_var_write(hndl_sys,camera.roll);
-	//	file_var_write(hndl_sys,camera.aspect);
-	//	file_var_write(hndl_sys,camera.arc);
-	//	file_var_write(hndl_sys,camera.ambient);
-	//	file_var_write(hndl_sys,sun_light);
-	//	file_var_write(hndl_sys,sun_angle.pan);
-	//	file_var_write(hndl_sys,sun_angle.tilt);
-	//	file_var_write(hndl_sys,sun_color.blue);
-	//	file_var_write(hndl_sys,sun_color.green);
-	//	file_var_write(hndl_sys,sun_color.red);
-	//	file_var_write(hndl_sys,fog_color);
-	//	file_var_write(hndl_sys,d3d_fogcolor1.red);
-	//	file_var_write(hndl_sys,d3d_fogcolor1.green);
-	//	file_var_write(hndl_sys,d3d_fogcolor1.blue);
-	//	file_var_write(hndl_sys,d3d_fogcolor2.red);
-	//	file_var_write(hndl_sys,d3d_fogcolor2.green);
-	//	file_var_write(hndl_sys,d3d_fogcolor2.blue);
-	//	file_var_write(hndl_sys,d3d_fogcolor3.red);
-	//	file_var_write(hndl_sys,d3d_fogcolor3.green);
-	//	file_var_write(hndl_sys,d3d_fogcolor3.blue);
-	//	file_var_write(hndl_sys,d3d_fogcolor4.red);
-	//	file_var_write(hndl_sys,d3d_fogcolor4.green);
-	//	file_var_write(hndl_sys,d3d_fogcolor4.blue);
-	//	file_var_write(hndl_sys,camera.fog_start);
-	//	file_var_write(hndl_sys,camera.fog_end);
-	//	file_var_write(hndl_sys,skCube);
-	//	
-	//	// Close
-	//	file_close(hndl_sys);
-	//	file_close(hndl_mdlobjs);
-	//	file_close(hndl_lights);
-	//	file_close(hndl_parts);
-	//	file_close(hndl_snds);
-	//	file_close(hndl_terraindata);
-	//	file_close(hndl_nodedata);
-	//	file_close(hndl_garbage);
-//}
 
 /*
 --------------------------------------------------
@@ -1952,8 +2083,13 @@ Returns: -
 --------------------------------------------------
 */
 void LoadNewLevel() {
-
+	
+	WriteLog("Executing LoadNewLevel()...");
+	
+	WriteLog("Loading a dry level...");
 	level_load("dry.wmb");
+	
+	WriteLog("Creating sky cube...");
 	/*
 	switch(skCube) {
 		
@@ -1972,109 +2108,17 @@ void LoadNewLevel() {
 		break;
 	}
 	*/
+	
+	WriteLog("Executing miscellaneous stuff...");
 	camera.ambient = -75;
 
 	ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
+	
+	manip_type = scale + 1;
+	
+	WriteLog("Finished executing LoadNewLevel().");
 }
-
-//void load_level(STRING *filef) {
-	//	
-	//	int i = _ObjectType;
-	//	ENTITY *tmp;
-	//	
-	//	int tmpID, tmpobjtype;
-	//	VECTOR tmpVector;
-	//	
-	//	vec_zero(tmpVector);
-	//	
-	//	// Use the same stupid core as save_level
-	//	STRING *filef_original = str_create("#300");
-	//	str_cpy(filef_original,filef);
-	//	
-	//	var hndl_sys = file_open_read(str_cat(filef,"_sys.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_mdlobjs = file_open_read(str_cat(filef,"_ents.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_lights = file_open_read(str_cat(filef,"_lights.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_parts = file_open_read(str_cat(filef,"_parts.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_snds = file_open_read(str_cat(filef,"_snds.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_terraindata = file_open_read(str_cat(filef,"_tdata.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_nodedata = file_open_read(str_cat(filef,"_ndata.txt"));
-	//	str_cpy(filef,filef_original);
-	//	
-	//	var hndl_garbage = file_open_read(str_cat(filef,"_trash.txt"));
-	//	str_cpy(filef,filef_original);
-	//	//////////////////////////////////////////////////////////////
-	//	
-	//	level_load("dry.wmb");
-	//	
-	//	// System
-	//	camera.x = file_var_read(hndl_sys);
-	//	camera.y = file_var_read(hndl_sys);
-	//	camera.z = file_var_read(hndl_sys);
-	//	camera.pan = file_var_read(hndl_sys);
-	//	camera.tilt = file_var_read(hndl_sys);
-	//	camera.roll = file_var_read(hndl_sys);
-	//	camera.aspect = file_var_read(hndl_sys);
-	//	camera.arc = file_var_read(hndl_sys);
-	//	camera.ambient = file_var_read(hndl_sys);
-	//	sun_light = file_var_read(hndl_sys);
-	//	sun_angle.pan = file_var_read(hndl_sys);
-	//	sun_angle.tilt = file_var_read(hndl_sys);
-	//	sun_color.blue = file_var_read(hndl_sys);
-	//	sun_color.green = file_var_read(hndl_sys);
-	//	sun_color.red = file_var_read(hndl_sys);
-	//	fog_color = file_var_read(hndl_sys);
-	//	d3d_fogcolor1.red = file_var_read(hndl_sys);
-	//	d3d_fogcolor1.green = file_var_read(hndl_sys);
-	//	d3d_fogcolor1.blue = file_var_read(hndl_sys);
-	//	d3d_fogcolor2.red = file_var_read(hndl_sys);
-	//	d3d_fogcolor2.green = file_var_read(hndl_sys);
-	//	d3d_fogcolor2.blue = file_var_read(hndl_sys);
-	//	d3d_fogcolor3.red = file_var_read(hndl_sys);
-	//	d3d_fogcolor3.green = file_var_read(hndl_sys);
-	//	d3d_fogcolor3.blue = file_var_read(hndl_sys);
-	//	d3d_fogcolor4.red = file_var_read(hndl_sys);
-	//	d3d_fogcolor4.green = file_var_read(hndl_sys);
-	//	d3d_fogcolor4.blue = file_var_read(hndl_sys);
-	//	camera.fog_start = file_var_read(hndl_sys);
-	//	camera.fog_end = file_var_read(hndl_sys);
-	//	skCube = file_var_read(hndl_sys);
-	//	
-	//	file_close(hndl_sys);
-	//	
-	//	// filef_ents.txt
-	//	var j = num_mdlobjs;
-	//	
-	//	tmpID = file_var_read(hndl_mdlobjs);
-	//	tmpobjtype = file_var_read(hndl_mdlobjs);
-	//	
-	//	tmpVector.x = file_var_read(hndl_mdlobjs);
-	//	tmpVector.y = file_var_read(hndl_mdlobjs);
-	//	tmpVector.z = file_var_read(hndl_mdlobjs);
-	//	
-	//	tmp = ent_create(_str(mdlobjs_table_ptr[tmpID]),tmpVector,NULL);
-	//	
-	//	tmp.ObjectID = num_mdlobjs;
-	//	tmp.ObjectType = file_var_read(hndl_mdlobjs);
-	//	
-	//	camera.ambient = 50;
-	//	
-	//	ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
-	//	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
-	//	
-//}
 
 /*
 --------------------------------------------------
@@ -2090,9 +2134,11 @@ Returns: -1 if a stage fails.
 */
 int SaveGameToSlot(var slot) {
 	
-	var i, j;
+	if(event_type == EVENT_RELEASE) return;
 	
-	BOOL t;
+	WriteLog("Executing SaveGameToSlot(var slot)...");
+	
+	var i, j; BOOL t;
 	
 	slot-=2;
 	
@@ -2115,12 +2161,20 @@ int SaveGameToSlot(var slot) {
 	i = game_save(pref_savebmaps,0,SV_INFO + SV_BMAPS);
 	j = game_save(pref_savegames,slot,SV_ALL - SV_INFO - SV_BMAPS);
 	
-	if(!i || !j) return -1;
+	if(!i || !j) {
+		
+		_beep();
+		WriteLog("*[ERROR] Game couldn't be saved, returns -1.");
+		
+		return -1;
+		
+	}
 	
 	GGUIShow();
 	set(panSaveGame,SHOW);
 	if(t) set(panLoadGame,SHOW);
 	
+	WriteLog("Finished executing SaveGameToSlot(var slot).");
 }
 
 /*
@@ -2134,13 +2188,26 @@ Returns: -1 if operation fails.
 */
 int LoadGameFromSlot(var slot) {
 	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("Executing LoadGameFromSlot(var slot)...");
+	
 	var i;
 	
 	slot-=2; // 1 for array (count from 0), 1 for closebutton
 	
 	i = game_load(pref_savegames,slot);
 	
-	if(!i) return -1;
+	if(!i) {
+		
+		_beep();
+		WriteLog("*[ERROR] The file couldn't be loaded, returns -1.");
+		
+		return -1;   
+		
+	}
+	
+	WriteLog("Finished executing LoadGameFromSlot(var slot), returns -1.");
 }
 
 /*
@@ -2161,11 +2228,22 @@ Returns: -1 if the kernel is currently running.
 */
 int Console() {
 	
-	if(KERNEL_IS_RUNNING) return -1;
+	WriteLog("*[SYS] Executing Console()...");
+	
+	if(KERNEL_IS_RUNNING) {
+		
+		_beep();
+		WriteLog("*[ERROR] Console() couldn't be executed while the kernel is running, returns -1.");
+		
+		return -1;
+		
+	}
 	
 	ConsoleText->pos_x = 2;
 	ConsoleText->pos_y = screen_size.y/4;
 	toggle(ConsoleText,SHOW);
+	
+	// Additional WriteLogs here.
 	
 	while(!KERNEL_IS_RUNNING) {
 		
@@ -2178,7 +2256,7 @@ int Console() {
 			
 		}
 		
-		if(result == 27 && LOAD_KERNEL) { // [Esc]
+		if(result == 27) { // [Esc]
 			
 			str_cpy((ConsoleText->pstring)[1],"Loading kernel...");
 			
@@ -2193,9 +2271,23 @@ int Console() {
 			
 		}
 		
-		if(str_cmp((ConsoleText->pstring)[1],"exit")) {
+		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_EXITSTR )) {
 			
-			printf("exit triggered");
+			ExitEvent();
+			
+		}
+		
+		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_REPORTSTR )) {
+			
+			_beep();
+			wait(1);
+			
+		}
+		
+		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_FACTORYSTR )) {
+			
+			_beep();
+			wait(1);
 			
 		}
 		
@@ -2204,6 +2296,8 @@ int Console() {
 	}
 	
 	reset(ConsoleText,SHOW);
+	
+	WriteLog("*[SYS] Finished executing Console(). Probably the user has started the kernel again, or craftbox is preparing to be shut down.");
 	
 }
 
@@ -2221,11 +2315,12 @@ int UnloadKernel() {
 	
 	proc_kill(4);
 	
+	WriteLog("*[SYS] Executing UnloadKernel()...");
+	
 	KERNEL_IS_RUNNING = 0;
 	
 	// From GShowCredits().
 	reset(panMMenu,SHOW);
-	reset(panMMenu_exit,SHOW);
 	reset(panNewGame,SHOW);
 	
 	level_load(NULL);
@@ -2234,6 +2329,8 @@ int UnloadKernel() {
 	GGUIHide();
 	
 	Console();
+	
+	WriteLog("*[SYS] Finished executing UnloadKernel(). Use the console to continue controlling craftbox.");
 	
 }
 
@@ -2250,7 +2347,26 @@ Returns: -
 */
 int ReloadKernel() {
 	
+	WriteLog("*[SYS] Executing ReloadKernel()...");
+	
 	wait(1);
+	
+	WriteLog("*[SYS] Finished executing ReloadKernel().");
+	
+}
+
+/*
+--------------------------------------------------
+void _beep()
+
+Desc: A beep() alternative. It does not halt game execution.
+
+Returns: -
+--------------------------------------------------
+*/
+void _beep() {
+	
+	if(LOGFILEHNDL) snd_play(__beep,100,0);
 	
 }
 
@@ -2265,28 +2381,103 @@ Sets KERNEL_IS_RUNNING to 1 if it had been fully loaded.
 Returns: -
 --------------------------------------------------
 */
+
 void LoadKernel() {
+	
+	WriteLog("*[SYS] Executing LoadKernel()...");
+	
+	STRING *_s = str_create("#64");
+	
+	// If you want, you can call GetSystemMetrics (windows.h) instead of Gamestudio's sys_metrics.	
+	str_cpy((PreMainMenuLoading.pstring)[0],"Testing various settings...");
+	
+	/* Resolution Test */
+	float WIDTH = sys_metrics(0), HEIGHT = sys_metrics(1);
+	
+	str_for_num(_s,WIDTH);
+	str_cat((PreMainMenuLoading.pstring)[0],_s);
+	str_cat((PreMainMenuLoading.pstring)[0]," ");
+	
+	str_for_num(_s,HEIGHT);
+	str_cat((PreMainMenuLoading.pstring)[0],_s);
+	str_cat((PreMainMenuLoading.pstring)[0]," ");
+	
+	if(WIDTH < MINIMUM_RESOLUTION_X ||
+	HEIGHT < MINIMUM_RESOLUTION_Y ) {
+		
+		UnloadKernel(); // switch off the kernel and enter console mode.
+		wait_for(UnloadKernel); // or else some kind of stupid error would pop up.
+		
+		str_cpy((ConsoleText.pstring)[1],"craftbox requires at least a 800x600 resolution screen to run properly.");
+		str_cpy((ConsoleText.pstring)[2],"Please switch to the resolution that is larger or equal to 800x600 and start craftbox again.");
+		
+		return;
+		
+	}
+	
+	/* Boot Mode Test */
+	str_for_num(_s,sys_metrics(67));
+	str_cat((PreMainMenuLoading.pstring)[0],_s);
+	str_cat((PreMainMenuLoading.pstring)[0]," ");
+	
+	/* Mouse Test */
+	str_for_num(_s,sys_metrics(19));
+	str_cat((PreMainMenuLoading.pstring)[0],_s);
+	str_cat((PreMainMenuLoading.pstring)[0]," ");
+	
+	if(!sys_metrics(19)) {
+		
+		UnloadKernel(); // switch off the kernel and enter console mode.
+		wait_for(UnloadKernel); // or else some kind of stupid error would pop up.
+		
+		str_cpy((ConsoleText.pstring)[1],"Plug in a mouse and restart craftbox.");
+		
+		return;
+		
+	}
+	
+	/* Processor Test */
+	str_for_num(_s,sys_metrics(73));
+	str_cat((PreMainMenuLoading.pstring)[0],_s);
+	str_cat((PreMainMenuLoading.pstring)[0]," ");
+	
+	str_remove(_s);
+	
+	double timer_;
+	STRING *timer__ = str_create("#100");
+	
+	GPreMainMenu();
+	
+	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_1);
+	dtimer();
+	
+	on_bksp = TakeScreenshot;
+	on_exit = ExitEvent;
+	on_close = ExitEvent;
 
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
 	sky_clip = -10;
-
-	_ObjectType = 1;
+	
+	sun_light = 300;
 
 	mouse_map = mouse;
 
 	vec_zero(parted_temp_vec);
 	vec_zero(parted_temp2_vec);
-
-	// So that we can get access to the database.
-	mdlobjs_table_ptr = mdlobjs_table;
+	
+	MaterialCopy(pTexColor, mtl_pTex1);
 
 	panHome.alpha = panProp.alpha = DEFAULT_ALPHA;
+	
+	timer_ = dtimer()/pow(10,3); // 1s = pow(10,3)ms
+	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
+	str_cat((PreMainMenuLoading.pstring)[1],"s");
+	
+	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_2);
+	dtimer();
 
 	// Initialize the databases and load them.
-	LoadObjectDatabase();
-	LoadSoundDatabase(); // Sound database doesn't require a pointer to access.
-	LoadParticleDatabase(); // So does particle database.
 	LoadSavedBMAPs();
 
 	// Intialize and read custom materials' properties.
@@ -2298,11 +2489,20 @@ void LoadKernel() {
 	ReadMaterialDataFromFile(mat_custom[2],FILE_CUSTOM_MAT_3);
 	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
 	
+	clipboard.name = str_create("#300");
+	
+	timer_ = dtimer()/pow(10,3);
+	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
+	str_cat((PreMainMenuLoading.pstring)[1],"s");
+	
 	// If we want a video to be played...
 	//		PlayVideo(100);
 	//		wait_for(PlayVideo);
 
 	// Intialize and load the GUI system.
+	str_cpy((PreMainMenuLoading.pstring)[2],LOADCRAFTBOX_3);
+	dtimer();
+	
 	GGUIInit();
 	wait_for(GGUIInit);
 	
@@ -2314,6 +2514,13 @@ void LoadKernel() {
 
 	//	def_move();
 	*/
+	
+	timer_ = dtimer()/pow(10,6);
+	str_cat((PreMainMenuLoading.pstring)[2],str_for_num(timer__,timer_));
+	str_cat((PreMainMenuLoading.pstring)[2],"s");
+	
+	reset(BackgroundScreen,SHOW);
+	reset(PreMainMenuLoading,SHOW);
 	
 	GLoadMainMenu();
 	
@@ -2345,8 +2552,7 @@ void LoopKernel() {
 			// Prevent the cursor from going outside the level border
 			if(!temp_pos.x) temp_pos.x = level_ent.max_x;
 			if(!temp_pos.y) temp_pos.y = level_ent.max_y;
-			if(!temp_pos.z) temp_pos.z = level_ent.max_z;
-			
+			if(!temp_pos.z) temp_pos.z = level_ent.max_z;	
 			
 			// These keys are combined together with the Ctrl key.
 			if(key_ctrl) {
@@ -2396,12 +2602,12 @@ void LoopKernel() {
 			if(key_t) 
 			{
 				while(key_t) wait(1);
-				num_mdlobjs++;
+				ObjectIDNumber++;
 			}
 			
 			if(key_y) {
 				while(key_y) wait(1);
-				num_mdlobjs--;
+				ObjectIDNumber--;
 			}
 			
 			if(key_r) {
@@ -2422,24 +2628,48 @@ void LoopKernel() {
 			
 			if(mouse_left) 
 			{
-				if(_ObjectType == Terrain) return;
 				
 				while(mouse_left) wait(1);
 				
 				if(!mouse_panel)
 				{
 					
-					if(!mouse_ent) CreateObject();
+					// Allow placing entities freely only on top 
+					// of neutral objects (e.g. terrains) or on solid
+					// ground (which means !mouse_ent)
+					if(!mouse_ent) { // Nothing is on top of the cursor
+						
+						if(manip_type == scale + 1) {
+							
+							CreateObject();
+							
+						}
+						
+					}
 					
+					// Something is on top but it's a neutral or terrain object
+					else if(mouse_ent.ObjectType == Neutral || mouse_ent.ObjectType == Terrain) {
+						
+						if(manip_type == scale + 1) {
+							
+							CreateObject();
+							
+						}
+						
+					}
+					
+					// others
 					else
 					{
+						
 						if(select)
 						{
 							
 							if(select.ObjectType == Light) GLightWindowHide();
-							if(select.ObjectType == NormalObject) GPropertiesWindowHide();
+							if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowHide();
 							if(select.ObjectType == Sound) GSoundWindowHide();
 							if(select.ObjectType == Particle) GParticleWindowHide();
+							if(select.ObjectType == Terrain) return;
 							
 							select.material = mat_temp;
 							select = NULL;
@@ -2453,7 +2683,7 @@ void LoopKernel() {
 						if(select.ObjectType == Light) GLightWindowShow();
 						else GLightWindowHide();
 						
-						if(select.ObjectType == NormalObject) GPropertiesWindowShow();
+						if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowShow();
 						else GPropertiesWindowHide();
 						
 						if(select.ObjectType == Sound) GSoundWindowShow();
@@ -2465,31 +2695,6 @@ void LoopKernel() {
 						PassObjectPropertiesToGUI(select);
 						
 					}
-					
-					/*
-					else
-					{
-						if(select)
-						{
-							if(mat_temp) select.material = mat_temp;
-							else select.material = NULL;
-							
-							if(select.ObjectType == Light) GLightWindowHide();						
-							if(select.ObjectType == NormalObject) GPropertiesWindowHide();
-							if(select.ObjectType == Sound) GSoundWindowHide();
-							if(select.ObjectType == Particle) GParticleWindowHide();
-							
-							select = NULL;
-						}
-						
-						GLightWindowHide();	
-						GParticleWindowHide();
-						GPropertiesWindowHide();
-						GSoundWindowHide();
-						
-						select = NULL;
-					}
-					*/
 					
 					wait(1);
 					
@@ -2514,6 +2719,153 @@ void LoopKernel() {
 
 /*
 --------------------------------------------------
+void NewLine()
+
+Desc: Writes a new line to LOGFILEHNDL.
+
+Returns: -
+--------------------------------------------------
+*/
+void NewLine() {
+	
+	// Windows uses CR/LF
+	file_asc_write(LOGFILEHNDL,13); // CR
+	file_asc_write(LOGFILEHNDL,10); // LF
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING *str)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING *str) {
+	
+	if(LOGFILEHNDL) {
+		
+		file_str_write(LOGFILEHNDL,str);
+		NewLine();
+		
+	}
+
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING * str, int i)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING * str, int i) {
+	
+	if(LOGFILEHNDL) {
+		
+		file_str_write(LOGFILEHNDL,str);
+		file_var_write(LOGFILEHNDL,(int)i);
+		NewLine();
+		
+	}
+
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING *str, var _v)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING *str, var _v) {
+	
+	if(LOGFILEHNDL) {
+		
+		file_str_write(LOGFILEHNDL,str);
+		file_var_write(LOGFILEHNDL,_v);
+		NewLine();      
+		
+	}
+
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING *str, double d)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING *str, double d) {
+	
+	if(LOGFILEHNDL) {
+		
+		file_str_write(LOGFILEHNDL,str);
+		file_var_write(LOGFILEHNDL,(double)d);
+		NewLine();
+		
+	}
+
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING *str, BOOL b)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING *str, BOOL b) {
+	
+	if(LOGFILEHNDL) {
+		
+		file_str_write(LOGFILEHNDL,str);
+		
+		if(b) file_str_write(LOGFILEHNDL,"true");
+		else file_str_write(LOGFILEHNDL,"false");
+		
+		NewLine();
+		
+	}
+
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
+int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct)
+
+
+--------------------------------------------------
+*/
+int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct) {
+	
+	if(LOGFILEHNDL) {
+		
+		if(objectstruct) {
+			
+			// hahaha			
+			
+		}
+		
+	}
+	
+	else return -1;
+	
+}
+
+/*
+--------------------------------------------------
 void CBox_startup()
 
 Desc: Unlike LoopKernel() which runs only if the kernel has been 
@@ -2531,9 +2883,6 @@ void CBox_startup() {
 	// Read and setup video settings prior to executing other functions.
 	ConfigFileRead(FILE_CONFIG);
 	
-	on_bksp = TakeScreenshot;
-	on_exit = ExitEvent;
-
 	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
 	
 	mouse_range = 500000;
@@ -2557,19 +2906,13 @@ void CBox_startup() {
 		
 		if(KERNEL_IS_RUNNING) {
 			
-			if(is(anms,SHOW)) anms.pos_x = panObj_Main.pos_x;
-			if(is(arch,SHOW)) arch.pos_x = panObj_Main.pos_x;
-			if(is(blands,SHOW)) blands.pos_x = panObj_Main.pos_x;
-			if(is(chars,SHOW)) chars.pos_x = panObj_Main.pos_x;
-			if(is(etc,SHOW)) etc.pos_x = panObj_Main.pos_x;
-			if(is(food,SHOW)) food.pos_x = panObj_Main.pos_x;
-			if(is(machs,SHOW)) machs.pos_x = panObj_Main.pos_x;
-			if(is(plants,SHOW)) plants.pos_x = panObj_Main.pos_x;
-			if(is(tportts,SHOW)) tportts.pos_x = panObj_Main.pos_x;
-			
 			if(select) {
 				
+				
+				
 				if(key_del) {
+					
+					RemoveFromTextureProjectionArray(select);
 					
 					ptr_remove(select);
 					
@@ -2644,6 +2987,8 @@ void CBox_startup() {
 				// select.material now holds mat_select
 				// so we must pass something else
 				
+				select.z = 3000 - v_objectz;
+				
 			}
 			
 			else { // If select isn't selected.
@@ -2655,33 +3000,6 @@ void CBox_startup() {
 				
 			}
 			
-			if(SliderLimit<0) SliderLimit=0; // prevent unexpected situations
-			if(SliderLimit>100) SliderLimit=100;
-			
-			panObj_Main.pos_x = (SliderLimit * (-bmap_width(panObj_Main.bmap) + screen_size.x))/100;
-			panObj_Part_Main.pos_x = (SliderLimit * (-bmap_width(panObj_Part_Main.bmap) + screen_size.x))/100;
-			panObj_Snd_Main.pos_x = (SliderLimit * (-bmap_width(panObj_Snd_Main.bmap) + screen_size.x))/100;
-			
-			if(panObj_Main.pos_x > 0) panObj_Main.pos_x = 0;
-			if(panObj_Main.pos_x < -bmap_width(panObj_Main.bmap) + screen_size.x) {
-				
-				panObj_Main.pos_x = -bmap_width(panObj_Main.bmap) + screen_size.x;
-				
-			}
-			
-			if(panObj_Part_Main.pos_x > 0) panObj_Part_Main.pos_x = 0;
-			if(panObj_Part_Main.pos_x < -bmap_width(panObj_Part_Main.bmap) + screen_size.x) {
-				
-				panObj_Part_Main.pos_x = -bmap_width(panObj_Part_Main.bmap) + screen_size.x;
-				
-			}
-			
-			if(panObj_Snd_Main.pos_x > 0) panObj_Snd_Main.pos_x = 0;
-			if(panObj_Snd_Main.pos_x < -bmap_width(panObj_Snd_Main.bmap) + screen_size.x) {
-				
-				panObj_Snd_Main.pos_x = -bmap_width(panObj_Snd_Main.bmap) + screen_size.x;
-				
-			}
 		}	
 		wait(1);
 		
@@ -2704,7 +3022,7 @@ void free_camera()
 	var rotatespeed = 5;
 	var speed = 40;
 
-	set(my, INVISIBLE | POLYGON);
+	set(my, INVISIBLE | POLYGON | PASSABLE);
 
 	vec_set(camera.x,my.x);
 	vec_set(camera.pan,my.pan);
@@ -2712,8 +3030,8 @@ void free_camera()
 
 	while(1)
 	{	
-		camera_force.x = (key_w - key_s)*speed*time_step;
-		camera_force.y = (key_a - key_d)*speed*time_step;
+		camera_force.x = ( (key_w || key_cuu) - (key_s || key_cud) )*speed*time_step;
+		camera_force.y = ( (key_a || key_cul) - (key_d || key_cur) )*speed*time_step;
 		
 		c_move(my,camera_force,nullvector,GLIDE+IGNORE_PASSABLE+IGNORE_PASSENTS+IGNORE_PUSH);
 		vec_set(camera.x,vector(my.x,my.y,my.z+15));
@@ -2728,17 +3046,6 @@ void free_camera()
 	}
 }
 ////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-// Debug & statistics
-////////////////////////////////////////////////////////////
-PANEL *debug = {
-	layer = 3;
-
-	digits(0,0,99,"arial#25b",1,num_mdlobjs);
-
-	flags = SHOW;
-}
 
 // Mystymood
 // Template file v5.202 (02/20/02)
@@ -3042,6 +3349,7 @@ void toggle_weather()//just for testing
 
 void good_weather()  { weather_state = 0; }
 
+// Can't be replaced with VOL_EFFECTS (at the momment).
 void weather_change() {
 
 	VECTOR temp;
@@ -3176,27 +3484,27 @@ void weather_change() {
 			
 			if(rand_count == 1 && rand_count_state != 1)
 			{
-				snd_handle_thunder = snd_play(thunder1_wav, 100, 0);
+				snd_handle_thunder = snd_play(thunder1_wav, VOL_EFFECTS, 0);
 				rand_count_state = 1;
 			}
 			if(rand_count == 2 && rand_count_state != 2)
 			{
-				snd_handle_thunder = snd_play(thunder2_wav, 100, 0);
+				snd_handle_thunder = snd_play(thunder2_wav, VOL_EFFECTS, 0);
 				rand_count_state = 2;
 			}
 			if(rand_count == 3 && rand_count_state != 3)
 			{
-				snd_handle_thunder = snd_play(thunder3_wav, 100, 0);
+				snd_handle_thunder = snd_play(thunder3_wav, VOL_EFFECTS, 0);
 				rand_count_state = 3;	
 			}
 			if(rand_count == 4 && rand_count_state != 4)
 			{
-				snd_handle_thunder = snd_play(thunder4_wav, 100, 0);
+				snd_handle_thunder = snd_play(thunder4_wav, VOL_EFFECTS, 0);
 				rand_count_state = 4;	
 			}
 			if(rand_count == 5 && rand_count_state != 5)
 			{
-				snd_handle_thunder = snd_play(thunder5_wav, 100, 0);
+				snd_handle_thunder = snd_play(thunder5_wav, VOL_EFFECTS, 0);
 				rand_count_state = 5;	
 			}	
 		}
@@ -3354,12 +3662,13 @@ void weather_change() {
 	}	
 }
 
-/*** LoadMystymood(BOOL on, BOOL load_lens) 
+/*
+--------------------------------------------------
+void LoadMystymood(BOOL _on, BOOL load_lens)
 
-Set on = 1, load mystymood
-Set load_lens = 1, load lens flare
 
-***/
+--------------------------------------------------
+*/
 void LoadMystymood(BOOL _on, BOOL load_lens)
 {
 	
@@ -3644,16 +3953,24 @@ void act_mystymood_trigg_label1()
 	act_mystymood_trigg();
 }
 
-////////////////////////////////////////////////////////////
-// This function will set up and manage the playground.
-////////////////////////////////////////////////////////////
+/*
+--------------------------------------------------
+void LoadPlayground()
+
+Desc: Sets up and manages the playground.
+
+Returns: -
+--------------------------------------------------
+*/
 void LoadPlayground() {
+	
+	if(event_type == EVENT_RELEASE) return;
 
 	if(select) {
 		
 		// Deselect any selected entity first
 		if(select.ObjectType == Light) GLightWindowHide();
-		if(select.ObjectType == NormalObject) GPropertiesWindowHide();
+		if(select.ObjectType == Object) GPropertiesWindowHide();
 		if(select.ObjectType == Sound) GSoundWindowHide();
 		if(select.ObjectType == Particle) GParticleWindowHide();
 		
@@ -3662,11 +3979,7 @@ void LoadPlayground() {
 		
 	}
 
-	/***
-
-	This code will scan through all available entities
-
-	***/
+	// Scans through all available entities
 	you = ent_next(NULL);
 	while(you) {
 		
@@ -3710,15 +4023,32 @@ void LoadPlayground() {
 	GGUIHide();
 
 	PLAYTESTING = 1;
-
-	if(play_as_fp) {
+	
+	//
+	//	if(play_as_fp) {
+		//		
+		//		set(panCAMRecorder,SHOW);
+		//		set(panCAMRecorder_digits,SHOW);
+		//		
+	//	}
+	
+	// Test if there is any entity in the projection array
+	if(rEnt[0]) {
 		
-		set(panCAMRecorder,SHOW);
-		set(panCAMRecorder_digits,SHOW);
+		vec_set(pSys.Pos,sun_light);
+		str_cpy(rFile,"renderedProjection");//name of saving bmap and projection parametrs
+		screen_render_entities (pSys[0].Pos,pSys[0].Ang,pSys[0].Fov,rEntCount);//create projection bmap(render 5 trees)
+		while(proc_status(screen_render_entities)) wait(1);// wait until render is finish
+		mtl_pTex1.skin1 = rBmap ;// set material skin to shadow bmap
+		
+		set_material_matrices();// set all mat_effect pointers that uses in shader
 		
 	}
 
 	while(PLAYTESTING) {
+		
+		// Need a little optimization here....
+		if(rEnt[0]) create_dxmat(mat_effect1,pSys[0].Pos,pSys[0].Ang,pSys[0].Fov,mtl_pTex1.skin1);
 		
 		temp_cam += 3 * time_step;
 		camera.z += .5 * sin(temp_cam);
@@ -3773,9 +4103,21 @@ void LoadPlayground() {
 		you = ent_next(you);
 		
 	}
+	
+	// Clear the rendered projection bmap.
+	bmap_purge(rBmap);
 }
 
+/*
+--------------------------------------------------
+void LoadNewLevelFromWindow() 
+
+
+--------------------------------------------------
+*/
 void LoadNewLevelFromWindow() {
+	
+	if(event_type == EVENT_RELEASE) return;
 
 	// Redirect to another function because we're in main menu now.
 	if(launch_newgame_from_main) {
@@ -3841,10 +4183,16 @@ void LoadNewLevelFromWindow() {
 
 }
 
+/*
+--------------------------------------------------
+void LoadNewLevelFromMenuWindow()
+
+
+--------------------------------------------------
+*/
 void LoadNewLevelFromMenuWindow() {
 	
 	reset(panMMenu,SHOW);
-	reset(panMMenu_exit,SHOW);
 	reset(panNewGame,SHOW);
 	//	
 	//	GGUIInit();
@@ -3907,70 +4255,5 @@ void LoadNewLevelFromMenuWindow() {
 		return;
 		
 	}
-
-}
-
-void load_ent_anms(var id) {
-
-	num_mdlobjs=id--;
-
-	reset(panObj_Main,SHOW);
-	reset(panObj_Subbar,SHOW);
-	reset(panObj_Subbar_slider,SHOW);
-	reset(panObj_Main_X,SHOW);
-
-	reset(anms,SHOW);
-
-	GGUIShow();
-
-	SliderLimit = 0;
-
-}
-
-void load_ent_arch(var id) {
-
-	error("load_ent_arch");
-
-}
-
-void load_ent_blands(var id) {
-
-	error("load_ent_blands");
-
-}
-
-void load_ent_chars(var id) {
-
-	error("load_ent_chars");
-
-}
-
-void load_ent_etc(var id) {
-
-	error("load_ent_etc");
-
-}
-
-void load_ent_food(var id) {
-
-	error("load_ent_food");
-
-}
-
-void load_ent_machs(var id) {
-
-	error("load_ent_machs");
-
-}
-
-void load_ent_plants(var id) {
-
-	error("load_ent_plants");
-
-}
-
-void load_ent_tportts(var id) {
-
-	error("load_ent_tportts");
 
 }

@@ -2,7 +2,6 @@
 #define HEADER_H
 
 /*
---------------------------------------------------
 CBox.h
 
 Base declarations.
@@ -44,18 +43,19 @@ Everybody is welcome to help fixing those bugs...THANKS!!!
 // It can be used to copy normal objects, lights, or particle
 // effects
 ////////////////////////////////////////////////////////////
-typedef struct OBJECTSTRUCT {
+typedef struct {
 	
 	////////////////////////////////////////////////////////////
 	// General information that is copied regardless
 	// which type the object is.
 	////////////////////////////////////////////////////////////
-	int oid; // Object ID
 	int of_objtype; // The type of object that has been copied.
 	
 	var _scale_x, _scale_y, _scale_z,
 	_pan, _tilt, _roll,
 	_alpha, _ambient;
+	
+	STRING *name;
 	
 	////////////////////////////////////////////////////////////
 	// Unique properties each type of object has.
@@ -83,6 +83,58 @@ typedef struct OBJECTSTRUCT {
 	
 } OBJECTSTRUCT;
 
+/*
+typedef struct {
+   
+   // Actually, in Shade-C v0.91b S1, HDR is faked. But 
+   // the "faked" one is very close to the real thing in my opinion. 
+   // Includes tonemapping, dynamic exposure control and bloom.
+   
+   BOOL HDR;
+   
+   var 
+   HDR_RenderTargetResizeFactor,
+   HDR_BitDepth,
+   HDR_LightScattering,
+   HDR_Blurring,
+   HDR_BloomStrength,
+   HDR_HighPassLuminance,
+   HDR_HighPassMiddleGrey,
+   HDR_HighPassWhiteCutoff,
+   HDR_ExposureControlAdaptionSpeed;
+   
+   BOOL DOF;
+   
+   var 
+   DOF_FocalPlaneDepth,
+   DOF_FocalPlanePos,
+   DOF_BlurStrength,
+   DOF_RenderTargetResizeFactor,
+   DOF_BitDepth,
+   DOF_MaxDepth;
+   
+   BOOL Refract;
+   
+   var 
+   Refract_RenderTargetSizeX,
+   Refract_RenderTargetSizeY;
+   
+   BOOL Reflect;
+   
+   var 
+   Reflect_RenderTargetSizeX,
+   Reflect_RenderTargetSizeY;
+   
+   BOOL Water;
+   
+   var 
+   Water_Depth;
+   
+   BOOL VolumetricParticles;
+   
+} SHADE_C_VARIABLES_STRUCT;
+*/
+
 OBJECTSTRUCT clipboard;
 
 //////////////////////////////////////////////////////////////
@@ -93,23 +145,81 @@ OBJECTSTRUCT clipboard;
 
 #define FOG_END_LIM 8000
 
-#define MAX_SOUNDS 50
-#define MAX_PARTICLES 20
-#define MAX_OBJECTS 880
+#define FIXED_CULLING_DISTANCE 1500
+#define FOG_CULLING_DISTANCE 200
 
-BOOL LOAD_KERNEL = true, // By default
-KERNEL_IS_RUNNING = false,
-ENABLE_WRITING_LOGS = true,
+#define MINIMUM_RESOLUTION_X 800
+#define MINIMUM_RESOLUTION_Y 600
+
+#define MINIMUM_SCALE_CONSTANT .5
+
+#define MAX_rEnts 1000
+int rEntCount = -1;
+
+BOOL KERNEL_IS_RUNNING = false,
 IN_GAME = false,
 C_TRACE_OPTIMIZATION = false,
 DISTANCE_OPTIMIZATION = true;
 
+BOOL SHADE_C_FLAG;
+
 var LOGFILEHNDL;
 
-#define FIXED_CULLING_DISTANCE 1500
-#define FOG_CULLING_DISTANCE 200
+var VOL_EFFECTS = 75, VOL_MUSIC = 100;
 
-var VOL_EFFECTS, VOL_MUSIC;
+SOUND *__beep = "beep.wav";
+
+STRING *VAREXPLORER_EXITSTR = "exit";
+STRING *VAREXPLORER_REPORTSTR = "report";
+STRING *VAREXPLORER_FACTORYSTR = "default";
+
+STRING *pref_savebmaps = "./src/system";
+STRING *pref_savegames = "./src/txt/cgame";
+
+STRING *FILE_SCREENSHOT = "craftbox";
+STRING *FILE_CONFIG = "./src/outside/settings.cfg";
+STRING *FILE_CUSTOM_MAT_1 = "./src/outside/mat_custom_1.cfg";
+STRING *FILE_CUSTOM_MAT_2 = "./src/outside/mat_custom_2.cfg";
+STRING *FILE_CUSTOM_MAT_3 = "./src/outside/mat_custom_3.cfg";
+STRING *FILE_CUSTOM_MAT_4 = "./src/outside/mat_custom_4.cfg";
+STRING *FILE_CREDITS_0 = "./src/outside/c.t.txt";
+STRING *FILE_CREDITS_TEXT = "./src/outside/c.txt";
+STRING *FILE_LOG = "./CBox.log";
+
+STRING *FILE_GAME_INTRO_VIDEO;
+STRING *FILE_GAME_OUTRO_VIDEO;
+
+STRING *EXT_OBJECT = "mdl";
+STRING *EXT_SOUND = "wav";
+STRING *EXT_TERRAIN = "hmp";
+STRING *EXT_SPRITE = "tga";
+
+STRING *PATH_SOUNDS = "./sounds/";
+STRING *PATH_SPRITES = "./2d/sprites/";
+STRING *PATH_TERRAINS = "./objects/blands/";
+
+STRING *PATH_OBJECTS_ANMS = "./objects/anms/";
+STRING *PATH_OBJECTS_ARCHS = "./objects/archs/";
+STRING *PATH_OBJECTS_CHARS = "./objects/chars/";
+STRING *PATH_OBJECTS_ETC = "./objects/etc/";
+STRING *PATH_OBJECTS_FOOD = "./objects/food/";
+STRING *PATH_OBJECTS_MACHS = "./objects/machs/";
+STRING *PATH_OBJECTS_PLANTS = "./objects/plants/";
+STRING *PATH_OBJECTS_SYS = "./objects/sys/";
+STRING *PATH_OBJECTS_TPORTTS = "./objects/tportts/";
+
+STRING *TEMPSTR = "                                                                 ";
+short TEMP_OBJECT_TYPE;
+
+STRING *LOADCRAFTBOX_1 = "Initializing events and variables...";
+STRING *LOADCRAFTBOX_2 = "Initializing saved bitmaps and custom materials...";
+STRING *LOADCRAFTBOX_3 = "Initializing GUI...";
+
+TEXT *OptionsGraphicsTxt = sys_nxalloc(sizeof(TEXT));
+TEXT *OptionsSoundTxt = sys_nxalloc(sizeof(TEXT));
+TEXT *OptionsThemesTxt = sys_nxalloc(sizeof(TEXT));
+TEXT *OptionsMaintenanceTxt = sys_nxalloc(sizeof(TEXT));
+	
 
 ////////////////////////////////////////////////////////////
 // System definitions for Mystymood.
@@ -230,19 +340,31 @@ var moon_scale_fac = 1.5;
 #define ObjectType skill1
 #define ObjectDynamic skill2
 #define ObjectPhysics skill3
-#define ObjectID skill4
+#define ParticleID skill4 // Only particle effects use this.
 #define LightMode skill5
 #define FlickSpeed skill6
 #define CameraFP skill7
 #define CameraBike skill8
 
 // Object type
-#define NormalObject 1
-#define Particle 2
-#define Light 3
-#define Sound 4
-#define Terrain 5
-#define Node 6
+#define Object 1
+#define ObjectAnimal 2
+#define ObjectArchitecture 3
+#define ObjectCharacter 4
+#define ObjectEveryday 5
+#define ObjectFood 6
+#define ObjectMachine 7
+#define ObjectPlant 8
+#define ObjectTransport 9
+#define ObjectNode 10
+
+#define Particle 11
+#define Light 12
+#define Sound 13
+#define Terrain 14
+#define Sprite 15
+#define Neutral 16
+#define Player 17 // Player != player
 
 // Defines for materials
 #define select_mat_null 15
@@ -270,33 +392,62 @@ var moon_scale_fac = 1.5;
 //////////////////////////////
 // Strings and texts will be declared here.
 //////////////////////////////
-STRING *mdlobjs_table[1000];
-STRING **mdlobjs_table_ptr;
 
 STRING *current_folder = "a",
 *file_selected = "a";
 
-TEXT *files_list;
+TEXT *files_list = {
+	
+	layer = 15;
+	
+	string(800);
+	font = "Arial#15b";   
+	
+}
+
+TEXT *music_list = {
+   
+   layer = 15;
+   
+   string("#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50",
+   "#50","#50","#50","#50","#50");
+   font = "Arial#15b";
+   
+}
+
 TEXT* ConsoleText = { font = "Arial#15b"; string("
 
-< craftbox variable explorer >
+	< craftbox variable explorer >
 
-[Esc]: Exits the variable explorer and re-load the kernel (Requires LOAD_KERNEL = 1)
-[Enter]: View/commit a variable's value.
+","#255","#255","#255","#255","#255"); layer = 999; }
 
-","#255"); layer = 999; }
-
-STRING *pref_savebmaps = "./src/system";
-STRING *pref_savegames = "./src/txt/cgame";
-
-STRING *FILE_SCREENSHOT = "craftbox";
-STRING *FILE_CONFIG = "./src/cfg/cfg.cfg";
-STRING *FILE_CUSTOM_MAT_1 = "./src/cfg/mat_custom_1.cfg";
-STRING *FILE_CUSTOM_MAT_2 = "./src/cfg/mat_custom_2.cfg";
-STRING *FILE_CUSTOM_MAT_3 = "./src/cfg/mat_custom_3.cfg";
-STRING *FILE_CUSTOM_MAT_4 = "./src/cfg/mat_custom_4.cfg";
-STRING *FILE_CREDITS_0 = "./src/txt/c.t.txt";
-STRING *FILE_CREDITS_TEXT = "./src/txt/c.txt";
+TEXT *PreMainMenuLoading = {
+   
+   layer = 20;
+   
+   string("#500","#200","#200");
+   
+   pos_x = 20;
+   pos_y = 20;
+   
+   font = "Arial#25b";
+   
+   red = 54;
+   green = 117;
+   blue = 136;
+   
+}
 
 ////////////////////////////////////////////////////////////
 // Variables/Booleans will be declared here.
@@ -324,21 +475,20 @@ v_alpha_m, // Alpha for materials
 
 v_lred, v_lgreen, v_lblue, v_lrange,
 
-v_fogr, v_fogg, v_fogb, v_fogdensity;
+v_fogr, v_fogg, v_fogb, v_fogdensity,
 
-var SliderLimit; // This var controls panObj_Main.
+v_objectz;
 
-var num_mdlobjs, num_partobjs/*, num_lightobjs*/, num_sndobjs,
-_ObjectType;
+COLOR temp_light;
 
-var page = 1, lfsp = 0; //launched from switch_panProp
+var ObjectIDNumber, ParticleIDNumber, SoundIDNumber;
+var _ObjectType;
+
+var page = 1, lfsp = 0; //launched from GpanPropSwitchPage
 
 BOOL from_test_play = 0;
 
 BOOL launch_newgame_from_main;
-
-// Particle database array
-var partobjs[20];
 
 ////////////////////////////////////////////////////////////
 // Variables and booleans related to Mystymood.
@@ -428,21 +578,12 @@ rain_to_snow_on_altitude = 1;//1=rain morphes to snow when snow_altitude is reac
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
 ////////////////////////////////////////////////////////////
-PANEL *buttonlst,
+PANEL *Statistics,
+*buttonlst,
 *last_pan,
 *panMain_Top,
 *panMain_Bottom,
 *panMain_Play,
-*panObj_Main,
-*panObj_Subbar,
-*panObj_Subbar_slider,
-*panObj_Main_X,
-*panObj_Part_Main,
-*panObj_Snd_Main,
-*panObj_Part_Main_X,
-*panObj_Snd_Main_X,
-*panObj_Part_slider,
-*panObj_Snd_slider,
 *buttonlst_submenu_terrain,
 *buttonlst_submenu_object,
 *buttonlst_submenu_path,
@@ -455,7 +596,6 @@ PANEL *buttonlst,
 *panSnd,
 *panParticle,
 *panLight,
-*debug,
 *panRotateHelp,
 *panScaleHelp,
 *panLightNoti,
@@ -463,21 +603,30 @@ PANEL *buttonlst,
 *panSaveGame,
 *panLoadGame,
 *panMMenu,
-*panMMenu_exit,
 *panScreenshot,
 *panCAMRecorder,
 *panCAMRecorderREC,
 *panCAMRecorder_digits,
-*anms,
-*arch,
-*blands,
-*chars,
-*etc,
-*food,
-*machs,
-*plants,
-*tportts,
-*empty;
+*empty,
+*InsertObject,
+*InsertObject_Inputter,
+*IO_ObjectTab,
+*IO_SoundTab,
+*IO_ParticleTab,
+*IO_LightTab,
+*IO_SpriteTab,
+*IO_TerrainTab,
+*LightPresets,
+*InsertParticle,
+*BackgroundScreen,
+*Options_Graphics,
+*Options_Sound,
+*Options_Themes,
+*Options_Maintenance,
+*LoadGame_Uppart,
+*LoadGame_Downpart,
+*LoadGameInside,
+*ZTool;
 
 void free_camera();
 
@@ -555,7 +704,7 @@ FONT *f = "Arial#25b";
 ////////////////////////////////////////////////////////////
 // Material declarations
 ////////////////////////////////////////////////////////////
-MATERIAL *mat_select, *mat_temp;
+MATERIAL *mat_select, *mat_temp, *pTexColor;
 
 // Predefined materials
 MATERIAL *mat_lava, *mat_smaragd, *mat_marble,
@@ -568,7 +717,6 @@ MATERIAL *mat_custom[4];
 ////////////////////////////////////////////////////////////
 // Sounds will be declared here.
 ////////////////////////////////////////////////////////////
-SOUND *sndobjs[50];
 
 SOUND *rain_wav = "rain.wav";
 SOUND *wind_wav = "wind.wav";
@@ -583,6 +731,13 @@ SOUND *thunder5_wav = "thunder5.wav";
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
 ////////////////////////////////////////////////////////////
+BMAP *BackgroundScreen1 = "BackgroundScreen1.jpg";
+BMAP *BackgroundScreen2 = "BackgroundScreen2.jpg";
+BMAP *BackgroundScreen3 = "BackgroundScreen1.jpg";
+BMAP *BackgroundScreen4 = "BackgroundScreen2.jpg";
+BMAP *BackgroundScreen5 = "BackgroundScreen1.jpg";
+BMAP *BackgroundScreen6 = "BackgroundScreen2.jpg";
+
 BMAP *save_array[9];
 BMAP *slot1 = "button_save_slot_interface.bmp";
 BMAP *slot2 = "button_save_slot_interface.bmp";
@@ -643,33 +798,6 @@ BMAP *flag_ROTATE_on = "flag_ROTATE_on.png";
 BMAP *flag_SCALE = "flag_SCALE.png";
 BMAP *flag_SCALE_on = "flag_SCALE_on.png";
 
-BMAP *flag_ANMS = "flag_ANMS.png";
-BMAP *flag_ANMS_on = "flag_ANMS_on.png";
-
-BMAP *flag_ARCH = "flag_ARCH.png";
-BMAP *flag_ARCH_on = "flag_ARCH_on.png";
-
-BMAP *flag_BLANDS = "flag_BLANDS.png";
-BMAP *flag_BLANDS_on = "flag_BLANDS_on.png";
-
-BMAP *flag_CHARS = "flag_CHARS.png";
-BMAP *flag_CHARS_on = "flag_CHARS_on.png";
-
-BMAP *flag_ETC = "flag_ETC.png";
-BMAP *flag_ETC_on = "flag_ETC_on.png";
-
-BMAP *flag_FOOD = "flag_FOOD.png";
-BMAP *flag_FOOD_on = "flag_FOOD_on.png";
-
-BMAP *flag_MACHS = "flag_MACHS.png";
-BMAP *flag_MACHS_on = "flag_MACHS_on.png";
-
-BMAP *flag_PLANTS = "flag_PLANTS.png";
-BMAP *flag_PLANTS_on = "flag_PLANTS_on.png";
-
-BMAP *flag_TPORTTS = "flag_TPORTTS.png";
-BMAP *flag_TPORTTS_on = "flag_TPORTTS_on.png";
-
 BMAP *flag_DISCO = "flag_DISCO.bmp";
 BMAP *flag_DISCO_on = "flag_DISCO_on.bmp";
 
@@ -716,16 +844,6 @@ BMAP *menu3_submenu2_over = "button_nodetype_over.bmp";
 //BMAP *menu3_submenu3 = "button_submenu3_3.bmp";
 //BMAP *menu3_submenu4 = "button_submenu3_4.bmp";
 
-BMAP *panObj_anms = "panObj_anms.png";
-BMAP *panObj_arch = "panObj_arch.png";
-BMAP *panObj_chars = "panObj_chars.png";
-BMAP *panObj_etc = "panObj_etc.png";
-BMAP *panObj_food = "panObj_food.png";
-BMAP *panObj_machs = "panObj_machs.png";
-BMAP *panObj_plants = "panObj_plants.png";
-BMAP *panObj_tportts = "panObj_tportts.png";
-BMAP *panObj_blands = "panObj_blands.png";
-
 BMAP *panProp1_IMG = "panProp_1.bmp";
 BMAP *panProp2_IMG = "panProp_2.bmp";
 BMAP *panProp3_IMG = "panProp_3.bmp";
@@ -747,20 +865,42 @@ BMAP *bmp_lightning = "lightning.tga";    // change
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
+void OpenDebug();
+void CloseDebug();
 void ExitEvent();
 void LoadKernel();
 void LoopKernel();
 void LoadPlayground();
+void _beep();
 int UnloadKernel();
 int ReloadKernel();
 int Console();
+int PlayVideo(STRING *, var);
+void FolderScan(TEXT *,STRING *,STRING *);
+
+void AddToTextureProjectionArray(ENTITY *);
+void RemoveFromTextureProjectionArray(ENTITY *);
+
+int SetupShader();
+
+// Implementation for writing different types of variables for WriteLog
+// With somethin like int WriteLog(int); implement them yourself.
+// or use somethin like WriteLog follow an empty string and var.
+// Mother of function overloading.
+int WriteLog(STRING *);
+int WriteLog(STRING *, int);
+int WriteLog(STRING *, var);
+int WriteLog(STRING *, double);
+int WriteLog(STRING *, BOOL);
+int WriteLog(STRING *, OBJECTSTRUCT *);
+int WriteLog(STRING *);
+void NewLine();
+
 /*** First person camera ***/
 void fpcam_update();
 void fpcam_input();
 void fpcam_push(var,var);
 void fpcam_flashlight();
-
-int PlayVideo(STRING *, var);
 
 void GGUIInit();
 void GGUIHide();
@@ -776,22 +916,22 @@ void GPanelDrag(PANEL *);
 void GPanelSizeForWH(PANEL *, BMAP *);
 void GNotificationCreate(FONT *, STRING *);
 void GWindowClose(var, PANEL *);
-void GObjectTypeSwitcher(var);
-void GObjectTypeBackgroundSwitcher(PANEL *);
 
+void GInsertObjectShow();
+void GInsertObjectHide();
 void GHomeShow();
 void GMaterialEditorShow();
-void GObjectAddWindowShow();
-void GParticleAddWindowShow();
-void GSoundAddWindowShow();
-void GLightAddWindowShow();
-void GTerrainSubmenuShow();
 void GObjectSubmenuShow();
 void GPathSubmenuShow();
 void GSwitchToMoveMode();
 void GSwitchToRotateMode();
 void GSwitchToScaleMode();
 void GLoadMainMenu();
+void GPreMainMenu();
+void GOptionsShow();
+void GOptionsAdjustSettings(var);
+void GOptions_SaveSettings();
+void GOptionsHide();
 void GShowCredits();
 void GGameLoad();
 void GGameSave();
@@ -803,12 +943,23 @@ void GSoundWindowShow();
 void GSoundWindowHide();
 void GParticleWindowShow();
 void GParticleWindowHide();
-
 void GWorldNew();
+void GpanPropSwitchPage(var);
+void GLoadGameShow();
+void GLoadGameHide();
+void GLoadGame_Scroll(var, PANEL *);
+
+void GIO_ObjectTab_SwitchTab(var);
+void GOptions_Graphics();
+void GOptions_Sound();
+void GOptions_Themes();
+void GOptions_Maintenance();
+
+void GSelectObject(var);
+void GSelectLight(var);
+void GSelectParticle(var);
 
 void GToggleLevelCreationMode(var);
-
-void FolderScan(STRING *,STRING *);
 
 void FollowPointer();
 
@@ -819,11 +970,11 @@ int PassObjectPropertiesToGUI(ENTITY *);
 
 void ReadMaterialDataFromFile(MATERIAL *, STRING *);
 void WriteMaterialDataToFile(STRING *, MATERIAL *);
-
 void PassMaterialDataToWindow(MATERIAL *);
+void MaterialCopy(MATERIAL *, MATERIAL *);
 
 int PassObjectDataToClipboard(ENTITY *, OBJECTSTRUCT *);
-void PassClipboardDataToObject(ENTITY *);
+int PassClipboardDataToObject(ENTITY *);
 
 int MaterialSelect(var);
 void MaterialSave();
@@ -836,9 +987,6 @@ void ObjectManipulationInterface();
 
 ENTITY *CreateObject();
 
-void LoadObjectDatabase();
-void LoadSoundDatabase();
-void LoadParticleDatabase();
 void LoadSavedBMAPs();
 
 int SaveGameToSlot(var);
@@ -847,25 +995,9 @@ int LoadGameFromSlot(var);
 int ConfigFileRead(STRING *);
 int ConfigFileWrite(STRING *);
 
-void a_patroller();
-void a_patroller_node();
-
 int GenerateLight();
 int GenerateSound();
 int GenerateWaypoint();
-
-void FixObjectScale(ENTITY *);
-void switch_panProp(var);
-
-void load_ent_anms(var);
-void load_ent_arch(var);
-void load_ent_blands(var);
-void load_ent_chars(var);
-void load_ent_etc(var);
-void load_ent_food(var);
-void load_ent_machs(var);
-void load_ent_plants(var);
-void load_ent_tportts(var);
 
 void func_particle_segment();
 void func_lightning_effect();
@@ -881,8 +1013,6 @@ void lensflare_start();
 void flare_init(ENTITY *);
 void flare_place(ENTITY *);
 
-//void save_level(STRING *);
-//void load_level(STRING *);
 void LoadNewLevel();
 void LoadNewLevelFromWindow();
 void LoadNewLevelFromMenuWindow();
@@ -905,6 +1035,7 @@ void weather_change();
 // These are particle function prototypes, and were generated
 // by 3rd party tools. So their names are a bit messed up.
 // For those who want to modify my code: I've tried naming them properly.
+// But core functions remain unreadable.
 void New_Base_Effect_base_event(PARTICLE *);
 void New_Base_Effect_base(PARTICLE *);
 void Base_Effect_base_event(PARTICLE *);

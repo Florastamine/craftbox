@@ -16,8 +16,11 @@ its name implies.
 
 
 #ifndef default_c
+
 	#define default_c
+	
 	#include <acknex.h> // standard engine objects
+	#include <d3d9.h>
 
 	var def_dfps,def_dtps,def_dtlv,def_dtcs,def_dtac,def_dtrf,def_dsnd;
 	ANGLE def_cang;
