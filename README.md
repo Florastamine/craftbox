@@ -1,4 +1,4 @@
 craftbox
 ========
 
-An open, free-form, flexible, multi-purpose world creator for kids. Formerly known as Edu6.
+A written-from-scratch, open-source, free-form, flexible, multi-purpose world creator for kids, formerly known as Edu6.
