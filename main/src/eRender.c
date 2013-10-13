@@ -30,9 +30,9 @@ function is_points_visible (var num)
 {
 	var c,cp;VECTOR tmp;
 	for (c=0;c<=num;c++)
-		for(cp=0;cp<=7;cp++) {
-			get_points(tmp,rEnt[c],cp);if (vec_to_screen(tmp,rView)==NULL) return(0);
-			}
+	for(cp=0;cp<=7;cp++) {
+		get_points(tmp,rEnt[c],cp);if (vec_to_screen(tmp,rView)==NULL) return(0);
+	}
 	return(1);
 }
 
@@ -87,14 +87,20 @@ function screen_render_entities (VECTOR* lPos,VECTOR* aang,var* fov,var cent)
 	for (c=0;c<=cent;c++) 
 	{
 		//find bounding box and center of all entities what in the list (rEnt[])
+		
 		reset(rEnt[c],FLAG1);c_setminmax(rEnt[c]);
+		
 		if (c==0) {get_points(tmp,rEnt[c],0);vec_set(vMin,tmp);vec_set(vMax,tmp);}
 		for (cp=0;cp<=7;cp++)
 		{
-			get_points(tmp,rEnt[c],cp);
-			if (vMin.x>tmp.x) vMin.x=tmp.x;if (vMin.y>tmp.y) vMin.y=tmp.y;
-			if (vMin.z>tmp.z) vMin.z=tmp.z;if (vMax.x<tmp.x) vMax.x=tmp.x;
-			if (vMax.y<tmp.y) vMax.y=tmp.y;if (vMax.z<tmp.z) vMax.z=tmp.z;
+			if(rEnt[cp]) {
+				
+				get_points(tmp,rEnt[c],cp);
+				if (vMin.x>tmp.x) vMin.x=tmp.x;if (vMin.y>tmp.y) vMin.y=tmp.y;
+				if (vMin.z>tmp.z) vMin.z=tmp.z;if (vMax.x<tmp.x) vMax.x=tmp.x;
+				if (vMax.y<tmp.y) vMax.y=tmp.y;if (vMax.z<tmp.z) vMax.z=tmp.z;
+				
+			}
 		}
 	}
 	vec_lerp(eMin,vMin,vMax,0.5);//find center position of all entities (rEnt[])
@@ -111,8 +117,8 @@ function screen_render_entities (VECTOR* lPos,VECTOR* aang,var* fov,var cent)
 	
 	if (is_points_visible(cent)) //find Fov there all entities visible
 	while(is_points_visible(cent)&&rView.arc>2) {rView.arc--;wait(1);}
-		else while(!is_points_visible(cent)&&rView.arc<175) {rView.arc++;wait(1);}
-		
+	else while(!is_points_visible(cent)&&rView.arc<175) {rView.arc++;wait(1);}
+	
 
 	
 	vec_set(sky_color,vector(255,255,255));wait(1);//set background to white

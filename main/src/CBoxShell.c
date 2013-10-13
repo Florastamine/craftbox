@@ -29,6 +29,21 @@ GSelectParticle a bit, and run - more particle effects.
 --------------------------------------------------
 */
 
+PANEL *MainMenu_Bar = {
+	
+	layer = 1;
+	
+	bmap = "bar.tga";
+	
+	pos_x = 0;
+	pos_y = 0;
+	
+	flags = TRANSLUCENT | SHOW;
+	
+	alpha = 75;
+	
+}
+
 
 PANEL *ZTool = {
 	
@@ -387,7 +402,7 @@ PANEL *panHome = {
 	
 	button(88,35,"button_saveworld_on.png","button_saveworld_off.png","button_saveworld_over.png",NULL,GGameSave,NULL);
 	button(119,80,"button_loadworld_on.png","button_loadworld_off.png","button_loadworld_over.png",NULL,GGameLoad,NULL);
-	button(113,123,"button_newworld_on.png","button_newworld_off.png","button_newworld_over.png",NULL,GWorldNew,NULL);
+	button(113,123,"button_newworld_on.png","button_newworld_off.png","button_newworld_over.png",NULL,GWorldNewShow,NULL);
 	button(108,166,"button_worldset_on.png","button_worldset_off.png","button_worldset_over.png",NULL,NULL,NULL);
 	button(34,212,"button_compileworld_on.png","button_compileworld_off.png","button_compileworld_over.png",NULL,NULL,NULL);
 	button(50,255,"button_exitworld_on.png","button_exitworld_off.png","button_exitworld_over.png",NULL,NULL,NULL);
@@ -747,39 +762,71 @@ PANEL *panLoadGame = {
 	
 }
 
-PANEL *panMMenu = {
+PANEL *MainMenu_Item1 = {
 	
-	layer = 1;
-	//	bmap = "panMMenu_Main.bmp";
+	layer = 2;
 	
-	// Old code
-	/*
-	button(20,25,slot1,slot1,slot1,LoadGameFromSlot,NULL,NULL);
-	button(126,25,slot2,slot2,slot2,LoadGamweFromSlot,NULL,NULL);
-	button(232,25,slot3,slot3,slot3,LoadGameFromSlot,NULL,NULL);
-	button(20,131,slot4,slot4,slot4,LoadGameFromSlot,NULL,NULL);
-	button(126,131,slot5,slot5,slot5,LoadGameFromSlot,NULL,NULL);
-	button(232,131,slot6,slot6,slot6,LoadGameFromSlot,NULL,NULL);
-	button(20,237,slot7,slot7,slot7,LoadGameFromSlot,NULL,NULL);
-	button(126,237,slot8,slot8,slot8,LoadGameFromSlot,NULL,NULL);
-	button(232,237,slot9,slot9,slot9,LoadGameFromSlot,NULL,NULL);
-	
-	button(5,359,"button_MMenu_New_on.png","button_MMenu_New_off.png","button_MMenu_New_on.png",GWorldNew,NULL,NULL);
-	button(165,359,"button_MMenu_opt_on.png","button_MMenu_opt_off.png","button_MMenu_opt_on.png",NULL,NULL,NULL);
-	button(5,402,"button_MMenu_cmp_on.png","button_MMenu_cmp_off.png","button_MMenu_cmp_on.png",NULL,NULL,NULL);
-	button(165,402,"button_MMenu_dev_on.png","button_MMenu_dev_off.png","button_MMenu_dev_on.png",GShowCredits,NULL,NULL);
-	*/
-	
-	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNew,NULL);
-	button(0,25,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,NULL);
-	button(0,50,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,NULL);
-	button(0,75,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,NULL,NULL);
-	button(0,100,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GShowCredits,NULL);
-	//	button(0,100,"button_Exit_on.bmp","button_Exit_off.bmp","button_Exit_on.bmp",NULL,NULL,NULL);
+	bmap = "button_NewGame_on.bmp";
+	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
+	alpha = 75;
+	
 }
+
+PANEL *MainMenu_Item2 = {
+	
+	layer = 2;
+	
+	bmap = "button_LoadGame_on.bmp";
+	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,NULL);
+
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 75;
+
+}
+
+PANEL *MainMenu_Item3 = {
+	
+	layer = 2;
+	
+	bmap = "button_Options_on.bmp";
+	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 75;
+
+}
+
+PANEL *MainMenu_Item4 = {
+	
+	layer = 2;
+	
+	bmap = "button_Achievements_on.bmp";
+	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,NULL,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 75;
+
+}
+
+PANEL *MainMenu_Item5 = {
+	
+	layer = 2;
+	
+	bmap = "button_Credits_on.bmp";
+	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GShowCredits,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 75;
+
+}
+
 
 PANEL *panCAMRecorder = {
 	
@@ -2757,9 +2804,6 @@ void GGUIInit() {
 	GPanelResize(panCAMRecorder,'t'); // x+y-scale
 	GPanelResize(panScreenshot,'t');
 	
-	panMMenu.pos_x = 10;
-	panMMenu.pos_y = screen_size.y/4;
-	
 	int i;
 	for(i = 3;i > 0;i--) pan_setpos(panCAMRecorder_digits,1,i,vector(screen_size.x - 35 - 30 * i,BORDER,0));
 	
@@ -2812,6 +2856,18 @@ void GGUIInit() {
 	ZTool.pos_x = screen_size.x - bmap_width(ZTool.bmap) - BORDER * 2;
 	ZTool.pos_y = (screen_size.y - bmap_height(ZTool.bmap))/2;
 	
+	MainMenu_Bar.pos_x = 0;
+	MainMenu_Bar.pos_y = screen_size.y/4;
+	
+	MainMenu_Bar.scale_x = sys_metrics(0)/bmap_width(MainMenu_Bar.bmap);
+	MainMenu_Bar.scale_y = .5;
+	
+	MainMenu_Item1.pos_y  = MainMenu_Item2.pos_y = MainMenu_Item3.pos_y = MainMenu_Item4.pos_y = MainMenu_Item5.pos_y = MainMenu_Bar.pos_y + BORDER/2;
+	MainMenu_Item1.pos_x = BORDER;
+	MainMenu_Item2.pos_x = MainMenu_Item1.pos_x + bmap_width(MainMenu_Item1.bmap);
+	MainMenu_Item3.pos_x = MainMenu_Item2.pos_x + bmap_width(MainMenu_Item2.bmap);
+	MainMenu_Item4.pos_x = MainMenu_Item3.pos_x + bmap_width(MainMenu_Item3.bmap);
+	MainMenu_Item5.pos_x = MainMenu_Item4.pos_x + bmap_width(MainMenu_Item4.bmap);
 	
 	/*
 
@@ -2965,7 +3021,7 @@ void GGUIHide()
 --------------------------------------------------
 */
 void GGUIHide() {
-   
+	
 	if(select) {
 		
 		// Deselect any selected entity first
@@ -3241,10 +3297,9 @@ void GShowCredits() {
 	
 	var rollspeed = .5;
 	
-	reset(panMMenu,SHOW);
 	reset(panNewGame,SHOW);
 	
-	level_load("_arena1.wmb");
+	level_load(NULL);
 	
 	TEXT *import = txt_create(100,1);
 	TEXT *end = txt_create(1,1);
@@ -3302,6 +3357,43 @@ void GPanelSizeForWH(PANEL *p, BMAP *b) {
 
 /*
 --------------------------------------------------
+void GMainMenuShow()
+
+
+--------------------------------------------------
+*/
+void GMainMenuShow() {
+	
+	set(MainMenu_Bar,SHOW);
+	set(MainMenu_Item1,SHOW);
+	set(MainMenu_Item2,SHOW);
+	set(MainMenu_Item3,SHOW);
+	set(MainMenu_Item4,SHOW);
+	set(MainMenu_Item5,SHOW);
+	
+}
+
+/*
+--------------------------------------------------
+void GMainMenuHide()
+
+
+--------------------------------------------------
+*/
+void GMainMenuHide() {
+	
+	reset(MainMenu_Bar,SHOW);
+	reset(MainMenu_Item1,SHOW);
+	reset(MainMenu_Item2,SHOW);
+	reset(MainMenu_Item3,SHOW);
+	reset(MainMenu_Item4,SHOW);
+	reset(MainMenu_Item5,SHOW);
+	
+}
+
+
+/*
+--------------------------------------------------
 void GLoadMainMenu()
 
 
@@ -3312,20 +3404,21 @@ void GLoadMainMenu() {
 	IN_GAME = 0;
 	
 	GGUIHide();
+	GMainMenuShow();
 	//	GPanelCenter(panMMenu);
 	
 	launch_newgame_from_main = 1;
 	
-	level_load("_tech.wmb");
+	level_load("dry_menu.wmb");
 	game_load(pref_savebmaps,0);
 	
-	set(panMMenu,SHOW);
+	//	GPanelSelect(panMMenu);
 	
-	GPanelSelect(panMMenu);
+	//	panMMenu.alpha = 50;
 	
-	panMMenu.alpha = 50;
+	guiViewPreset(&guiCurrentViewPreset, 1, vector(-77,-144,-35), vector(41,10,0)); // znear
+	guiViewPreset(&guiCurrentViewPreset, 2, vector(522,-485,1123), vector(109,7,0)); // sprite	
 	
-	// dev text goes here
 }
 
 /*
@@ -3339,6 +3432,9 @@ void GOptionsShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	guiCurrentViewPreset = 2;
+	
+	GWorldNewHide();
 	GLoadGameHide();
 	
 	GOptions_Graphics();
@@ -3654,14 +3750,19 @@ void GLightWindowHide() {
 
 /* 
 --------------------------------------------------
-void GWorldNew()
+void GWorldNewShow()
 
 
 --------------------------------------------------
 */
-void GWorldNew() {
+void GWorldNewShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	guiCurrentViewPreset = 1;
+	
+	GLoadGameHide();
+	GOptionsHide();
 	
 	if(!is(panNewGame,SHOW)) {
 		
@@ -3690,6 +3791,20 @@ void GWorldNew() {
 	}
 	
 }
+
+/*
+--------------------------------------------------
+void GWorldNewHide()
+
+
+--------------------------------------------------
+*/
+void GWorldNewHide() {
+	
+	reset(panNewGame,SHOW);
+	
+}
+	
 
 /*
 --------------------------------------------------
@@ -4810,10 +4925,18 @@ void GLoadGame_Scroll(var nothing, PANEL *launcher) {
 	
 }
 
+/*
+--------------------------------------------------
+void GLoadGameShow()
+
+
+--------------------------------------------------
+*/
 void GLoadGameShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GWorldNewHide();
 	GOptionsHide();
 	
 	set(LoadGame_Uppart,SHOW);
@@ -4825,6 +4948,13 @@ void GLoadGameShow() {
 	
 }
 
+/*
+--------------------------------------------------
+void GLoadGameHide()
+
+
+--------------------------------------------------
+*/
 void GLoadGameHide() {
 	
 	reset(LoadGame_Uppart,SHOW);

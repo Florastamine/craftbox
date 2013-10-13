@@ -55,6 +55,7 @@ Returns: -
 void TakeScreenshot() {
 	
 	WriteLog("Executing TakeScreenshot()...");
+	NewLine();
 	
 	file_for_screen(FILE_SCREENSHOT,shot);
 	shot++;
@@ -72,6 +73,7 @@ void TakeScreenshot() {
 	panScreenshot.alpha = 100;
 	
 	WriteLog("Finished executing TakeScreenshot().");
+	NewLine();
 	
 }
 
@@ -90,12 +92,17 @@ Returns: -1 if the object hasn't been created yet.
 int GenerateWaypoint()
 {
 	WriteLog("Executing GenerateWaypoint()...");
+	NewLine();
 	
 	if(!my) {
 		
 		_beep();
+		
 		WriteLog("*[ERROR] GenerateWaypoint() doesn't have any entity to be assigned to. ");
+		NewLine();
+		
 		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateWaypoint(), returns -1.");
+		NewLine();
 		
 		return -1;
 		
@@ -111,6 +118,8 @@ int GenerateWaypoint()
 	}
 	
 	WriteLog("Finished executing GenerateWaypoint(). Or, in the other hand, the entity that was carrying GenerateWaypoint() was killed...");
+	NewLine();
+	
 }
 
 /*
@@ -127,12 +136,17 @@ Returns: -1 if the object hasn't been created yet.
 int GenerateSound() {
 	
 	WriteLog("Executing GenerateSound()...");
+	NewLine();
 	
 	if(!my) {
 		
 		_beep();
+		
 		WriteLog("*[ERROR] GenerateSound() doesn't have any entity to be assigned to. ");
+		NewLine();
+		
 		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateSound(), returns -1.");
+		NewLine();
 		
 		return -1;
 		
@@ -147,6 +161,8 @@ int GenerateSound() {
 	}
 	
 	WriteLog("Finished executing GenerateSound(). Or, in the other hand, the entity that was carrying GenerateSound() was killed...");
+	NewLine();
+	
 }
 
 /*
@@ -163,12 +179,17 @@ Returns: -1 if the object hasn't been created yet.
 int GenerateLight() {
 	
 	WriteLog("Executing GenerateLight()...");
+	NewLine();
 	
 	if(!my) {
 		
 		_beep();
+		
 		WriteLog("*[ERROR] GenerateLight() doesn't have any entity to be assigned to. ");
+		NewLine();
+		
 		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateLight(), returns -1.");
+		NewLine();
 		
 		return -1;
 		
@@ -182,7 +203,7 @@ int GenerateLight() {
 	my.alpha = DEFAULT_ALPHA+25;
 	my.ambient = 100;
 	
-	my.lightrange = random(500);
+	my.lightrange = random(2000);
 	
 	my.red = temp_light.red;
 	my.green = temp_light.green;
@@ -227,16 +248,21 @@ int GenerateLight() {
 	}
 	
 	WriteLog("Finished executing GenerateLight(). Or, in the other hand, the entity that was carrying GenerateLight() was killed...");
+	NewLine();
+	
 }
 
 /*
 --------------------------------------------------
-void AddToTextureProjectionArray(ENTITY *Ent)
+int AddToTextureProjectionArray(ENTITY *Ent)
 
 
 --------------------------------------------------
 */
-void AddToTextureProjectionArray(ENTITY *Ent) {
+int AddToTextureProjectionArray(ENTITY *Ent) {
+	
+	WriteLog("Executing AddToTextureProjectionArray(ENTITY *Ent)...");
+	NewLine();
 	
 	while(!Ent) wait(1);
 	
@@ -245,7 +271,26 @@ void AddToTextureProjectionArray(ENTITY *Ent) {
 		rEntCount += 1;
 		rEnt[rEntCount] = Ent;
 		
+		WriteLog("Successfully imported an entity into the projection array.");
+		NewLine();
+		
 	}
+	
+	else {
+		
+		WriteLog("*[ERROR] The projection array is full. Maximum number of entities allowed is ",MAX_rEnts);
+		NewLine();
+		WriteLog("* From the ",MAX_rEnts + 1);
+		WriteLog(" entity, shadow will no longer be casted.");
+		NewLine();
+		
+		return -1;
+		
+		
+	}
+	
+	WriteLog("Finished executing AddToTextureProjectionArray(ENTITY *Ent).");
+	NewLine();
 	
 }
 
@@ -343,7 +388,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		while(!tmp) wait(1);
 		WriteLog("Finished creating the temporary neutral object. Passing values...");
 		
-		AddToTextureProjectionArray(tmp);
+		//		AddToTextureProjectionArray(tmp);
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
@@ -531,7 +576,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		while(!tmp) wait(1);
 		WriteLog("Finished creating the temporary terrain object. Passing values...");
 		
-		AddToTextureProjectionArray(tmp);
+		//		AddToTextureProjectionArray(tmp);
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
@@ -623,7 +668,7 @@ void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 int PlayVideo(STRING *what, var vol)
 
 Desc: A media_play wrapper which plays a multimedia file 
-and wait until it ends. Combine with wait_for to get the 
+and wait until it ends. Combine with proc_status to get the 
 desired effect.
 
 Returns: -1 if the file couldn't be opened.
@@ -829,25 +874,25 @@ void MaterialCopy(MATERIAL *dest, MATERIAL *source)
 --------------------------------------------------
 */
 void MaterialCopy(MATERIAL *dest, MATERIAL *source) {
-   
-   while(!dest || !source) wait(1);
-   
-   dest.ambient_red = source.ambient_red;
-   dest.ambient_green = source.ambient_green;
-   dest.ambient_blue = source.ambient_blue;
-   
-   dest.specular_red = source.specular_red;
-   dest.specular_green = source.specular_green;
-   dest.specular_blue = source.specular_blue;
-   
-   dest.diffuse_red = source.diffuse_red;
-   dest.diffuse_green = source.diffuse_green;
-   dest.diffuse_blue = source.diffuse_blue;
-   
-   dest.emissive_red = source.emissive_red;
-   dest.emissive_green = source.emissive_green;
-   dest.emissive_blue = source.emissive_blue;
-   
+	
+	while(!dest || !source) wait(1);
+	
+	dest.ambient_red = source.ambient_red;
+	dest.ambient_green = source.ambient_green;
+	dest.ambient_blue = source.ambient_blue;
+	
+	dest.specular_red = source.specular_red;
+	dest.specular_green = source.specular_green;
+	dest.specular_blue = source.specular_blue;
+	
+	dest.diffuse_red = source.diffuse_red;
+	dest.diffuse_green = source.diffuse_green;
+	dest.diffuse_blue = source.diffuse_blue;
+	
+	dest.emissive_red = source.emissive_red;
+	dest.emissive_green = source.emissive_green;
+	dest.emissive_blue = source.emissive_blue;
+	
 }
 
 /*
@@ -1449,7 +1494,7 @@ void ObjectPaste() {
 		str_cpy(TEMPSTR,clipboard.name);
 		
 		PassClipboardDataToObject(CreateObject());
-		wait_for(PassClipboardDataToObject);
+		while(proc_status(PassClipboardDataToObject)) wait(1);
 		
 		str_cpy(TEMPSTR,TEMPSTR_old);
 		TEMP_OBJECT_TYPE = TEMP_OBJECT_TYPE_old;
@@ -1908,9 +1953,11 @@ void ExitEvent() {
 	
 	WriteLog("*[SYS] Saving configuration...");
 	ConfigFileWrite(FILE_CONFIG);
-	wait_for(ConfigFileWrite);
+	while(proc_status(ConfigFileWrite)) wait(1);
 	
 	WriteLog("*[SYS] Closing LOGFILEHNDL and exiting craftbox!");
+	
+	NewLine();
 	if(LOGFILEHNDL) file_close(LOGFILEHNDL);
 	
 	sys_exit(NULL);
@@ -2117,6 +2164,8 @@ void LoadNewLevel() {
 	
 	manip_type = scale + 1;
 	
+	IN_GAME = 1;
+	
 	WriteLog("Finished executing LoadNewLevel().");
 }
 
@@ -2261,7 +2310,7 @@ int Console() {
 			str_cpy((ConsoleText->pstring)[1],"Loading kernel...");
 			
 			LoadKernel();
-			wait_for(LoadKernel);
+			while(proc_status(LoadKernel)) wait(1);
 			
 			LoopKernel();
 			
@@ -2320,7 +2369,8 @@ int UnloadKernel() {
 	KERNEL_IS_RUNNING = 0;
 	
 	// From GShowCredits().
-	reset(panMMenu,SHOW);
+	GMainMenuHide();
+	
 	reset(panNewGame,SHOW);
 	
 	level_load(NULL);
@@ -2406,7 +2456,7 @@ void LoadKernel() {
 	HEIGHT < MINIMUM_RESOLUTION_Y ) {
 		
 		UnloadKernel(); // switch off the kernel and enter console mode.
-		wait_for(UnloadKernel); // or else some kind of stupid error would pop up.
+		while(proc_status(UnloadKernel)) wait(1);  // or else some kind of stupid error would pop up.
 		
 		str_cpy((ConsoleText.pstring)[1],"craftbox requires at least a 800x600 resolution screen to run properly.");
 		str_cpy((ConsoleText.pstring)[2],"Please switch to the resolution that is larger or equal to 800x600 and start craftbox again.");
@@ -2428,7 +2478,7 @@ void LoadKernel() {
 	if(!sys_metrics(19)) {
 		
 		UnloadKernel(); // switch off the kernel and enter console mode.
-		wait_for(UnloadKernel); // or else some kind of stupid error would pop up.
+		while(proc_status(UnloadKernel)) wait(1);  // or else some kind of stupid error would pop up.
 		
 		str_cpy((ConsoleText.pstring)[1],"Plug in a mouse and restart craftbox.");
 		
@@ -2479,6 +2529,9 @@ void LoadKernel() {
 
 	// Initialize the databases and load them.
 	LoadSavedBMAPs();
+	
+	// Initialize shaders
+	SetupShader();
 
 	// Intialize and read custom materials' properties.
 	int i;
@@ -2495,16 +2548,14 @@ void LoadKernel() {
 	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
 	str_cat((PreMainMenuLoading.pstring)[1],"s");
 	
-	// If we want a video to be played...
-	//		PlayVideo(100);
-	//		wait_for(PlayVideo);
+	// If we want a video to be played... 
 
 	// Intialize and load the GUI system.
 	str_cpy((PreMainMenuLoading.pstring)[2],LOADCRAFTBOX_3);
 	dtimer();
 	
 	GGUIInit();
-	wait_for(GGUIInit);
+	while(proc_status(GGUIInit)) wait(1);
 	
 	/*
 	// Load a blank level.
@@ -2746,7 +2797,7 @@ int WriteLog(STRING *str) {
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
-		NewLine();
+		//		NewLine();
 		
 	}
 
@@ -2767,7 +2818,7 @@ int WriteLog(STRING * str, int i) {
 		
 		file_str_write(LOGFILEHNDL,str);
 		file_var_write(LOGFILEHNDL,(int)i);
-		NewLine();
+		//		NewLine();
 		
 	}
 
@@ -2788,7 +2839,7 @@ int WriteLog(STRING *str, var _v) {
 		
 		file_str_write(LOGFILEHNDL,str);
 		file_var_write(LOGFILEHNDL,_v);
-		NewLine();      
+		//		NewLine();      
 		
 	}
 
@@ -2809,7 +2860,7 @@ int WriteLog(STRING *str, double d) {
 		
 		file_str_write(LOGFILEHNDL,str);
 		file_var_write(LOGFILEHNDL,(double)d);
-		NewLine();
+		//		NewLine();
 		
 	}
 
@@ -2833,7 +2884,7 @@ int WriteLog(STRING *str, BOOL b) {
 		if(b) file_str_write(LOGFILEHNDL,"true");
 		else file_str_write(LOGFILEHNDL,"false");
 		
-		NewLine();
+		//		NewLine();
 		
 	}
 
@@ -2912,7 +2963,7 @@ void CBox_startup() {
 				
 				if(key_del) {
 					
-					RemoveFromTextureProjectionArray(select);
+					//					RemoveFromTextureProjectionArray(select);
 					
 					ptr_remove(select);
 					
@@ -3007,13 +3058,41 @@ void CBox_startup() {
 
 }
 
+/*
+--------------------------------------------------
+void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
+{
+	VECTOR pos, ang;
+	vec_set(&pos, _pos);
+	vec_set(&ang, _ang);
+	
+	while (1)
+	{  
+		if (*ref == id && !IN_GAME)
+		{
+			vec_lerp(camera.x, camera.x, pos.x, clamp(guiViewPresetSpeed * time_step, 0, 1));
+			vec_lerp(camera.pan, camera.pan, ang.x, clamp(guiViewPresetSpeed * time_step, 0, 1));
+		} 
+		
+		wait(1);
+	}
+}
+
 ////////////////////////////////////////////////////////////
 // This is the camera controller I found when I was tweaking Mystymood.
-// 5.7.2013 : This camera is good, but I have to partly rewrite it
+// + 5.7.2013 : This camera is good, but I have to partly rewrite it
 // because...well, I won't explain, find out for yourself.
 // This code won't be checked against PLAYTESTING because
 // it will be killed prior to set PLAYTESTING to 1.
 // and restored later when PLAYTESTING has been set to 0.
+// + 13.10.2013 : 
 ////////////////////////////////////////////////////////////
 VECTOR *camera_force = { z = 0; }
 
@@ -3029,7 +3108,8 @@ void free_camera()
 	vec_set(camera.tilt,my.tilt);
 
 	while(1)
-	{	
+	{
+	   
 		camera_force.x = ( (key_w || key_cuu) - (key_s || key_cud) )*speed*time_step;
 		camera_force.y = ( (key_a || key_cul) - (key_d || key_cur) )*speed*time_step;
 		
@@ -4032,6 +4112,7 @@ void LoadPlayground() {
 		//		
 	//	}
 	
+	/*
 	// Test if there is any entity in the projection array
 	if(rEnt[0]) {
 		
@@ -4044,11 +4125,12 @@ void LoadPlayground() {
 		set_material_matrices();// set all mat_effect pointers that uses in shader
 		
 	}
+	*/
 
 	while(PLAYTESTING) {
 		
 		// Need a little optimization here....
-		if(rEnt[0]) create_dxmat(mat_effect1,pSys[0].Pos,pSys[0].Ang,pSys[0].Fov,mtl_pTex1.skin1);
+		//		if(rEnt[0]) create_dxmat(mat_effect1,pSys[0].Pos,pSys[0].Ang,pSys[0].Fov,mtl_pTex1.skin1);
 		
 		temp_cam += 3 * time_step;
 		camera.z += .5 * sin(temp_cam);
@@ -4072,6 +4154,7 @@ void LoadPlayground() {
 		
 		reset(panCAMRecorder,SHOW);
 		reset(panCAMRecorder_digits,SHOW);
+		reset(panCAMRecorderREC,SHOW);
 		
 	}
 	else { //play_as_bike
@@ -4192,19 +4275,14 @@ void LoadNewLevelFromMenuWindow()
 */
 void LoadNewLevelFromMenuWindow() {
 	
-	reset(panMMenu,SHOW);
+	GMainMenuHide();
 	reset(panNewGame,SHOW);
-	//	
-	//	GGUIInit();
-	//	wait_for(GGUIInit);
 
 	GGUIShow();
 
 	LoadNewLevel();
 
-	launch_newgame_from_main = 0;
-	
-	IN_GAME = 1;
+	launch_newgame_from_main = 0;\
 
 	// Left
 	if(button_state(panNewGame,2,-1)) {

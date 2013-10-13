@@ -44,17 +44,17 @@ http://gamestart3d.com/wiki/index.php?title=Forward_or_Deferred_rendering%3F
 
 + Fixed Function Effects List
 - [X] Watershader
-- [X] Multitexturing
+- [X] Random multitexturing
 - [X] Environment Mapping
 - [X] Improved Overlay 
 
 + Shaders List
-- Watershader
+- [X] Watershader
 - Light Shaft
 - God Rays
-- Specular
+- [X] Specular
 - [X] Velvet
-- Fur
+- [X] Fur
 - (Motion) Blur
 - [X] Chrome
 - Multitexturing
@@ -62,7 +62,6 @@ http://gamestart3d.com/wiki/index.php?title=Forward_or_Deferred_rendering%3F
 - [X] Grass waving
 - Refraction
 - [X] Ocean
-- Glow
 - Flame
 - Soft Particles
 
@@ -79,9 +78,10 @@ MATERIAL *Toon;
 MATERIAL *Chrome;
 MATERIAL *GrassWaving;
 MATERIAL *Fur1;
-MATERIAL *Fur2;
 MATERIAL *Ocean;
 MATERIAL *Velvety;
+MATERIAL *Specular;
+MATERIAL *Water;
 
 BMAP *waterbump = "waves2.tga";
 BMAP *envspec = "sky.tga";
@@ -122,7 +122,7 @@ int SetupShader()
 */
 int SetupShader() {
 	
-	if(edition < 3) return;
+	if(edition < 3) return -1;
 	
 	//	Setup for Shade-C
 	//	sc_bHDR = 1;
@@ -132,7 +132,6 @@ int SetupShader() {
 	//	sc_bReflect = 0;
 	//	sc_bVolParts = 0;
 	//	sc_setup();
-	
 	
 	
 }
@@ -234,11 +233,29 @@ MATERIAL *Fur1 =
 }
 
 MATERIAL *Velvety = {
-   
-   effect = "Velvety.fx";
-   
-   flags = TANGENT;
-   
+	
+	effect = "Velvety.fx";
+	
+	flags = TANGENT;
+	
+}
+
+MATERIAL *Specular = {
+	
+	effect = "specular_world.fx";
+	
+	flags = TANGENT;
+	
+}
+
+MATERIAL *Water = {
+	
+	skin1 = waterbump;
+	skin2 = transenvmap_cube;
+	
+	flags = TANGENT;
+	effect = "watershader.fx";
+	
 }
 
 void mtl_ffpwater_event()
@@ -343,7 +360,24 @@ action sOcean() {
 }
 
 action sVelvety() {
-   
-   my.material = Velvety;
-   
+	
+	my.material = Velvety;
+	
+}
+
+action sSpecular() {
+	
+	my.material = Specular;
+	
+}
+
+action sWater()
+{
+	bmap_to_cubemap(bmap_to_mipmap(Water.skin2));
+	bmap_to_mipmap(Water.skin1);
+	
+	my.material = Water;
+
+	set(my,TRANSLUCENT);
+	set(my,NOFOG);
 }

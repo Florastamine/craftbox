@@ -137,6 +137,13 @@ typedef struct {
 
 OBJECTSTRUCT clipboard;
 
+var guiViewPresetSpeed = 0.1;
+
+// variables
+int guiCurrentViewPreset = 1; // Use default view at start
+
+void guiViewPreset (int *, int, VECTOR *, VECTOR *);
+
 //////////////////////////////////////////////////////////////
 
 // System
@@ -215,10 +222,10 @@ STRING *LOADCRAFTBOX_1 = "Initializing events and variables...";
 STRING *LOADCRAFTBOX_2 = "Initializing saved bitmaps and custom materials...";
 STRING *LOADCRAFTBOX_3 = "Initializing GUI...";
 
-TEXT *OptionsGraphicsTxt = sys_nxalloc(sizeof(TEXT));
-TEXT *OptionsSoundTxt = sys_nxalloc(sizeof(TEXT));
-TEXT *OptionsThemesTxt = sys_nxalloc(sizeof(TEXT));
-TEXT *OptionsMaintenanceTxt = sys_nxalloc(sizeof(TEXT));
+TEXT *OptionsGraphicsTxt;
+TEXT *OptionsSoundTxt;
+TEXT *OptionsThemesTxt;
+TEXT *OptionsMaintenanceTxt;
 	
 
 ////////////////////////////////////////////////////////////
@@ -345,6 +352,7 @@ var moon_scale_fac = 1.5;
 #define FlickSpeed skill6
 #define CameraFP skill7
 #define CameraBike skill8
+#define ProjectionID skill9
 
 // Object type
 #define Object 1
@@ -602,7 +610,6 @@ PANEL *Statistics,
 *panNewGame,
 *panSaveGame,
 *panLoadGame,
-*panMMenu,
 *panScreenshot,
 *panCAMRecorder,
 *panCAMRecorderREC,
@@ -626,7 +633,13 @@ PANEL *Statistics,
 *LoadGame_Uppart,
 *LoadGame_Downpart,
 *LoadGameInside,
-*ZTool;
+*ZTool,
+*MainMenu_Bar,
+*MainMenu_Item1,
+*MainMenu_Item2,
+*MainMenu_Item3,
+*MainMenu_Item4,
+*MainMenu_Item5;
 
 void free_camera();
 
@@ -878,7 +891,7 @@ int Console();
 int PlayVideo(STRING *, var);
 void FolderScan(TEXT *,STRING *,STRING *);
 
-void AddToTextureProjectionArray(ENTITY *);
+int AddToTextureProjectionArray(ENTITY *);
 void RemoveFromTextureProjectionArray(ENTITY *);
 
 int SetupShader();
@@ -896,11 +909,41 @@ int WriteLog(STRING *, OBJECTSTRUCT *);
 int WriteLog(STRING *);
 void NewLine();
 
-/*** First person camera ***/
-void fpcam_update();
-void fpcam_input();
-void fpcam_push(var,var);
-void fpcam_flashlight();
+/*** Third/first person camera ***/
+/////////
+//cerberi_croman's code (user request topic)
+//http://www.coniserver.net/ubb7/ubbthreads.php?ubb=showflat&Number=186382#Post186382
+//some changes Xd1Vo :p
+
+// 12.10.2013/13.10.2013 modified by Nguyen Ngoc Huy:
+// + some changes were made specifically for craftbox
+// + group functions
+// + disable the "running stamina" system
+
+#define gravity skill30
+#define zoffset skill31
+
+#define animate skill32
+#define animate2 skill33
+#define state skill34
+#define currentframe skill35
+#define blendframe skill36
+
+#define nullframe -2
+#define blend -1
+#define stand 0
+#define run 1
+#define walk 2
+#define walkSlow 3
+#define walkBack 4
+
+#define run_animation_speed 4
+
+VECTOR speed;
+var sMove = 1;
+var camera_type=0;
+
+/*****************************/
 
 void GGUIInit();
 void GGUIHide();
@@ -943,10 +986,13 @@ void GSoundWindowShow();
 void GSoundWindowHide();
 void GParticleWindowShow();
 void GParticleWindowHide();
-void GWorldNew();
+void GWorldNewShow();
+void GWorldNewHide();
 void GpanPropSwitchPage(var);
 void GLoadGameShow();
 void GLoadGameHide();
+void GMainMenuShow();
+void GMainMenuHide();
 void GLoadGame_Scroll(var, PANEL *);
 
 void GIO_ObjectTab_SwitchTab(var);

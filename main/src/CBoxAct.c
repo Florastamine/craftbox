@@ -109,97 +109,6 @@ void fpcam_flashlight() {
 
 }
 
-void fpcam_update()
-{
-	vec_lerp(camera.x,camera.x,camera_center.x,0.3);
-	vec_lerp(camera_center,camera_center,vector(0,0,cam_height),1);
-	vec_rotate(camera_center,my.pan);
-	vec_add(camera_center,my.x);
-	camera.pan -= mouse_spd * mouse_force.x * time_step;
-	camera.tilt += mouse_spd * mouse_force.y * time_step;
-	camera.z = -25;
-	if(camera.tilt > 70) camera.tilt = 70;
-	if(camera.tilt < -70) camera.tilt = -70;
-}
-
-void fpcam_input()
-{
-	if(key_z)
-	{
-		while(camera->arc >= 45)
-		{
-			camera->arc -= .2 * time_step;
-			wait(1);
-		}
-	}
-	else
-	{
-		while(camera->arc <= 60)
-		{
-			camera->arc += .2 * time_step;
-			wait(1);
-		}
-	}
-
-	if(my_height <= 10)
-	{
-		force.x = overallspeed * (key_w - key_s) * time_step;
-		
-		if(key_shift && (key_w)) accelerate(dist.x,force.x + 3.5,0.5);
-		else accelerate(dist.x,force.x,0.7);
-		
-		force.y = overallspeed * (key_a - key_d) * time_step;
-		
-		if(key_shift && (key_w)) accelerate(dist.x,force.x + 1.5,0.5);
-		else accelerate(dist.y,force.y,0.7);
-	}
-
-	if(key_w) {
-		
-		ent_animate(my,"ComNwForward",my.skill65,ANM_CYCLE);
-		my.skill65+=5*time_step;
-		
-		if(key_shift) {
-			
-			ent_animate(my,"ComNrForward",my.skill65,ANM_CYCLE);
-			my.skill65+=5*time_step;
-			
-		}
-		
-	}
-
-	else if(key_s) {
-		
-		ent_animate(my,"ComNwBackward",my.skill65,ANM_CYCLE);
-		my.skill65+=5*time_step;
-	}
-
-	else if(key_a) {
-		
-		ent_animate(my,"ComNwLeft",my.skill65,ANM_CYCLE);
-		my.skill65 += 5 * time_step;
-		
-	}
-
-	else if (key_d) {
-		
-		ent_animate(my,"ComNwRight",my.skill65,ANM_CYCLE);
-		my.skill65 += 5 * time_step;
-		
-	}
-
-	else {
-		
-		ent_animate(my,"ComNormalStand",my.skill65,ANM_CYCLE);
-		my.skill65 += 5 * time_step;
-		
-	}
-
-	move_friction = 0.2;
-	move_min_z = -1;
-
-}
-
 #define HEALTH skill30
 
 function health_indicator()
@@ -213,47 +122,6 @@ function health_indicator()
 		my.scale_x = you.HEALTH * 0.1;
 		wait (1);
 	}
-}
-
-action APlayerFP()
-{
-	player = my;
-	
-	my.material = mtl_pTex1;
-	
-	my.HEALTH = 100;
-	set(my,POLYGON | SHADOW);
-	//	my.scale_x = 4.5;
-	//	my.scale_y = my.scale_x;
-	//	my.scale_z = my.scale_x;
-
-	my.CameraFP = 1;
-
-	flashlight = ent_create("Torch.mdl",my.x,fpcam_flashlight);
-	ent_create ("health.pcx", my.x, health_indicator);
-
-	while(my)
-	{
-		if(PLAYTESTING && my.CameraFP && !my.CameraBike)
-		{
-			if(my_height <= 10) my.pan = camera.pan;
-			my_height = c_trace(my.x,vector(my.x,my.y,my.z-9999),IGNORE_MODELS|IGNORE_PASSABLE|IGNORE_ME|USE_BOX);
-			if(my_height > 10) accelerate(absdist.z,-10 * time_step,-1);    
-			
-			else
-			{
-				absdist.z = -(my_height/1.2)+ step_height;
-				absdist.z = clamp(absdist.z,-step_height,step_height);
-				if((my_height + absdist.z) > 10){ absdist.z = -my_height -10; }
-			} 
-			
-			c_move(my,dist,absdist, IGNORE_PASSABLE|GLIDE);	
-			
-			fpcam_update();
-			fpcam_input();
-		}
-		wait(1);
-	} 
 }
 
 action APlayerBike() {
@@ -579,54 +447,10 @@ action NeutralEnt() {
 	set(my, POLYGON);
 	my.ObjectType = Neutral;
 	
-	my.material = mtl_pTex1;
+	//	my.material = mtl_pTex1;
 	
 }
 
-/////////
-
-//cerberi_croman's code (user request topic)
-//http://www.coniserver.net/ubb7/ubbthreads.php?ubb=showflat&Number=186382#Post186382
-//some changes Xd1Vo :p
-
-#define gravity skill30
-#define zoffset skill31
-var running;
-
-#define animate skill32
-#define animate2 skill33
-#define state skill34
-#define currentframe skill35
-#define blendframe skill36
-
-#define nullframe -2
-#define blend -1
-#define stand 0
-#define run 1
-#define walk 2
-#define walkSlow 3
-#define walkBack 4
-#define jump 5
-#define fall 6
-
-#define run_animation_speed 7
-
-VECTOR speed;
-var anm_perc;
-var move_speed;
-var sMove = 1;
-var wcount;
-var wcounter;
-var get_tired;
-var regen;
-
-void pl_move();
-void pl_camera();
-void pl_animate(animation_speed);
-
-
-ENTITY* flashlight;
-//player action
 action player1()
 {
 	
@@ -635,7 +459,7 @@ action player1()
 	flashlight = ent_create ("flashlight1.mdl",nullvector,NULL);
 	
 	vec_set(flashlight.blue,vector(60,128,120));
-	set(flashlight,PASSABLE | SPOTLIGHT);
+	set(flashlight,PASSABLE/* | SPOTLIGHT*/);
 	player = me;
 	
 	set(my,UNLIT | POLYGON | SHADOW);
@@ -645,7 +469,7 @@ action player1()
 	c_setminmax(me);
 	
 	my.CameraFP = 1;
-	my.material = mtl_pTex1;
+	//	my.material = mtl_pTex1;
 	
 	ent_create ("health.pcx", my.x, health_indicator);
 	
@@ -653,173 +477,177 @@ action player1()
 	{
 		if(PLAYTESTING && my.CameraFP && !my.CameraBike)
 		{
-
-			pl_animate(1);
 			
-			pl_move();
+			/*** Initial setup ***/
 			vec_for_bone(fpos,me,"Bip01 R Finger1");
 			vec_set(flashlight.x,fpos);vec_set(flashlight.pan,my.pan);
-			pl_camera();
-			wait(1);
+			
+			if(camera.tilt < -90) camera.tilt = -90;
+			if(camera.tilt > 45) camera.tilt = 45;
+			
+			/*** Animation ***/
+			if (my.state != blend && my.blendframe != nullframe) 
+			{ 
+				my.animate2 = 0;
+				my.state = blend;
+			}
+			
+			if (my.state == blend)
+			{
+				if (my.currentframe == stand) ent_animate(my,"patrol_idle",my.animate,ANM_CYCLE);
+				if (my.currentframe == run) ent_animate(my,"run",my.animate,ANM_CYCLE);
+				if (my.currentframe == walk) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				if (my.currentframe == walkBack) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				if (my.currentframe == walkSlow) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				if (my.blendframe == stand) ent_blend("patrol_idle",0,my.animate2);
+				if (my.blendframe == run) ent_blend("run",0,my.animate2);
+				if (my.blendframe == walk) ent_blend("patrol_stree",0,my.animate2);
+				if (my.blendframe == walkBack) ent_blend("patrol_stree",0,my.animate2);
+				if (my.blendframe == walkSlow) ent_blend("patrol_stree",0,my.animate2);
+
+				my.animate2 += 30 * time_step;
+				
+				if (my.animate2 >= 100) 
+				{
+					my.animate = 0;
+					my.state = my.blendframe;
+					my.blendframe = nullframe;
+				}
+			}
+			
+			if (my.state == stand) 
+			{
+				ent_animate(my,"patrol_idle",my.animate,ANM_CYCLE);
+				my.animate += 5 * 1 * time_step;
+				my.animate %= 100;
+				my.currentframe = stand;
+			}
+			
+			if (my.state == run) 
+			{
+				ent_animate(my,"run",my.animate,ANM_CYCLE);
+				my.animate += run_animation_speed * 1 * 3 * time_step;
+				my.animate %= 100;
+				my.currentframe = run;
+			}
+			
+			if (my.state == walk) 
+			{
+				ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				my.animate += 7 * 1 * time_step;
+				my.animate %= 100;
+				my.currentframe = walk;
+				wait(1);
+				
+			}
+			
+			if (my.state == walkSlow) 
+			{
+				ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				my.animate += 5 * 1 * time_step;
+				my.animate %= 100;
+				my.currentframe = walkSlow;
+			}
+			
+			if (my.state == walkBack) 
+			{
+				ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
+				my.animate -= 5 * 1 * time_step;
+				if(my.animate <= 0){my.animate += 100;}
+				my.currentframe = walkBack;
+			}
+			
+			/*** Movement ***/
+			if(key_w) {
+				
+				if(key_shift) sMove = 2;
+				else sMove = 1;
+				
+			}
+			
+			result = c_trace(my.x, vector(my.x,my.y,my.z-5000), IGNORE_ME|IGNORE_PASSENTS|IGNORE_PASSABLE|IGNORE_SPRITES|USE_BOX); 
+			speed.z = -(result - my.zoffset);
+
+			if(sMove == 1) {
+				speed.x = (key_w - key_s) * 12 * time_step;//6
+				speed.y = (key_a - key_d) * 5 * time_step;
+
+			}
+			
+			if(sMove == 2){
+				speed.x = (key_w - key_s) * 35 * time_step;//11
+				speed.y = (key_a - key_d) * 15 * time_step;
+			}
+			my.pan = camera.pan;
+			
+			if(key_w && sMove == 1 && my.state != walk) my.blendframe = walk;
+			if(key_w && sMove == 2 && my.state != run) my.blendframe = run;
+			if(key_s && my.state != walkBack) my.blendframe = walkBack; speed.x += 2 * time_step;
+			if(!key_w && !key_s && !key_a && !key_d && my.state != stand) my.blendframe = stand;
+			
+			c_move(me, speed.x, nullvector, IGNORE_PASSABLE | GLIDE);
+			
+			/*** Camera ***/
+			if(key_1) {
+				
+				while(key_1) wait(1);
+				switch(camera_type) {
+					
+					case 0: // third person camera
+					
+					set(panCAMRecorder,SHOW);
+					set(panCAMRecorder_digits,SHOW);
+					set(panCAMRecorderREC,SHOW);
+					
+					camera_type = 1;
+					
+					break;
+					
+					case 1: // first person camera
+					
+					reset(panCAMRecorder,SHOW);
+					reset(panCAMRecorder_digits,SHOW);
+					reset(panCAMRecorderREC,SHOW);
+					
+					camera_type = 0;
+					
+					break;
+					
+				}
+				
+			}
+			
+			if(camera_type == 0) {
+				
+				camera.genius = NULL;
+				camera.pan -= 15 * mouse_force.x * time_step;
+				camera.tilt += 15 * mouse_force.y * time_step;
+
+				camera.x = player.x - 100 * cos(camera.pan) * cos(camera.tilt);
+				camera.y = player.y - 100 * sin(camera.pan) * cos(camera.tilt);
+				camera.z = player.z - 100 * sin(camera.tilt) + 110;
+				vec_add(camera.x,vector(20,10,30)); 
+				
+			}
+			
+			else { 
+				
+				camera.genius = me;
+				camera.pan -= 15 * mouse_force.x * time_step;
+				camera.tilt += 15 * mouse_force.y * time_step;
+
+				camera.x = player.x;
+				camera.y = player.y;
+				camera.z = player.z + 150;
+			}
+			
+			
+			/*** Etc ***/
+			
+			// 
 			
 		}
 		wait(1);
 	} 
 	
-}
-
-
-void sprint_fun()
-{
-	
-if(key_w && wcount == 0){while(key_w){wait(1);}wcount = 1;}
-	while(wcount == 1 && regen == 0){
-		wcounter += 3 * time_step;
-		if(key_w && wcounter < 50){
-			sMove = 2;
-			}else{
-			sMove = 1;
-		}
-		if(wcounter > 30 || sMove == 2){
-			wcount = 0;
-			wcounter = 0;
-		}
-		wait(1);
-	}
-}
-
-// player move action
-void pl_move()
-{
-	if(key_w){sprint_fun();}
-	if(sMove == 2){get_tired += 3*time_step;}
-	if(get_tired > 300){sMove = 1;regen += 3*time_step;
-	if(regen > 120){regen = 0;get_tired = 0;}}
-	
-	result = c_trace(my.x, vector(my.x,my.y,my.z-5000), IGNORE_ME|IGNORE_PASSENTS|IGNORE_PASSABLE|IGNORE_SPRITES|USE_BOX); 
-	speed.z = -(result - my.zoffset);
-
-	if(sMove == 1){
-		speed.x = (key_w - key_s) * 12 * time_step;//6
-		speed.y = (key_a - key_d) * 5 * time_step;
-
-	}
-	if(sMove == 2 && get_tired <= 300){
-		speed.x = (key_w - key_s) * 35 * time_step;//11
-		speed.y = (key_a - key_d) * 15 * time_step;
-	}
-	my.pan = camera.pan;
-	
-	if(key_w && sMove == 1 && my.state != walk){my.blendframe = walk;}
-	if(key_w && sMove == 2 && my.state != run){my.blendframe = run;}
-	if(key_s && my.state != walkBack){my.blendframe = walkBack; speed.x += 2 * time_step;}
-	if(!key_w && !key_s && !key_a && !key_d && my.state != stand){my.blendframe = stand;}
-	
-	c_move(me, speed.x, nullvector, IGNORE_PASSABLE | GLIDE);
-	
-}
-
-// player animate function
-void pl_animate(animation_speed) 
-{
-	if (animation_speed <= 0) animation_speed = 1;
-	
-	if (my.state != blend && my.blendframe != nullframe) 
-	{ 
-		my.animate2 = 0;
-		my.state = blend;
-	}
-	
-	if (my.state == blend)
-	{
-		if (my.currentframe == stand) ent_animate(my,"patrol_idle",my.animate,ANM_CYCLE);
-		if (my.currentframe == run) ent_animate(my,"run",my.animate,ANM_CYCLE);
-		if (my.currentframe == walk) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		if (my.currentframe == walkBack) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		if (my.currentframe == walkSlow) ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		if (my.blendframe == stand) ent_blend("patrol_idle",0,my.animate2);
-		if (my.blendframe == run) ent_blend("run",0,my.animate2);
-		if (my.blendframe == walk) ent_blend("patrol_stree",0,my.animate2);
-		if (my.blendframe == walkBack) ent_blend("patrol_stree",0,my.animate2);
-		if (my.blendframe == walkSlow) ent_blend("patrol_stree",0,my.animate2);
-
-		my.animate2 += 45 * time_step;
-		
-		if (my.animate2 >= 100) 
-		{
-			my.animate = 0;
-			my.state = my.blendframe;
-			my.blendframe = nullframe;
-		}
-	}
-	
-	if (my.state == stand) 
-	{
-		ent_animate(my,"patrol_idle",my.animate,ANM_CYCLE);
-		my.animate += 5 * animation_speed * time_step;
-		my.animate %= 100;
-		my.currentframe = stand;
-	}
-	
-	if (my.state == run) 
-	{
-		ent_animate(my,"run",my.animate,ANM_CYCLE);
-		my.animate += run_animation_speed * animation_speed * 3 * time_step;
-		my.animate %= 100;
-		my.currentframe = run;
-	}
-	
-	if (my.state == walk) 
-	{
-		ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		my.animate += 7 * animation_speed * time_step;
-		my.animate %= 100;
-		my.currentframe = walk;
-		wait(1);
-		
-	}
-	
-	if (my.state == walkSlow) 
-	{
-		ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		my.animate += 5 * animation_speed * time_step;
-		my.animate %= 100;
-		my.currentframe = walkSlow;
-	}
-	
-	if (my.state == walkBack) 
-	{
-		ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-		my.animate -= 5 * animation_speed * time_step;
-		if(my.animate <= 0){my.animate += 100;}
-		my.currentframe = walkBack;
-	}
-}
-
-var camera_type=0;
-
-// player camera function
-void pl_camera()
-{
-if(key_1 && camera_type == 0){while(key_1){wait(1);}camera_type = 1;}
-if(key_1 && camera_type == 1){while(key_1){wait(1);}camera_type = 0;}
-	
-	if(camera_type == 0){
-		camera.genius = NULL;
-		camera.pan -= 15 * mouse_force.x * time_step;
-		camera.tilt += 15 * mouse_force.y * time_step;
-
-		camera.x = player.x - 100 * cos(camera.pan) * cos(camera.tilt);
-		camera.y = player.y - 100 * sin(camera.pan) * cos(camera.tilt);
-		camera.z = player.z - 100 * sin(camera.tilt) + 120;
-		vec_add(camera.x,vector(20,10,30));
-		}else{
-		camera.genius = me;
-		camera.pan -= 15 * mouse_force.x * time_step;
-		camera.tilt += 15 * mouse_force.y * time_step;
-
-		camera.x = player.x;
-		camera.y = player.y;
-		camera.z = player.z + 55;
-	}
 }

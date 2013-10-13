@@ -27,12 +27,12 @@ List of things to do :
 - Fix the bug related to rEntCount and the black bitmap after create_dxmat.
 - Write various parameters to settings.cfg: settings for shaders, texture projection and such.
 - Replace sound instructions' volumes by VOL_EFFECTS and VOL_MUSIC
-- Tweak the new player code.
+- [X] Tweak the new player code.
 - Finish the main menu prototype for further implementations.
 - Take a look at the maze generation algorithm.
 - Fix RemoveFromTextureProjectionArray(ENTITY *).
 - Add support so that both mtl_pTex* and the colorful previously-defined materials can live happily together.
-- Appending log file instead of overwriting it.
+- [X] Appending log file instead of overwriting it.
 - More detalied logging.
 - Integrate the shader library from Slin's collection
 
@@ -45,72 +45,6 @@ Optimizations that need to be performed:
 >+++
 --------------------------------------------------
 */
-
-
-
-var fpsec;
-var init_frames;
-
-PANEL* framerate_pan  =//Zeige mir die Entity Anzahl /--\ Framerate/sek /--\ Polycount
-{
-
-       pos_x = 100; //820
-       pos_y = 0; //740
-       layer = 20;
-       digits(350, 0,7,"Arial#20",1, fpsec);  //FPS 
-       digits(350,30,7,"Arial#20",1,num_visentpolys); //POLYS
-       digits(350,60,7,"Arial#20",1,num_visents); //ENTITYS    
-       flags = OVERLAY | SHOW;
-}
-
-TEXT* info_txt = 
-{
-		 font = "Arial#20";
-       layer = 20; 
-       pos_x = 300;
-       pos_y = 0;
-       string("FPS","Polygone","Entitys");
-       flags = SHOW;
-
-}
-
-function set_fpsmax_startup()
-{
-
-       while (1)
-       {
-               
-               init_frames = total_frames;
-               wait(-1);
-               fpsec = total_frames - init_frames;
-               
-               if(fpsec<=200 && fpsec>=51)
-               {
-               framerate_pan.red=60;
-               framerate_pan.green=200;
-               framerate_pan.blue=60;	
-					}               
-               
-               if(fpsec>=31 && fpsec<=50)
-               {
-               framerate_pan.red=255;
-               framerate_pan.green=190;
-               framerate_pan.blue=80;	
-					}
-					
-               if(fpsec<30)
-               {
-               framerate_pan.red=255;
-               framerate_pan.green=0;
-               framerate_pan.blue=0;	
-					}
-               
-               wait(1);
-
-       }
-
-}
-
 
 #include "CBox8.c"
 
@@ -147,11 +81,11 @@ function set_fpsmax_startup()
 #include "CBoxDebug.c"
 
 ENTITY *SkyCube = {
-   
-   type = "./2d/tex/s_s_greenland+6.tga";
-   
-   flags2 = SKY | CUBE | SHOW;
-   
+	
+	type = "./2d/tex/s_s_greenland+6.tga";
+	
+	flags2 = SKY | CUBE | SHOW;
+	
 }
 
 int num = 0;
@@ -229,13 +163,43 @@ void main(void)  {
 		
 		LOGFILEHNDL = file_open_append(FILE_LOG);
 		
-		file_str_write(LOGFILEHNDL,"-- Log file opened at ");
-		file_var_write(LOGFILEHNDL,sys_hours);
-		file_str_write(LOGFILEHNDL,":");
-		file_var_write(LOGFILEHNDL,sys_minutes);
-		file_str_write(LOGFILEHNDL,":");
-		file_var_write(LOGFILEHNDL,sys_seconds);
 		NewLine();
+		
+		WriteLog("-- Log file opened at ");
+		WriteLog("",sys_hours);
+		WriteLog(": ",sys_minutes);
+		WriteLog(": ",sys_seconds);
+		WriteLog(",",sys_day);
+		WriteLog("/ ",sys_month);
+		WriteLog("/ ",sys_year);
+		NewLine();
+		
+		switch(sys_winversion) {
+			
+			/*
+			Range:
+			1 - Windows 98 SE
+			2 - Windows ME
+			3 - Windows 2000
+			4 - Windows 2003
+			5 - Windows XP 
+			6 - Windows Vista or above 
+			*/
+			
+			case 1: WriteLog("Windows 98/98SE detected."); break;
+			case 2: WriteLog("Windows ME detected."); break;
+			case 3: WriteLog("Windows 2000 detected."); break;
+			case 4: WriteLog("Windows 2003 detected."); break;
+			case 5: WriteLog("Windows XP detected."); break;
+			case 6: WriteLog("Windows Vista/7/8 detected."); break;
+			default: WriteLog("Linux or another operating system detected."); break;
+			
+		}
+		
+		NewLine();
+		
+		WriteLog("Allocated memory: ",sys_memory*1024);
+		WriteLog("KB");
 		NewLine();
 		
 	}
@@ -246,11 +210,9 @@ void main(void)  {
 		
 	}
 	else {
-	   
-	   SetupShader();
 		
 		LoadKernel();
-		wait_for(LoadKernel);
+		while(proc_status(LoadKernel)) wait(1);
 		
 		LoopKernel();
 		
@@ -266,9 +228,4 @@ void main(void)  {
 
 	}
 	
-}
-
-action wter(){
-   set(my,PASSABLE);
-   sc_water(me);
 }
