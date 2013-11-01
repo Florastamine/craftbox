@@ -121,8 +121,18 @@ int SetupShader()
 --------------------------------------------------
 */
 int SetupShader() {
+   
+   WriteLog("[ ] Setting up shaders");
+   NewLine();
 	
-	if(edition < 3) return -1;
+	if(edition < 3) {
+	   
+	   WriteLog("!! [ERROR] Still don't have enough money to afford a Commercial license.. :(");
+	   NewLine();
+	   
+	   return -1;
+	   
+	}
 	
 	//	Setup for Shade-C
 	//	sc_bHDR = 1;
@@ -132,6 +142,9 @@ int SetupShader() {
 	//	sc_bReflect = 0;
 	//	sc_bVolParts = 0;
 	//	sc_setup();
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
 	
 	
 }

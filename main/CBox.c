@@ -5,16 +5,12 @@ CBox.c
 This file is responsible for setting up the environment
 and calling the main modules.
 
+craftbox was written from scratch (just about 30 lines of code for codebase), in five months.
+
 TODO:
 <+++
 
-
->+++
-
-NOTES:
-<+++
-
-+ Milestone 5 release
++ Milestone 5.1 release
 - Integrated BoH_Havoc's shader library
 - Integrated Xd1Vo's texture projection
 - Separated the debug code (CBoxDebug.c) and shader code (CBoxShader.c).
@@ -22,122 +18,73 @@ NOTES:
 - Fixed several bugs.
 - A new method of accessing data was implemented -> shorter code, faster performance and allows external 3D contents to be plugged easier.
 - Added command line parameters support.
+- ...
 
 List of things to do :
 - Fix the bug related to rEntCount and the black bitmap after create_dxmat.
 - Write various parameters to settings.cfg: settings for shaders, texture projection and such.
 - Replace sound instructions' volumes by VOL_EFFECTS and VOL_MUSIC
 - [X] Tweak the new player code.
-- Finish the main menu prototype for further implementations.
+- [X] Finish the main menu prototype for further implementations.
 - Take a look at the maze generation algorithm.
 - Fix RemoveFromTextureProjectionArray(ENTITY *).
 - Add support so that both mtl_pTex* and the colorful previously-defined materials can live happily together.
 - [X] Appending log file instead of overwriting it.
 - More detalied logging.
 - Integrate the shader library from Slin's collection
+- Default config. in ConfigFileRead().
+- Fill int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct).
 
 Optimizations that need to be performed:
 - Shade-C (for performance)
 - Mystymood (for performance)
 - RemoveFromTextureProjectionArray(ENTITY *) (for performance)
-- Functions, variables, #define statements.
+- Functions, variables, #define statements. (clear unnecessary vars, there are too many)
+
+>+++
+
+NOTES:
+<+++
+
+1) 
+
+Texture projection for:
+- All types of normal entities (>Object && <=Object..)
+- Custom terrains
+
+Projection planes
+- All types of players (but only one can be activated at a time).
+- Neutral objects (ground planes for example), but not for PASSABLE entities. (like glass walls)
+
+Static; can't be affected.
+- Sky cube
+- Pointer
+- Sprite, sound, particle objects
+- Nodes
+
+2) ptr_first
 
 >+++
 --------------------------------------------------
 */
 
 #include "CBox8.c"
-
-//////////////////////////////////////////////////////////////
-#define PRAGMA_PATH "./src"
-#define PRAGMA_PATH "./src/outside"
-#define PRAGMA_PATH "./src/fx"
-
-#define PRAGMA_PATH "./2d/gui"
-#define PRAGMA_PATH "./2d/tex"
-#define PRAGMA_PATH "./2d/sprites"
-
-#define PRAGMA_PATH "./objects/sys"
-#define PRAGMA_PATH "./objects/anms"
-#define PRAGMA_PATH "./objects/arch"
-#define PRAGMA_PATH "./objects/blands"
-#define PRAGMA_PATH "./objects/chars"
-#define PRAGMA_PATH "./objects/etc"
-#define PRAGMA_PATH "./objects/food"
-#define PRAGMA_PATH "./objects/machs"
-#define PRAGMA_PATH "./objects/plants"
-#define PRAGMA_PATH "./objects/tportts"
-
-#define PRAGMA_PATH "./sounds"
-#define PRAGMA_PATH "./sounds/music"
-
-#define PRAGMA_PATH "./levels"
-//////////////////////////////////////////////////////////////
-
 #include "CBox.h"
 #include "CBoxShader.c"
 #include "CBoxCore.c"
 #include "CBoxShell.c"
+#include "CBoxScratch.c"
 #include "CBoxDebug.c"
 
-ENTITY *SkyCube = {
-	
-	type = "./2d/tex/s_s_greenland+6.tga";
-	
-	flags2 = SKY | CUBE | SHOW;
-	
-}
+/*
+--------------------------------------------------
+void main(void)
 
-int num = 0;
-var hndl;
+Desc:
 
-void play() {
-	
-	if(media_playing(hndl)) {
-		
-		printf("I'm playing something");
-		return;
-		
-	}
-	
-	if(!str_cmp((music_list.pstring)[num],"")) {
-		
-		STRING *parse = str_create("..\\sounds\\music\\");
-		
-		str_cat(parse,(music_list.pstring)[num]);
-		str_cpy((music_list.pstring)[num],parse);
-		
-		hndl = media_play(parse,NULL,100);
-		printf("%i",hndl);
-		
-		while(media_playing(hndl)) {
-			
-			if(key_n) {
-				
-				while(key_n) wait(1);
-				num++;
-				
-				media_playing(hndl);
-				
-			}
-			
-			if(key_p) {
-				
-				while(key_p) wait(1);
-				num--;
-				
-				media_playing(hndl);
-				
-			}
-			
-			wait(1);
-			
-		}
-		
-	}
-	
-}
-
+Returns: -
+--------------------------------------------------
+*/
 void main(void)  {
 	
 	if( str_stri(command_str," -com") ) { // C_TRACE_OPTIMIZATION instead of DISTANCE_OPTIMIZATION
@@ -146,14 +93,8 @@ void main(void)  {
 		DISTANCE_OPTIMIZATION = 0;
 		
 	}
-	else { // Uses DISTANCE_OPTIMIZATION if -com isn't specified.
-		
-		DISTANCE_OPTIMIZATION = 1;
-		C_TRACE_OPTIMIZATION = 0;
-		
-	}
 	
-	if( str_stri(command_str," -dev") ) { // Enable debugging + statistics, not implemented yet.
+	if( str_stri(command_str," -dev") ) { // Enable debugging + statistics, not fully implemented yet
 		
 		OpenDebug();
 		
@@ -177,6 +118,7 @@ void main(void)  {
 		switch(sys_winversion) {
 			
 			/*
+			
 			Range:
 			1 - Windows 98 SE
 			2 - Windows ME
@@ -184,6 +126,7 @@ void main(void)  {
 			4 - Windows 2003
 			5 - Windows XP 
 			6 - Windows Vista or above 
+			
 			*/
 			
 			case 1: WriteLog("Windows 98/98SE detected."); break;
@@ -209,23 +152,14 @@ void main(void)  {
 		Console();
 		
 	}
+	
 	else {
 		
 		LoadKernel();
 		while(proc_status(LoadKernel)) wait(1);
-		
+			
 		LoopKernel();
 		
-		//	
-		//	on_t = UnloadKernel;
-		//	
-		//	txt_for_dir(music_list,str_create("./src/*.ogg"));
-		//	
-		//	set(music_list,SHOW);
-		//	
-		//	on_m = play;
-		
-
 	}
 	
 }

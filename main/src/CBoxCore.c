@@ -24,6 +24,8 @@ http://www.youtube.com/watch?v=evSwhNl-HhQ
 http://mp3.zing.vn/bai-hat/Power-Kanye-West/ZWZA707C.html
 http://mp3.zing.vn/bai-hat/Viva-la-Vida-Coldplay/ZW60CI7D.html
 http://mp3.zing.vn/bai-hat/I-m-On-One-DJ-Khaled-ft-Drake-Rick-Ross/ZWZCCCU9.html
+http://en.wikipedia.org/wiki/MIT_License
+http://en.wikipedia.org/wiki/LGPL
 
 - Objects
 - Sounds
@@ -37,14 +39,110 @@ http://mp3.zing.vn/bai-hat/I-m-On-One-DJ-Khaled-ft-Drake-Rick-Ross/ZWZCCCU9.html
 --------------------------------------------------
 */
 
-#include "CBoxDDecl.c"
+//#include "CBoxDDecl.c"
 #include "CBoxAct.c"
+
+/*
+--------------------------------------------------
+void PassToSKYSTR(var position)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void PassToSKYSTR(var position) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("[ ] Passing information from the input box to SKYSTR");
+	
+	// I don't care 'bout blank spaces 'cause all of them have been flooded
+	// with undef.
+	int absposition = position - 1;
+	if(!str_cmp( (files_list_SKYSTR.pstring) [absposition], undef ) ) {
+		
+		str_cpy(SKYSTR, PATH_SKIES);
+		str_cat(SKYSTR, (files_list_SKYSTR.pstring) [absposition] );
+		
+		WriteLog("copied "); WriteLog(SKYSTR);
+		NewLine();		
+		
+	}
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
+void PassToGROUNDSTR(var position)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void PassToGROUNDSTR(var position) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("[ ] Passing information from the input box to GROUNDSTR");
+	
+	int absposition = position - 1;
+	if( !str_cmp((files_list_GROUNDSTR.pstring) [absposition], undef) ) {
+		
+		str_cpy(GROUNDSTR,PATH_GROUNDS);
+		str_cat(GROUNDSTR,(files_list_GROUNDSTR.pstring) [absposition]);
+		
+		WriteLog("copied "); WriteLog(GROUNDSTR);
+		NewLine();
+		
+		
+	}
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
+void PassToLOADGAMESTR(var position)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void PassToLOADGAMESTR(var position) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("[ ] Passing information from the input box to LOADGAMESTR");
+	
+	int absposition = position - 1;
+	if( !str_cmp((files_list_LOADGAMESTR.pstring) [absposition], undef) ) {
+		
+		str_cpy(LOADGAMESTR, PATH_SAVEDGAMES);
+		str_cat(LOADGAMESTR,(files_list_LOADGAMESTR.pstring) [absposition]);
+		
+		WriteLog("copied "); WriteLog(LOADGAMESTR);
+		NewLine();
+		
+	}
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+}
 
 /*
 --------------------------------------------------
 void TakeScreenshot()
 
-Desc: Uses file_for_screen to take a JPG screenshot
+Desc: Uses file_for_screen to take a screenshot
 and names the captured file as pref_shot. This function
 is independent and can be used anywhere within the code
 or assigned to an input key.
@@ -54,25 +152,26 @@ Returns: -
 */
 void TakeScreenshot() {
 	
-	WriteLog("Executing TakeScreenshot()...");
+	WriteLog("[ ] Trying to take a screenshot...");
 	NewLine();
 	
-	file_for_screen(FILE_SCREENSHOT,shot);
+	STRING *extension = ".jpg"; // Change the extension here: jpg, dds (uncompressed), png, bmp
+	STRING *temp_ = "#100";
+	
+	str_cpy(temp_,FILE_SCREENSHOT);
+	str_cat(temp_,extension);
+	
+	file_for_screen(temp_,shot);
 	shot++;
 	
 	set(panScreenshot,SHOW);
 	
-	while(panScreenshot.alpha > 0) {
-		
-		panScreenshot.alpha -= 10 * time_step;
-		wait(1);
-		
-	}
+	GPanelFade(panScreenshot,100,0,10);
 
 	reset(panScreenshot,SHOW);
 	panScreenshot.alpha = 100;
 	
-	WriteLog("Finished executing TakeScreenshot().");
+	WriteLog("[X] Task completed.");
 	NewLine();
 	
 }
@@ -91,22 +190,14 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateWaypoint()
 {
-	WriteLog("Executing GenerateWaypoint()...");
-	NewLine();
 	
-	if(!my) {
-		
-		_beep();
-		
-		WriteLog("*[ERROR] GenerateWaypoint() doesn't have any entity to be assigned to. ");
-		NewLine();
-		
-		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateWaypoint(), returns -1.");
-		NewLine();
-		
-		return -1;
-		
-	}
+	WriteLog("[ ] Loading waypoint function for ");
+	
+	while(!my) wait(1);
+	STRING *temp_ = my->type;
+	
+	WriteLog( temp_ );
+	NewLine();
 
 	my_target_node = me;
 	my_target_node.emask |= ENABLE_SCAN;
@@ -117,7 +208,8 @@ int GenerateWaypoint()
 		
 	}
 	
-	WriteLog("Finished executing GenerateWaypoint(). Or, in the other hand, the entity that was carrying GenerateWaypoint() was killed...");
+	WriteLog("[X] Task completed for GenerateWaypoint() at");
+	WriteLog( temp_ );
 	NewLine();
 	
 }
@@ -135,22 +227,13 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateSound() {
 	
-	WriteLog("Executing GenerateSound()...");
-	NewLine();
+	WriteLog("[ ] Loading sound function for ");
 	
-	if(!my) {
-		
-		_beep();
-		
-		WriteLog("*[ERROR] GenerateSound() doesn't have any entity to be assigned to. ");
-		NewLine();
-		
-		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateSound(), returns -1.");
-		NewLine();
-		
-		return -1;
-		
-	}
+	while(!my) wait(1);
+	STRING *temp_ = my->type;
+	
+	WriteLog( temp_ );
+	NewLine();
 	
 	ent_playloop(my,snd_create(TEMPSTR),VOL_EFFECTS);
 	
@@ -160,7 +243,8 @@ int GenerateSound() {
 		
 	}
 	
-	WriteLog("Finished executing GenerateSound(). Or, in the other hand, the entity that was carrying GenerateSound() was killed...");
+	WriteLog("[X] Task completed for GenerateSound() at ");
+	WriteLog( temp_ ); // use (STRING *) my->type outside here isn't right..my doesn't exist anymore..
 	NewLine();
 	
 }
@@ -178,22 +262,13 @@ Returns: -1 if the object hasn't been created yet.
 */
 int GenerateLight() {
 	
-	WriteLog("Executing GenerateLight()...");
-	NewLine();
+	WriteLog("[ ] Loading light function for ");
 	
-	if(!my) {
-		
-		_beep();
-		
-		WriteLog("*[ERROR] GenerateLight() doesn't have any entity to be assigned to. ");
-		NewLine();
-		
-		WriteLog("* Probably the entity hasn't been created yet prior to executing GenerateLight(), returns -1.");
-		NewLine();
-		
-		return -1;
-		
-	}
+	while(!my) wait(1);
+	STRING *temp_ = my->type;
+	
+	WriteLog( temp_ );
+	NewLine();
 	
 	set(my, BRIGHT | NOFOG | PASSABLE | TRANSLUCENT);
 	
@@ -211,7 +286,7 @@ int GenerateLight() {
 	
 	my.z += 100;
 	
-	if(my.FlickSpeed <= 0) my.FlickSpeed = .5;
+	if(!my.FlickSpeed) my.FlickSpeed = .5;
 	
 	// Like men and women, lights should equal to normal entities.
 	// They have the rights to be manipulated by the mouse.
@@ -223,7 +298,7 @@ int GenerateLight() {
 	
 	while(my) { // This loop will active as long as its entity is alive.
 		
-		if(my.LightMode == flick) { // Flickering lights (Flashing lights)
+		if(my.LightMode == Flick) { // Flickering lights (Flashing lights)
 			
 			my.lightrange = 0;
 			wait(-my.FlickSpeed);
@@ -232,7 +307,7 @@ int GenerateLight() {
 			
 		}
 		
-		if(my.LightMode == disco) { // Lights that change its r/g/b values continuously.
+		if(my.LightMode == Disco) { // Lights that change its r/g/b values continuously.
 			
 			random_seed(0);
 			
@@ -240,14 +315,15 @@ int GenerateLight() {
 			my.green = random(255);
 			my.blue = random(255);
 			
-			wait(-.1);
+			wait(-DYNAMIC_LIGHT_DISCO_SPEED);
 			
 		}
 		
 		wait(1);
 	}
 	
-	WriteLog("Finished executing GenerateLight(). Or, in the other hand, the entity that was carrying GenerateLight() was killed...");
+	WriteLog("[X] Task completed for GenerateLight() at ");
+	WriteLog( temp_ );
 	NewLine();
 	
 }
@@ -256,12 +332,14 @@ int GenerateLight() {
 --------------------------------------------------
 int AddToTextureProjectionArray(ENTITY *Ent)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 int AddToTextureProjectionArray(ENTITY *Ent) {
 	
-	WriteLog("Executing AddToTextureProjectionArray(ENTITY *Ent)...");
+	WriteLog("[ ] Trying to add an entity to the projection array...");
 	NewLine();
 	
 	while(!Ent) wait(1);
@@ -271,25 +349,20 @@ int AddToTextureProjectionArray(ENTITY *Ent) {
 		rEntCount += 1;
 		rEnt[rEntCount] = Ent;
 		
-		WriteLog("Successfully imported an entity into the projection array.");
-		NewLine();
-		
 	}
 	
 	else {
 		
-		WriteLog("*[ERROR] The projection array is full. Maximum number of entities allowed is ",MAX_rEnts);
+		WriteLog("!! [ERROR] The projection array is full. Maximum number of entities allowed is ",MAX_rEnts);
 		NewLine();
-		WriteLog("* From the ",MAX_rEnts + 1);
-		WriteLog(" entity, shadow will no longer be casted.");
+		WriteLog("!! From the ",MAX_rEnts + 1);
+		WriteLog(" entity, shadows will no longer be casted.");
 		NewLine();
-		
-		return -1;
-		
 		
 	}
 	
-	WriteLog("Finished executing AddToTextureProjectionArray(ENTITY *Ent).");
+	WriteLog("[X] Task completed for AddToTextureProjectionArray(ENTITY *Ent) at ");
+	WriteLog( (STRING *) Ent->type );
 	NewLine();
 	
 }
@@ -298,7 +371,9 @@ int AddToTextureProjectionArray(ENTITY *Ent) {
 --------------------------------------------------
 void RemoveFromTextureProjectionArray(ENTITY *Ent)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void RemoveFromTextureProjectionArray(ENTITY *Ent) {
@@ -352,17 +427,20 @@ waypoint and light objects.
 
 Returns:
 - Success: pointer of the newly created object.
-- Fail: NULL object.
+- Fail: NULL.
 --------------------------------------------------
 */
 ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateObject.
 
-	WriteLog("Executing CreateObject()...");
+	WriteLog("[ ] Trying to create an object through CreateObject()... ");
+	NewLine();
 	
-	if(str_cmp(TEMPSTR[0]," ")) {
+	if( (TEMPSTR->chars)[0] == undef) {
 		
 		_beep();
-		WriteLog("*[ERROR] Somehow TEMPSTR is empty, cannot create object, returns NULL.");
+		
+		WriteLog("!! [ERROR] Somehow TEMPSTR is empty, cannot create object, returns NULL.");
+		NewLine();
 		
 		return NULL;
 		
@@ -372,8 +450,10 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 	if(!temp_pos.x && !temp_pos.y && !temp_pos.z) {
 		
 		_beep();
-		WriteLog("*[ERROR] The cursor's position is out of range, returns a NULL object.");
-		WriteLog("* Point the cursor to the correct position and try again. Solid ground, for example.");
+		WriteLog("!! [ERROR] The cursor's position is out of range, returns a NULL object.");
+		NewLine();
+		WriteLog("!! Point the cursor to the correct position and try again. Solid ground, for example.");
+		NewLine();
 		
 		return NULL;
 		
@@ -386,7 +466,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create(TEMPSTR,temp_pos,ObjectManipulationInterface);
 		
 		while(!tmp) wait(1);
-		WriteLog("Finished creating the temporary neutral object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary neutral object. Passing values...");
+		NewLine();
 		
 		//		AddToTextureProjectionArray(tmp);
 		
@@ -407,7 +488,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectDynamic = 0; // This is a static object
 		tmp.ObjectPhysics = 0; // And physics aren't enabled by default.		
-		WriteLog("Finished executing CreateObject(), released a new neutral object.");
+		
+		LoadCBOIF(tmp);
+		
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
 		
 		return tmp;
 		
@@ -418,63 +504,39 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		switch(ParticleIDNumber) {
 			
 			case part_spiral: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_spiral);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_spiral); break;
 			
 			case part_colorfulspark: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_colorfulspark);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_colorfulspark); break;
 			
 			case part_spacehole: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_spacehole);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_spacehole); break;
 			
 			case part_fountain2: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain2);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain2); break;
 			
 			case part_fountain1: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain1);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fountain1); break;
 			
 			case part_fire2: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire2);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire2); break;
 			
 			case part_fire1: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire1);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_fire1); break;
 			
 			case part_doublehelix: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_doublehelix);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_doublehelix); break;
 			
 			case part_composition: 
-			
-			tmp = ent_create("desktop_effect.png",temp_pos,emit_composition);
-			
-			break;
+			tmp = ent_create("desktop_effect.png",temp_pos,emit_composition); break;
 			
 			default:
 			
 			_beep();
-			WriteLog("*[ERROR] ParticleIDNumber out of range, returns a NULL object.");
+			WriteLog("!! [ERROR] ParticleIDNumber out of range (");
+			WriteLog(ParticleIDNumber);
+			WriteLog("), returns NULL.");
+			NewLine();
 			
 			return NULL;
 			
@@ -483,7 +545,9 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		}
 		
 		while(!tmp) wait(1);
-		WriteLog("Finished creating the temporary particle object. Passing values...");
+		
+		WriteLog("[ ] Finished creating the temporary particle object. Passing values...");
+		NewLine();
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
@@ -500,7 +564,9 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp.alpha = DEFAULT_ALPHA+25;
 		tmp.ambient = 100;
 		
-		WriteLog("Finished executing CreateObject(), released a new particle object.");
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
 		
 		return tmp;	
 		
@@ -511,14 +577,18 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create("jabber.png",temp_pos,GenerateLight);
 		
 		while(tmp == NULL) wait(1);
-		WriteLog("Finished creating the temporary light object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary light object. Passing values...");
+		NewLine();
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
+		
 		// Lights don't have IDs so passing them is redundant.
-		WriteLog("Finished executing CreateObject(), released a new light object.");
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
 		
 		return tmp;
 		
@@ -529,7 +599,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create("sound_32.png",temp_pos,GenerateSound);
 		
 		while(tmp == NULL) wait(1);
-		WriteLog("Finished creating the temporary sound object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary sound object. Passing values...");
+		NewLine();
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
@@ -545,7 +616,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		WriteLog("Finished executing CreateObject(), released a new sound object.");
+		LoadCBOIF(tmp);
+		
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
+		
 		return tmp;
 		
 	}
@@ -555,7 +631,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create(TEMPSTR,temp_pos,ObjectManipulationInterface);
 		
 		while(!tmp) wait(1);
-		WriteLog("Finished creating the temporary sprite object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary sprite object. Passing values...");
+		NewLine();
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
@@ -564,7 +641,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		WriteLog("Finished executing CreateObject(), released a new sprite object.");
+		LoadCBOIF(tmp);
+		
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
+		
 		return tmp;
 		
 	}
@@ -574,7 +656,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create(TEMPSTR,temp_pos,NULL);
 		
 		while(!tmp) wait(1);
-		WriteLog("Finished creating the temporary terrain object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary terrain object. Passing values...");
+		NewLine();
 		
 		//		AddToTextureProjectionArray(tmp);
 		
@@ -585,7 +668,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		WriteLog("Finished executing CreateObject(), released a new terrain object.");
+		LoadCBOIF(tmp);
+		
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
+		
 		return tmp;
 		
 	}
@@ -595,7 +683,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp = ent_create("ix_waypoint.mdl",temp_pos,GenerateWaypoint);
 		
 		while(tmp == NULL) wait(1);
-		WriteLog("Finished creating the temporary waypoint object. Passing values...");
+		WriteLog("[ ] Finished creating the temporary waypoint object. Passing values...");
+		NewLine();
 		
 		tmp.filename = str_create("#300");
 		str_cpy(tmp.filename,TEMPSTR);
@@ -607,7 +696,11 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = ObjectNode;
 		
-		WriteLog("Finished executing CreateObject(), released a new waypoint object.");
+		LoadCBOIF(tmp);
+		
+		WriteLog("[X] Task completed for CreateObject() at ");
+		WriteLog( (STRING *) tmp->type );
+		NewLine();
 		
 		return tmp;
 		
@@ -618,41 +711,43 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 }
 
 /*
-void main(void) {
-	//	CreateDirectory("cd",0);
-	scan_folder("sharedData","pcx");
-}
-*/
-
-/*
 --------------------------------------------------
 void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 
+Desc: Did a little optimization here - the string clearing 
+is redundant, because str_cpy will automatically overwrites 
+string while writing from source.
 
+27.10.2013: Added a simple extension that fills undef char to the text object
+
+Returns: -
 --------------------------------------------------
 */
 void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 {
-	TEXT *read_files = txt_create(1000,1);
+	
+	WriteLog("[ ] Scanning folder ");
+	WriteLog( dir );
+	WriteLog(" for all ");
+	WriteLog(ext);
+	WriteLog(" files.");
+	NewLine();
+	
+	while(!filler) wait(1); // wait for our customer
+	
+	TEXT *read_files = txt_create(filler.strings,1);
 	
 	STRING *search_form = "a";
 
 	str_cpy(current_folder,dir);
-
 	str_cpy(search_form,dir);
 	str_cat(search_form,"\\*.");
 	str_cat(search_form,ext);
 	
 	files_found = txt_for_dir(read_files, search_form);
 	
-	var num = files_already;
-	while(num<999)
-	{
-		str_cpy((filler.pstring)[num],"");
-		num++;
-	}
+	var num = 0;
 	
-	num=0;
 	while(num<files_found)
 	{
 		str_cpy((filler.pstring)[num+files_already],(read_files.pstring)[num]);
@@ -660,7 +755,20 @@ void FolderScan(TEXT *filler, STRING *dir, STRING *ext)
 	}
 	list_start=0;
 	
-	wait(1);
+	if(files_found < filler.strings) {
+		
+		while(files_found < filler.strings) {
+			
+			str_cpy( (filler.pstring) [(int) files_found], undef);
+			files_found += 1;
+			
+		}
+		
+	}
+	
+	WriteLog("[X] Task completed for FolderScan(TEXT *filler, STRING *dir, STRING *ext).");
+	NewLine();
+	
 }
 
 /* 
@@ -676,16 +784,18 @@ Returns: -1 if the file couldn't be opened.
 */
 int PlayVideo(STRING *what, var vol) {
 	
-	WriteLog("Executing PlayVideo(STRING *what, var vol)...");
-	
 	proc_kill(4);
 
-	var hndl;
+	WriteLog("[ ] Trying to play a video file...");
+	NewLine();
 	
+	var hndl;
+
 	if(!media_play(what,NULL,0)) {
 		
 		_beep();
-		WriteLog("*[ERROR] The file couldn't be opened.");
+		WriteLog("!! [ERROR] The file couldn't be opened.");
+		NewLine();
 		
 		return -1;
 		
@@ -694,7 +804,9 @@ int PlayVideo(STRING *what, var vol) {
 
 	while(media_playing(hndl)) wait(1);
 	
-	WriteLog("Finished executing PlayVideo(STRING *what, var vol).");
+	WriteLog("[X] Task completed. ");
+	NewLine();
+
 }
 
 /* 
@@ -711,21 +823,23 @@ Returns: -
 */
 
 void FollowPointer() {
-	
+
 	proc_mode = PROC_LATE  ; // I'm so stupid...
-	
-	WriteLog("Executing FollowPointer() (followed by proc_mode)...");
-	
+
+	WriteLog("[ ] Setting up the pointer...");
+	NewLine();
+
 	if(!KERNEL_IS_RUNNING) {
 		
 		_beep();
-		WriteLog("*[ERROR] You must first start the kernel before executing FollowPointer().");
+		WriteLog("!! [ERROR] You must first start the kernel before FollowPointer() can be executed.");
+		NewLine();
 		
 		return;
 		
 	}
-	
-	
+
+
 	fpsf_marker = me;
 	set(fpsf_marker,PASSABLE | POLYGON);
 
@@ -756,7 +870,9 @@ void FollowPointer() {
 		
 	}
 	
-	WriteLog("FollowPointer() was closed. Probably because of the termination of the kernel.");
+	WriteLog("[X] Task completed for FollowPointer().");
+	NewLine();
+	
 }
 
 /*
@@ -770,18 +886,12 @@ yet been opened.
 --------------------------------------------------
 */
 int PassObjectPropertiesToGUI(ENTITY *e) {
-	
-	WriteLog("Executing PassObjectPropertiesToGUI(ENTITY *e)...");
-	
-	if(!is(panProp,SHOW)) {
-		
-		_beep();
-		WriteLog("panProp hasn't been opened yet. Cancelling PassObjectPropertiesToGUI(...).");
-		
-		return -1;
-		
-	}
-	
+
+	WriteLog("[ ] Trying to pass object information to the appropriate panel...");
+	NewLine();
+
+	if(!is(panProp,SHOW)) return -1; // Not necessary to use WriteLog here.
+
 	v_objectz = 3000 - e.z;
 	v_ambient = e.ambient;
 	v_alpha = 100 - e.alpha;
@@ -810,7 +920,8 @@ int PassObjectPropertiesToGUI(ENTITY *e) {
 	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
 	else button_state(panProp_1,8,0);
 	
-	WriteLog("Finished executing PassObjectPropertiesToGUI(ENTITY *e).");
+	WriteLog("[X] Task completed.");
+	NewLine();
 
 }
 
@@ -829,70 +940,86 @@ Returns: -
 --------------------------------------------------
 */
 void ObjectRestoreDefault() {
-	
+
 	if(event_type == EVENT_RELEASE) return;
 	
-	WriteLog("Executing ObjectRestoreDefault()...");
-	
+	WriteLog("[ ] Trying to reset the object to its original state...");
+	NewLine();
+
 	if(select) {
+		
 		select.alpha = 0;
 		select.ambient = 0;
 		reset(select, BRIGHT | INVISIBLE | NOFOG | OVERLAY | PASSABLE | SHADOW | TRANSLUCENT);
 		if(!is(select,POLYGON)) set(select,POLYGON);
 		
 		PassObjectPropertiesToGUI(select); // update the properties panel
+		
 	}
 	
-	WriteLog("Finished executing ObjectRestoreDefault().");
-	
+	WriteLog("[X] Task completed.");
+	NewLine();
+
 }
 
 /*
 --------------------------------------------------
 void ObjectRandomPan()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void ObjectRandomPan() {
-	
+
 	if(event_type == EVENT_RELEASE) return;
 	
-	WriteLog("Executing ObjectRandomPan()...");
+	WriteLog("[ ] Setting random pan for object ");
+	NewLine();
 
 	if(select) select.pan = random(360);
 	
-	WriteLog("Finished executing ObjectRandomPan().");
+	WriteLog("[X] Task completed.");	
+	NewLine();
 
 }
 
 /*
 --------------------------------------------------
-void MaterialCopy(MATERIAL *dest, MATERIAL *source)
+void MaterialCopyColor(MATERIAL *dest, MATERIAL *source)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
-void MaterialCopy(MATERIAL *dest, MATERIAL *source) {
+void MaterialCopyColor(MATERIAL *dest, MATERIAL *source) {
 	
+	WriteLog("[ ] Copying material color...");
+	NewLine();
+
 	while(!dest || !source) wait(1);
-	
+
 	dest.ambient_red = source.ambient_red;
 	dest.ambient_green = source.ambient_green;
 	dest.ambient_blue = source.ambient_blue;
-	
+
 	dest.specular_red = source.specular_red;
 	dest.specular_green = source.specular_green;
 	dest.specular_blue = source.specular_blue;
-	
+
 	dest.diffuse_red = source.diffuse_red;
 	dest.diffuse_green = source.diffuse_green;
 	dest.diffuse_blue = source.diffuse_blue;
-	
+
 	dest.emissive_red = source.emissive_red;
 	dest.emissive_green = source.emissive_green;
 	dest.emissive_blue = source.emissive_blue;
 	
+	WriteLog("[X] Task completed.");
+	NewLine();
+
 }
 
 /*
@@ -909,33 +1036,24 @@ Returns: -1 if id is out of range.
 --------------------------------------------------
 */
 int MaterialSelect(var id) {
+
+	if(event_type == EVENT_RELEASE) return -1;
 	
-	if(event_type == EVENT_RELEASE) return;
-	
-	WriteLog("Executing MaterialSelect()...");
+	WriteLog("[ ] Selecting material from list...");
+	NewLine();
 
 	// Clear evidence first
-	int i = id;
-	while(i > 0) {
-		
-		button_state(panProp_2,i,0);
-		i--;
-		
-	}
-
-	i = id; // fetch again
+	var i = 0;
 	while(i < 16) {
 		
 		button_state(panProp_2,i,0);
 		i++;
 		
 	}
-
-	button_state(panProp_2,id,1);
+	
+	button_state(panProp_2,(int) id,1);
 
 	if(select) {
-		
-		WriteLog("Begin selecting the proper ID for passing to mat_temp...");
 		
 		switch(id) {
 			
@@ -1069,7 +1187,8 @@ int MaterialSelect(var id) {
 			
 			default:
 			
-			WriteLog("id fell out of range, returns -1.");  
+			WriteLog("!! [ERROR] id fell out of range, returns -1.");  
+			NewLine();
 			
 			return -1;
 			
@@ -1079,7 +1198,8 @@ int MaterialSelect(var id) {
 		
 	}
 	
-	WriteLog("Finished executing MaterialSelect().");
+	WriteLog("[X] Task completed.");
+	NewLine();
 
 }
 
@@ -1096,8 +1216,13 @@ then be assigned to -1, which indicates neutral object.
 */
 int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 	
-	WriteLog("Executing PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of)...");
+	while(!o || !of) wait(1);
 	
+	WriteLog("[ ] Copying data (");
+	WriteLog ( (STRING *) o->type );
+	WriteLog(") to clipboard...");
+	NewLine();
+
 	of.name = str_create("#300");
 
 	////////////////////////////////////////////////////////////
@@ -1113,15 +1238,16 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 
 	of._alpha = o.alpha;
 	of._ambient = o.ambient;
-	
+
 	// TOO LAZY TO USE MULTIPLE CASES IN A SWITCH STATMENT
 	// SO I SPLIT THEM INTO DIFFERENT IFs. IF IT SUCCESS,
 	// IT WILL RETURN, THUS PREVENTS THE FUNCTION FROM EXECUTING
 	// OTHER IFs.
-	
+
 	if(o.ObjectType > Object && o.ObjectType <= ObjectNode) {
 		
-		WriteLog("Passing information of a neutral object into clipboard.");
+		WriteLog("[ ] Passing information of a neutral object into clipboard.");
+		NewLine();
 		
 		str_cpy(of.name,o.filename);
 		
@@ -1158,15 +1284,17 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		// Also, it can be used to determine if the clipboard has any piece of data or not.
 		of.dp = 1;
 		
-		WriteLog("Passing done.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == Light) {
 		
-		WriteLog("Passing information of a light object into clipboard.");
+		WriteLog("[ ] Passing information of a light object into clipboard.");
+		NewLine();
 		
 		str_cpy(of.name,o.filename);
 		
@@ -1180,15 +1308,17 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.dp = 1;
 		
-		WriteLog("Passing done.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == Sound) {
 		
-		WriteLog("Passing information of a sound object into clipboard.");
+		WriteLog("[ ] Passing information of a sound object into clipboard.");
+		NewLine();
 		
 		str_cpy(of.name,o.filename);
 		
@@ -1196,15 +1326,17 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.dp = 1;
 		
-		WriteLog("Passing done.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == Particle) {
 		
-		WriteLog("Passing information of a particle object into clipboard.");
+		WriteLog("[ ] Passing information of a particle object into clipboard.");
+		NewLine();
 		
 		str_cpy(of.name,o.filename);
 		
@@ -1212,41 +1344,54 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.dp = 1;
 		
-		WriteLog("Passing done.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == ObjectNode) {
 		
+		WriteLog("[ ] Passing information of a node object into clipboard.");
+		NewLine();
+		
 		str_cpy(of.name,o.filename);
 		
+		WriteLog("[X] Task completed.");
+		NewLine();
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == Sprite) {
 		
+		WriteLog("[ ] Passing information of a sprite object into clipboard.");
+		NewLine();
+		
 		str_cpy(of.name,o.filename);
 		
+		WriteLog("[X] Task completed.");
+		NewLine();
 		return 1;
 		
 	}
-	
+
 	if(o.ObjectType == Terrain) {
 		
+		WriteLog("[ ] Passing information of a terrain into clipboard.");
+		NewLine();
+		
 		str_cpy(of.name,o.filename);
 		
+		WriteLog("[X] Task completed.");
+		NewLine();
 		return 1;
 		
 	}
-	
+
 	return -1;
 	
-	// need a fix here.
-	WriteLog("Finished executing PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of).");
-
 }
 
 /*
@@ -1262,14 +1407,20 @@ the clipboard is empty. (clipboard.dp = 0)
 --------------------------------------------------
 */
 int PassClipboardDataToObject(ENTITY *e) {
-
-	WriteLog("Executing PassClipboardDataToObject(ENTITY *e)...");
 	
+	while(!e) wait(1);
+	
+	WriteLog("[ ] Copying back data from clipboard to ");
+	WriteLog( (STRING *) e->type);
+	NewLine();
+
 	// Double check
 	if(!clipboard.dp) {
 		
 		_beep();
-		WriteLog("*[ERROR] Clipboard contains no data, returns -1.");
+		
+		WriteLog("!! [ERROR] Clipboard contains no data, returns -1.");
+		NewLine();
 		
 		return -1;
 		
@@ -1288,10 +1439,11 @@ int PassClipboardDataToObject(ENTITY *e) {
 	e.pan = clipboard._pan;
 	e.tilt = clipboard._tilt;
 	e.roll = clipboard._roll;
-	
+
 	if(clipboard.of_objtype > Object && clipboard.of_objtype <= ObjectNode) {
 		
-		WriteLog("Clipboard contains information of a neutral object.");
+		WriteLog("[ ] Clipboard contains information of a neutral object.");
+		NewLine();
 		
 		e.ObjectType = clipboard.of_objtype;
 		
@@ -1323,15 +1475,17 @@ int PassClipboardDataToObject(ENTITY *e) {
 		if(clipboard._flags[7]) set(e,TRANSLUCENT);
 		else reset(e,TRANSLUCENT);
 		
-		WriteLog("Successfully passed clipboard data to object.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == Light) {
 		
-		WriteLog("Clipboard contains information of a light object.");
+		WriteLog("[ ] Clipboard contains information of a light object.");
+		NewLine();
 		
 		e.red = clipboard._red;
 		e.green = clipboard._green;
@@ -1341,56 +1495,78 @@ int PassClipboardDataToObject(ENTITY *e) {
 		
 		e.material = mtl_model;
 		
-		WriteLog("Successfully passed clipboard data to object.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == Particle) {
 		
-		WriteLog("Clipboard contains information of a particle object.");
+		WriteLog("[ ] Clipboard contains information of a particle object.");
+		NewLine();
 		
 		e.material = mtl_model;
 		
-		WriteLog("Successfully passed clipboard data to object.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == Sound) {
 		
-		WriteLog("Clipboard contains information of a sound object.");
+		WriteLog("[ ] Clipboard contains information of a sound object.");
+		NewLine();
 		
 		e.material = mtl_sprite;
 		
-		WriteLog("Successfully passed clipboard data to object.");
+		WriteLog("[X] Task completed.");
+		NewLine();
 		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == Sprite) {
 		
+		WriteLog("[ ] Clipboard contains information of a sprite object.");
+		NewLine();
+		
+		WriteLog("[X] Task completed.");
+		NewLine();
+		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == Terrain) {
 		
+		WriteLog("[ ] Clipboard contains information of a terrain.");
+		NewLine();
+		
+		WriteLog("[X] Task completed.");
+		NewLine();
+		
 		return 1;
 		
 	}
-	
+
 	if(clipboard.of_objtype == ObjectNode) {
 		
+		WriteLog("[ ] Clipboard contains data of a node object.");
+		NewLine();
+		
+		WriteLog("[X] Task completed.");
+		NewLine();
+		
 		return 1;
 		
 	}
 	
-	// need another fix here.
-	WriteLog("Finished executing PassClipboardDataToObject(ENTITY *e).");
+	return -1;
 
 }
 
@@ -1409,7 +1585,8 @@ programming mistakes.
 */
 void ObjectCut() {
 	
-	WriteLog("Executing ObjectCut()...");
+	WriteLog("[ ] Cutting an object to clipboard..."); 
+	NewLine();
 
 	if(select) {
 		
@@ -1435,7 +1612,8 @@ void ObjectCut() {
 		select = NULL;
 	}
 	
-	WriteLog("Finished executing ObjectCut().");
+	WriteLog("[X] Task completed for ObjectCut().");
+	NewLine();
 
 }
 
@@ -1453,7 +1631,8 @@ programming mistakes.
 */
 void ObjectCopy() {
 	
-	WriteLog("Executing ObjectCopy()...");
+	WriteLog("[ ] Copying an object to clipboard.");
+	NewLine();
 
 	if(select) {
 		
@@ -1466,7 +1645,8 @@ void ObjectCopy() {
 		}
 	}
 	
-	WriteLog("Finished executing ObjectCopy().");
+	WriteLog("[X] Task completed for ObjectCopy().");
+	NewLine();
 
 }
 
@@ -1483,8 +1663,9 @@ Returns: -
 */
 void ObjectPaste() {
 	
-	WriteLog("Executing ObjectPaste()...");
-	
+	WriteLog("[ ] Pasting an object from clipboard...");
+	NewLine();
+
 	if(clipboard.dp) {
 		
 		int TEMP_OBJECT_TYPE_old = clipboard.of_objtype;
@@ -1501,7 +1682,8 @@ void ObjectPaste() {
 		
 	}
 	
-	WriteLog("Finished executing ObjectPaste().");
+	WriteLog("[X] Task completed for ObjectPaste().");
+	NewLine();
 
 }
 
@@ -1517,15 +1699,22 @@ Returns: -
 */
 void ReadMaterialDataFromFile(MATERIAL *m, STRING *file) {
 	
-	WriteLog("Executing ReadMaterialDataFromFile(MATERIAL *m, STRING *file)...");
-	
-	while(m == NULL) wait(1); // wait for m to be completely created
+	WriteLog("[ ] Reading material data from external file (");
+	WriteLog(file);
+	WriteLog(")...");
+	NewLine();
+
+	while(!m) wait(1); // wait for m to be completely created
 
 	var vpass = file_open_read(file);
-	if(vpass == 0) {
+	if(!vpass) {
 		
 		_beep();
-		WriteLog("*[ERROR] Failed to open <file> for reading material data, return.");
+		
+		WriteLog("!! [ERROR] Failed to open ");
+		WriteLog(file);
+		WriteLog(" for reading material data, returns.");
+		NewLine();
 		
 		return;
 		
@@ -1563,7 +1752,8 @@ void ReadMaterialDataFromFile(MATERIAL *m, STRING *file) {
 
 	file_close(vpass);
 	
-	WriteLog("Finished executing ReadMaterialDataFromFile(MATERIAL *m, STRING *file).");
+	WriteLog("[X] Task completed.");
+	NewLine();
 }
 
 /*
@@ -1578,18 +1768,11 @@ Returns: -
 */
 void PassMaterialDataToWindow(MATERIAL *m) {
 	
-	WriteLog("Executing PassMaterialDataToWindow(MATERIAL *m)...");
-	
-	while(m == NULL) wait(1);
-	
-	if(!is(panMat_Sub1,SHOW)) {
-		
-		_beep();
-		WriteLog("*[ERROR] panMat_Sub1 hasn't been opened yet, return.");
-		
-		return;
-		
-	}
+	WriteLog("[ ] Passing material data to the appropriate panel...");
+	NewLine();
+
+	while(!m) wait(1);
+	if(!is(panMat_Sub1,SHOW)) return;
 
 	v_ambient_r = m.ambient_red;
 	v_ambient_g = m.ambient_green;
@@ -1610,7 +1793,9 @@ void PassMaterialDataToWindow(MATERIAL *m) {
 	v_power = m.power;
 	v_alpha_m = 100 - m.alpha;
 	
-	WriteLog("Finished executing PassMaterialDataToWindow(MATERIAL *m).");
+	WriteLog("[X] Task completed.");
+	NewLine();
+
 }
 
 /*
@@ -1627,15 +1812,21 @@ Returns: -
 */
 void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
 	
-	WriteLog("Executing WriteMaterialDataToFile(STRING *file, MATERIAL *m)...");
-
-	while(m == NULL) wait(1);
+	WriteLog("[ ] Writing material data to ");
+	WriteLog(file);
+	NewLine();
+	
+	while(!m) wait(1);
 
 	var vpass = file_open_write(file);
-	if(vpass == 0) {
+	if(!vpass) {
 		
 		_beep();
-		WriteLog("*[ERROR] Failed to open <file> for writing material data to, return.");
+		
+		WriteLog(" !! [ERROR] Failed to open ");
+		WriteLog(file);
+		WriteLog("for writing material data to, returns.");
+		NewLine();
 		
 		return;
 		
@@ -1686,7 +1877,8 @@ void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
 	// close the panel.
 	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 	
-	WriteLog("Finished executing WriteMaterialDataToFile(STRING *file, MATERIAL *m).");
+	WriteLog("[X] Task completed.");
+	NewLine();
 }
 
 /*
@@ -1701,10 +1893,8 @@ Returns: -
 --------------------------------------------------
 */
 void MaterialSave() {
-	
+
 	if(event_type == EVENT_RELEASE) return;
-	
-	WriteLog("Executing MaterialSave()...");
 
 	// Material saving is available only to custom materials
 	switch(mat_type) {
@@ -1739,8 +1929,6 @@ void MaterialSave() {
 		break;
 	}
 	
-	WriteLog("Finished executing MaterialSave().");
-
 }
 
 /*
@@ -1760,7 +1948,9 @@ Returns: -
 */
 void ObjectManipulationCore()
 {
-	WriteLog("Executing ObjectManipulationCore()...");
+	
+	WriteLog("[ ] We are at the nuclear core! Oh wait...no, not that stupid core again...");
+	NewLine();
 	
 	while(mouse_left && (manip_type > 0 && manip_type < 4)) // [0..4]
 	{
@@ -1768,7 +1958,6 @@ void ObjectManipulationCore()
 		if(manip_type == scale) 
 		{
 			GGUIHide();
-			
 			if(key_alt) { // i don't place the checker here 'cause it can create jerky effect
 				
 				if(my.scale_x >= MINIMUM_SCALE_CONSTANT) {
@@ -1826,8 +2015,6 @@ void ObjectManipulationCore()
 	}
 
 	GGUIShow();
-	
-	WriteLog("Finished executing ObjectManipulationCore().");
 
 }
 
@@ -1837,7 +2024,8 @@ void ObjectManipulationInterface()
 
 Desc: An ObjectManipulationCore() wrapper. It will
 be assigned to newly created objects to enable
-manipulating of that object.
+manipulating of that object. Contains general code 
+for every newly born entity.
 
 Includes two simple scene optimization methods 
 (C_TRACE_OPTIMIZATION and DISTANCE_OPTIMIZATION).
@@ -1852,13 +2040,21 @@ Returns: -
 */
 void ObjectManipulationInterface()
 {
-	WriteLog("Executing ObjectManipulationInterface()...");
 	
+	WriteLog("[ ] Executing the stupid function that I have forgotten what it does :v");
+	NewLine();
+	
+	while(!my) wait(1);
+	
+	STRING *temp_ = my->type;
+
 	my.emask |= ENABLE_CLICK;
 	my.event = ObjectManipulationCore;
-	
+
 	var Dist = 0;
 	
+	// These are general code that every entity must have 
+	// for example in the editor
 	while(my) {
 		
 		if(PLAYTESTING) {
@@ -1932,7 +2128,10 @@ void ObjectManipulationInterface()
 		
 	}
 	
-	WriteLog("Finished executing ObjectManipulationInterface() (an entity that was carrying ObjectManipulationInterface() was killed).");
+	WriteLog("[X] Task completed for ObjectManipulationInterface() at ");
+	WriteLog(temp_);
+	NewLine();
+
 }
 
 /*
@@ -1940,28 +2139,42 @@ void ObjectManipulationInterface()
 void ExitEvent()
 
 Desc: Peform various tasks prior to exiting craftbox. 
-These include writing configuation files, saving variables...
+These including writing configuation files, saving variables...
 
 Returns: -
 --------------------------------------------------
 */
 void ExitEvent() {
-	
-	WriteLog("*[SYS] ExitEvent() was triggered.");
-	
-	if( str_stri(command_str," -dev") ) CloseDebug();
-	
-	WriteLog("*[SYS] Saving configuration...");
+
+	WriteLog("!! [SYS] ExitEvent() was triggered.");
+	NewLine();
+
+	if( str_stri(command_str," -dev") ) {
+		
+		WriteLog("!! [SYS] Closing debuggers...");
+		NewLine();
+		
+		CloseDebug();
+		
+	}
+
+	WriteLog("!! [SYS] Saving configuration...");
+	NewLine();
+
 	ConfigFileWrite(FILE_CONFIG);
 	while(proc_status(ConfigFileWrite)) wait(1);
-	
-	WriteLog("*[SYS] Closing LOGFILEHNDL and exiting craftbox!");
-	
-	NewLine();
-	if(LOGFILEHNDL) file_close(LOGFILEHNDL);
-	
+
+	if(LOGFILEHNDL) {
+		
+		WriteLog("!! [SYS] Closing LOGFILEHNDL and exiting craftbox!");
+		NewLine();
+		
+		file_close(LOGFILEHNDL);
+		
+	}
+
 	sys_exit(NULL);
-	
+
 }
 
 /*
@@ -1979,10 +2192,12 @@ Returns: -
 */
 void OptimizeFramerate(var dfr) {
 	
-	WriteLog("Executing OptimizeFramerate(var dfr)...");
+	WriteLog("[ ] Optimizing frame rate...");
+	NewLine();
 	
-	WriteLog("Finished executing OptimizeFramerate(var dfr).");
-	
+	WriteLog("[X] Task completed.");
+	NewLine();
+
 }
 
 /*
@@ -1996,14 +2211,19 @@ Returns: -1 if "cf" couldn't be opened.
 */
 int ConfigFileWrite(STRING *cf) {
 	
-	WriteLog("Executing ConfigFileWrite(STRING *cf)...");
+	WriteLog("[ ] Writing current configuration to file (");
+	WriteLog(cf);
+	WriteLog(")");
+	NewLine();
 
 	var file = file_open_write(cf);
 	
 	if(!file) {
 		
 		_beep();
-		WriteLog("*[ERROR] The file couldn't be opened, returns -1.");
+		
+		WriteLog("!! [ERROR] The file couldn't be opened, returns -1.");
+		NewLine();
 		
 		return -1;
 		
@@ -2032,7 +2252,7 @@ int ConfigFileWrite(STRING *cf) {
 	- video_screen
 
 	*/
-	
+
 	// -> Graphics + system
 	file_var_write(file,d3d_anisotropy);
 	file_var_write(file,d3d_antialias);
@@ -2041,26 +2261,27 @@ int ConfigFileWrite(STRING *cf) {
 	file_var_write(file,d3d_lightres);
 	file_var_write(file,video_aspect);
 	file_var_write(file,video_gamma);
-	
+
 	//	file_var_write(file,video_mode);
 	file_var_write(file,sys_metrics(0));
 	file_var_write(file,sys_metrics(1));
-	
+
 	file_var_write(file,video_screen);
-	
+
 	file_var_write(file,video_depth);
-	
+
 	file_var_write(file,shot);
-	
+
 	// -> Sound effects' volume
 	file_var_write(file,VOL_EFFECTS);
 	file_var_write(file,VOL_MUSIC);
-	
+
 	// -> Shaders + PPs parameters
-	
+
 	file_close(file);
 	
-	WriteLog("Finished executing ConfigFileWrite(STRING *cf).");
+	WriteLog("[X] Task completed.");
+	NewLine();
 
 }
 
@@ -2077,21 +2298,26 @@ then be used.
 */
 int ConfigFileRead(STRING *cf) {
 	
-	WriteLog("Executing ConfigFileWrite(STRING *cf)...");
+	WriteLog("[ ] Reading configuration from ");
+	WriteLog(cf);
+	NewLine();
 
 	var file = file_open_read(cf);
 	if(!file) { // Fail? Then use default settings.
 		
 		_beep();
-		WriteLog("*[ERROR] The file couldn't be opened, returns -1.");
-		WriteLog("* Use default configuration.");
+		
+		WriteLog("! [ERROR] The file couldn't be opened, returns -1.");
+		NewLine();
+		WriteLog("! Will now use default configuration.");
+		NewLine();
 		
 		/* Default config. goes here. */
 		
 		return -1;
 		
 	}
-	
+
 	// -> Graphics + system
 	d3d_anisotropy = file_var_read(file);
 	d3d_antialias = file_var_read(file);
@@ -2101,23 +2327,76 @@ int ConfigFileRead(STRING *cf) {
 
 	video_aspect = file_var_read(file);
 	video_gamma = file_var_read(file);
-	
+
 	video_set( file_var_read(file), file_var_read(file),
 	0 , file_var_read(file));
-	
+
 	video_depth = file_var_read(file);
-	
+
 	shot = file_var_read(file);
-	
+
 	// -> Sound effects' volume
 	VOL_EFFECTS = file_var_read(file);
 	VOL_MUSIC = file_var_read(file);
-	
+
 	// -> Shaders + PPs parameters
 
 	file_close(file);
 	
-	WriteLog("Finished executing ConfigFileWrite(STRING *cf).");
+	WriteLog("[X] Task completed.");
+	NewLine();
+
+}
+
+/*
+--------------------------------------------------
+void LaunchGameSession()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void LaunchGameSession() {
+
+	if(event_type == EVENT_RELEASE) return;
+	
+	WriteLog("[ ] Creating a game session, please wait.");
+	NewLine();
+	
+	dtimer();
+	
+	double time;
+
+	// Disable all the panels first
+	GMainMenuHide();
+	GWorldNewHide();
+	GLoadGameHide();
+	GOptionsHide();
+	GTrophiesHide();
+	GHelpHide();
+	
+	set(CreateWorldCoffee,SHOW);
+	set(CreateWorld,SHOW);
+
+	// Begin loading the level
+	LoadNewLevel();
+	while(proc_status(LoadNewLevel)) wait(1);
+
+	SessionsCount += 1;
+
+	GGUIShow();
+	
+	reset(CreateWorldCoffee,SHOW);
+	reset(CreateWorld,SHOW);
+	
+	time = dtimer();
+	
+	WriteLog("[X] Task completed, launched game session #",SessionsCount);
+	WriteLog(" , cost ",time ); // convert to sec: multiply it by pow(10,6) (microsecs)
+	WriteLog(" ms");
+	NewLine();
+
 }
 
 /*
@@ -2131,132 +2410,72 @@ Returns: -
 */
 void LoadNewLevel() {
 	
-	WriteLog("Executing LoadNewLevel()...");
-	
-	WriteLog("Loading a dry level...");
+	WriteLog("[ ] Loading ground...");
+	NewLine();
+
 	level_load("dry.wmb");
+
+	WriteLog("[ ] Creating sky cube...");
+	NewLine();
 	
-	WriteLog("Creating sky cube...");
-	/*
-	switch(skCube) {
-		
-		case 0:
-		
-		_cube = ent_createlayer("s_shamrock+6.tga",SKY | CUBE | SHOW,5);
-		layer_sort(_cube,6);
-		
-		break;
-		
-		case 1:
-		
-		_cube = ent_createlayer("s_ocean_sunset+6.tga",SKY | CUBE | SHOW,5);
-		layer_sort(_cube,6);
-		
-		break;
-	}
-	*/
-	
-	WriteLog("Executing miscellaneous stuff...");
-	camera.ambient = -75;
+	/* _cube = */
+	if( !str_cmp(SKYSTR,undef) )
+	ent_createlayer(SKYSTR,SKY | CUBE | SHOW, 999);
+
+	WriteLog("[ ] Loading miscellaneous stuff...");
+	NewLine();
+
+	//	camera.ambient = -75;
 
 	ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
-	
+
 	manip_type = scale + 1;
-	
+
 	IN_GAME = 1;
 	
-	WriteLog("Finished executing LoadNewLevel().");
 }
 
 /*
 --------------------------------------------------
 int SaveGameToSlot(var slot)
 
-Desc: Saves the current state of the world. Consists 
-of two stages: SV_ALL - SV_INFO - SV_BMAPS and SV_INFO + SV_BMAPS. 
-There will be two seperate .sav files, one contains each stage's saved data.
-They're loaded separately, too.
+Desc:
 
 Returns: -1 if a stage fails.
 --------------------------------------------------
 */
 int SaveGameToSlot(var slot) {
-	
+
 	if(event_type == EVENT_RELEASE) return;
 	
-	WriteLog("Executing SaveGameToSlot(var slot)...");
+	/*
 	
-	var i, j; BOOL t;
+	...
 	
-	slot-=2;
-	
-	GGUIHide();
-	
-	reset(panSaveGame,SHOW);
-	
-	if(is(panLoadGame,SHOW)) {
-		
-		t++;
-		reset(panLoadGame,SHOW);
-		
-	}
-	else t = 0;
-	
-	wait(2);
-	
-	bmap_for_screen(ptr_for_handle(save_array[slot]),1,1);
-	
-	i = game_save(pref_savebmaps,0,SV_INFO + SV_BMAPS);
-	j = game_save(pref_savegames,slot,SV_ALL - SV_INFO - SV_BMAPS);
-	
-	if(!i || !j) {
-		
-		_beep();
-		WriteLog("*[ERROR] Game couldn't be saved, returns -1.");
-		
-		return -1;
-		
-	}
-	
-	GGUIShow();
-	set(panSaveGame,SHOW);
-	if(t) set(panLoadGame,SHOW);
-	
-	WriteLog("Finished executing SaveGameToSlot(var slot).");
+	*/
+
 }
 
 /*
 --------------------------------------------------
 int LoadGameFromSlot(var slot)
 
-Desc: Loads a game from slot.
+Desc:
 
 Returns: -1 if operation fails.
 --------------------------------------------------
 */
 int LoadGameFromSlot(var slot) {
-	
+
 	if(event_type == EVENT_RELEASE) return;
 	
-	WriteLog("Executing LoadGameFromSlot(var slot)...");
+	/*
 	
-	var i;
+	...
 	
-	slot-=2; // 1 for array (count from 0), 1 for closebutton
+	*/
 	
-	i = game_load(pref_savegames,slot);
-	
-	if(!i) {
-		
-		_beep();
-		WriteLog("*[ERROR] The file couldn't be loaded, returns -1.");
-		
-		return -1;   
-		
-	}
-	
-	WriteLog("Finished executing LoadGameFromSlot(var slot), returns -1.");
 }
 
 /*
@@ -2276,24 +2495,29 @@ Returns: -1 if the kernel is currently running.
 --------------------------------------------------
 */
 int Console() {
-	
-	WriteLog("*[SYS] Executing Console()...");
-	
+
+	WriteLog("[SYS] Trying to start the console...");
+	NewLine();
+
 	if(KERNEL_IS_RUNNING) {
 		
 		_beep();
-		WriteLog("*[ERROR] Console() couldn't be executed while the kernel is running, returns -1.");
+		
+		WriteLog("! [ERROR] Console couldn't be executed while the kernel is running, returns -1.");
+		NewLine();
 		
 		return -1;
 		
 	}
 	
+	WriteLog("[SYS] Setup console...");
+
 	ConsoleText->pos_x = 2;
 	ConsoleText->pos_y = screen_size.y/4;
 	toggle(ConsoleText,SHOW);
-	
+
 	// Additional WriteLogs here.
-	
+
 	while(!KERNEL_IS_RUNNING) {
 		
 		inkey((ConsoleText->pstring)[1]);
@@ -2322,32 +2546,40 @@ int Console() {
 		
 		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_EXITSTR )) {
 			
+			WriteLog("[SYS] Exit event was triggered from the console.");
+			NewLine();
+			
 			ExitEvent();
 			
 		}
 		
 		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_REPORTSTR )) {
 			
+			WriteLog("[SYS] Preparing to run the report generator, please wait.");
+			NewLine();
+			
 			_beep();
-			wait(1);
 			
 		}
 		
 		if(str_cmp( (ConsoleText.pstring)[1],VAREXPLORER_FACTORYSTR )) {
 			
+			WriteLog("[SYS] Preparing to reset settings to its original state, please wait.");
+			NewLine();
+			
 			_beep();
-			wait(1);
 			
 		}
 		
 		wait(1);
 		
 	}
-	
+
 	reset(ConsoleText,SHOW);
-	
-	WriteLog("*[SYS] Finished executing Console(). Probably the user has started the kernel again, or craftbox is preparing to be shut down.");
-	
+
+	WriteLog("[SYS] The console has been closed. Probably the user has started the kernel again, or craftbox is preparing to shut down itself.");
+	NewLine();
+
 }
 
 /*
@@ -2361,27 +2593,27 @@ Returns: -
 --------------------------------------------------
 */
 int UnloadKernel() {
-	
+
 	proc_kill(4);
-	
-	WriteLog("*[SYS] Executing UnloadKernel()...");
-	
+
+	WriteLog("[SYS] Unloading the kernel...");
+	NewLine();
+
 	KERNEL_IS_RUNNING = 0;
-	
-	// From GShowCredits().
+
+	// From GCreditsShow().
 	GMainMenuHide();
-	
-	reset(panNewGame,SHOW);
-	
+
 	level_load(NULL);
 	vec_set(screen_color,vector(255,255,255));
-	
+
 	GGUIHide();
-	
+
 	Console();
-	
-	WriteLog("*[SYS] Finished executing UnloadKernel(). Use the console to continue controlling craftbox.");
-	
+
+	WriteLog("[SYS] Successfully unloaded the kernel. Use the console to continue controlling craftbox.");
+	NewLine();
+
 }
 
 /*
@@ -2396,13 +2628,15 @@ Returns: -
 --------------------------------------------------
 */
 int ReloadKernel() {
-	
-	WriteLog("*[SYS] Executing ReloadKernel()...");
-	
+
+	WriteLog("[SYS] Reloading the kernel");
+	NewLine();
+
 	wait(1);
-	
-	WriteLog("*[SYS] Finished executing ReloadKernel().");
-	
+
+	WriteLog("[SYS] Successfully reloaded the kernel.");
+	NewLine();
+
 }
 
 /*
@@ -2415,9 +2649,9 @@ Returns: -
 --------------------------------------------------
 */
 void _beep() {
-	
+
 	if(LOGFILEHNDL) snd_play(__beep,100,0);
-	
+
 }
 
 /*
@@ -2431,50 +2665,53 @@ Sets KERNEL_IS_RUNNING to 1 if it had been fully loaded.
 Returns: -
 --------------------------------------------------
 */
-
 void LoadKernel() {
-	
-	WriteLog("*[SYS] Executing LoadKernel()...");
-	
-	STRING *_s = str_create("#64");
-	
+
+	WriteLog("[SYS] Loading kernel");
+	NewLine();
+
+	STRING *_s = "#64";
+
 	// If you want, you can call GetSystemMetrics (windows.h) instead of Gamestudio's sys_metrics.	
 	str_cpy((PreMainMenuLoading.pstring)[0],"Testing various settings...");
 	
+	WriteLog("[ ] Testing various settings.");
+	NewLine();
+
 	/* Resolution Test */
 	float WIDTH = sys_metrics(0), HEIGHT = sys_metrics(1);
-	
+
 	str_for_num(_s,WIDTH);
 	str_cat((PreMainMenuLoading.pstring)[0],_s);
 	str_cat((PreMainMenuLoading.pstring)[0]," ");
-	
+
 	str_for_num(_s,HEIGHT);
 	str_cat((PreMainMenuLoading.pstring)[0],_s);
 	str_cat((PreMainMenuLoading.pstring)[0]," ");
-	
+
 	if(WIDTH < MINIMUM_RESOLUTION_X ||
 	HEIGHT < MINIMUM_RESOLUTION_Y ) {
 		
 		UnloadKernel(); // switch off the kernel and enter console mode.
 		while(proc_status(UnloadKernel)) wait(1);  // or else some kind of stupid error would pop up.
 		
-		str_cpy((ConsoleText.pstring)[1],"craftbox requires at least a 800x600 resolution screen to run properly.");
-		str_cpy((ConsoleText.pstring)[2],"Please switch to the resolution that is larger or equal to 800x600 and start craftbox again.");
+		str_cpy((ConsoleText.pstring)[1],"craftbox requires at least a 1024x768 resolution screen to run properly.");
+		str_cpy((ConsoleText.pstring)[2],"Please switch to the resolution that is larger or equal to 1024x768 and start craftbox again.");
 		
 		return;
 		
 	}
-	
+
 	/* Boot Mode Test */
 	str_for_num(_s,sys_metrics(67));
 	str_cat((PreMainMenuLoading.pstring)[0],_s);
 	str_cat((PreMainMenuLoading.pstring)[0]," ");
-	
+
 	/* Mouse Test */
 	str_for_num(_s,sys_metrics(19));
 	str_cat((PreMainMenuLoading.pstring)[0],_s);
 	str_cat((PreMainMenuLoading.pstring)[0]," ");
-	
+
 	if(!sys_metrics(19)) {
 		
 		UnloadKernel(); // switch off the kernel and enter console mode.
@@ -2485,22 +2722,26 @@ void LoadKernel() {
 		return;
 		
 	}
-	
+
 	/* Processor Test */
 	str_for_num(_s,sys_metrics(73));
 	str_cat((PreMainMenuLoading.pstring)[0],_s);
 	str_cat((PreMainMenuLoading.pstring)[0]," ");
-	
+
 	str_remove(_s);
 	
-	double timer_;
-	STRING *timer__ = str_create("#100");
+	WriteLog("[ ] Setting up events, calling main modules.");
+	NewLine();
 	
-	GPreMainMenu();
-	
-	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_1);
 	dtimer();
 	
+	double timer_;
+	STRING *timer__ = "#100";
+	
+	GPreMainMenu();
+
+	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_1);
+
 	on_bksp = TakeScreenshot;
 	on_exit = ExitEvent;
 	on_close = ExitEvent;
@@ -2508,28 +2749,26 @@ void LoadKernel() {
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
 	sky_clip = -10;
-	
-	sun_light = 300;
 
 	mouse_map = mouse;
 
 	vec_zero(parted_temp_vec);
 	vec_zero(parted_temp2_vec);
-	
-	MaterialCopy(pTexColor, mtl_pTex1);
+
+	MaterialCopyColor(pTexColor, mtl_pTex1);
 
 	panHome.alpha = panProp.alpha = DEFAULT_ALPHA;
-	
-	timer_ = dtimer()/pow(10,3); // 1s = pow(10,3)ms
+
+	timer_ = dtimer()/pow(10,3);
 	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
 	str_cat((PreMainMenuLoading.pstring)[1],"s");
-	
+
 	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_2);
 	dtimer();
 
 	// Initialize the databases and load them.
-	LoadSavedBMAPs();
-	
+	//	LoadSavedBMAPs();
+
 	// Initialize shaders
 	SetupShader();
 
@@ -2541,43 +2780,72 @@ void LoadKernel() {
 	ReadMaterialDataFromFile(mat_custom[1],FILE_CUSTOM_MAT_2);
 	ReadMaterialDataFromFile(mat_custom[2],FILE_CUSTOM_MAT_3);
 	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
-	
+
+	original_moon_scale_fac = moon_scale_fac;
+	original_time_speed_night = time_speed_night;
+	original_night_sky_scale_x = night_sky_scale_x;
+	original_night_sky_speed_x = night_sky_speed_x;
+	original_fog_color = fog_color;
+	original_camera_fog_start = camera->fog_start;
+	original_camera_fog_end = camera->fog_end;
+	original_sun_light = sun_light;
+	original_d3d_fogcolor1r = d3d_fogcolor1.red;
+	original_d3d_fogcolor1g = d3d_fogcolor1.green;
+	original_d3d_fogcolor1b = d3d_fogcolor1.blue;
+
 	clipboard.name = str_create("#300");
-	
+
 	timer_ = dtimer()/pow(10,3);
 	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
 	str_cat((PreMainMenuLoading.pstring)[1],"s");
-	
+
 	// If we want a video to be played... 
 
 	// Intialize and load the GUI system.
 	str_cpy((PreMainMenuLoading.pstring)[2],LOADCRAFTBOX_3);
 	dtimer();
-	
+
 	GGUIInit();
 	while(proc_status(GGUIInit)) wait(1);
-	
+
 	/*
 	// Load a blank level.
 	LoadNewLevel();
-	
+
 	//	LoadMystymood(1,1);
 
 	//	def_move();
 	*/
-	
+
 	timer_ = dtimer()/pow(10,6);
 	str_cat((PreMainMenuLoading.pstring)[2],str_for_num(timer__,timer_));
 	str_cat((PreMainMenuLoading.pstring)[2],"s");
-	
+
 	reset(BackgroundScreen,SHOW);
 	reset(PreMainMenuLoading,SHOW);
-	
+
 	GLoadMainMenu();
 	
-	mouse_mode = 4;
+	WriteLog("[ ] Executing miscellaneous stuff.");
+	NewLine();
 	
+	// Fill the large pools
+	FolderScan(files_list_SKYSTR_Pool, PATH_SKIES , str_create("tga") );
+	while(proc_status(FolderScan)) wait(1);
+	
+	FolderScan(files_list_GROUNDSTR_Pool, PATH_GROUNDS, str_create("wmb") );
+	while(proc_status(FolderScan)) wait(1);
+	
+	FolderScan(files_list_LOADGAMESTR_Pool, PATH_SAVEDGAMES, EXT_SAVEDGAMES);
+	while(proc_status(FolderScan)) wait(1);
+
 	KERNEL_IS_RUNNING = 1;
+	
+	mouse_mode = 4;
+
+	WriteLog("[X] Finished loading the kernel.");
+	NewLine();
+
 }
 
 /*
@@ -2592,9 +2860,18 @@ Returns: -
 --------------------------------------------------
 */
 void LoopKernel() {
-	
-	if(!KERNEL_IS_RUNNING) return;
-	
+
+	if(!KERNEL_IS_RUNNING) {
+		
+		_beep();
+		
+		WriteLog("[SYS] An attempt to launch LoopKernel() but the kernel hasn't been loaded, aborting.");
+		NewLine();
+		
+		return;
+		
+	}
+
 	while(KERNEL_IS_RUNNING) {
 		
 		if(IN_GAME) 
@@ -2650,6 +2927,8 @@ void LoopKernel() {
 				
 			}
 			
+			/*
+			
 			if(key_t) 
 			{
 				while(key_t) wait(1);
@@ -2660,6 +2939,8 @@ void LoopKernel() {
 				while(key_y) wait(1);
 				ObjectIDNumber--;
 			}
+			
+			*/
 			
 			if(key_r) {
 				
@@ -2720,7 +3001,7 @@ void LoopKernel() {
 							if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowHide();
 							if(select.ObjectType == Sound) GSoundWindowHide();
 							if(select.ObjectType == Particle) GParticleWindowHide();
-							if(select.ObjectType == Terrain) return;
+							//							if(select.ObjectType == Terrain) return;
 							
 							select.material = mat_temp;
 							select = NULL;
@@ -2766,6 +3047,9 @@ void LoopKernel() {
 		wait(1);
 	}
 
+	WriteLog("[X] Kernel looping code has finished its job.");
+	NewLine();
+
 }
 
 /*
@@ -2778,11 +3062,11 @@ Returns: -
 --------------------------------------------------
 */
 void NewLine() {
-	
+
 	// Windows uses CR/LF
 	file_asc_write(LOGFILEHNDL,13); // CR
 	file_asc_write(LOGFILEHNDL,10); // LF
-	
+
 }
 
 /*
@@ -2793,7 +3077,7 @@ int WriteLog(STRING *str)
 --------------------------------------------------
 */
 int WriteLog(STRING *str) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
@@ -2802,7 +3086,7 @@ int WriteLog(STRING *str) {
 	}
 
 	else return -1;
-	
+
 }
 
 /*
@@ -2813,7 +3097,7 @@ int WriteLog(STRING * str, int i)
 --------------------------------------------------
 */
 int WriteLog(STRING * str, int i) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
@@ -2823,7 +3107,7 @@ int WriteLog(STRING * str, int i) {
 	}
 
 	else return -1;
-	
+
 }
 
 /*
@@ -2834,7 +3118,7 @@ int WriteLog(STRING *str, var _v)
 --------------------------------------------------
 */
 int WriteLog(STRING *str, var _v) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
@@ -2844,7 +3128,7 @@ int WriteLog(STRING *str, var _v) {
 	}
 
 	else return -1;
-	
+
 }
 
 /*
@@ -2855,7 +3139,7 @@ int WriteLog(STRING *str, double d)
 --------------------------------------------------
 */
 int WriteLog(STRING *str, double d) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
@@ -2865,7 +3149,7 @@ int WriteLog(STRING *str, double d) {
 	}
 
 	else return -1;
-	
+
 }
 
 /*
@@ -2876,7 +3160,7 @@ int WriteLog(STRING *str, BOOL b)
 --------------------------------------------------
 */
 int WriteLog(STRING *str, BOOL b) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		file_str_write(LOGFILEHNDL,str);
@@ -2889,7 +3173,7 @@ int WriteLog(STRING *str, BOOL b) {
 	}
 
 	else return -1;
-	
+
 }
 
 /*
@@ -2900,19 +3184,19 @@ int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct)
 --------------------------------------------------
 */
 int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct) {
-	
+
 	if(LOGFILEHNDL) {
 		
 		if(objectstruct) {
 			
-			// hahaha			
+			// { ... }		
 			
 		}
 		
 	}
-	
+
 	else return -1;
-	
+
 }
 
 /*
@@ -2931,11 +3215,14 @@ Returns: -
 */
 void CBox_startup() {
 
+	WriteLog("[SYS] Loading CBox_startup()...");
+	NewLine();
+
 	// Read and setup video settings prior to executing other functions.
 	ConfigFileRead(FILE_CONFIG);
-	
-	video_window(NULL,NULL,0,"craftbox 0.8 Pre-Alpha 4.1");
-	
+
+	video_window(NULL,NULL,0,"craftbox Pre-Alpha, Milestone 4.x");
+
 	mouse_range = 500000;
 	random_seed(0); // e.g. random light generators.
 	terrain_chunk = 0;
@@ -3015,14 +3302,14 @@ void CBox_startup() {
 				if(button_state(panLight,2,-1)) {
 					
 					button_state(panLight,3,-1);
-					select.LightMode = disco;
+					select.LightMode = Disco;
 					
 				}
 				
 				if(button_state(panLight,3,-1)) {
 					
 					button_state(panLight,2,-1);
-					select.LightMode = flick;
+					select.LightMode = Flick;
 					
 				}
 				
@@ -3056,6 +3343,9 @@ void CBox_startup() {
 		
 	}
 
+	WriteLog("[X] CBox_startup() was terminated.");
+	NewLine();
+
 }
 
 /*
@@ -3072,7 +3362,7 @@ void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
 	VECTOR pos, ang;
 	vec_set(&pos, _pos);
 	vec_set(&ang, _ang);
-	
+
 	while (1)
 	{  
 		if (*ref == id && !IN_GAME)
@@ -3085,23 +3375,30 @@ void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
 	}
 }
 
-////////////////////////////////////////////////////////////
-// This is the camera controller I found when I was tweaking Mystymood.
-// + 5.7.2013 : This camera is good, but I have to partly rewrite it
-// because...well, I won't explain, find out for yourself.
-// This code won't be checked against PLAYTESTING because
-// it will be killed prior to set PLAYTESTING to 1.
-// and restored later when PLAYTESTING has been set to 0.
-// + 13.10.2013 : 
-////////////////////////////////////////////////////////////
-VECTOR *camera_force = { z = 0; }
+/*
+--------------------------------------------------
+void free_camera()
 
+Desc: This is the camera controller I found when I was tweaking Mystymood.
++ 5.7.2013 : This camera is good, but I have to partly rewrite it
+because...well, I won't explain, find out for yourself.
+This code won't be checked against PLAYTESTING because
+it will be killed prior to set PLAYTESTING to 1.
+and restored later when PLAYTESTING has been set to 0.
++ 13.10.2013, 22.10.2013 : Modified.
+
+Returns: -
+--------------------------------------------------
+*/
 void free_camera()
 {
-	var rotatespeed = 5;
-	var speed = 40;
 
-	set(my, INVISIBLE | POLYGON | PASSABLE);
+	WriteLog("[ ] Setting up camera...");
+	NewLine();
+
+	var doublefactor;
+
+	set(my, POLYGON | PASSABLE | INVISIBLE);
 
 	vec_set(camera.x,my.x);
 	vec_set(camera.pan,my.pan);
@@ -3109,24 +3406,33 @@ void free_camera()
 
 	while(1)
 	{
-	   
-		camera_force.x = ( (key_w || key_cuu) - (key_s || key_cud) )*speed*time_step;
-		camera_force.y = ( (key_a || key_cul) - (key_d || key_cur) )*speed*time_step;
+		
+		if(key_shift) doublefactor = 3;
+		else doublefactor = 1; // prevent multiplication by 0
+		
+		if(camera.tilt >= 90) camera.tilt = 90;
+		if(camera.tilt <= -90) camera.tilt = -90;
+		
+		// 60 = speed
+		camera_force.x = ( (key_w || key_cuu) - (key_s || key_cud) )*60*doublefactor*time_step;
+		camera_force.y = ( (key_a || key_cul) - (key_d || key_cur) )*60*doublefactor*time_step;
 		
 		c_move(my,camera_force,nullvector,GLIDE+IGNORE_PASSABLE+IGNORE_PASSENTS+IGNORE_PUSH);
 		vec_set(camera.x,vector(my.x,my.y,my.z+15));
 		
-		camera.tilt += rotatespeed * mouse_right*mouse_force.y * time_step;
-		camera.pan += rotatespeed * mouse_right*-mouse_force.x * time_step;
+		// 3 = rotation speed
+		camera.tilt += 3 * mouse_right*mouse_force.y * time_step;
+		camera.pan += 3 * mouse_right*-mouse_force.x * time_step;
 		
 		vec_set(my.tilt,camera.tilt);
 		vec_set(my.pan,camera.pan);
 		
 		wait(1);
 	}
+	
 }
-////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
 // Mystymood
 // Template file v5.202 (02/20/02)
 ////////////////////////////////////////////////////////////////////////
@@ -3139,16 +3445,47 @@ void free_camera()
 // www.loopix-project.com
 ////////////////////////////////////////////////////////////////////////
 
+/*
+--------------------------------------------------
+void flare_init(ENTITY *flare_ent)
+
+Desc:
+
+Returns: - 
+--------------------------------------------------
+*/
 void flare_init(ENTITY *flare_ent)
 {
+   
+   while(!flare_ent) wait(1);
+
+	WriteLog("[ ] Intializing lens flare for ");
+	WriteLog( (STRING *) flare_ent->type );
+	NewLine();
+
 	my = flare_ent;
 	my.flags2 &= ~SHOW;
 	my.flags |= (BRIGHT|PASSABLE|TRANSLUCENT);
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
 }
 
-// Desc: places a flare at temp.x/temp.y deviations from screen center
+/*
+--------------------------------------------------
+void flare_place(ENTITY *flare_ent)
+
+Desc: Places a flare at temp.x/temp.y deviations from screen center
+
+Returns: -
+--------------------------------------------------
+*/
 void flare_place(ENTITY *flare_ent)
 {
+
+	// Do not flood the log file
+
 	my = flare_ent;
 	my.flags2 |= SHOW;
 
@@ -3208,8 +3545,20 @@ void flare_place(ENTITY *flare_ent)
 	rel_for_screen(my.x,camera);
 }
 
+/*
+--------------------------------------------------
+void LoadMystymoodLensflare()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void LoadMystymoodLensflare()
 {
+
+	WriteLog("[ ] Activating lens flare");
+	NewLine();
 
 	flare_init(flare1_ent);
 	flare_init(flare2_ent);
@@ -3234,6 +3583,9 @@ void LoadMystymoodLensflare()
 	wait(1);
 
 	lens_active = 1;
+	
+	WriteLog("[X] Task completed for LoadMystymoodLensflare().");
+	NewLine();
 
 	while(lens_active)
 	{
@@ -3286,6 +3638,10 @@ void LoadMystymoodLensflare()
 	}
 
 	lens_active = 0;
+
+	WriteLog("[X] Deactivated lens flare.");
+	NewLine();
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3296,8 +3652,18 @@ void LoadMystymoodLensflare()
 ////
 ////Jun 07 by www.loopix-project.com
 ////Nov 07 Lite-C conversion by Alexis Rozhkov aka Shadow
+//// 22.10.2013: U just tested this with Shade-C 0.91, worked just fine. Shade-C EVO? Maybe later.
 /////////////////////////////////////////////////////////////
 
+/*
+--------------------------------------------------
+void func_fade_colors(var *col_target, var *col1, var *col2)
+
+Desc: 
+
+Returns: -
+--------------------------------------------------
+*/
 void func_fade_colors(var *col_target, var *col1, var *col2)
 {
 	var i = 0;
@@ -3308,8 +3674,16 @@ void func_fade_colors(var *col_target, var *col1, var *col2)
 	}
 }
 
-//start rain/snow particle effects////
 
+/*
+--------------------------------------------------
+void func_particle_seed_infinity(PARTICLE *p)
+
+Desc: 
+
+Returns: -
+--------------------------------------------------
+*/
 void func_particle_seed_infinity(PARTICLE *p)
 {
 
@@ -3321,6 +3695,15 @@ void func_particle_seed_infinity(PARTICLE *p)
 
 }
 
+/*
+--------------------------------------------------
+void func_effect_particle_seed(PARTICLE *p)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void func_effect_particle_seed(PARTICLE *p) {
 
 	vec_set(p.x,vector(camera.x+random(particle_seedbox.x*2)-particle_seedbox.x,
@@ -3341,11 +3724,27 @@ void func_effect_particle_seed(PARTICLE *p) {
 		p.event  = func_particle_seed_infinity;	
 	}	
 }
-////end rain/snow particle setup////
 
-////start thunder lighning////
+/*
+--------------------------------------------------
+void func_fade_lightning(PARTICLE *p)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void func_fade_lightning(PARTICLE *p)  { p.lifespan = 0; }
 
+/*
+--------------------------------------------------
+void func_particle_lightning(PARTICLE *p)
+
+Desc: 
+
+Returns: -
+--------------------------------------------------
+*/
 void func_particle_lightning(PARTICLE *p)
 {
 	VECTOR temp;
@@ -3360,6 +3759,15 @@ void func_particle_lightning(PARTICLE *p)
 	p.event  = func_fade_lightning;
 }
 
+/*
+--------------------------------------------------
+void func_particle_segment()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void func_particle_segment()
 {
 	vec_set(temporary, segment_end);
@@ -3378,6 +3786,15 @@ void func_particle_segment()
 	}
 }
 
+/*
+--------------------------------------------------
+void func_particle_segment()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void func_particle_segment()
 {
 	vec_set(temporary, stroke_start);
@@ -3399,6 +3816,15 @@ void func_particle_segment()
 	}
 }
 
+/*
+--------------------------------------------------
+void func_increase_brightness()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
 void func_increase_brightness()
 {
 	lightning_on = 1;
@@ -3419,18 +3845,18 @@ void func_increase_brightness()
 	lightning_on = 0;
 }
 
-////end thunder lightning////
+/*
+--------------------------------------------------
+void weather_change()
 
-void toggle_weather()//just for testing
-{
-	weather_state += 1;
-	if(weather_state > 2) weather_state = 0;
-}
+Desc:Can't be replaced with VOL_EFFECTS (at the momment).
 
-void good_weather()  { weather_state = 0; }
-
-// Can't be replaced with VOL_EFFECTS (at the momment).
+Returns: -
+--------------------------------------------------
+*/
 void weather_change() {
+
+	if(!mystymood_active) return; // Activates weather ONLY IF Mystymood is active.
 
 	VECTOR temp;
 
@@ -3746,14 +4172,19 @@ void weather_change() {
 --------------------------------------------------
 void LoadMystymood(BOOL _on, BOOL load_lens)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void LoadMystymood(BOOL _on, BOOL load_lens)
 {
-	
+   
+   WriteLog("[ ] Loading Mystymood");
+	NewLine();
+
 	int step = 0;
-	
+
 	if(!load_lens) {
 		
 		flare1_ent.flags2 &= ~SHOW;
@@ -3804,7 +4235,15 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 	}
 
-	if(step>=2) return;
+	if(step>=2) {
+	   
+	   WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
+		NewLine();
+		
+		return;
+		
+	}
+	
 
 	////////////////////////////////////////////////////////////
 	// Setup for lensflare
@@ -3842,9 +4281,13 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	sky_moon.flags2 |= SHOW;
 
 	VECTOR temp;
-
-	on_space = toggle_weather;
-	on_alt = good_weather;
+	
+	if( str_stri(command_str," -dev") ) {
+		
+		on_space = toggle_weather;
+		on_alt = good_weather;
+		
+	}
 
 	weather_change();
 
@@ -3859,6 +4302,9 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	vec_set(d3d_fogcolor1,fog_day);//set the default day fog-color 
 
 	mystymood_active = 1;
+	
+	WriteLog("[X] Task completed, activated Mystymood.");
+	NewLine();
 
 	while(mystymood_active) {
 		
@@ -4010,27 +4456,10 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	}	
 
 	mystymood_active = 0;
-}
-
-void act_mystymood_trigg_label1()
-{
-	weather_fader = 1;//reset this var
-
-	weather_state = my.skill70;
-	rain_random_move_on = my.skill71;
-	rain_random_move = my.skill72;
-	rain_wind_x = my.skill73;
-	rain_wind_y = my.skill74;
-	rain_fallspeed = my.skill75;
-	disable_lightning_thunder = my.skill76;
-	snow_random_move_on = my.skill77;
-	snow_random_move = my.skill78;
-	snow_wind_x = my.skill79;
-	snow_wind_y = my.skill80;
-	snow_fallspeed = my.skill81;
-	weather_fade_speed = my.skill82;
-
-	act_mystymood_trigg();
+	
+	WriteLog("[X] Switched off Mystymood.");
+	NewLine();
+	
 }
 
 /*
@@ -4043,8 +4472,11 @@ Returns: -
 --------------------------------------------------
 */
 void LoadPlayground() {
-	
+
 	if(event_type == EVENT_RELEASE) return;
+
+	WriteLog("[ ] Preparing the playground...");
+	NewLine();
 
 	if(select) {
 		
@@ -4103,7 +4535,7 @@ void LoadPlayground() {
 	GGUIHide();
 
 	PLAYTESTING = 1;
-	
+
 	//
 	//	if(play_as_fp) {
 		//		
@@ -4111,7 +4543,7 @@ void LoadPlayground() {
 		//		set(panCAMRecorder_digits,SHOW);
 		//		
 	//	}
-	
+
 	/*
 	// Test if there is any entity in the projection array
 	if(rEnt[0]) {
@@ -4186,152 +4618,11 @@ void LoadPlayground() {
 		you = ent_next(you);
 		
 	}
-	
+
 	// Clear the rendered projection bmap.
-	bmap_purge(rBmap);
-}
-
-/*
---------------------------------------------------
-void LoadNewLevelFromWindow() 
-
-
---------------------------------------------------
-*/
-void LoadNewLevelFromWindow() {
+	//	bmap_purge(rBmap);
 	
-	if(event_type == EVENT_RELEASE) return;
-
-	// Redirect to another function because we're in main menu now.
-	if(launch_newgame_from_main) {
-		
-		LoadNewLevelFromMenuWindow();
-		return;
-		
-	}
-
-	ent_remove(cam);
-
-	LoadNewLevel();
-
-	// Left
-	if(button_state(panNewGame,2,-1)) {
-		
-		LoadMystymood(0,0);
-		
-		if(button_state(panNewGame,4,-1)) {
-			
-			fog_color = 1;
-			d3d_fogcolor1.red = v_fogr;
-			d3d_fogcolor1.green = v_fogg;
-			d3d_fogcolor1.blue = v_fogb;
-			
-			camera.fog_start = 10;
-			camera.fog_end = (FOG_END_LIM - v_fogdensity) + 2 * camera.fog_start ; 
-			
-		}
-		
-		else fog_color = 0;
-		
-		return ;
-		
-	}
-
-	// Right
-	if(button_state(panNewGame,3,-1)) {
-		
-		LoadMystymood(0,0);
-		
-		wait(1.5);
-		
-		// Mystymood w/ lensflare
-		LoadMystymood(1,button_state(panNewGame,5,-1));
-		
-		// Thunder
-		if(button_state(panNewGame,6,-1)) disable_lightning_thunder = 1;
-		else disable_lightning_thunder = 0;
-		
-		// Use moon
-		if(button_state(panNewGame,7,-1)) use_moon = 1;
-		else use_moon = 0;
-		
-		moon_scale_fac = _moon_scale_fac;
-		time_speed_night = _time_speed_night;
-		night_sky_scale_x = _night_sky_scale_x;
-		night_sky_speed_x = _night_sky_speed_x;
-		
-		return;
-		
-	}
-
-}
-
-/*
---------------------------------------------------
-void LoadNewLevelFromMenuWindow()
-
-
---------------------------------------------------
-*/
-void LoadNewLevelFromMenuWindow() {
-	
-	GMainMenuHide();
-	reset(panNewGame,SHOW);
-
-	GGUIShow();
-
-	LoadNewLevel();
-
-	launch_newgame_from_main = 0;\
-
-	// Left
-	if(button_state(panNewGame,2,-1)) {
-		
-		LoadMystymood(0,0);
-		
-		if(button_state(panNewGame,4,-1)) {
-			
-			fog_color = 1;
-			d3d_fogcolor1.red = v_fogr;
-			d3d_fogcolor1.green = v_fogg;
-			d3d_fogcolor1.blue = v_fogb;
-			
-			camera.fog_start = 10;
-			camera.fog_end = (FOG_END_LIM - v_fogdensity) + 2 * camera.fog_start ; 
-			
-		}
-		
-		else fog_color = 0;
-		
-		return ;
-		
-	}
-
-	// Right
-	if(button_state(panNewGame,3,-1)) {
-		
-		LoadMystymood(0,0);
-		
-		wait(1.5);
-		
-		// Mystymood w/ lensflare
-		LoadMystymood(1,button_state(panNewGame,5,-1));
-		
-		// Thunder
-		if(button_state(panNewGame,6,-1)) disable_lightning_thunder = 1;
-		else disable_lightning_thunder = 0;
-		
-		// Use moon
-		if(button_state(panNewGame,7,-1)) use_moon = 1;
-		else use_moon = 0;
-		
-		moon_scale_fac = _moon_scale_fac;
-		time_speed_night = _time_speed_night;
-		night_sky_scale_x = _night_sky_scale_x;
-		night_sky_speed_x = _night_sky_speed_x;
-		
-		return;
-		
-	}
+	WriteLog("[X] Playtesting ended.");
+	NewLine();
 
 }

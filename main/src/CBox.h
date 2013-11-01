@@ -83,70 +83,13 @@ typedef struct {
 	
 } OBJECTSTRUCT;
 
-/*
-typedef struct {
-   
-   // Actually, in Shade-C v0.91b S1, HDR is faked. But 
-   // the "faked" one is very close to the real thing in my opinion. 
-   // Includes tonemapping, dynamic exposure control and bloom.
-   
-   BOOL HDR;
-   
-   var 
-   HDR_RenderTargetResizeFactor,
-   HDR_BitDepth,
-   HDR_LightScattering,
-   HDR_Blurring,
-   HDR_BloomStrength,
-   HDR_HighPassLuminance,
-   HDR_HighPassMiddleGrey,
-   HDR_HighPassWhiteCutoff,
-   HDR_ExposureControlAdaptionSpeed;
-   
-   BOOL DOF;
-   
-   var 
-   DOF_FocalPlaneDepth,
-   DOF_FocalPlanePos,
-   DOF_BlurStrength,
-   DOF_RenderTargetResizeFactor,
-   DOF_BitDepth,
-   DOF_MaxDepth;
-   
-   BOOL Refract;
-   
-   var 
-   Refract_RenderTargetSizeX,
-   Refract_RenderTargetSizeY;
-   
-   BOOL Reflect;
-   
-   var 
-   Reflect_RenderTargetSizeX,
-   Reflect_RenderTargetSizeY;
-   
-   BOOL Water;
-   
-   var 
-   Water_Depth;
-   
-   BOOL VolumetricParticles;
-   
-} SHADE_C_VARIABLES_STRUCT;
-*/
-
 OBJECTSTRUCT clipboard;
-
-var guiViewPresetSpeed = 0.1;
-
-// variables
-int guiCurrentViewPreset = 1; // Use default view at start
-
-void guiViewPreset (int *, int, VECTOR *, VECTOR *);
 
 //////////////////////////////////////////////////////////////
 
 // System
+char undef = '-';
+
 #define BORDER 10
 #define DEFAULT_ALPHA 50
 
@@ -155,20 +98,28 @@ void guiViewPreset (int *, int, VECTOR *, VECTOR *);
 #define FIXED_CULLING_DISTANCE 1500
 #define FOG_CULLING_DISTANCE 200
 
-#define MINIMUM_RESOLUTION_X 800
-#define MINIMUM_RESOLUTION_Y 600
+#define MINIMUM_RESOLUTION_X 1024
+#define MINIMUM_RESOLUTION_Y 768
 
 #define MINIMUM_SCALE_CONSTANT .5
 
+#define DYNAMIC_LIGHT_DISCO_SPEED 0.1
+
 #define MAX_rEnts 1000
+
 int rEntCount = -1;
+
+var temp_cam;
+int SessionsCount = 0;
+var guiViewPresetSpeed = 0.1;
+int guiCurrentViewPreset = 1; // Use default view at start
 
 BOOL KERNEL_IS_RUNNING = false,
 IN_GAME = false,
 C_TRACE_OPTIMIZATION = false,
 DISTANCE_OPTIMIZATION = true;
 
-BOOL SHADE_C_FLAG;
+//BOOL SHADE_C_FLAG;
 
 var LOGFILEHNDL;
 
@@ -176,12 +127,15 @@ var VOL_EFFECTS = 75, VOL_MUSIC = 100;
 
 SOUND *__beep = "beep.wav";
 
+STRING *RELEASE_STR_VER = "< release number >";
+STRING *RELEASE_STR_INFO = "< release info >";
+
 STRING *VAREXPLORER_EXITSTR = "exit";
 STRING *VAREXPLORER_REPORTSTR = "report";
 STRING *VAREXPLORER_FACTORYSTR = "default";
 
-STRING *pref_savebmaps = "./src/system";
-STRING *pref_savegames = "./src/txt/cgame";
+STRING *pref_savebmaps = "./src/outside";
+STRING *pref_savegames = "./src/outside/cgame";
 
 STRING *FILE_SCREENSHOT = "craftbox";
 STRING *FILE_CONFIG = "./src/outside/settings.cfg";
@@ -193,18 +147,24 @@ STRING *FILE_CREDITS_0 = "./src/outside/c.t.txt";
 STRING *FILE_CREDITS_TEXT = "./src/outside/c.txt";
 STRING *FILE_LOG = "./CBox.log";
 
-STRING *FILE_GAME_INTRO_VIDEO;
-STRING *FILE_GAME_OUTRO_VIDEO;
+STRING *FILE_GAME_INTRO_VIDEO = "#300";
+STRING *FILE_GAME_OUTRO_VIDEO = "#300";
+
+STRING *GROUNDSTR = "#300"; // Store ground location.
+STRING *SKYSTR = "#300"; // Store sky (cube) location.
+STRING *TEMPSTR = "#300"; // Store object location
+STRING *LOADGAMESTR = "#300";
 
 STRING *EXT_OBJECT = "mdl";
 STRING *EXT_SOUND = "wav";
 STRING *EXT_TERRAIN = "hmp";
 STRING *EXT_SPRITE = "tga";
+STRING *EXT_SAVEDGAMES = "s";
 
 STRING *PATH_SOUNDS = "./sounds/";
-STRING *PATH_SPRITES = "./2d/sprites/";
-STRING *PATH_TERRAINS = "./objects/blands/";
 
+STRING *PATH_SPRITES = "./objects/sprites/";
+STRING *PATH_TERRAINS = "./objects/blands/";
 STRING *PATH_OBJECTS_ANMS = "./objects/anms/";
 STRING *PATH_OBJECTS_ARCHS = "./objects/archs/";
 STRING *PATH_OBJECTS_CHARS = "./objects/chars/";
@@ -215,7 +175,12 @@ STRING *PATH_OBJECTS_PLANTS = "./objects/plants/";
 STRING *PATH_OBJECTS_SYS = "./objects/sys/";
 STRING *PATH_OBJECTS_TPORTTS = "./objects/tportts/";
 
-STRING *TEMPSTR = "                                                                 ";
+STRING *PATH_SKIES = "./2d/skies/";
+
+STRING *PATH_GROUNDS = "./levels/grounds/";
+
+STRING *PATH_SAVEDGAMES = "./levels/";
+
 short TEMP_OBJECT_TYPE;
 
 STRING *LOADCRAFTBOX_1 = "Initializing events and variables...";
@@ -226,7 +191,15 @@ TEXT *OptionsGraphicsTxt;
 TEXT *OptionsSoundTxt;
 TEXT *OptionsThemesTxt;
 TEXT *OptionsMaintenanceTxt;
-	
+TEXT *ReleaseInfo = {
+   
+   strings(2);
+   
+   string(RELEASE_STR_VER,RELEASE_STR_INFO);
+   
+   font="Arial#20";
+   
+}
 
 ////////////////////////////////////////////////////////////
 // System definitions for Mystymood.
@@ -247,6 +220,27 @@ var _moon_scale_fac,
 _time_speed_night,
 _night_sky_scale_x,
 _night_sky_speed_x;
+
+var original_moon_scale_fac,
+original_time_speed_night,
+original_night_sky_scale_x,
+original_night_sky_speed_x,
+original_fog_color,
+original_camera_fog_start,
+original_camera_fog_end,
+original_sun_light,
+original_d3d_fogcolor1r,
+original_d3d_fogcolor1g,
+original_d3d_fogcolor1b,
+
+new_moon_scale_fac,
+new_time_speed_night,
+new_night_sky_scale_x,
+new_night_sky_speed_x,
+new_load_lensflare,
+new_use_moon,
+new_use_sun,
+use_nightstars;
 
 //night sky
 // lim(night_sky_scale_x) = 4
@@ -352,7 +346,7 @@ var moon_scale_fac = 1.5;
 #define FlickSpeed skill6
 #define CameraFP skill7
 #define CameraBike skill8
-#define ProjectionID skill9
+//#define ProjectionID skill9
 
 // Object type
 #define Object 1
@@ -383,8 +377,8 @@ var moon_scale_fac = 1.5;
 #define select_custom_mat4 14
 
 // Defines for lights
-#define flick 1
-#define disco 2
+#define Flick 1
+#define Disco 2
 
 // Defines for particles
 #define part_spiral 1
@@ -408,29 +402,50 @@ TEXT *files_list = {
 	
 	layer = 15;
 	
-	string(800);
-	font = "Arial#15b";   
+	strings(800);
+	font = "Arial#27b";   
 	
+}
+
+TEXT *files_list_SKYSTR = {
+	
+	layer = 15;
+	
+	strings(4);
+	
+	font = "Arial#27b";
+	
+}
+
+TEXT *files_list_GROUNDSTR =  {
+	
+	layer = 15;
+	
+	strings(4);
+	
+	font = "Arial#27b";
+	
+}
+
+TEXT *files_list_LOADGAMESTR = {
+   
+   layer = 15;
+   
+   strings(8);
+   
+   font = "Arial#27b";
+   
 }
 
 TEXT *music_list = {
    
    layer = 15;
    
-   string("#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50",
-   "#50","#50","#50","#50","#50");
-   font = "Arial#15b";
+   strings(100);
+   
+   font = "Arial#27b";
+   
+   flags = SHOW;
    
 }
 
@@ -449,7 +464,7 @@ TEXT *PreMainMenuLoading = {
    pos_x = 20;
    pos_y = 20;
    
-   font = "Arial#25b";
+   font = "Arial#27b";
    
    red = 54;
    green = 117;
@@ -457,13 +472,21 @@ TEXT *PreMainMenuLoading = {
    
 }
 
+TEXT *files_list_SKYSTR_Pool = { strings(800); }
+TEXT *files_list_GROUNDSTR_Pool = { strings(800); }
+TEXT *files_list_LOADGAMESTR_Pool = { strings(800); }
+
 ////////////////////////////////////////////////////////////
 // Variables/Booleans will be declared here.
 ////////////////////////////////////////////////////////////
 
+var WorldType;
+var InMenu_NewGame, InMenu_Options;
+
+int SKYSTR_Scaler = 0, GROUNDSTR_Scaler = 0, LOADGAMESTR_Scaler = 0;
+
 BOOL play_as_fp, play_as_bike;
 
-var skCube;
 int mat_type, manip_type;
 int files_found, list_start;
 int shot = 0;
@@ -489,7 +512,7 @@ v_objectz;
 
 COLOR temp_light;
 
-var ObjectIDNumber, ParticleIDNumber, SoundIDNumber;
+var ParticleIDNumber;
 var _ObjectType;
 
 var page = 1, lfsp = 0; //launched from GpanPropSwitchPage
@@ -607,9 +630,6 @@ PANEL *Statistics,
 *panRotateHelp,
 *panScaleHelp,
 *panLightNoti,
-*panNewGame,
-*panSaveGame,
-*panLoadGame,
 *panScreenshot,
 *panCAMRecorder,
 *panCAMRecorderREC,
@@ -617,6 +637,9 @@ PANEL *Statistics,
 *empty,
 *InsertObject,
 *InsertObject_Inputter,
+*InputBox_GROUNDSTR,
+*InputBox_SKYSTR,
+*InputBox_LOADGAMESTR,
 *IO_ObjectTab,
 *IO_SoundTab,
 *IO_ParticleTab,
@@ -630,23 +653,29 @@ PANEL *Statistics,
 *Options_Sound,
 *Options_Themes,
 *Options_Maintenance,
-*LoadGame_Uppart,
-*LoadGame_Downpart,
-*LoadGameInside,
+*LoadGame,
 *ZTool,
 *MainMenu_Bar,
 *MainMenu_Item1,
 *MainMenu_Item2,
 *MainMenu_Item3,
 *MainMenu_Item4,
-*MainMenu_Item5;
-
-void free_camera();
+*MainMenu_Item5,
+*MainMenu_Item6,
+*NewGame_ScreenLeft,
+*NewGame_ScreenRight,
+*NewGame_Screen1,
+*NewGame_ScreenDyn_Step1,
+*NewGame_ScreenStatic_Step1,
+*NewGame_Screen3,
+*NewGame_PreviewButton,
+*CreateWorld,
+*CreateWorldCoffee;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
 ////////////////////////////////////////////////////////////
-ENTITY *select, *fpsf_marker, *cam, *_cube, *flashlight;
+ENTITY *select, *fpsf_marker, *cam, *flashlight;
 
 ENTITY *my_target_node;
 
@@ -692,11 +721,13 @@ VECTOR particle_seedbox;
 VECTOR temp2, ctemp;
 VECTOR TARGET;
 
-// Vectors for dragging entities
+// Vectors for dragging entities & camera movement
 VECTOR v1, v2;
+VECTOR *camera_force = { z = 0;
+}
 
 // Vectors for backup purposes
-VECTOR xy_panLight, xy_panProp, xy_panSnd, xy_panParticle;\
+VECTOR xy_panLight, xy_panProp, xy_panSnd, xy_panParticle;
 
 /*** Vectors & angles for particle effects ***/
 VECTOR parted_temp_vec, parted_temp2_vec;
@@ -712,7 +743,7 @@ ANGLE *parted_temp_ang = {
 ////////////////////////////////////////////////////////////
 // Fonts and texts' declarations
 ////////////////////////////////////////////////////////////
-FONT *f = "Arial#25b";
+FONT *f = "Arial#27b";
 
 ////////////////////////////////////////////////////////////
 // Material declarations
@@ -750,28 +781,6 @@ BMAP *BackgroundScreen3 = "BackgroundScreen1.jpg";
 BMAP *BackgroundScreen4 = "BackgroundScreen2.jpg";
 BMAP *BackgroundScreen5 = "BackgroundScreen1.jpg";
 BMAP *BackgroundScreen6 = "BackgroundScreen2.jpg";
-
-BMAP *save_array[9];
-BMAP *slot1 = "button_save_slot_interface.bmp";
-BMAP *slot2 = "button_save_slot_interface.bmp";
-BMAP *slot3 = "button_save_slot_interface.bmp";
-BMAP *slot4 = "button_save_slot_interface.bmp";
-BMAP *slot5 = "button_save_slot_interface.bmp";
-BMAP *slot6 = "button_save_slot_interface.bmp";
-BMAP *slot7 = "button_save_slot_interface.bmp";
-BMAP *slot8 = "button_save_slot_interface.bmp";
-BMAP *slot9 = "button_save_slot_interface.bmp";
-//BMAP *slot10 = "button_save_slot_interface.bmp";
-//BMAP *slot11 = "button_save_slot_interface.bmp";
-//BMAP *slot12 = "button_save_slot_interface.bmp";
-//BMAP *slot13 = "button_save_slot_interface.bmp";
-//BMAP *slot14 = "button_save_slot_interface.bmp";
-//BMAP *slot15 = "button_save_slot_interface.bmp";
-//BMAP *slot16 = "button_save_slot_interface.bmp";
-//BMAP *slot17 = "button_save_slot_interface.bmp";
-//BMAP *slot18 = "button_save_slot_interface.bmp";
-//BMAP *slot19 = "button_save_slot_interface.bmp";
-//BMAP *slot20 = "button_save_slot_interface.bmp";
 
 BMAP* mouse = "mouse_pointer.png";
 
@@ -889,12 +898,12 @@ int UnloadKernel();
 int ReloadKernel();
 int Console();
 int PlayVideo(STRING *, var);
+int SetupShader();
 void FolderScan(TEXT *,STRING *,STRING *);
+void LoadCBOIF(ENTITY *);
 
 int AddToTextureProjectionArray(ENTITY *);
 void RemoveFromTextureProjectionArray(ENTITY *);
-
-int SetupShader();
 
 // Implementation for writing different types of variables for WriteLog
 // With somethin like int WriteLog(int); implement them yourself.
@@ -909,53 +918,24 @@ int WriteLog(STRING *, OBJECTSTRUCT *);
 int WriteLog(STRING *);
 void NewLine();
 
-/*** Third/first person camera ***/
-/////////
-//cerberi_croman's code (user request topic)
-//http://www.coniserver.net/ubb7/ubbthreads.php?ubb=showflat&Number=186382#Post186382
-//some changes Xd1Vo :p
-
-// 12.10.2013/13.10.2013 modified by Nguyen Ngoc Huy:
-// + some changes were made specifically for craftbox
-// + group functions
-// + disable the "running stamina" system
-
-#define gravity skill30
-#define zoffset skill31
-
-#define animate skill32
-#define animate2 skill33
-#define state skill34
-#define currentframe skill35
-#define blendframe skill36
-
-#define nullframe -2
-#define blend -1
-#define stand 0
-#define run 1
-#define walk 2
-#define walkSlow 3
-#define walkBack 4
-
-#define run_animation_speed 4
-
-VECTOR speed;
-var sMove = 1;
-var camera_type=0;
-
-/*****************************/
+void free_camera();
+void toggle_weather();
+void good_weather();
 
 void GGUIInit();
 void GGUIHide();
 void GGUIShow();
 void GGUIUpdate(PANEL *);
 
+void guiViewPreset (int *, int, VECTOR *, VECTOR *);
+void GPanelAlignMainMenu(PANEL *);
 void GPanelCenterInside(PANEL *, PANEL *);
 void GPanelResize(PANEL *, char);
 void GPanelRotate(PANEL *,var,var,BOOL);
 void GPanelSelect(PANEL *);
 void GPanelCenter(PANEL *);
 void GPanelDrag(PANEL *);
+void GPanelFade(PANEL *, var, var, var);
 void GPanelSizeForWH(PANEL *, BMAP *);
 void GNotificationCreate(FONT *, STRING *);
 void GWindowClose(var, PANEL *);
@@ -975,7 +955,7 @@ void GOptionsShow();
 void GOptionsAdjustSettings(var);
 void GOptions_SaveSettings();
 void GOptionsHide();
-void GShowCredits();
+void GCreditsShow();
 void GGameLoad();
 void GGameSave();
 void GLightWindowShow();
@@ -991,9 +971,27 @@ void GWorldNewHide();
 void GpanPropSwitchPage(var);
 void GLoadGameShow();
 void GLoadGameHide();
+void GHelpHide();
+void GHelpShow();
+void GTrophiesHide();
+void GTrophiesShow();
 void GMainMenuShow();
 void GMainMenuHide();
-void GLoadGame_Scroll(var, PANEL *);
+//void GLoadGame_Scroll(var, PANEL *);
+void GNewGameResetDynamicSettings();
+void GNewGameResetStaticSettings();
+void GSwitchNewGameScreen(var);
+void GNewGame_ChooseWorld(var);
+void GNewGame_Scrollbar(var, PANEL *);
+void GNewGame_PreviewScene();
+void GNewGame_UnPreviewScene();
+void LaunchGameSession();
+void GSKYSTR_Up(); // I don't use grouped functions with parameters 'cause I don't want to get stuck
+void GSKYSTR_Down(); // with a bunch of if..else statements.
+void GGROUNDSTR_Up();
+void GGROUNDSTR_Down();
+void GLOADGAMESTR_Up();
+void GLOADGAMESTR_Down();
 
 void GIO_ObjectTab_SwitchTab(var);
 void GOptions_Graphics();
@@ -1005,7 +1003,11 @@ void GSelectObject(var);
 void GSelectLight(var);
 void GSelectParticle(var);
 
-void GToggleLevelCreationMode(var);
+//void GToggleLevelCreationMode(var);
+void FillFromPool(TEXT *, TEXT *, var, var); // dest, pool, amount, scaler
+void PassToSKYSTR(var);
+void PassToGROUNDSTR(var);
+void PassToLOADGAMESTR(var);
 
 void FollowPointer();
 
@@ -1017,7 +1019,7 @@ int PassObjectPropertiesToGUI(ENTITY *);
 void ReadMaterialDataFromFile(MATERIAL *, STRING *);
 void WriteMaterialDataToFile(STRING *, MATERIAL *);
 void PassMaterialDataToWindow(MATERIAL *);
-void MaterialCopy(MATERIAL *, MATERIAL *);
+void MaterialCopyColor(MATERIAL *, MATERIAL *);
 
 int PassObjectDataToClipboard(ENTITY *, OBJECTSTRUCT *);
 int PassClipboardDataToObject(ENTITY *);
@@ -1033,7 +1035,7 @@ void ObjectManipulationInterface();
 
 ENTITY *CreateObject();
 
-void LoadSavedBMAPs();
+//void LoadSavedBMAPs();
 
 int SaveGameToSlot(var);
 int LoadGameFromSlot(var);

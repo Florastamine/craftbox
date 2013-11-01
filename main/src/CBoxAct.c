@@ -22,6 +22,42 @@ NOTES:
 --------------------------------------------------
 */
 
+/*** Third/first person camera ***/
+/////////
+//cerberi_croman's code (user request topic)
+//http://www.coniserver.net/ubb7/ubbthreads.php?ubb=showflat&Number=186382#Post186382
+//some changes Xd1Vo :p
+
+// 12.10.2013/13.10.2013 modified by Nguyen Ngoc Huy:
+// + some changes were made specifically for craftbox
+// + group functions
+// + disable the "running stamina" system
+
+#define gravity skill30
+#define zoffset skill31
+
+#define animate skill32
+#define animate2 skill33
+#define state skill34
+#define currentframe skill35
+#define blendframe skill36
+
+#define nullframe -2
+#define blend -1
+#define stand 0
+#define run 1
+#define walk 2
+#define walkSlow 3
+#define walkBack 4
+
+#define run_animation_speed 4
+
+VECTOR speed;
+var sMove = 1;
+var camera_type=0;
+
+/*****************************/
+
 ////////////////////////////////////////////////////////////
 // A patroller and a node.
 ////////////////////////////////////////////////////////////
@@ -67,46 +103,6 @@ action a_patroller()
 		}
 		wait (1);
 	}
-}
-
-VECTOR dist, absdist, force, camera_center;
-var my_height; //
-var step_height = 8; //
-var overallspeed = 7.9; // Overall player's movement speed
-var mouse_spd = 9; // Mouse sensivity
-var cam_height = 110; // Camera's Z-height
-var temp_cam = 0;
-
-void fpcam_push(var Speed,var Amount)
-{
-	dist.x = Speed * Amount * time_step;
-	force.x = Speed * time_step;
-	accelerate(dist.x,force.x,0.7);
-}
-
-void fpcam_flashlight() {
-
-	proc_mode = PROC_LATE;
-
-	flashlight = me;
-	set(flashlight,PASSABLE | SPOTLIGHT | CAST | LIGHT);
-	flashlight.lightrange = 1500;
-	vec_set(flashlight.blue,vector(255,100,100));
-
-	while(1)
-	{
-		if(key_t) flashlight.lightrange += 25;
-		if(key_y) flashlight.lightrange -= 25;
-		
-		flashlight.x = player.x + 15 * cos(player.pan) + 20 * sin(player.pan);
-		flashlight.y = player.y + 50 * sin(player.pan) - 20 * cos(player.pan);
-		flashlight.z = player.z + 10; 
-		flashlight.pan = player.pan;
-		flashlight.tilt = player.tilt;
-		flashlight.roll = player.roll;
-		wait(1);
-	}  
-
 }
 
 #define HEALTH skill30
@@ -286,6 +282,29 @@ action dummy_target()
 	}
 
 } 
+
+action act_mystymood_trigg();
+
+void act_mystymood_trigg_label1()
+{
+	weather_fader = 1;//reset this var
+
+	weather_state = my.skill70;
+	rain_random_move_on = my.skill71;
+	rain_random_move = my.skill72;
+	rain_wind_x = my.skill73;
+	rain_wind_y = my.skill74;
+	rain_fallspeed = my.skill75;
+	disable_lightning_thunder = my.skill76;
+	snow_random_move_on = my.skill77;
+	snow_random_move = my.skill78;
+	snow_wind_x = my.skill79;
+	snow_wind_y = my.skill80;
+	snow_fallspeed = my.skill81;
+	weather_fade_speed = my.skill82;
+
+	act_mystymood_trigg();
+}
 
 //title:MystyMood Sky Template
 //image:loopix_logo.pcx

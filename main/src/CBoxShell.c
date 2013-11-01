@@ -29,6 +29,116 @@ GSelectParticle a bit, and run - more particle effects.
 --------------------------------------------------
 */
 
+PANEL *CreateWorld = {
+	
+	layer = 998;
+	bmap = "white.bmp";
+	
+}
+
+PANEL *CreateWorldCoffee = {
+	
+	layer = 999;
+	bmap = "coffee_badge.png";
+	
+}
+
+PANEL *NewGame_PreviewButton = {
+	
+	bmap = "button_PreviewScene_off.png";
+	button(0,0,"button_PreviewScene_on.png","button_PreviewScene_off.png","button_PreviewScene_on.png",NULL,GNewGame_UnPreviewScene,GNewGame_PreviewScene);
+	
+	flags = SHOW;
+	
+}
+
+
+PANEL *NewGame_ScreenLeft = {
+	
+	layer = 2;
+	
+	button(0,0,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GSwitchNewGameScreen,NULL);
+	button(0,0,"black.bmp","black.bmp","black.bmp",NULL,NULL,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *NewGame_ScreenRight = {
+	
+	layer = 2;
+	
+	button(0,0,"black.bmp","black.bmp","black.bmp",NULL,NULL,NULL);
+	button(0,0,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GSwitchNewGameScreen,NULL);
+	
+	flags = OVERLAY;
+	
+}
+
+PANEL *NewGame_Screen1 = {
+	
+	bmap = "NewGame_Screen1.bmp";
+	flags =  TRANSLUCENT;
+	alpha = 75;
+	
+	button(121,345,"button_NewGame_Screen.bmp","button_NewGame_Screen.bmp","button_NewGame_Screen.bmp",NULL,GNewGame_ChooseWorld,NULL);
+	button(517,345,"button_NewGame_Screen.bmp","button_NewGame_Screen.bmp","button_NewGame_Screen.bmp",NULL,GNewGame_ChooseWorld,NULL);
+	
+}
+
+PANEL *NewGame_ScreenDyn_Step1 = {
+	
+	bmap = "NewGame_ScreenDyn_Step1.bmp";
+	
+	button_toggle(30,96,"NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_Off.bmp","NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,126,"NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_Off.bmp","NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,156,"NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_Off.bmp","NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,186,"NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_Off.bmp","NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_On.bmp",NULL,NULL,NULL);
+	
+	button_radio(36,250."NewGame_Radiobox_Rain_On.bmp","NewGame_Radiobox_Rain_Off.bmp","NewGame_Radiobox_Rain_On.bmp",NULL,NULL,NULL);
+	button_radio(36,280,"NewGame_Radiobox_Snow_On.bmp","NewGame_Radiobox_Snow_Off.bmp","NewGame_Radiobox_Snow_On.bmp",NULL,NULL,NULL);
+	button_radio(36,310,"NewGame_Radiobox_Both_On.bmp","NewGame_Radiobox_Both_Off.bmp","NewGame_Radiobox_Both_On.bmp",NULL,NULL,NULL);
+	button_radio(36,340,"NewGame_Radiobox_Nothing_On.bmp","NewGame_Radiobox_Nothing_Off.bmp","NewGame_Radiobox_Nothing_On.bmp",NULL,NULL,NULL);
+	
+	hslider(503,115,274,"SliderKnob.bmp",0,100,test);
+	hslider(503,164,274,"SliderKnob.bmp",0,100,new_time_speed_night);
+	hslider(503,215,274,"SliderKnob.bmp",0,100,new_moon_scale_fac);
+	hslider(503,263,274,"SliderKnob.bmp",0,100,new_night_sky_scale_x);
+	hslider(503,318,274,"SliderKnob.bmp",0,100,new_night_sky_speed_x);
+	
+	flags =  TRANSLUCENT;
+	
+	alpha = 75;
+}
+
+PANEL *NewGame_ScreenStatic_Step1 = {
+	
+	bmap = "NewGame_ScreenStatic_Step1.bmp";
+	
+	hslider(323,107,271,"SliderKnob.bmp",-200,300,sun_light); // actually I found sun_light ranged from -200 to 200+
+	button_toggle(37,166,"NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_Off.bmp","NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_On.bmp",NULL,NULL,NULL);
+	
+	hslider(283,255,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.red);
+	hslider(283,291,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.green);
+	hslider(283,329,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.blue);
+	hslider(283,370,271,"SliderKnob.bmp",100,50000,camera.fog_end);
+	
+	flags = TRANSLUCENT;
+	alpha = 75;
+	
+}
+
+PANEL *NewGame_Screen3 = {
+	
+	bmap = "NewGame_Screen3.bmp";
+	
+	button(661,354,"button_Start_on.png","button_Start_off.png","button_Start_on.png",NULL,LaunchGameSession,NULL);
+	
+	flags = TRANSLUCENT;
+	alpha = 75;
+	
+}
+
 PANEL *MainMenu_Bar = {
 	
 	layer = 1;
@@ -60,41 +170,11 @@ PANEL *ZTool = {
 	
 }
 
-PANEL *LoadGame_Uppart = {
-	
-	layer = 3;
-	
-	bmap = "LoadGameUppart.bmp";
-	
-	button(0,0,"arrow_up.png","arrow_up.png","arrow_up.png",NULL,GLoadGame_Scroll,NULL);
-	
-}
-
-PANEL *LoadGame_Downpart = {
-	
-	layer = 3;
-	
-	bmap = "LoadGameDownpart.bmp";
-	
-	button(0,0,"arrow_down.png","arrow_down.png","arrow_down.png",NULL,GLoadGame_Scroll,NULL);
-	
-}
-
-PANEL *LoadGameInside = {
+PANEL *LoadGame = {
 	
 	layer = 1;
 	
-	bmap = "LoadGameInside.bmp";
-	
-	button(0,0,slot1,slot1,slot1,NULL,LoadGameFromSlot,NULL);
-	button(0,50,slot2,slot2,slot2,NULL,LoadGameFromSlot,NULL);
-	button(0,100,slot3,slot3,slot3,NULL,LoadGameFromSlot,NULL);
-	button(0,150,slot4,slot4,slot4,NULL,LoadGameFromSlot,NULL);
-	button(0,200,slot5,slot5,slot5,NULL,LoadGameFromSlot,NULL);
-	button(0,250,slot6,slot6,slot6,NULL,LoadGameFromSlot,NULL);
-	button(0,300,slot7,slot7,slot7,NULL,LoadGameFromSlot,NULL);
-	button(0,350,slot8,slot8,slot8,NULL,LoadGameFromSlot,NULL);
-	button(0,400,slot9,slot9,slot9,NULL,LoadGameFromSlot,NULL);
+	bmap = "LoadGame.bmp";
 	
 }
 
@@ -107,31 +187,32 @@ PANEL *Options_Graphics = {
 	bmap = "Options_Graphics.bmp";
 	
 	//
-	button(155,62,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,62,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,81,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,81,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,92,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,92,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,111,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,111,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,122,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,122,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,141,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,141,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,152,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,152,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,171,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,171,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,182,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,182,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,201,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,201,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,212,"arrow_left.png","arrow_left.png","arrow_left.png",GOptionsAdjustSettings,NULL,NULL);
-	button(275,212,"arrow_right.png","arrow_right.png","arrow_right.png",GOptionsAdjustSettings,NULL,NULL);
+	//	button(241,231,"arrow_left.png","arrow_left.png","arrow_left.png",GOptionsAdjustSettings,NULL,NULL);
+	//	button(400,231,"arrow_right.png","arrow_right.png","arrow_right.png",GOptionsAdjustSettings,NULL,NULL);
+	//	
 	
 	//
-	button(320,11,"button_Options_Graphics.png","button_Options_Graphics.png","button_Options_Graphics.png",NULL,GOptions_Graphics,NULL);
-	button(320,50,"button_Options_Sound.png","button_Options_Sound.png","button_Options_Sound.png",NULL,GOptions_Sound,NULL);
-	button(320,90,"button_Options_Themes.png","button_Options_Themes.png","button_Options_Themes.png",NULL,GOptions_Themes,NULL);
-	button(320,130,"button_Options_Maintenance.png","button_Options_Maintenance.png","button_Options_Maintenance.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(9,349,"button_Options_Back.bmp","button_Options_Back.bmp","button_Options_Back.bmp",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -148,22 +229,22 @@ PANEL *Options_Sound = {
 	bmap = "Options_Sound.bmp";
 	
 	//
-	button(155,62,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,62,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,81,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,81,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,92,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,92,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,111,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,111,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
-	button(155,122,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
-	button(275,122,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
+	button(241,141,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
+	button(400,141,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
 	//
-	button(320,11,"button_Options_Graphics.png","button_Options_Graphics.png","button_Options_Graphics.png",NULL,GOptions_Graphics,NULL);
-	button(320,50,"button_Options_Sound.png","button_Options_Sound.png","button_Options_Sound.png",NULL,GOptions_Sound,NULL);
-	button(320,90,"button_Options_Themes.png","button_Options_Themes.png","button_Options_Themes.png",NULL,GOptions_Themes,NULL);
-	button(320,130,"button_Options_Maintenance.png","button_Options_Maintenance.png","button_Options_Maintenance.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(9,349,"button_Options_Back.bmp","button_Options_Back.bmp","button_Options_Back.bmp",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -177,12 +258,12 @@ PANEL *Options_Themes = {
 	
 	bmap = "Options_Themes.bmp";
 	
-	button(320,11,"button_Options_Graphics.png","button_Options_Graphics.png","button_Options_Graphics.png",NULL,GOptions_Graphics,NULL);
-	button(320,50,"button_Options_Sound.png","button_Options_Sound.png","button_Options_Sound.png",NULL,GOptions_Sound,NULL);
-	button(320,90,"button_Options_Themes.png","button_Options_Themes.png","button_Options_Themes.png",NULL,GOptions_Themes,NULL);
-	button(320,130,"button_Options_Maintenance.png","button_Options_Maintenance.png","button_Options_Maintenance.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(9,349,"button_Options_Back.bmp","button_Options_Back.bmp","button_Options_Back.bmp",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -196,12 +277,12 @@ PANEL *Options_Maintenance = {
 	
 	bmap = "Options_Maintenance.bmp";
 	
-	button(320,11,"button_Options_Graphics.png","button_Options_Graphics.png","button_Options_Graphics.png",NULL,GOptions_Graphics,NULL);
-	button(320,50,"button_Options_Sound.png","button_Options_Sound.png","button_Options_Sound.png",NULL,GOptions_Sound,NULL);
-	button(320,90,"button_Options_Themes.png","button_Options_Themes.png","button_Options_Themes.png",NULL,GOptions_Themes,NULL);
-	button(320,130,"button_Options_Maintenance.png","button_Options_Maintenance.png","button_Options_Maintenance.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(9,349,"button_Options_Back.bmp","button_Options_Back.bmp","button_Options_Back.bmp",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -217,6 +298,78 @@ PANEL *BackgroundScreen = {
 	
 }
 
+PANEL *InputBox_GROUNDSTR = {
+	
+	/*
+	
+	EVENT_RELEASE and EVENT_BUTTONUP can be used to distinguish whether functionOff was triggered by leaving the button area 
+	or releasing the mouse button. EVENT_CLICK and EVENT_CLICKUP can be used to distinguish whether the mouse click switches the toggle button on or off. 
+	
+	*/
+	
+	layer = 10;
+	
+	bmap = "InputPalette_4.bmp";
+	
+	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
+	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
+	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
+	
+	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GGROUNDSTR_Up,NULL);
+	button(247,76,"sort_down.png","sort_down.png","sort_down.png",NULL,GGROUNDSTR_Down,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 50;
+	
+}
+
+PANEL *InputBox_SKYSTR = {
+	
+	layer = 10;
+	
+	bmap = "InputPalette_4.bmp";
+	
+	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
+	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
+	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
+	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
+	
+	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GSKYSTR_Up,NULL);
+	button(247,76,"sort_down.png","sort_down.png","sort_down.png",NULL,GSKYSTR_Down,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 50;
+	
+}
+
+PANEL *InputBox_LOADGAMESTR = {
+	
+	layer = 10;
+	
+	bmap = "InputPalette_8.bmp";
+	
+	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,108,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,135,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,162,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,189,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	
+	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GLOADGAMESTR_Up,NULL);
+	button(247,184,"sort_down.png","sort_down.png","sort_down.png",NULL,GLOADGAMESTR_Down,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+
+	alpha = 50;
+	
+}
+
+
 PANEL *InsertObject_Inputter = {
 	
 	/*
@@ -226,25 +379,25 @@ PANEL *InsertObject_Inputter = {
 	
 	*/
 	
-	bmap = "InsertObject_Inputter.bmp";
+	bmap = "InputPalette_4.bmp";
 	
 	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,30,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,60,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,90,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,120,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,150,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,180,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,210,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,240,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,270,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,300,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,330,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,360,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,390,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,420,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,450,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,480,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,120,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,150,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,180,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,210,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,240,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,270,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,300,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,330,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,360,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,390,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,420,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,450,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	//	button(0,480,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 
 	flags = TRANSLUCENT;
 
@@ -590,10 +743,6 @@ PANEL *panMain_Play = {
 	flags = OVERLAY | SHOW;
 }
 
-PANEL *blackscreen = {
-	bmap = "bitmap.bmp";
-}
-
 PANEL *panLight = {
 	
 	layer = 2;
@@ -646,127 +795,11 @@ PANEL *panScaleHelp = {
 	
 }
 
-PANEL *panNewGame = {
-	
-	layer = 2;
-	
-	bmap = "panNewGame.bmp";
-	
-	// 1
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
-	
-	// 2
-	button_toggle(145,60,"flag_new_on.bmp","flag_new_.bmp","flag_new_on.bmp","flag_new_on.bmp",NULL,GToggleLevelCreationMode,NULL);
-	
-	// 3
-	button_toggle(465,60,"flag_new_on.bmp","flag_new_.bmp","flag_new_on.bmp","flag_new_on.bmp",NULL,GToggleLevelCreationMode,NULL);
-	
-	// Left
-	hslider(66,400,100,"slider.bmp",1,255,v_fogr);
-	hslider(66,419,100,"slider.bmp",1,255,v_fogg);
-	hslider(66,438,100,"slider.bmp",1,255,v_fogb);
-	hslider(138,464,100,"slider.bmp",100,8000,v_fogdensity);
-	
-	// 4
-	button_toggle(150,365,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
-	
-	// Right
-	
-	// 5
-	button_toggle(546,87,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
-	// 6
-	button_toggle(546,104,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
-	// 7
-	button_toggle(546,120,"flag_select_ON.bmp","flag_select.bmp","flag_select_ON.bmp","flag_select_ON.bmp",NULL,NULL,NULL);
-	
-	hslider(546,173,100,"slider.bmp",.125,5,_moon_scale_fac);
-	hslider(546,188,100,"slider.bmp",.1,255,_time_speed_night);
-	hslider(546,203,100,"slider.bmp",.5,4,_night_sky_scale_x);
-	hslider(546,218,100,"slider.bmp",1,500,_night_sky_speed_x);
-	
-	// 8
-	button(605,460,"button_creatworld_on.bmp","button_creatworld_off.bmp","button_creatworld_on.bmp",NULL,LoadNewLevelFromWindow,NULL);
-	
-	flags = OVERLAY | TRANSLUCENT;
-	
-	on_click = GPanelDrag;
-	
-}
-
-PANEL *panSaveGame = {
-	
-	layer = 2;
-	
-	bmap = "panSaveGame.bmp";
-	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
-	
-	button(20,25,slot1,slot1,slot1,NULL,SaveGameToSlot,NULL);
-	button(126,25,slot2,slot2,slot2,NULL,SaveGameToSlot,NULL);
-	button(232,25,slot3,slot3,slot3,NULL,SaveGameToSlot,NULL);
-	button(20,131,slot4,slot4,slot4,NULL,SaveGameToSlot,NULL);
-	button(126,131,slot5,slot5,slot5,NULL,SaveGameToSlot,NULL);
-	button(232,131,slot6,slot6,slot6,NULL,SaveGameToSlot,NULL);
-	button(20,237,slot7,slot7,slot7,NULL,SaveGameToSlot,NULL);
-	button(126,237,slot8,slot8,slot8,NULL,SaveGameToSlot,NULL);
-	button(232,237,slot9,slot9,slot9,NULL,SaveGameToSlot,NULL);
-	//	button(0,180,slot10,slot10,slot10,NULL,SaveGameToSlot,NULL);
-	//	button(0,200,slot11,slot11,slot11,NULL,SaveGameToSlot,NULL);
-	//	button(0,220,slot12,slot12,slot12,NULL,SaveGameToSlot,NULL);
-	//	button(0,240,slot13,slot13,slot13,NULL,SaveGameToSlot,NULL);
-	//	button(0,260,slot14,slot14,slot14,NULL,SaveGameToSlot,NULL);
-	//	button(0,280,slot15,slot15,slot15,NULL,SaveGameToSlot,NULL);
-	//	button(0,300,slot16,slot16,slot16,NULL,SaveGameToSlot,NULL);
-	//	button(0,320,slot17,slot17,slot17,NULL,SaveGameToSlot,NULL);
-	//	button(0,340,slot18,slot18,slot18,NULL,SaveGameToSlot,NULL);
-	//	button(0,360,slot19,slot19,slot19,NULL,SaveGameToSlot,NULL);
-	//	button(0,380,slot20,slot20,slot20,NULL,SaveGameToSlot,NULL);
-	
-	flags = TRANSLUCENT;
-	
-	on_click = GPanelDrag;
-	
-}
-
-PANEL *panLoadGame = {
-	
-	layer = 2;
-	bmap = "panLoadGame.bmp";
-	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
-	
-	button(20,25,slot1,slot1,slot1,NULL,LoadGameFromSlot,NULL);
-	button(126,25,slot2,slot2,slot2,NULL,LoadGameFromSlot,NULL);
-	button(232,25,slot3,slot3,slot3,NULL,LoadGameFromSlot,NULL);
-	button(20,131,slot4,slot4,slot4,NULL,LoadGameFromSlot,NULL);
-	button(126,131,slot5,slot5,slot5,NULL,LoadGameFromSlot,NULL);
-	button(232,131,slot6,slot6,slot6,NULL,LoadGameFromSlot,NULL);
-	button(20,237,slot7,slot7,slot7,NULL,LoadGameFromSlot,NULL);
-	button(126,237,slot8,slot8,slot8,NULL,LoadGameFromSlot,NULL);
-	button(232,237,slot9,slot9,slot9,NULL,LoadGameFromSlot,NULL);
-	//		button(100,180,slot10,slot10,slot10,NULL,LoadGameFromSlot,NULL);
-	//		button(100,200,slot11,slot11,slot11,NULL,LoadGameFromSlot,NULL);
-	//		button(100,220,slot12,slot12,slot12,NULL,LoadGameFromSlot,NULL);
-	//		button(100,240,slot13,slot13,slot13,NULL,LoadGameFromSlot,NULL);
-	//		button(100,260,slot14,slot14,slot14,NULL,LoadGameFromSlot,NULL);
-	//		button(100,280,slot15,slot15,slot15,NULL,LoadGameFromSlot,NULL);
-	//		button(100,300,slot16,slot16,slot16,NULL,LoadGameFromSlot,NULL);
-	//		button(100,320,slot17,slot17,slot17,NULL,LoadGameFromSlot,NULL);
-	//		button(100,340,slot18,slot18,slot18,NULL,LoadGameFromSlot,NULL);
-	//		button(100,360,slot19,slot19,slot19,NULL,LoadGameFromSlot,NULL);
-	//		button(100,380,slot20,slot20,slot20,NULL,LoadGameFromSlot,NULL);
-	
-	flags = TRANSLUCENT;
-	
-	on_click = GPanelDrag;
-	
-}
-
 PANEL *MainMenu_Item1 = {
 	
 	layer = 2;
 	
-	bmap = "button_NewGame_on.bmp";
+	bmap = "button_NewGame_off.bmp";
 	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -779,7 +812,7 @@ PANEL *MainMenu_Item2 = {
 	
 	layer = 2;
 	
-	bmap = "button_LoadGame_on.bmp";
+	bmap = "button_LoadGame_off.bmp";
 	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,NULL);
 
 	flags = OVERLAY | TRANSLUCENT;
@@ -792,7 +825,7 @@ PANEL *MainMenu_Item3 = {
 	
 	layer = 2;
 	
-	bmap = "button_Options_on.bmp";
+	bmap = "button_Options_off.bmp";
 	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -805,7 +838,7 @@ PANEL *MainMenu_Item4 = {
 	
 	layer = 2;
 	
-	bmap = "button_Achievements_on.bmp";
+	bmap = "button_Achievements_off.bmp";
 	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,NULL,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
@@ -818,8 +851,8 @@ PANEL *MainMenu_Item5 = {
 	
 	layer = 2;
 	
-	bmap = "button_Credits_on.bmp";
-	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GShowCredits,NULL);
+	bmap = "button_Credits_off.bmp";
+	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GCreditsShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -827,6 +860,18 @@ PANEL *MainMenu_Item5 = {
 
 }
 
+PANEL *MainMenu_Item6 = {
+	
+	layer = 2;
+	
+	bmap = "button_Help_on.bmp";
+	button(0,0,"button_Help_on.bmp","button_Help_off.bmp","button_Help_on.bmp",NULL,NULL,NULL);
+	
+	flags = OVERLAY | TRANSLUCENT;
+	
+	alpha = 75;
+	
+}
 
 PANEL *panCAMRecorder = {
 	
@@ -1001,18 +1046,6 @@ MATERIAL *mat_select =
 	diffuse_red=255;
 	diffuse_green=255;
 	diffuse_blue=0;
-}
-
-////////////////////////////////////////////////////////////
-// Texts will be defined here.
-////////////////////////////////////////////////////////////
-TEXT *files_list = 
-{ 
-	strings = 1000; 
-	pos_x = 0;
-	pos_y = 0;
-	font = "Arial#25b";
-	flags=SHOW;
 }
 
 ////////////////////////////////////////////////////////////
@@ -2485,7 +2518,9 @@ ENTITY *flare20_ent =
 --------------------------------------------------
 void GGUIUpdate(PANEL *wg)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGUIUpdate(PANEL *wg) {
@@ -2539,24 +2574,6 @@ void GGUIUpdate(PANEL *wg) {
 		pan_setpos(panParticle,3,1,vector(bmap_width(panParticle.bmap) - 38 - 15,0,0));
 		
 	}
-	
-	if(wg == panNewGame) {
-		
-		pan_setpos(panNewGame,3,1,vector(bmap_width(panNewGame.bmap) - 38 - 15,0,0));
-		
-	}
-	
-	if(wg == panLoadGame) {
-		
-		pan_setpos(panLoadGame,3,1,vector(bmap_width(panLoadGame.bmap) - 38 - 15,0,0));
-		
-	}
-	
-	if(wg == panSaveGame) {
-		
-		pan_setpos(panSaveGame,3,1,vector(bmap_width(panSaveGame.bmap) - 38 - 15,0,0));
-		
-	}
 }
 
 /* 
@@ -2566,6 +2583,8 @@ void GWindowClose(var id, PANEL *p)
 Desc: id always = 1 cuz we don't have two closebuttons at the same time. 
 only one PANEL * parameter isn't enough (and it won't work too) so 
 this simple ugly hack should do the trick.
+
+Returns: -
 --------------------------------------------------
 */
 void GWindowClose(var id, PANEL *p) {
@@ -2574,7 +2593,6 @@ void GWindowClose(var id, PANEL *p) {
 	
 	id = 1;
 	
-	if(p == panNewGame) reset(panNewGame,SHOW);
 	if(p == panHome) reset(panHome,SHOW);
 
 	if(p == panMat_Sub1) {
@@ -2595,45 +2613,20 @@ void GWindowClose(var id, PANEL *p) {
 	if(p == InsertObject) GInsertObjectHide();
 	if(p == Options_Graphics) GOptionsHide();
 	
-	if(p == panSaveGame) reset(panSaveGame,SHOW);
-	if(p == panLoadGame) reset(panLoadGame,SHOW);
-	
 }
-
-/* 
---------------------------------------------------
-void GToggleLevelCreationMode(var ID)
-
-
---------------------------------------------------
-*/
-void GToggleLevelCreationMode(var ID) {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-	if(ID == 2) button_state(panNewGame,3,0);
-	else button_state(panNewGame,2,0);
-	
-}
-
 
 /* 
 --------------------------------------------------
 void GGameLoad()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGameLoad() {
 	
 	if(event_type == EVENT_RELEASE) return;
-	
-	GPanelCenter(panSaveGame);   
-	GGUIUpdate(panLoadGame);
-	
-	set(panLoadGame,SHOW);
-	
-	GPanelSelect(panLoadGame);
 	
 }
 
@@ -2641,19 +2634,14 @@ void GGameLoad() {
 --------------------------------------------------
 void GGameSave()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGameSave() {
 	
 	if(event_type == EVENT_RELEASE) return;
-	
-	GPanelCenter(panSaveGame);
-	GGUIUpdate(panSaveGame);
-	
-	set(panSaveGame,SHOW);
-	
-	GPanelSelect(panSaveGame);
 	
 }
 
@@ -2661,7 +2649,9 @@ void GGameSave() {
 --------------------------------------------------
 void GGPanelDrag(PANEL *p)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelDrag(PANEL *p)
@@ -2684,7 +2674,6 @@ void GPanelDrag(PANEL *p)
 		//hack hack hack!!!!
 		if(p == panHome) GGUIUpdate(panHome);
 		if(p == panProp) GGUIUpdate(panProp);
-		if(p == panNewGame) GGUIUpdate(panNewGame);
 		
 		wait(1);
 	}
@@ -2692,14 +2681,15 @@ void GPanelDrag(PANEL *p)
 	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
 	if(p == panHome) GGUIUpdate(panHome);
 	if(p == panProp) GGUIUpdate(panProp);
-	if(p == panNewGame) GGUIUpdate(panNewGame);
 }
 
 /* 
 --------------------------------------------------
 void GPanelCenter(PANEL *p)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelCenter(PANEL *p) {
@@ -2713,7 +2703,9 @@ void GPanelCenter(PANEL *p) {
 --------------------------------------------------
 void GPanelCenterInside(PANEL *p, PANEL *s)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelCenterInside(PANEL *p, PANEL *s) {
@@ -2722,7 +2714,6 @@ void GPanelCenterInside(PANEL *p, PANEL *s) {
 	// peform a S comparison
 	if(bmap_width(p.bmap)*bmap_height(p.bmap) > bmap_width(s.bmap)*bmap_height(s.bmap)) {
 		
-		printf("The size of the image that needs to be centered is too large.\nTry resizing it.");
 		return;
 		
 	}
@@ -2738,7 +2729,9 @@ void GPanelCenterInside(PANEL *p, PANEL *s) {
 --------------------------------------------------
 void GPanelRotate(PANEL *p,var lim,var speed,BOOL rotate_on_center)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelRotate(PANEL *p,var lim,var speed,BOOL rotate_on_center)
@@ -2762,7 +2755,9 @@ void GPanelRotate(PANEL *p,var lim,var speed,BOOL rotate_on_center)
 --------------------------------------------------
 void GPanelResize(PANEL *p, char c)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelResize(PANEL *p, char c) {
@@ -2790,19 +2785,64 @@ void GPanelResize(PANEL *p, char c) {
 	
 }
 
+/*
+--------------------------------------------------
+void GPanelAlignMainMenu(PANEL *Panel)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GPanelAlignMainMenu(PANEL *Panel) {
+	
+	while(!Panel) wait(1);
+	
+	Panel.pos_x = (sys_metrics(0) - bmap_width(Panel.bmap)) / 2;
+	Panel.pos_y = sys_metrics(1)/4 + bmap_height(MainMenu_Bar.bmap) * MainMenu_Bar.scale_y + BORDER;
+	
+}
+
+
 /* 
 --------------------------------------------------
 void GGUIInit()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGUIInit() {
 	
 	wait(2);
 	
+	GPanelResize(CreateWorld,'t');
+	CreateWorldCoffee.pos_x = screen_size.x - bmap_width(CreateWorldCoffee.bmap) - BORDER * 2;
+	CreateWorldCoffee.pos_y = screen_size.y - bmap_height(CreateWorldCoffee.bmap) - BORDER * 2;
+	
+	ReleaseInfo.pos_x = screen_size.x - str_width( (ReleaseInfo->pstring) [1], ReleaseInfo->font ) - BORDER * 2;
+	ReleaseInfo.pos_y = screen_size.y - BORDER * 4;
+	
 	GPanelResize(panCAMRecorder,'t'); // x+y-scale
 	GPanelResize(panScreenshot,'t');
+	
+	GPanelAlignMainMenu(NewGame_Screen1);
+	GPanelAlignMainMenu(NewGame_ScreenDyn_Step1);
+	GPanelAlignMainMenu(NewGame_ScreenStatic_Step1);
+	GPanelAlignMainMenu(NewGame_Screen3);
+	GPanelAlignMainMenu(Options_Graphics);
+	GPanelAlignMainMenu(Options_Sound);
+	GPanelAlignMainMenu(Options_Themes);
+	GPanelAlignMainMenu(Options_Maintenance);
+	GPanelAlignMainMenu(LoadGame);
+	
+	
+	NewGame_ScreenLeft.pos_x = NewGame_Screen1.pos_x - NewGame_Screen1.pos_x/2;
+	NewGame_ScreenLeft.pos_y = NewGame_Screen1.pos_y + bmap_width(NewGame_Screen1.bmap)/4;
+	
+	NewGame_ScreenRight.pos_x = NewGame_ScreenLeft.pos_x + bmap_width(NewGame_Screen1.bmap) + (NewGame_Screen1.pos_x - NewGame_ScreenLeft.pos_x);
+	NewGame_ScreenRight.pos_y = NewGame_ScreenLeft.pos_y;
 	
 	int i;
 	for(i = 3;i > 0;i--) pan_setpos(panCAMRecorder_digits,1,i,vector(screen_size.x - 35 - 30 * i,BORDER,0));
@@ -2832,6 +2872,8 @@ void GGUIInit() {
 		i++;
 	}
 	
+	/*
+	
 	Options_Graphics.pos_y =
 	Options_Sound.pos_y = 
 	Options_Themes.pos_y = 
@@ -2844,14 +2886,7 @@ void GGUIInit() {
 	Options_Maintenance.pos_x =
 	screen_size.x - bmap_width(Options_Graphics.bmap) - BORDER*3;
 	
-	LoadGame_Uppart.pos_x = screen_size.x - bmap_width(LoadGameInside.bmap);
-	LoadGame_Uppart.pos_y = 0;
-	
-	LoadGame_Downpart.pos_x = screen_size.x - bmap_width(LoadGame_Downpart.bmap);
-	LoadGame_Downpart.pos_y = screen_size.y - bmap_height(LoadGame_Downpart.bmap);
-	
-	LoadGameInside.pos_x = screen_size.x - bmap_width(LoadGameInside.bmap);
-	LoadGameInside.pos_y = bmap_height(LoadGame_Uppart.bmap); // so that the buttons won't get stuck
+	*/
 	
 	ZTool.pos_x = screen_size.x - bmap_width(ZTool.bmap) - BORDER * 2;
 	ZTool.pos_y = (screen_size.y - bmap_height(ZTool.bmap))/2;
@@ -2862,12 +2897,13 @@ void GGUIInit() {
 	MainMenu_Bar.scale_x = sys_metrics(0)/bmap_width(MainMenu_Bar.bmap);
 	MainMenu_Bar.scale_y = .5;
 	
-	MainMenu_Item1.pos_y  = MainMenu_Item2.pos_y = MainMenu_Item3.pos_y = MainMenu_Item4.pos_y = MainMenu_Item5.pos_y = MainMenu_Bar.pos_y + BORDER/2;
+	MainMenu_Item1.pos_y  = MainMenu_Item2.pos_y = MainMenu_Item3.pos_y = MainMenu_Item4.pos_y = MainMenu_Item5.pos_y = MainMenu_Item6.pos_y = MainMenu_Bar.pos_y + BORDER/2;
 	MainMenu_Item1.pos_x = BORDER;
-	MainMenu_Item2.pos_x = MainMenu_Item1.pos_x + bmap_width(MainMenu_Item1.bmap);
-	MainMenu_Item3.pos_x = MainMenu_Item2.pos_x + bmap_width(MainMenu_Item2.bmap);
-	MainMenu_Item4.pos_x = MainMenu_Item3.pos_x + bmap_width(MainMenu_Item3.bmap);
-	MainMenu_Item5.pos_x = MainMenu_Item4.pos_x + bmap_width(MainMenu_Item4.bmap);
+	MainMenu_Item2.pos_x = MainMenu_Item1.pos_x + bmap_width(MainMenu_Item1.bmap) + BORDER;
+	MainMenu_Item3.pos_x = MainMenu_Item2.pos_x + bmap_width(MainMenu_Item2.bmap) + BORDER;
+	MainMenu_Item4.pos_x = MainMenu_Item3.pos_x + bmap_width(MainMenu_Item3.bmap) + BORDER;
+	MainMenu_Item5.pos_x = MainMenu_Item4.pos_x + bmap_width(MainMenu_Item4.bmap) + BORDER;
+	MainMenu_Item6.pos_x = MainMenu_Item5.pos_x + bmap_width(MainMenu_Item5.bmap) + BORDER;
 	
 	/*
 
@@ -2910,13 +2946,37 @@ void GGUIInit() {
 	OptionsMaintenanceTxt = txt_create(10,500);
 	
 	OptionsGraphicsTxt->font = OptionsSoundTxt->font = OptionsThemesTxt->font = OptionsMaintenanceTxt->font = font_create("Arial#19");
+	
+	InputBox_GROUNDSTR.pos_x = NewGame_Screen3.pos_x + 45;
+	InputBox_GROUNDSTR.pos_y = NewGame_Screen3.pos_y + 140;
+	
+	InputBox_SKYSTR.pos_x = NewGame_Screen3.pos_x + 450;
+	InputBox_SKYSTR.pos_y = InputBox_GROUNDSTR.pos_y;
+	
+	InputBox_LOADGAMESTR.pos_x = LoadGame.pos_x + 35;
+	InputBox_LOADGAMESTR.pos_y = LoadGame.pos_y + 110;
+	
+	files_list_SKYSTR.pos_x = InputBox_SKYSTR.pos_x;
+	files_list_SKYSTR.pos_y = InputBox_SKYSTR.pos_y;
+	
+	files_list_GROUNDSTR.pos_x = InputBox_GROUNDSTR.pos_x;
+	files_list_GROUNDSTR.pos_y = InputBox_GROUNDSTR.pos_y;
+	
+	files_list_LOADGAMESTR.pos_x = InputBox_LOADGAMESTR.pos_x;
+	files_list_LOADGAMESTR.pos_y = InputBox_LOADGAMESTR.pos_y;
+	
+	NewGame_PreviewButton.pos_x = (screen_size.x - bmap_width(NewGame_PreviewButton.bmap))/2;
+	NewGame_PreviewButton.pos_y = 50;
+	
 }
 
 /* 
 --------------------------------------------------
 void GPanelSelect(PANEL *p)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPanelSelect(PANEL *p)
@@ -2969,7 +3029,9 @@ void GPanelSelect(PANEL *p)
 --------------------------------------------------
 void GTerrainSubmenuShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GTerrainSubmenuShow() {
@@ -2986,7 +3048,9 @@ void GTerrainSubmenuShow() {
 --------------------------------------------------
 void GObjectSubmenuShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GObjectSubmenuShow() {
@@ -3000,7 +3064,9 @@ void GObjectSubmenuShow() {
 --------------------------------------------------
 void GPathSubmenuShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPathSubmenuShow() {
@@ -3017,7 +3083,9 @@ void GPathSubmenuShow() {
 --------------------------------------------------
 void GGUIHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGUIHide() {
@@ -3052,7 +3120,9 @@ void GGUIHide() {
 --------------------------------------------------
 void GGUIShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GGUIShow() {
@@ -3067,7 +3137,9 @@ void GGUIShow() {
 --------------------------------------------------
 void GHomeShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GHomeShow() {
@@ -3085,7 +3157,9 @@ void GHomeShow() {
 --------------------------------------------------
 void GMaterialEditorShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GMaterialEditorShow() {
@@ -3151,7 +3225,9 @@ void GMaterialEditorShow() {
 --------------------------------------------------
 void GSwitchToMoveMode()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSwitchToMoveMode() {
@@ -3189,7 +3265,9 @@ void GSwitchToMoveMode() {
 --------------------------------------------------
 void GSwitchToRotateMode()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSwitchToRotateMode() {
@@ -3224,7 +3302,9 @@ void GSwitchToRotateMode() {
 --------------------------------------------------
 void GSwitchToScaleMode()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSwitchToScaleMode() {
@@ -3260,7 +3340,9 @@ void GSwitchToScaleMode() {
 --------------------------------------------------
 void GNotificationCreate(FONT *f, STRING *r)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GNotificationCreate(FONT *f, STRING *r)
@@ -3286,18 +3368,25 @@ void GNotificationCreate(FONT *f, STRING *r)
 
 /*
 --------------------------------------------------
-void GShowCredits()
+void GCreditsShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
-void GShowCredits() {
+void GCreditsShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
 	var rollspeed = .5;
 	
-	reset(panNewGame,SHOW);
+	//	reset(panNewGame,SHOW);
+	GWorldNewHide();
+	GLoadGameHide();
+	GOptionsHide();
+	GHelpHide();
+	GTrophiesHide();
 	
 	level_load(NULL);
 	
@@ -3359,7 +3448,9 @@ void GPanelSizeForWH(PANEL *p, BMAP *b) {
 --------------------------------------------------
 void GMainMenuShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GMainMenuShow() {
@@ -3370,6 +3461,9 @@ void GMainMenuShow() {
 	set(MainMenu_Item3,SHOW);
 	set(MainMenu_Item4,SHOW);
 	set(MainMenu_Item5,SHOW);
+	set(MainMenu_Item6,SHOW);
+	
+	set(ReleaseInfo,SHOW);
 	
 }
 
@@ -3377,7 +3471,9 @@ void GMainMenuShow() {
 --------------------------------------------------
 void GMainMenuHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GMainMenuHide() {
@@ -3388,6 +3484,9 @@ void GMainMenuHide() {
 	reset(MainMenu_Item3,SHOW);
 	reset(MainMenu_Item4,SHOW);
 	reset(MainMenu_Item5,SHOW);
+	reset(MainMenu_Item6,SHOW);
+	
+	reset(ReleaseInfo,SHOW);
 	
 }
 
@@ -3396,12 +3495,15 @@ void GMainMenuHide() {
 --------------------------------------------------
 void GLoadMainMenu()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GLoadMainMenu() {
 	
 	IN_GAME = 0;
+	str_cpy(SKYSTR,undef);
 	
 	GGUIHide();
 	GMainMenuShow();
@@ -3416,8 +3518,8 @@ void GLoadMainMenu() {
 	
 	//	panMMenu.alpha = 50;
 	
-	guiViewPreset(&guiCurrentViewPreset, 1, vector(-77,-144,-35), vector(41,10,0)); // znear
-	guiViewPreset(&guiCurrentViewPreset, 2, vector(522,-485,1123), vector(109,7,0)); // sprite	
+	guiViewPreset(&guiCurrentViewPreset, 1, vector(-77,-144,-35), vector(41,10,0));
+	guiViewPreset(&guiCurrentViewPreset, 2, vector(522,-485,1123), vector(109,7,0));	
 	
 }
 
@@ -3425,26 +3527,44 @@ void GLoadMainMenu() {
 --------------------------------------------------
 void GOptionsShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptionsShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	if(InMenu_Options) {
+		
+		GOptionsHide();
+		
+		return;
+		
+	}
+	
+	
 	guiCurrentViewPreset = 2;
 	
 	GWorldNewHide();
 	GLoadGameHide();
+	GHelpHide();
+	GTrophiesHide();
 	
 	GOptions_Graphics();
+	
+	InMenu_Options = 1;
+	
 }
 
 /*
 --------------------------------------------------
 void GOptionsHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptionsHide() {
@@ -3454,8 +3574,6 @@ void GOptionsHide() {
 		reset(Options_Graphics,SHOW);
 		reset(OptionsGraphicsTxt,SHOW);
 		
-		return;
-		
 	}
 	
 	if(is(Options_Sound,SHOW)) {
@@ -3463,15 +3581,11 @@ void GOptionsHide() {
 		reset(Options_Sound,SHOW);
 		reset(OptionsSoundTxt,SHOW);
 		
-		return;
-		
 	}
 	
 	if(is(Options_Themes,SHOW)) {
 		
 		reset(Options_Themes,SHOW);
-		
-		return;
 		
 	}
 	
@@ -3479,9 +3593,11 @@ void GOptionsHide() {
 		
 		reset(Options_Maintenance,SHOW);
 		
-		return;
-		
 	}
+	
+	InMenu_Options = 0;
+	
+	return;
 	
 }
 
@@ -3489,7 +3605,9 @@ void GOptionsHide() {
 --------------------------------------------------
 void GPropertiesWindowShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPropertiesWindowShow() {
@@ -3572,7 +3690,9 @@ void GPropertiesWindowShow() {
 --------------------------------------------------
 void GPropertiesWindowHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPropertiesWindowHide() {
@@ -3617,7 +3737,9 @@ void GPropertiesWindowHide() {
 --------------------------------------------------
 void GSoundWindowShow() 
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSoundWindowShow() {
@@ -3636,7 +3758,9 @@ void GSoundWindowShow() {
 --------------------------------------------------
 void GSoundWindowHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSoundWindowHide() {
@@ -3652,7 +3776,9 @@ void GSoundWindowHide() {
 --------------------------------------------------
 void GParticleWindowShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GParticleWindowShow() {
@@ -3670,7 +3796,9 @@ void GParticleWindowShow() {
 --------------------------------------------------
 void GParticleWindowHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GParticleWindowHide() {
@@ -3686,7 +3814,9 @@ void GParticleWindowHide() {
 --------------------------------------------------
 void GLightWindowShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GLightWindowShow() {
@@ -3709,8 +3839,8 @@ void GLightWindowShow() {
 	v_lrange = select.lightrange;
 	
 	// 'cause no#1 is the close button so we start from 2.
-	if(select.LightMode == disco) button_state(panLight,2,1);
-	if(select.LightMode == flick) button_state(panLight,3,1);
+	if(select.LightMode == Disco) button_state(panLight,2,1);
+	if(select.LightMode == Flick) button_state(panLight,3,1);
 	
 }
 
@@ -3718,7 +3848,9 @@ void GLightWindowShow() {
 --------------------------------------------------
 void GLightWindowHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GLightWindowHide() {
@@ -3741,8 +3873,8 @@ void GLightWindowHide() {
 	// So we obtain C first, in this case is v_lrange
 	olrange = select.lightrange = v_lrange;
 	
-	if(button_state(panLight,2,-1)) select.LightMode = disco;
-	if(button_state(panLight,3,-1)) select.LightMode = flick;
+	if(button_state(panLight,2,-1)) select.LightMode = Disco;
+	if(button_state(panLight,3,-1)) select.LightMode = Flick;
 	
 	reset(panLight,SHOW);
 	
@@ -3752,17 +3884,84 @@ void GLightWindowHide() {
 --------------------------------------------------
 void GWorldNewShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GWorldNewShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	if(InMenu_NewGame) {
+		
+		GWorldNewHide();
+		
+		return;
+		
+	}
+	
+	
 	guiCurrentViewPreset = 1;
 	
 	GLoadGameHide();
 	GOptionsHide();
+	GTrophiesHide();
+	GHelpHide();
+	
+	//	set(NewGame_ScreenLeft,SHOW);
+	//	set(NewGame_ScreenRight,SHOW);
+	set(NewGame_Screen1,SHOW);
+	
+	InMenu_NewGame = 1;
+	
+	while(InMenu_NewGame) {
+		
+		if( is(NewGame_ScreenDyn_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType == 1) ) {
+			
+			moon_scale_fac = new_moon_scale_fac;
+			time_speed_night = new_time_speed_night;
+			night_sky_scale_x = new_night_sky_scale_x;
+			night_sky_speed_x = new_night_sky_speed_x;
+			
+			if(is(NewGame_ScreenDyn_Step1,SHOW)) {
+				
+				if( button_state(NewGame_ScreenDyn_Step1,1,-1) ) new_load_lensflare = 1;
+				else new_load_lensflare = 0;
+				
+				if( button_state(NewGame_ScreenDyn_Step1,2,-1) ) new_use_sun = 1;
+				else new_use_sun = 0;
+				
+				if( button_state(NewGame_ScreenDyn_Step1,3,-1) ) new_use_moon = 1;
+				else new_use_moon = 0;
+				
+				if( button_state(NewGame_ScreenDyn_Step1,4,-1) ) use_nightstars = 1;
+				else use_nightstars = 0;
+				
+			}	
+			
+		}
+		
+		if( is(NewGame_ScreenStatic_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType > 1) ) {
+			
+			wait(1);
+			
+		}
+		
+		wait(1);
+		
+	}
+	
+	reset(NewGame_Screen1,SHOW);
+	reset(NewGame_Screen3,SHOW);
+	reset(NewGame_ScreenLeft,SHOW);
+	reset(NewGame_ScreenRight,SHOW);
+	reset(NewGame_ScreenStatic_Step1,SHOW);
+	reset(NewGame_ScreenDyn_Step1,SHOW);
+	reset(InputBox_GROUNDSTR,SHOW);
+	reset(InputBox_SKYSTR,SHOW);
+	
+	/*
 	
 	if(!is(panNewGame,SHOW)) {
 		
@@ -3790,27 +3989,82 @@ void GWorldNewShow() {
 		//		button_state (panNewGame,7,1); // Moon too
 	}
 	
+	*/
+	
+}
+
+/*
+--------------------------------------------------
+void GNewGameResetDynamicSettings()
+
+Desc: 
+
+Returns: -
+--------------------------------------------------
+*/
+void GNewGameResetDynamicSettings() {
+	
+	moon_scale_fac = original_moon_scale_fac;
+	time_speed_night = original_time_speed_night;
+	night_sky_scale_x = original_night_sky_scale_x;
+	night_sky_speed_x = original_night_sky_speed_x;
+	fog_color = original_fog_color;
+	camera->fog_start = original_camera_fog_start;
+	camera->fog_end = original_camera_fog_end;
+	
+}
+
+/*
+--------------------------------------------------
+void GNewGameResetStaticSettings()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GNewGameResetStaticSettings() {
+	
+	fog_color = original_fog_color;
+	d3d_fogcolor1.red = original_d3d_fogcolor1r;
+	d3d_fogcolor1.green = original_d3d_fogcolor1g;
+	d3d_fogcolor1.blue = original_d3d_fogcolor1b;
+	sun_light = original_sun_light;
+	
 }
 
 /*
 --------------------------------------------------
 void GWorldNewHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GWorldNewHide() {
 	
-	reset(panNewGame,SHOW);
+	//	reset(panNewGame,SHOW);
+	reset(files_list_GROUNDSTR,SHOW);
+	reset(files_list_SKYSTR,SHOW);
+	
+	InMenu_NewGame = 0;
+	
+	LoadMystymood(0,0);
+	
+	if(WorldType == 1) GNewGameResetDynamicSettings();
+	else GNewGameResetStaticSettings();
 	
 }
-	
+
 
 /*
 --------------------------------------------------
 void GpanPropSwitchPage(var mode)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GpanPropSwitchPage(var mode) {
@@ -3827,7 +4081,9 @@ void GpanPropSwitchPage(var mode) {
 --------------------------------------------------
 void GIO_ObjectTab_SwitchTab(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GIO_ObjectTab_SwitchTab(var ID) {
@@ -3942,7 +4198,9 @@ void GIO_ObjectTab_SwitchTab(var ID) {
 --------------------------------------------------
 void GObjectTypeTab_Switcher(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GObjectTypeTab_Switcher(var ID) {
@@ -4044,7 +4302,9 @@ void GObjectTypeTab_Switcher(var ID) {
 --------------------------------------------------
 void GInsertObjectShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GInsertObjectShow() {
@@ -4096,7 +4356,9 @@ void GInsertObjectShow() {
 --------------------------------------------------
 void GInsertObjectHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GInsertObjectHide() {
@@ -4116,7 +4378,9 @@ void GInsertObjectHide() {
 --------------------------------------------------
 void GSelectObject(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSelectObject(var ID) {
@@ -4251,7 +4515,9 @@ void GSelectObject(var ID) {
 --------------------------------------------------
 void GSelectParticle(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSelectParticle(var ID) {
@@ -4281,7 +4547,9 @@ void GSelectParticle(var ID) {
 --------------------------------------------------
 void GSelectLight(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GSelectLight(var ID) {
@@ -4428,7 +4696,9 @@ void GSelectLight(var ID) {
 --------------------------------------------------
 void GPreMainMenu()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GPreMainMenu() {
@@ -4461,7 +4731,9 @@ void GPreMainMenu() {
 --------------------------------------------------
 void GOptions_Graphics()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptions_Graphics() {
@@ -4480,8 +4752,8 @@ void GOptions_Graphics() {
 	set(Options_Graphics, SHOW);
 	set(OptionsGraphicsTxt,SHOW);
 	
-	OptionsGraphicsTxt.pos_x = Options_Graphics.pos_x + 190;
-	OptionsGraphicsTxt.pos_y = Options_Graphics.pos_y + 67;
+	OptionsGraphicsTxt.pos_x = Options_Graphics.pos_x + 290;
+	OptionsGraphicsTxt.pos_y = Options_Graphics.pos_y + 90;
 	
 	//layer_sort(OptionsGraphicsTxt,Options.layer+2);
 	
@@ -4504,10 +4776,14 @@ void GOptions_Graphics() {
 	
 	// Floating values can't be tested using switch..case.
 	
+	/*
+	
 	if(video_aspect >= 4/3 && video_aspect < 16/10) str_cpy((OptionsGraphicsTxt.pstring)[1],"4:3");
 	else if(video_aspect >= 16/10 && video_aspect < 16/9) str_cpy((OptionsGraphicsTxt.pstring)[1],"16:10");
 	else if(video_aspect >= 16/9) str_cpy((OptionsGraphicsTxt.pstring)[1],"16:9");
 	else str_cpy((OptionsGraphicsTxt.pstring)[1],"I don't know...");	
+	
+	*/
 	
 	// Test for bit depth
 	
@@ -4541,7 +4817,9 @@ void GOptions_Graphics() {
 --------------------------------------------------
 void GOptions_Sound()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptions_Sound() {
@@ -4562,8 +4840,8 @@ void GOptions_Sound() {
 	set(Options_Sound,SHOW);
 	set(OptionsSoundTxt,SHOW);
 	
-	OptionsSoundTxt.pos_x = Options_Sound.pos_x + 190;
-	OptionsSoundTxt.pos_y = Options_Sound.pos_y + 67;
+	OptionsSoundTxt.pos_x = Options_Sound.pos_x + 290;
+	OptionsSoundTxt.pos_y = Options_Sound.pos_y + 90;
 	
 	// Music volume
 	str_cpy((OptionsSoundTxt.pstring)[0],str_create(str_for_num((OptionsSoundTxt.pstring)[0],VOL_MUSIC)));
@@ -4579,7 +4857,9 @@ void GOptions_Sound() {
 --------------------------------------------------
 void GOptions_Themes()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptions_Themes() {
@@ -4612,7 +4892,9 @@ void GOptions_Themes() {
 --------------------------------------------------
 void GOptions_Maintenance()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptions_Maintenance() {
@@ -4645,7 +4927,9 @@ void GOptions_Maintenance() {
 --------------------------------------------------
 void GOptions_SaveSettings()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptions_SaveSettings() {
@@ -4673,9 +4957,13 @@ void GOptions_SaveSettings() {
 		else video_set(sys_metrics(0),sys_metrics(1),0,2);
 		
 		// Check for wide screen, gamma, fsaa, aa and so.
+		/*
+		
 		if( str_cmp((OptionsGraphicsTxt.pstring)[1],"4:3") ) video_aspect = 4/3;
 		else if(str_cmp((OptionsGraphicsTxt.pstring)[1],"16:9")) video_aspect = 16/9;
 		else video_aspect = 16/10;
+		
+		*/
 		
 		video_gamma = str_to_num( (OptionsGraphicsTxt.pstring) [3] );
 		d3d_antialias = str_to_num( (OptionsGraphicsTxt.pstring) [4] );
@@ -4721,7 +5009,9 @@ void GOptions_SaveSettings() {
 --------------------------------------------------
 void GOptionsAdjustSettings(var ID)
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GOptionsAdjustSettings(var ID) {
@@ -4741,6 +5031,8 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
+			/*
+			
 			case 3: case 4: // 4:3 <-> 16:10 <-> 16:9
 			
 			if( str_cmp((OptionsGraphicsTxt.pstring)[1],"4:3") ) str_cpy( (OptionsGraphicsTxt.pstring) [1] , str_create("16:9"));
@@ -4749,14 +5041,16 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 5: case 6: // 16-bit color depth <-> 32-bit
+			*/
+			
+			case 3: case 4: // 16-bit color depth <-> 32-bit
 			
 			if( str_cmp((OptionsGraphicsTxt.pstring)[2],"16-bit") ) str_cpy( (OptionsGraphicsTxt.pstring) [2],str_create("32-bit"));
 			else str_cpy( (OptionsGraphicsTxt.pstring) [2],str_create("16-bit"));
 			
 			break;
 			
-			case 7: // Brightness --
+			case 5: // Brightness --
 			
 			int brightness = str_to_num( (OptionsGraphicsTxt.pstring) [3]);
 			
@@ -4768,7 +5062,7 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 8: // brightness ++
+			case 6: // brightness ++
 			
 			int brightness = str_to_num( (OptionsGraphicsTxt.pstring) [3]);
 			brightness+=5;
@@ -4779,7 +5073,7 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 9: // fsaa --
+			case 7: // fsaa --
 			
 			int fsaa = str_to_num( (OptionsGraphicsTxt.pstring) [4]);
 			
@@ -4791,7 +5085,7 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 10: // fsaa ++ 
+			case 8: // fsaa ++ 
 			
 			int fsaa = str_to_num( (OptionsGraphicsTxt.pstring) [4]);
 			
@@ -4802,7 +5096,7 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 11: // af --
+			case 9: // af --
 			
 			int af = str_to_num( (OptionsGraphicsTxt.pstring) [5]);
 			
@@ -4813,7 +5107,7 @@ void GOptionsAdjustSettings(var ID) {
 			
 			break;
 			
-			case 12: // af ++ 
+			case 10: // af ++ 
 			
 			int af = str_to_num( (OptionsGraphicsTxt.pstring) [5]);
 			
@@ -4904,47 +5198,35 @@ void GOptionsAdjustSettings(var ID) {
 
 /*
 --------------------------------------------------
-void GLoadGame_Scroll(var nothing, PANEL *launcher)
-
-
---------------------------------------------------
-*/
-void GLoadGame_Scroll(var nothing, PANEL *launcher) {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-	if(launcher == LoadGame_Uppart /*&& 
-	LoadGameInside.pos_y > bmap_height(LoadGame_Uppart.bmap)*/ ) 
-	
-	LoadGameInside.pos_y += 50;
-	
-	else if(launcher == LoadGame_Downpart /*&&
-	LoadGameInside.pos_y <= screen_size.y - bmap_height(LoadGameInside.bmap)*/)
-	
-	LoadGameInside.pos_y -= 50;
-	
-}
-
-/*
---------------------------------------------------
 void GLoadGameShow()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GLoadGameShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	if(is(LoadGame,SHOW)) {
+		
+		GLoadGameHide();
+		
+		return;
+		
+	}
+	
 	GWorldNewHide();
 	GOptionsHide();
+	GTrophiesHide();
+	GHelpHide();
 	
-	set(LoadGame_Uppart,SHOW);
-	set(LoadGame_Downpart,SHOW);
+	FillFromPool(files_list_LOADGAMESTR, files_list_LOADGAMESTR_Pool, 8, 0);
 	
-	set(LoadGameInside,SHOW);
-	
-	wait(1);
+	set(LoadGame,SHOW);
+	set(InputBox_LOADGAMESTR,SHOW);
+	set(files_list_LOADGAMESTR,SHOW);
 	
 }
 
@@ -4952,16 +5234,455 @@ void GLoadGameShow() {
 --------------------------------------------------
 void GLoadGameHide()
 
+Desc:
 
+Returns: -
 --------------------------------------------------
 */
 void GLoadGameHide() {
 	
-	reset(LoadGame_Uppart,SHOW);
-	reset(LoadGame_Downpart,SHOW);
+	reset(LoadGame,SHOW);
+	reset(files_list_LOADGAMESTR,SHOW);
+	reset(InputBox_LOADGAMESTR,SHOW);
 	
-	reset(LoadGameInside,SHOW);
+}
+
+/*
+--------------------------------------------------
+void GTrophiesShow()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GTrophiesShow() {
+	
+	GHelpHide();
+	GWorldNewHide();
+	GLoadGameHide();
+	GOptionsHide();
+	
+}
+
+/*
+--------------------------------------------------
+void GTrophiesHide()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GTrophiesHide() {
 	
 	wait(1);
+	
+}
+
+/*
+--------------------------------------------------
+void GHelpShow()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GHelpShow() {
+	
+	GWorldNewHide();
+	GLoadGameHide();
+	GOptionsHide();
+	GTrophiesHide();
+	
+}
+
+/*
+--------------------------------------------------
+void GHelpHide()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GHelpHide() {
+	
+	wait(1);
+	
+}
+
+/*
+--------------------------------------------------
+void FillFromPool(TEXT *dest, TEXT *pool, var amount, var scaler)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void FillFromPool(TEXT *dest, TEXT *pool, var amount, var scaler) {
+	
+	if(amount <= 0) return;
+	
+	while(!pool || !dest) wait(1);
+	
+	amount = abs(amount);
+	
+	int i = 0;
+	while(i < amount) {
+		
+		str_cpy( (dest.pstring) [i], (pool.pstring) [ scaler*amount + i ] );
+		
+		i++;
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GPanelFade(PANEL *Panel, var start, var end, var speed)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GPanelFade(PANEL *Panel, var start, var end, var speed) {
+	
+	while(!Panel) wait(1);
+	if(start == end) return;
+	
+	speed = abs(speed);
+	start = abs(start);
+	end = abs(end);
+	
+	if(end>100) end=100;
+	if(start>100) start=100;
+	
+	Panel->alpha = start;
+	
+	if(start > end) { // Fade out 
+		
+		while(Panel->alpha >= end) {
+			
+			Panel->alpha -= speed * time_step;
+			wait(1);
+			
+		}
+		
+	}
+
+	else { // Fade in
+
+		while(Panel->alpha <= end) {
+			
+			Panel->alpha += speed * time_step;
+			wait(1);
+			
+		}
+
+	}
+
+	Panel->alpha = end;
+
+}
+
+/*
+--------------------------------------------------
+void GNewGame_PreviewScene()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GNewGame_PreviewScene() {
+	
+	GMainMenuHide();
+	
+}
+
+/*
+--------------------------------------------------
+void GNewGame_UnPreviewScene()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GNewGame_UnPreviewScene() {
+	
+	if(event_type == EVENT_CLICKUP) return;
+	
+	GMainMenuShow();
+	
+	wait(1);	
+	
+}
+
+/*
+--------------------------------------------------
+void GLOADGAMESTR_Up()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GLOADGAMESTR_Up() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(LOADGAMESTR_Scaler > 0) {
+		
+		LOADGAMESTR_Scaler -= 1;
+		FillFromPool(files_list_LOADGAMESTR, files_list_LOADGAMESTR_Pool, 8, LOADGAMESTR_Scaler);
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GLOADGAMESTR_Down()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GLOADGAMESTR_Down() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	LOADGAMESTR_Scaler += 1;
+	FillFromPool(files_list_LOADGAMESTR, files_list_LOADGAMESTR_Pool, 8, LOADGAMESTR_Scaler);
+	
+}
+
+/*
+--------------------------------------------------
+void GSKYSTR_Up()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GSKYSTR_Up() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(SKYSTR_Scaler > 0) {
+		
+		SKYSTR_Scaler -= 1;
+		FillFromPool(files_list_SKYSTR, files_list_SKYSTR_Pool, 4, SKYSTR_Scaler);
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GSKYSTR_Down()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GSKYSTR_Down() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	SKYSTR_Scaler += 1; // ++
+	FillFromPool(files_list_SKYSTR, files_list_SKYSTR_Pool, 4, SKYSTR_Scaler);
+	
+}
+
+/*
+--------------------------------------------------
+void GGROUNDSTR_Up()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GGROUNDSTR_Up() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(GROUNDSTR_Scaler > 0) {
+		
+		GROUNDSTR_Scaler -= 1;
+		FillFromPool(files_list_GROUNDSTR, files_list_GROUNDSTR_Pool, 4, GROUNDSTR_Scaler);
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GGROUNDSTR_Down()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GGROUNDSTR_Down() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	GROUNDSTR_Scaler += 1;
+	FillFromPool(files_list_GROUNDSTR, files_list_GROUNDSTR_Pool, 4, GROUNDSTR_Scaler);
+	
+}
+
+/*
+--------------------------------------------------
+void GSwitchNewGameScreen ( var ID ) 
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GSwitchNewGameScreen ( var ID ) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if( (int) ID == 1) {
+		
+		if(is(NewGame_Screen3,SHOW)) {
+			
+			if(WorldType == 1) { // Dynamic world was picked up before
+				
+				reset(NewGame_ScreenStatic_Step1,SHOW);
+				set(NewGame_ScreenDyn_Step1,SHOW);
+				
+				if(!mystymood_active) LoadMystymood(1,1);
+				
+			}
+			else { // Static world
+				
+				reset(NewGame_ScreenDyn_Step1,SHOW);  
+				set(NewGame_ScreenStatic_Step1,SHOW);
+				
+				LoadMystymood(0,0);
+				mystymood_active = 0;
+				
+			}
+			
+			reset(NewGame_Screen3,SHOW);
+			set(NewGame_ScreenRight,SHOW);
+			
+			reset(InputBox_GROUNDSTR,SHOW);
+			reset(InputBox_SKYSTR,SHOW);
+			reset(files_list_GROUNDSTR,SHOW);
+			reset(files_list_SKYSTR,SHOW);
+			
+			return;
+			
+		}
+		
+		if(is(NewGame_ScreenDyn_Step1,SHOW) || is(NewGame_ScreenStatic_Step1,SHOW)) {
+			
+			reset(NewGame_ScreenDyn_Step1,SHOW);
+			reset(NewGame_ScreenStatic_Step1,SHOW);
+			
+			set(NewGame_Screen1,SHOW);
+			reset(NewGame_ScreenRight,SHOW);
+			reset(NewGame_ScreenLeft,SHOW);
+			
+			mystymood_active = 0;
+			LoadMystymood(0,0);
+			
+			GNewGameResetDynamicSettings();
+			
+			return;
+			
+			
+		}
+		
+	}
+
+	else {
+		
+		if(is(NewGame_Screen1,SHOW)) {
+			
+			if(WorldType == 1) { // Dynamic world was picked up before
+				
+				reset(NewGame_ScreenStatic_Step1,SHOW);
+				set(NewGame_ScreenDyn_Step1,SHOW);
+				
+				if(!mystymood_active) LoadMystymood(1,1);
+				
+			}
+			else { // Static world
+				
+				reset(NewGame_ScreenDyn_Step1,SHOW);  
+				set(NewGame_ScreenStatic_Step1,SHOW);
+				
+				LoadMystymood(0,0);
+				mystymood_active = 0;
+				
+			}
+			
+			reset(NewGame_Screen1,SHOW);
+			
+			set(NewGame_ScreenRight,SHOW);
+			set(NewGame_ScreenLeft,SHOW);
+			
+			return;
+			
+		}
+		
+		if(is(NewGame_ScreenDyn_Step1,SHOW) || is(NewGame_ScreenStatic_Step1,SHOW)) {
+			
+			reset(NewGame_ScreenDyn_Step1,SHOW);
+			reset(NewGame_ScreenStatic_Step1,SHOW);
+			
+			set(NewGame_Screen3,SHOW);
+			reset(NewGame_ScreenRight,SHOW);
+			
+			if(!mystymood_active && WorldType == 1) LoadMystymood(1,1);
+			
+			set(InputBox_GROUNDSTR,SHOW);
+			set(InputBox_SKYSTR,SHOW);
+			set(files_list_GROUNDSTR,SHOW);
+			set(files_list_SKYSTR,SHOW);
+			
+			FillFromPool(files_list_GROUNDSTR, files_list_GROUNDSTR_Pool, 4, 0);					
+			FillFromPool(files_list_SKYSTR, files_list_SKYSTR_Pool, 4, 0);
+			
+			return;
+			
+		}
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GNewGame_ChooseWorld(var ID)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GNewGame_ChooseWorld(var ID) {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	WorldType = (int) ID;
+	
+	GSwitchNewGameScreen(2);
 	
 }

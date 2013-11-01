@@ -14,18 +14,72 @@ its name implies.
 --------------------------------------------------
 */
 
-
 #ifndef default_c
 
 	#define default_c
 	
 	#include <acknex.h> // standard engine objects
-	#include <d3d9.h>
+	#include <d3d9.h> // Shade-C
+	#include <strio.c> // for the scripting language
+	
+	//////////////////////////////////////////////////////////////
+	#define PRAGMA_PATH "./src"
+	#define PRAGMA_PATH "./src/outside"
+	#define PRAGMA_PATH "./src/fx"
 
+	#define PRAGMA_PATH "./2d/gui"
+	#define PRAGMA_PATH "./2d/tex"
+	#define PRAGMA_PATH "./2d/skies" // Skies can either be cube, or dome
+
+	#define PRAGMA_PATH "./objects/sys"
+	#define PRAGMA_PATH "./objects/anms"
+	#define PRAGMA_PATH "./objects/arch"
+	#define PRAGMA_PATH "./objects/blands"
+	#define PRAGMA_PATH "./objects/chars"
+	#define PRAGMA_PATH "./objects/etc"
+	#define PRAGMA_PATH "./objects/food"
+	#define PRAGMA_PATH "./objects/machs"
+	#define PRAGMA_PATH "./objects/plants"
+	#define PRAGMA_PATH "./objects/tportts"
+	#define PRAGMA_PATH "./objects/sprites"
+
+	#define PRAGMA_PATH "./sounds"
+	#define PRAGMA_PATH "./sounds/music"
+
+	#define PRAGMA_PATH "./levels"
+	#define PRAGMA_PATH "./levels/grounds"
+	//////////////////////////////////////////////////////////////
+	
+	TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
+	
 	var def_dfps,def_dtps,def_dtlv,def_dtcs,def_dtac,def_dtrf,def_dsnd;
 	ANGLE def_cang;
 	
+	var def_shot_num = 0;
+	var def_oldmouse = 0;
+	
 	BOOL PLAYTESTING = 0;
+	
+	//script to capture a skycube by pressing x in 3dgs
+	var fh_n;
+	BMAP *canvas;
+	BMAP *b_render1;
+	BMAP *b_render2;
+	BMAP *b_render3;
+	BMAP *b_render4;
+	BMAP *b_render5;
+	BMAP *b_render6;
+	var cubenumber = 0;
+	var directions[18] = {180, 0, 0, 90, 0, 0, 0, 0, 0, -90, 0, 0, 90, -90, 0, 90, 90, 0};
+	STRING *tempstring1 = "#200";
+	STRING *tempstring2 = "#200";
+	STRING *_ts_ = "#200";
+	
+	void write8(var);
+	void write16(var);
+	void str_padding(STRING *, var, var);
+	void write_cubemap();
+	void capture_cubemap();
 	
 	VIEW* viewMap = 
 	{
@@ -91,8 +145,6 @@ its name implies.
 		draw_line(vector(x1,y1,0),color,100);
 	}
 
-	var def_oldmouse = 0;
-
 	void def_debug() 
 	{
 		if(key_alt) 
@@ -107,7 +159,7 @@ its name implies.
 			freeze_mode = !freeze_mode;
 			
 			if (freeze_mode) {
-			   
+				
 				def_oldmouse = mouse_mode;
 				mouse_mode = 4;
 				mouse_pointer = 2;
@@ -163,7 +215,6 @@ its name implies.
 		}
 	}
 
-	var def_shot_num = 0;
 	void def_shot() 
 	{ 
 		file_for_screen("shot_",def_shot_num); 
@@ -201,8 +252,6 @@ its name implies.
 		}
 	}
 
-	TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
-
 	void def_console() /* ~ */
 	{
 		def_ctxt->pos_x = 2;
@@ -223,19 +272,157 @@ its name implies.
 		string = watch_str;
 		flags = SHOW;
 	}
+	
+	
+	//----------------------------------------------------------------------------- write_cubemap
+	void write8(var bte) // write char
+	{
+		file_asc_write(fh_n, bte);
+	}
+
+	void write16(var shrt) // write unsigned short
+	{
+		file_asc_write(fh_n, shrt&255);
+		file_asc_write(fh_n, (shrt>>8)&255);
+	}
+
+	void str_padding(STRING *str, var number, var padding)
+	{
+		str_for_num(_ts_, number);
+		var i = 0;
+		i = padding - str_len(_ts_);
+		while(i > 0)
+		{
+			str_cat(str, "0");
+			i-=1;
+		}
+		str_cat(str, _ts_);
+	}
+
+	void write_cubemap()
+	{
+		var i;
+		var xx;
+		var yy;
+		var format;
+		var pixel;
+		var pixelalpha;
+		VECTOR canvas_size;
+		VECTOR temp;
+
+		canvas_size.x = bmap_width(b_render1);
+		canvas_size.y = bmap_height(b_render1);
+		format = bmap_lock(b_render1, 0);
+		bmap_lock(b_render2, 0);
+		bmap_lock(b_render3, 0);
+		bmap_lock(b_render4, 0);
+		bmap_lock(b_render5, 0);
+		bmap_lock(b_render6, 0);
+
+		str_cpy(tempstring1,"cubemap");
+		str_padding(tempstring1, cubenumber, 4);
+		str_cat(tempstring1, "+6.tga");
+		fh_n = file_open_write(tempstring1);
+		
+		cubenumber+=1;
+		//--------------------------------------------------------write header
+		write8(0);
+		write8(0);
+		write8(2); // image type
+		write16(0);
+		write16(0);
+		write8(0);
+		write16(0);
+		write16(0);
+		write16(canvas_size.x * 6); // width
+		write16(canvas_size.y); // height
+		write8(24); // color depth
+		write8(0);
+		//--------------------------------------------------------write image data
+		yy = canvas_size.y - 1;
+		while(yy >= 0)
+		{
+			i = 0;
+			while(i < 6)
+			{
+				if(i==0) canvas=b_render1;
+				if(i==1) canvas=b_render2;
+				if(i==2) canvas=b_render3;
+				if(i==3) canvas=b_render4; 
+				if(i==4) canvas=b_render5; 
+				if(i==5) canvas=b_render6; 
+				xx = 0;
+				while(xx < canvas_size.x)
+				{
+					pixel = pixel_for_bmap(canvas, xx, yy);
+					pixel_to_vec(temp, pixelalpha, format, pixel);
+					write8(temp.x); // b
+					write8(temp.y); // g
+					write8(temp.z); // r
+					xx+=1;
+				}
+				i+=1;
+			}
+			yy-=1;
+		}
+		file_close(fh_n);
+		bmap_unlock(b_render1);
+		bmap_unlock(b_render2);
+		bmap_unlock(b_render3);
+		bmap_unlock(b_render4);
+		bmap_unlock(b_render5);
+		bmap_unlock(b_render6);
+	}
+
+	//----------------------------------------------------------------------------- capture_cubemap
+	void capture_cubemap()
+	{
+		var old_arc;
+		var old_x;
+		var old_y;
+		var old_screen;
+
+		b_render1 = bmap_create("render.tga"); // use a 256x256 tga for example -> determines cube map size
+		b_render2 = bmap_create("render.tga");
+		b_render3 = bmap_create("render.tga");
+		b_render4 = bmap_create("render.tga");
+		b_render5 = bmap_create("render.tga");
+		b_render6 = bmap_create("render.tga");
+
+		old_arc = camera.arc;
+		old_x = screen_size.x;
+		old_y = screen_size.y;
+		old_screen = video_screen;
+
+		camera.arc = 90;
+		video_set(256, 256, 0, 2); // should be same resolution as render.tga
+
+		freeze_mode = 1;
+		
+		vec_set(camera.pan, directions[0]); wait(1); bmap_for_screen(b_render1,0,0);
+		vec_set(camera.pan, directions[3]); wait(1); bmap_for_screen(b_render2,0,0);
+		vec_set(camera.pan, directions[6]); wait(1); bmap_for_screen(b_render3,0,0);
+		vec_set(camera.pan, directions[9]); wait(1); bmap_for_screen(b_render4,0,0);
+		vec_set(camera.pan, directions[12]); wait(1); bmap_for_screen(b_render5,0,0);
+		vec_set(camera.pan, directions[15]); wait(1); bmap_for_screen(b_render6,0,0);
+		
+		freeze_mode = 0;
+
+		wait(1);
+		write_cubemap();
+
+		wait(1);
+		camera.arc = old_arc;
+		video_set(old_x, old_y, 0, old_screen);
+	}
+
+	/*
 
 	void def_startup() 
 	{ 
-		if (!on_f2) on_f2 = def_save;
-		if (!on_f3) on_f3 = def_load;
-		if (!on_f5) on_f5 = def_video;
-		if (!on_f6) on_f6 = def_shot;
-		if (!on_f11) on_f11 = def_debug;
-		
-		if (!on_enter) on_enter = def_screen;
-		if (!on_grave) on_grave = def_console;
-		
-		//		if (!on_close) on_close = def_exit;
+
 	}
+	
+	*/
 
 #endif
