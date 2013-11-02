@@ -2313,6 +2313,9 @@ int ConfigFileRead(STRING *cf) {
 		NewLine();
 		
 		/* Default config. goes here. */
+		video_depth = 32;
+		video_set(sys_metrics(0),sys_metrics(1),0,1);
+		// other settings remain default (in the game engine/library)
 		
 		return -1;
 		
@@ -3187,11 +3190,45 @@ int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct) {
 
 	if(LOGFILEHNDL) {
 		
-		if(objectstruct) {
+		while(!objectstruct) wait(1);
+		
+		WriteLog("Inside ");
+		WriteLog( objectstruct->name );
+		NewLine();
+		
+		WriteLog(objectstruct->_scale_x); NewLine();
+		WriteLog(objectstruct->_scale_y); NewLine();
+		WriteLog(objectstruct->_scale_z); NewLine();
+		WriteLog(objectstruct->_pan); NewLine();
+		WriteLog(objectstruct->_tilt); NewLine();
+		WriteLog(objectstruct->_roll); NewLine();
+		WriteLog(objectstruct->_alpha); NewLine();
+		WriteLog(objectstruct->_ambient); NewLine();
+		WriteLog(objectstruct->name); NewLine();
+		WriteLog(objectstruct->pPhysics); NewLine();
+		WriteLog(objectstruct->pStatic); NewLine();
+		
+		int i = 0;
+		while(i < 8) {
 			
-			// { ... }		
+			WriteLog(objectstruct->_flags[i]);
+			NewLine();
+			
+			i++;
 			
 		}
+		
+		WriteLog(objectstruct->mass); NewLine();
+		WriteLog(objectstruct->friction); NewLine();
+		WriteLog(objectstruct->_red); NewLine();
+		WriteLog(objectstruct->_green); NewLine();
+		WriteLog(objectstruct->_blue); NewLine();
+		WriteLog(objectstruct->_range); NewLine();
+		WriteLog(objectstruct->_LightMode); NewLine();
+		WriteLog(objectstruct->dp); NewLine();
+		
+		WriteLog("Raw data produced. For more information, refer to the OBJECTSTRUCT struct definition on CBox.h");
+		NewLine();
 		
 	}
 
@@ -3456,8 +3493,8 @@ Returns: -
 */
 void flare_init(ENTITY *flare_ent)
 {
-   
-   while(!flare_ent) wait(1);
+	
+	while(!flare_ent) wait(1);
 
 	WriteLog("[ ] Intializing lens flare for ");
 	WriteLog( (STRING *) flare_ent->type );
@@ -4179,8 +4216,8 @@ Returns: -
 */
 void LoadMystymood(BOOL _on, BOOL load_lens)
 {
-   
-   WriteLog("[ ] Loading Mystymood");
+	
+	WriteLog("[ ] Loading Mystymood");
 	NewLine();
 
 	int step = 0;
@@ -4236,8 +4273,8 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	}
 
 	if(step>=2) {
-	   
-	   WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
+		
+		WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
 		NewLine();
 		
 		return;

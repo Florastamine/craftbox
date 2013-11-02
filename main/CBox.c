@@ -32,7 +32,7 @@ List of things to do :
 - [X] Appending log file instead of overwriting it.
 - More detalied logging.
 - Integrate the shader library from Slin's collection
-- Default config. in ConfigFileRead().
+- [X] Default config. in ConfigFileRead().
 - Fill int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct).
 
 Optimizations that need to be performed:

@@ -105,13 +105,15 @@ void a_startup() {
 }
 
 
-void LoadCBOIF(ENTITY *From) {
+void LoadCBOIF(ENTITY *from) {
 	
-	while(!From) wait(1);
+	while(!from) wait(1);
+	
+	/*
 	
 	var temp;
-	STRING *CBOIF = str_create("#200"); // this is the limit
-	//   str_cpy(CBOIF, (STRING *) From->type );
+	STRING *CBOIF = "#200"; // this is the limit
+	//   str_cpy(CBOIF, (STRING *) from->type );
 	
 	// LoadCBOIF uses TEMPSTR to evaluate the exact path without having to
 	// do it again. Because of this: If you use LoadCBOIF in other places than 
@@ -135,92 +137,91 @@ void LoadCBOIF(ENTITY *From) {
 	// Dirty, ugly code.
 	// Don't have time to optimize them though.
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.scale_x = temp;
+	if(temp != -1) from.scale_x = temp;
 	
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.scale_y = temp;
+	if(temp != -1) from.scale_y = temp;
 	
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.scale_z = temp;
+	if(temp != -1) from.scale_z = temp;
 	
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.pan = temp;
+	if(temp != -1) from.pan = temp;
 	
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.tilt = temp;
+	if(temp != -1) from.tilt = temp;
 	
 	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) From.roll = temp;
+	if(temp != -1) from.roll = temp;
 	
 	// flags after
 	// NARROW, FAT, CLIPPED, CAST, SPOTLIGHT
 	// OVERLAY, DECAL, NOFILTER, SHOW/INVISIBLE,
 	// ANIMATE, DYNAMIC
 	
-	if(file_var_read(CBOIFHNDL)) set(From,PASSABLE);
-	else reset(From,PASSABLE);
+	if(file_var_read(CBOIFHNDL)) set(from,PASSABLE);
+	else reset(from,PASSABLE);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,POLYGON);
-	else reset(From,POLYGON);
+	if(file_var_read(CBOIFHNDL)) set(from,POLYGON);
+	else reset(from,POLYGON);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,UNTOUCHABLE);
-	else reset(From,UNTOUCHABLE);
+	if(file_var_read(CBOIFHNDL)) set(from,UNTOUCHABLE);
+	else reset(from,UNTOUCHABLE);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,SHADOW);
-	else reset(From,SHADOW);
+	if(file_var_read(CBOIFHNDL)) set(from,SHADOW);
+	else reset(from,SHADOW);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,TRANSLUCENT);
-	else reset(From,TRANSLUCENT);
+	if(file_var_read(CBOIFHNDL)) set(from,TRANSLUCENT);
+	else reset(from,TRANSLUCENT);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,BRIGHT);
-	else reset(From,BRIGHT);
+	if(file_var_read(CBOIFHNDL)) set(from,BRIGHT);
+	else reset(from,BRIGHT);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,LIGHT);
-	else reset(From,LIGHT);
+	if(file_var_read(CBOIFHNDL)) set(from,LIGHT);
+	else reset(from,LIGHT);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,UNLIT);
-	else reset(From,UNLIT);
+	if(file_var_read(CBOIFHNDL)) set(from,UNLIT);
+	else reset(from,UNLIT);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,NOFOG);
-	else reset(From,NOFOG);
+	if(file_var_read(CBOIFHNDL)) set(from,NOFOG);
+	else reset(from,NOFOG);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,ZNEAR);
-	else reset(From,ZNEAR);
+	if(file_var_read(CBOIFHNDL)) set(from,ZNEAR);
+	else reset(from,ZNEAR);
 	
 	//+flags
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG1);
-	else reset(From,FLAG1);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG1);
+	else reset(from,FLAG1);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG2);
-	else reset(From,FLAG2);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG2);
+	else reset(from,FLAG2);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG3);
-	else reset(From,FLAG3);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG3);
+	else reset(from,FLAG3);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG4);
-	else reset(From,FLAG4);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG4);
+	else reset(from,FLAG4);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG5);
-	else reset(From,FLAG5);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG5);
+	else reset(from,FLAG5);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG6);
-	else reset(From,FLAG6);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG6);
+	else reset(from,FLAG6);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG7);
-	else reset(From,FLAG7);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG7);
+	else reset(from,FLAG7);
 	
-	if(file_var_read(CBOIFHNDL)) set(From,FLAG8);
-	else reset(From,FLAG8);
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG8);
+	else reset(from,FLAG8);
 	
 	//+skills
-	
 	int i = 30; // pass from skill 30 and up, also pass 30 skills
 	var temp;
 	
 	while(i < 60) {
 		
 		temp = file_var_read(CBOIFHNDL);
-		if(temp != -1) From.skill[i] = temp;
+		if(temp != -1) from.skill[i] = temp;
 		
 		i += 1;
 		
@@ -229,5 +230,7 @@ void LoadCBOIF(ENTITY *From) {
 	}
 	
 	file_close(CBOIFHNDL);
+	
+	*/
 	
 }

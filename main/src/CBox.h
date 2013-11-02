@@ -72,7 +72,7 @@ typedef struct {
 	////////////// Particle objects
 	
 	////////////// Light objects
-	var _red, _green, _blue, _range, _flick_speed;
+	var _red, _green, _blue, _range;
 	int _LightMode;
 	
 	////////////// Sound objects
@@ -445,7 +445,7 @@ TEXT *music_list = {
    
    font = "Arial#27b";
    
-   flags = SHOW;
+//   flags = SHOW;
    
 }
 

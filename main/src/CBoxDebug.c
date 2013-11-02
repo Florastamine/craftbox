@@ -70,6 +70,7 @@ void OpenDebug() {
 	if (!on_f5) on_f5 = def_shot;
 	if (!on_f6) on_f6 = def_debug;
 	if (!on_f7) on_f7 = capture_cubemap; // Not useable yet!
+	if (!on_h) on_h = toggleSsaoState;
 	
 	if (!on_enter) on_enter = def_screen;
 	if (!on_grave) on_grave = def_console;
@@ -106,6 +107,7 @@ void CloseDebug() {
 	if(on_f5) on_f5 = NULL;
 	if(on_f6) on_f6 = NULL;
 	if(on_f7) on_f7 = NULL;
+	if(on_h) on_h = NULL;
 	
 	if(on_enter) on_enter = NULL;
 	if(on_grave) on_grave = NULL;

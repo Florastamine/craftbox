@@ -110,8 +110,11 @@ void mtl_vegetation_init();
 #include "projMain.c" //code for creating matrix
 #include "eRender.c" //render bitmap for projection texture
 
-//BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
+// BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
 #include "sc_core.c"
+
+// SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
+#include "ppSsao.h"
 
 /*
 --------------------------------------------------
@@ -121,17 +124,17 @@ int SetupShader()
 --------------------------------------------------
 */
 int SetupShader() {
-   
-   WriteLog("[ ] Setting up shaders");
-   NewLine();
+	
+	WriteLog("[ ] Setting up shaders");
+	NewLine();
 	
 	if(edition < 3) {
-	   
-	   WriteLog("!! [ERROR] Still don't have enough money to afford a Commercial license.. :(");
-	   NewLine();
-	   
-	   return -1;
-	   
+		
+		WriteLog("!! [ERROR] Still don't have enough money to afford a Commercial license.. :(");
+		NewLine();
+		
+		return -1;
+		
 	}
 	
 	//	Setup for Shade-C
@@ -142,6 +145,8 @@ int SetupShader() {
 	//	sc_bReflect = 0;
 	//	sc_bVolParts = 0;
 	//	sc_setup();
+	
+	_SSAO();
 	
 	WriteLog("[X] Task completed.");
 	NewLine();
