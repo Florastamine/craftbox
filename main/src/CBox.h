@@ -80,15 +80,33 @@ typedef struct {
 	////////////// Node placer
 	
 	BOOL dp;
+	var _skill[30];
 	
 } OBJECTSTRUCT;
 
 OBJECTSTRUCT clipboard;
-
 //////////////////////////////////////////////////////////////
 
 // System
 char undef = '-';
+char endline = '|';
+char separate = '_';
+
+BOOL KERNEL_IS_RUNNING = false,
+IN_GAME = false,
+C_TRACE_OPTIMIZATION = false,
+DISTANCE_OPTIMIZATION = true;
+
+#define WORLD_DYNAMIC 1
+#define WORLD_STATIC 2
+
+#define RESIZE_X 0
+#define RESIZE_Y 1
+#define RESIZE_XY 2
+
+#define X 1
+#define Y 2
+#define Z 3
 
 #define BORDER 10
 #define DEFAULT_ALPHA 50
@@ -106,6 +124,37 @@ char undef = '-';
 #define DYNAMIC_LIGHT_DISCO_SPEED 0.1
 
 #define MAX_rEnts 1000
+#define MAX_OBJECTS 10000
+#define MAX_PARTICLES 100
+#define MAX_LIGHTS 200
+#define MAX_SOUNDS 500
+#define MAX_SPRITES 1000
+#define MAX_TOTAL MAX_OBJECTS+MAX_PARTICLES+MAX_LIGHTS+MAX_SOUNDS+MAX_SPRITES
+
+#define B_SIBGLE 1		  //Brush SIngle Vertex
+#define B_MULT 2			  //Brush Multiple Vertex
+#define B_MULT_SMOOT 3	  //Brush Multiple Vertex with Smoot
+#define DEF_UPPER	1		  //Deform terrain Height UPPER
+#define DEF_LOWER 2		  //Deform terrain Height Down
+#define TRUE 1	
+#define FALSE 0
+
+#define SCALE_MARKER 2
+#define SCALE_MARKER_TERRAIN 0
+
+var total_vertices; // will store the total number of vertices for the current terrain entity
+var bSize = 800; //Brushe Terrain deform size 
+var tMaxHeight = 5000; //Terrain Max Height
+var sizeh = 10;
+var brush_speed = 5;
+var TerrainEditMode = 0;
+
+var bType = B_MULT; //brushe type
+var bHeight = DEF_UPPER;
+var bHlimit = FALSE;
+
+var StatsIsRunning = 0;
+var CountObjects = 0, CountParticles = 0, CountLights = 0, CountSounds = 0, CountSprites = 0, CountTotal = 0;
 
 int rEntCount = -1;
 
@@ -114,18 +163,26 @@ int SessionsCount = 0;
 var guiViewPresetSpeed = 0.1;
 int guiCurrentViewPreset = 1; // Use default view at start
 
-BOOL KERNEL_IS_RUNNING = false,
-IN_GAME = false,
-C_TRACE_OPTIMIZATION = false,
-DISTANCE_OPTIMIZATION = true;
+var BBTranslucency;
+var ToggleSnow = 0;
+var ToggleRain = 0;
 
 //BOOL SHADE_C_FLAG;
 
 var LOGFILEHNDL;
 
-var VOL_EFFECTS = 75, VOL_MUSIC = 100;
+var VOL_EFFECTS = 75, VOL_MUSIC = 100; // Alternative vars for sound_vol, midi_vol and such.
+int mpCount = 0, mpRandomize = 0, mpSongs, mpPauseMark; // Vars declared specifically for the music player.
+var mpHandle;
+
+STRING *mouse_str = "mouse_pointer.png";
+
+STRING *_mpCount = "#5";
+STRING *_mpSongTemp = "#100";
 
 SOUND *__beep = "beep.wav";
+STRING *SE_MM_hover = "button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
+STRING *SE_MM_click = "button-30_CMMclickon.wav";
 
 STRING *RELEASE_STR_VER = "< release number >";
 STRING *RELEASE_STR_INFO = "< release info >";
@@ -154,14 +211,18 @@ STRING *GROUNDSTR = "#300"; // Store ground location.
 STRING *SKYSTR = "#300"; // Store sky (cube) location.
 STRING *TEMPSTR = "#300"; // Store object location
 STRING *LOADGAMESTR = "#300";
+STRING *mpSongTemp = "#400";
 
 STRING *EXT_OBJECT = "mdl";
 STRING *EXT_SOUND = "wav";
 STRING *EXT_TERRAIN = "hmp";
 STRING *EXT_SPRITE = "tga";
 STRING *EXT_SAVEDGAMES = "s";
+STRING *EXT_MUSIC = "*.ogg";
 
 STRING *PATH_SOUNDS = "./sounds/";
+STRING *PATH_SOUNDS_ = "sounds\\";
+STRING *sndConnectorShared = "#400";
 
 STRING *PATH_SPRITES = "./objects/sprites/";
 STRING *PATH_TERRAINS = "./objects/blands/";
@@ -181,24 +242,42 @@ STRING *PATH_GROUNDS = "./levels/grounds/";
 
 STRING *PATH_SAVEDGAMES = "./levels/";
 
+STRING *PATH_MUSIC = "sounds\\music\\";
+
+STRING *TERRAINDATA = "tex_geometry";
+
 short TEMP_OBJECT_TYPE;
 
 STRING *LOADCRAFTBOX_1 = "Initializing events and variables...";
 STRING *LOADCRAFTBOX_2 = "Initializing saved bitmaps and custom materials...";
 STRING *LOADCRAFTBOX_3 = "Initializing GUI...";
 
+STRING *PLAYTEST_LOADSCREENSTR = "#400"; // Something will modify this...and we got user-defined loadscreens.
+
 TEXT *OptionsGraphicsTxt;
 TEXT *OptionsSoundTxt;
 TEXT *OptionsThemesTxt;
 TEXT *OptionsMaintenanceTxt;
 TEXT *ReleaseInfo = {
-   
-   strings(2);
-   
-   string(RELEASE_STR_VER,RELEASE_STR_INFO);
-   
-   font="Arial#20";
-   
+	
+	strings(2);
+	
+	string(RELEASE_STR_VER,RELEASE_STR_INFO);
+	
+	font="Arial#20";
+	
+}
+
+TEXT *MusicPlayerInfo, *MusicPlayerQuickInfo;
+
+TEXT *StatsPanel = {
+	
+	layer = 15;
+	
+	strings(6);
+	
+	font = "Arial#20b";
+	
 }
 
 ////////////////////////////////////////////////////////////
@@ -216,31 +295,12 @@ TEXT *ReleaseInfo = {
 #define sky_add_blue 	  255
 #define sky_alpha 		 	10//0-100, decrease this to get more fogcolor1 tint
 
-var _moon_scale_fac,
-_time_speed_night,
-_night_sky_scale_x,
-_night_sky_speed_x;
+var _fog_color = 0, _sun_light = 100, _d3d_fogcolor1_red = 128, _d3d_fogcolor1_blue = 128, _d3d_fogcolor1_green = 128, _camera_fog_end = 6000; // Default values
 
-var original_moon_scale_fac,
-original_time_speed_night,
-original_night_sky_scale_x,
-original_night_sky_speed_x,
-original_fog_color,
-original_camera_fog_start,
-original_camera_fog_end,
-original_sun_light,
-original_d3d_fogcolor1r,
-original_d3d_fogcolor1g,
-original_d3d_fogcolor1b,
-
-new_moon_scale_fac,
-new_time_speed_night,
-new_night_sky_scale_x,
-new_night_sky_speed_x,
-new_load_lensflare,
-new_use_moon,
-new_use_sun,
-use_nightstars;
+#define RAIN_ONLY 0
+#define SNOW_ONLY 1
+#define RAIN_SNOW 2
+#define NO_RAIN_SNOW 3
 
 //night sky
 // lim(night_sky_scale_x) = 4
@@ -272,7 +332,7 @@ var night_sky_speed_y = 1;
 #define cloud3_scale_y 	    2
 #define cloud3_alpha 	 	 0//0 = starts at nice weather!
 
-#define sun_grow_z		 1500//z-height of sun-grow/sun-shrink, adjust according to your horizon view
+var sun_grow_z	=	 1500;//z-height of sun-grow/sun-shrink, adjust according to your horizon view
 
 //when your sun elevation is low, big scales (scale_x, scale_y) can look bad (sun-sprites touches the terrain!)
 #define sun_scale_x 		    3//7;////size of the sun, changes all other sun entitys (sun_corona, sun_shine) relative to it
@@ -294,9 +354,9 @@ var moon_scale_fac = 1.5;
 #define weather_fog_far	  	  1000
 
 //define here the xyz size of the weatherbox around the camera
-#define cx 1000//lenght
-#define cy 1000//width
-#define cz 600//height
+#define cx 100000//lenght
+#define cy 100000//width
+#define cz 60000//height
 
 #define rain_part_num 2//defines rain density
 #define snow_part_num 1//defines snow density
@@ -428,25 +488,13 @@ TEXT *files_list_GROUNDSTR =  {
 }
 
 TEXT *files_list_LOADGAMESTR = {
-   
-   layer = 15;
-   
-   strings(8);
-   
-   font = "Arial#27b";
-   
-}
-
-TEXT *music_list = {
-   
-   layer = 15;
-   
-   strings(100);
-   
-   font = "Arial#27b";
-   
-//   flags = SHOW;
-   
+	
+	layer = 15;
+	
+	strings(8);
+	
+	font = "Arial#27b";
+	
 }
 
 TEXT* ConsoleText = { font = "Arial#15b"; string("
@@ -456,25 +504,38 @@ TEXT* ConsoleText = { font = "Arial#15b"; string("
 ","#255","#255","#255","#255","#255"); layer = 999; }
 
 TEXT *PreMainMenuLoading = {
-   
-   layer = 20;
-   
-   string("#500","#200","#200");
-   
-   pos_x = 20;
-   pos_y = 20;
-   
-   font = "Arial#27b";
-   
-   red = 54;
-   green = 117;
-   blue = 136;
-   
+	
+	layer = 20;
+	
+	string("#500","#200","#200");
+	
+	pos_x = 20;
+	pos_y = 20;
+	
+	font = "Arial#27b";
+	
+	red = 54;
+	green = 117;
+	blue = 136;
+	
 }
 
 TEXT *files_list_SKYSTR_Pool = { strings(800); }
 TEXT *files_list_GROUNDSTR_Pool = { strings(800); }
 TEXT *files_list_LOADGAMESTR_Pool = { strings(800); }
+
+TEXT *mpPool = {
+	
+	//	pos_x = 10;
+	//	pos_y = 40;
+	
+	strings(1000); // Can be filled with 1000 songs
+	
+	//	font = "Arial#25b";
+	
+	//	flags = SHOW;
+	
+}
 
 ////////////////////////////////////////////////////////////
 // Variables/Booleans will be declared here.
@@ -510,7 +571,7 @@ v_fogr, v_fogg, v_fogb, v_fogdensity,
 
 v_objectz;
 
-COLOR temp_light;
+COLOR *temp_light;
 
 var ParticleIDNumber;
 var _ObjectType;
@@ -550,10 +611,10 @@ var part_size, part_alpha, part_num;
 var fog_weather_day[3] = {50,50,50};//r, g, b
 var fog_weather_night[3] = {15,15,15};
 
+/*
+
 var random_weather_change_frequency = 100;//frequency of weather change...the higher the value the less it changes
 var random_weather_state_time = 40;//the higher the value the longer a weather state remains
-
-var weather_state = 0;//start with good weather...1=rain, 2=snow
 
 var rain_wind_x = 2, rain_wind_y = 1;
 var rain_fallspeed = 25;
@@ -565,7 +626,6 @@ var snow_altitude = 160;//world-coord-z that enables snowfall (in quants)
 var rain_random_move = 1;//strength of randomness on the particles x/y movement direction
 var snow_random_move = 8;
 
-var weather_fade_speed = 10;//fade-speed of weather change
 var weather_soundfade_speed = 0.6;//fade-speed of weather-sound on weather changes
 
 var disable_lightning_thunder = 0;//1=disables lightning-thunder
@@ -588,28 +648,56 @@ var stroke_area;//area of lightning stroke
 var temporary;
 var segment_length; // temporary length of the segment line
 var stroke_length; // temporary length of the particle line
-var current_color[3];
 var lightning_on;
+
+*/
+
+var weather_state = 0;//start with good weather...1=rain, 2=snow
+var weather_fade_speed = 10;//fade-speed of weather change
+var current_color[3];
 
 // lens_flare.c
 var flare_alpha = 70;
 var flare_fadespeed = 25;
 var lens_active = 0, mystymood_active = 0;
 
-BOOL dynamic_day_night = 1,
-use_moon = 1,
-use_bg_sounds = 1, //if 1, daytime ambiente background sounds are activated
-use_random_weather = 1, //1= weather changes randomly
-rain_random_move_on = 1, //1=on,0=off...sets randomness on the particles x/y movement direction
-snow_random_move_on = 1,
-rain_to_snow_on_altitude = 1;//1=rain morphes to snow when snow_altitude is reached
+BOOL dynamic_day_night = 1;
+//use_moon = 1,
+//use_bg_sounds = 1, //if 1, daytime ambiente background sounds are activated
+//use_random_weather = 1, //1= weather changes randomly
+//rain_random_move_on = 1, //1=on,0=off...sets randomness on the particles x/y movement direction
+//snow_random_move_on = 1,
+//rain_to_snow_on_altitude = 1;//1=rain morphes to snow when snow_altitude is reached
 
+var original_moon_scale_fac,
+original_time_speed_night,
+original_night_sky_scale_x,
+original_night_sky_speed_x,
+original_fog_color,
+original_camera_fog_start,
+original_camera_fog_end,
+original_sun_light,
+original_d3d_fogcolor1r,
+original_d3d_fogcolor1g,
+original_d3d_fogcolor1b,
+
+_moon_scale_fac = moon_scale_fac,
+_time_speed_night = time_speed_night,
+_time_speed = time_speed,
+_night_sky_scale_x = night_sky_scale_x,
+_night_sky_speed_x = night_sky_speed_x,
+_load_lensflare = 1,
+_use_moon = 1,
+_use_sun = 1,
+_use_nightstars = 1,
+_weather_mode = NO_RAIN_SNOW; // RAIN_ONLY, SNOW_ONLY, RAIN_SNOW, NO_RAIN_SNOW
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
 ////////////////////////////////////////////////////////////
 PANEL *Statistics,
+*InDev,
 *buttonlst,
 *last_pan,
 *panMain_Top,
@@ -670,12 +758,20 @@ PANEL *Statistics,
 *NewGame_Screen3,
 *NewGame_PreviewButton,
 *CreateWorld,
-*CreateWorldCoffee;
+*CreateWorldCoffee,
+*FPCrosshair,
+*MusicPlayer,
+*MusicPlayerQuick,
+*Stats,
+*Blackboard,
+*Playtest_Loadscreen, // Global
+*pLoadBar,
+*TerrainToolbar;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
 ////////////////////////////////////////////////////////////
-ENTITY *select, *fpsf_marker, *cam, *flashlight;
+ENTITY *select, *marker, *cam, *flashlight, *skycube, *TerrainEnt;
 
 ENTITY *my_target_node;
 
@@ -762,6 +858,7 @@ MATERIAL *mat_custom[4];
 // Sounds will be declared here.
 ////////////////////////////////////////////////////////////
 
+SOUND *snowstorm_ambient = "snowstorm.ogg";
 SOUND *rain_wav = "rain.wav";
 SOUND *wind_wav = "wind.wav";
 SOUND *day_wav = "ambiente_day.wav";
@@ -781,8 +878,6 @@ BMAP *BackgroundScreen3 = "BackgroundScreen1.jpg";
 BMAP *BackgroundScreen4 = "BackgroundScreen2.jpg";
 BMAP *BackgroundScreen5 = "BackgroundScreen1.jpg";
 BMAP *BackgroundScreen6 = "BackgroundScreen2.jpg";
-
-BMAP* mouse = "mouse_pointer.png";
 
 BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
 BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
@@ -877,6 +972,7 @@ BMAP *fire3_map = "fire3.tga";
 BMAP *fire1_map = "fire1.tga";
 BMAP *blitz1_map = "blitz1.tga";
 BMAP *star1_map = "star1.tga";
+BMAP* drop1_map = "rain.tga";
 
 /*** For Mystymood ***/
 BMAP *part_bmp_weather;
@@ -893,6 +989,7 @@ void ExitEvent();
 void LoadKernel();
 void LoopKernel();
 void LoadPlayground();
+void PrecacheContent();
 void _beep();
 int UnloadKernel();
 int ReloadKernel();
@@ -900,15 +997,24 @@ int Console();
 int PlayVideo(STRING *, var);
 int SetupShader();
 void FolderScan(TEXT *,STRING *,STRING *);
-void LoadCBOIF(ENTITY *);
+void WriteObjectCustomSettings(ENTITY *);
+void LoadObjectCustomSettings(ENTITY *);
+int GetPercent(var, var);
+void on_level_event(var);
+COLOR *CopyColor(var, var, var);
+void Scale(ENTITY *, var);
+int range(var, var, var);
+void place_mesh_on_ground(ENTITY *, int);
 
 int AddToTextureProjectionArray(ENTITY *);
 void RemoveFromTextureProjectionArray(ENTITY *);
+void ConvertToCTFormat(STRING *, var, var);
 
 // Implementation for writing different types of variables for WriteLog
 // With somethin like int WriteLog(int); implement them yourself.
 // or use somethin like WriteLog follow an empty string and var.
-// Mother of function overloading.
+// Mother of function overloading.\
+// 14.11.2013: Edited. No, it's nothing compared to that "mother of function overloading".
 int WriteLog(STRING *);
 int WriteLog(STRING *, int);
 int WriteLog(STRING *, var);
@@ -917,10 +1023,36 @@ int WriteLog(STRING *, BOOL);
 int WriteLog(STRING *, OBJECTSTRUCT *);
 int WriteLog(STRING *);
 void NewLine();
+void WriteLogHeaders();
+STRING *StringForBool(var);
 
 void free_camera();
 void toggle_weather();
 void good_weather();
+
+// A simple music player, developed in a rush.
+void mpLoad(STRING *, STRING *);
+void mpUnload();
+void mpPrev();
+void mpNext();
+void mpPause();
+void mpResume();
+void mpPlay(STRING *);
+void ToggleMusicPlayer();
+void sndPlay(STRING *);
+
+// Terrain deformation functions
+void TDeform_deform_terrain();
+void TDeform_single(); //upper deform
+void TDeform_multiple(); //down deform
+void TDeform_multipleSmooth(); //Mutiple vertices from size brush
+//void TDeform_changeBrushSingle();
+//void TDeform_changeBrushMultiple();
+//void TDeform_changeBrushMultipleSmooth();
+void TDeform_changeBrushRaise();
+void TDeform_changeBrushLower();
+void TDeform_saveterrain(ENTITY *);
+void TDeform_LoadHeightFrom(ENTITY *);
 
 void GGUIInit();
 void GGUIHide();
@@ -930,16 +1062,22 @@ void GGUIUpdate(PANEL *);
 void guiViewPreset (int *, int, VECTOR *, VECTOR *);
 void GPanelAlignMainMenu(PANEL *);
 void GPanelCenterInside(PANEL *, PANEL *);
-void GPanelResize(PANEL *, char);
+void GPanelResize(PANEL *, int);
 void GPanelRotate(PANEL *,var,var,BOOL);
 void GPanelSelect(PANEL *);
 void GPanelCenter(PANEL *);
 void GPanelDrag(PANEL *);
 void GPanelFade(PANEL *, var, var, var);
 void GPanelSizeForWH(PANEL *, BMAP *);
-void GNotificationCreate(FONT *, STRING *);
+void GPanelMoveAlpha(PANEL *, var, var, var, var, var, var);
+void GPanelMoveAlphaX(PANEL *, var, var, var);
+void GPanelMoveAlphaY(PANEL *, var, var, var);
+//void GNotificationCreate(FONT *, STRING *);
 void GWindowClose(var, PANEL *);
 
+void GBlackboardAlphaFade();
+void GBlackboardAlphaRestore();
+void GToggleStatistics();
 void GInsertObjectShow();
 void GInsertObjectHide();
 void GHomeShow();
@@ -992,6 +1130,18 @@ void GGROUNDSTR_Up();
 void GGROUNDSTR_Down();
 void GLOADGAMESTR_Up();
 void GLOADGAMESTR_Down();
+void GTerrainLoadGeoWrapper();
+void GTerrainSaveGeoWrapper();
+void GInDevShow();
+void GInDevHide();
+void GWeatherMode_RainOnly();
+void GWeatherMode_SnowOnly();
+void GWeatherMode_Nothing();
+void GWeatherMode_RainSnow();
+
+// wrappers/controllers for sound instructions
+void GSEMenuMouseHover();
+void GSEMenuMouseClick();
 
 void GIO_ObjectTab_SwitchTab(var);
 void GOptions_Graphics();
@@ -1002,6 +1152,8 @@ void GOptions_Maintenance();
 void GSelectObject(var);
 void GSelectLight(var);
 void GSelectParticle(var);
+
+void GToggleMusicPlayerRandomize();
 
 //void GToggleLevelCreationMode(var);
 void FillFromPool(TEXT *, TEXT *, var, var); // dest, pool, amount, scaler
@@ -1027,6 +1179,8 @@ int PassClipboardDataToObject(ENTITY *);
 int MaterialSelect(var);
 void MaterialSave();
 
+void WriteToBlackboard(STRING *, STRING *, var);
+
 void ObjectCut();
 void ObjectCopy();
 void ObjectPaste();
@@ -1046,6 +1200,7 @@ int ConfigFileWrite(STRING *);
 int GenerateLight();
 int GenerateSound();
 int GenerateWaypoint();
+int GenerateTerrain();
 
 void func_particle_segment();
 void func_lightning_effect();
@@ -1055,7 +1210,7 @@ void sky_day_fade_in();
 void sky_day_state();
 void sky_night_fade_in();
 void sky_night_state();
-void act_mystymood_trigg_label1();
+//void act_mystymood_trigg_label1();
 void lensflare_create();
 void lensflare_start();
 void flare_init(ENTITY *);
@@ -1070,6 +1225,7 @@ void TakeScreenshot();
 void OptimizeFramerate(var);
 
 void LoadMystymood(BOOL, BOOL); // This will load the Mystymood engine.
+void UnloadMystymood();
 void LoadMystymoodLensflare();
 void func_fade_colors(var *, var *, var *);
 void func_particle_seed_infinity(PARTICLE *);
@@ -1079,6 +1235,8 @@ void func_particle_lightning(PARTICLE *);
 void func_particle_segment();
 void func_increase_brightness();
 void weather_change();
+void snow(var, var, VECTOR *);
+void rain(var, var);
 
 // These are particle function prototypes, and were generated
 // by 3rd party tools. So their names are a bit messed up.
@@ -1148,5 +1306,9 @@ void p_fire_2_create(VECTOR *);
 void p_fire_1_create(VECTOR *);
 void p_double_helix_create(VECTOR *);
 void p_composition_create(VECTOR *);
+
+void rain_event(PARTICLE *);
+void rain_base(PARTICLE *);
+void rain(VECTOR *);
 
 #endif HEADER_H

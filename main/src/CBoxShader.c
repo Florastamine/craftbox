@@ -115,6 +115,7 @@ void mtl_vegetation_init();
 
 // SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
 #include "ppSsao.h"
+#include "dof.c"
 
 /*
 --------------------------------------------------
@@ -128,6 +129,8 @@ int SetupShader() {
 	WriteLog("[ ] Setting up shaders");
 	NewLine();
 	
+	return;
+	
 	if(edition < 3) {
 		
 		WriteLog("!! [ERROR] Still don't have enough money to afford a Commercial license.. :(");
@@ -137,16 +140,25 @@ int SetupShader() {
 		
 	}
 	
-	//	Setup for Shade-C
-	//	sc_bHDR = 1;
-	//	sc_bDOF = 0;
-	//	sc_bRefract = 0;
-	//	sc_bWater = 0;
-	//	sc_bReflect = 0;
-	//	sc_bVolParts = 0;
-	//	sc_setup();
+	// Shade-C
+	sc_bHDR = 1;
+	sc_bDOF = 0;
+	sc_bRefract = 0;
+	sc_bWater = 0;
+	sc_bReflect = 0;
+	sc_bVolParts = 0;
+	sc_setup();
 	
+	// SSAO
 	_SSAO();
+	while(proc_status(_SSAO)) wait(1);
+	
+	// Depth of field
+	dof();
+	
+	// Misc.
+	shadow_stencil = 2;
+	//	stencil_blur(3);
 	
 	WriteLog("[X] Task completed.");
 	NewLine();
@@ -181,7 +193,7 @@ MATERIAL* FFE_Env =
 {
 	skin1 = transenvmap_cube;
 	
-	flags = enable_view;
+	flags = ENABLE_VIEW;
 	event = transenv_event;
 	effect = "Envmapping.fx";
 }

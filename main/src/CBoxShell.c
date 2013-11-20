@@ -25,9 +25,132 @@ NOTES:
 Just plug additional code to CBox.h and CBoxShell.c, modify InsertParticle and 
 GSelectParticle a bit, and run - more particle effects.
 
++ Sound effects for
+- Menu (hover, click)
+
 >+++
 --------------------------------------------------
 */
+
+PANEL *TerrainToolbar = {
+	
+	layer = 999;
+	
+	bmap = "TerrainToolbar.png";
+	
+	//	button(10,10,"terrain_brush_raise.png","terrain_brush_raise.png","terrain_brush_raise.png",NULL,TDeform_changeBrushRaise,NULL);
+	//	button(74,10,"terrain_brush_lower.png","terrain_brush_lower.png","terrain_brush_lower.png",NULL,TDeform_changeBrushLower,NULL);
+	
+	button_toggle(10,10,"terrain_brush_raise_on.png","terrain_brush_raise.png","terrain_brush_raise_on.png","terrain_brush_raise_on.png",TDeform_changeBrushRaise,NULL,NULL);
+	button_toggle(74,10,"terrain_brush_raise_on.png","terrain_brush_raise.png","terrain_brush_raise_on.png","terrain_brush_raise_on.png",TDeform_changeBrushLower,NULL,NULL);
+	
+	button(138,10,"load_upload.png""load_upload.png","load_upload.png",NULL,GTerrainSaveGeoWrapper,NULL);
+	button(202,10,"load_download.png","load_download.png","load_download.png",NULL,GTerrainLoadGeoWrapper,NULL);
+	
+	hslider(289,34,155,"slider.bmp",500,5000,bSize);
+	hslider(289,72,155,"slider.bmp",5,25,brush_speed);
+	//	
+	//	pos_x = 10;
+	//	pos_y = 10;
+	
+	//   flags = SHOW;
+	
+	on_click = GPanelDrag;
+	
+}
+
+PANEL *pLoadBar = {
+	
+	layer = 999;
+	pos_x = 0;
+	
+	// Purple mountain majesty sRGBB  (r, g, b)	(150, 120, 182)
+	red = 150;
+	green = 120;
+	blue = 182;
+	
+}
+
+PANEL *InDev = {
+	
+	layer = 999;
+	
+	bmap = "InDev.png";
+	button(170,184,"InDev_Close.png","InDev_Close.png","InDev_Close.png",NULL,GInDevHide,GSEMenuMouseHover);
+	
+}
+
+PANEL *Playtest_Loadscreen = {
+	
+	layer = 20;
+	
+	
+}
+
+PANEL *Blackboard = {
+	
+	layer = 25;
+	
+	bmap = "notificationGround.bmp";
+	button(0,0,"notification.bmp","notification.bmp","notification.bmp",NULL,GBlackboardAlphaRestore,GBlackboardAlphaFade);
+	
+	flags = TRANSLUCENT;
+	
+}
+
+PANEL *Stats = {
+	
+	layer = 1;
+	
+	bmap = "Stats.png";
+	flags = OVERLAY | TRANSLUCENT;
+	alpha = 50;
+	
+	button(261,251,"button_stats_off.png","button_stats_off.png","button_stats_off.png",NULL,GToggleStatistics,NULL);
+	
+	on_click = GPanelDrag;
+	
+}
+
+PANEL *MusicPlayer = {
+	
+	layer = 15;
+	
+	bmap = "MusicPlayerInterface.png";
+	
+	button(0,0,"mp_media_previous.png","mp_media_previous.png","mp_media_previous.png",NULL,mpPrev,NULL);
+	button(138,0,"mp_media_pause.png","mp_media_pause.png","mp_media_pause.png",NULL,mpPause,NULL);
+	button(276,0,"mp_media_play.png","mp_media_play.png","mp_media_play.png",NULL,mpResume,NULL);
+	button(414,0,"mp_media_next.png","mp_media_next.png","mp_media_next.png",NULL,mpNext,NULL);
+	button_toggle(336,156,"Musicplayer_checkbox_random_on.png","Musicplayer_checkbox_random_off.png","Musicplayer_checkbox_random_on.png","Musicplayer_checkbox_random_on.png",NULL,GToggleMusicPlayerRandomize,GSEMenuMouseHover);
+	
+	flags = OVERLAY;
+	
+	on_click = GPanelDrag;
+	
+}
+
+TEXT *MusicPlayerInfo = {
+	
+	layer = 20;
+	
+	strings(2);
+	string(_mpSongTemp,_mpCount);
+	
+	font = "Arial#20b";
+	
+	//	flags = SHOW;
+	
+}
+
+PANEL *FPCrosshair = {
+	
+	layer = 15;
+	bmap = "crosshair.png";
+	
+	flags = OVERLAY;
+	
+}
 
 PANEL *CreateWorld = {
 	
@@ -48,7 +171,7 @@ PANEL *NewGame_PreviewButton = {
 	bmap = "button_PreviewScene_off.png";
 	button(0,0,"button_PreviewScene_on.png","button_PreviewScene_off.png","button_PreviewScene_on.png",NULL,GNewGame_UnPreviewScene,GNewGame_PreviewScene);
 	
-	flags = SHOW;
+	//	flags = SHOW;
 	
 }
 
@@ -90,21 +213,21 @@ PANEL *NewGame_ScreenDyn_Step1 = {
 	
 	bmap = "NewGame_ScreenDyn_Step1.bmp";
 	
-	button_toggle(30,96,"NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_Off.bmp","NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_On.bmp",NULL,NULL,NULL);
-	button_toggle(30,126,"NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_Off.bmp","NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_On.bmp",NULL,NULL,NULL);
-	button_toggle(30,156,"NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_Off.bmp","NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_On.bmp",NULL,NULL,NULL);
-	button_toggle(30,186,"NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_Off.bmp","NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,96,"NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_Off.bmp","NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_On.bmp",GSEMenuMouseClick,NULL,NULL);
+	button_toggle(30,126,"NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_Off.bmp","NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_On.bmp",GSEMenuMouseClick,NULL,NULL);
+	button_toggle(30,156,"NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_Off.bmp","NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_On.bmp",GSEMenuMouseClick,NULL,NULL);
+	button_toggle(30,186,"NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_Off.bmp","NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_On.bmp",GSEMenuMouseClick,NULL,NULL);
 	
-	button_radio(36,250."NewGame_Radiobox_Rain_On.bmp","NewGame_Radiobox_Rain_Off.bmp","NewGame_Radiobox_Rain_On.bmp",NULL,NULL,NULL);
-	button_radio(36,280,"NewGame_Radiobox_Snow_On.bmp","NewGame_Radiobox_Snow_Off.bmp","NewGame_Radiobox_Snow_On.bmp",NULL,NULL,NULL);
-	button_radio(36,310,"NewGame_Radiobox_Both_On.bmp","NewGame_Radiobox_Both_Off.bmp","NewGame_Radiobox_Both_On.bmp",NULL,NULL,NULL);
-	button_radio(36,340,"NewGame_Radiobox_Nothing_On.bmp","NewGame_Radiobox_Nothing_Off.bmp","NewGame_Radiobox_Nothing_On.bmp",NULL,NULL,NULL);
+	button_radio(36,250."NewGame_Radiobox_Rain_On.bmp","NewGame_Radiobox_Rain_Off.bmp","NewGame_Radiobox_Rain_On.bmp",GSEMenuMouseClick,GWeatherMode_RainOnly,NULL);
+	button_radio(36,280,"NewGame_Radiobox_Snow_On.bmp","NewGame_Radiobox_Snow_Off.bmp","NewGame_Radiobox_Snow_On.bmp",GSEMenuMouseClick,GWeatherMode_SnowOnly,NULL);
+	button_radio(36,310,"NewGame_Radiobox_Both_On.bmp","NewGame_Radiobox_Both_Off.bmp","NewGame_Radiobox_Both_On.bmp",GSEMenuMouseClick,GWeatherMode_RainSnow,NULL);
+	button_radio(36,340,"NewGame_Radiobox_Nothing_On.bmp","NewGame_Radiobox_Nothing_Off.bmp","NewGame_Radiobox_Nothing_On.bmp",GSEMenuMouseClick,GWeatherMode_Nothing,NULL);
 	
-	hslider(503,115,274,"SliderKnob.bmp",0,100,test);
-	hslider(503,164,274,"SliderKnob.bmp",0,100,new_time_speed_night);
-	hslider(503,215,274,"SliderKnob.bmp",0,100,new_moon_scale_fac);
-	hslider(503,263,274,"SliderKnob.bmp",0,100,new_night_sky_scale_x);
-	hslider(503,318,274,"SliderKnob.bmp",0,100,new_night_sky_speed_x);
+	hslider(503,115,274,"SliderKnob.bmp",0,150,_time_speed); // [0..150]
+	hslider(503,164,274,"SliderKnob.bmp",0,150,_time_speed_night); // [0..150]
+	hslider(503,215,274,"SliderKnob.bmp",2.5,40,_moon_scale_fac); // [2,5..40]
+	hslider(503,263,274,"SliderKnob.bmp",0.5,5,_night_sky_scale_x); // [0,5..5]
+	hslider(503,318,274,"SliderKnob.bmp",0,200,_night_sky_speed_x); // [0..200]
 	
 	flags =  TRANSLUCENT;
 	
@@ -115,13 +238,13 @@ PANEL *NewGame_ScreenStatic_Step1 = {
 	
 	bmap = "NewGame_ScreenStatic_Step1.bmp";
 	
-	hslider(323,107,271,"SliderKnob.bmp",-200,300,sun_light); // actually I found sun_light ranged from -200 to 200+
-	button_toggle(37,166,"NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_Off.bmp","NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_On.bmp",NULL,NULL,NULL);
+	hslider(323,107,271,"SliderKnob.bmp",-200,300,_sun_light); // actually I found sun_light ranged from -200 to 200+
+	button_toggle(37,166,"NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_Off.bmp","NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_On.bmp",GSEMenuMouseClick,NULL,NULL);
 	
-	hslider(283,255,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.red);
-	hslider(283,291,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.green);
-	hslider(283,329,271,"SliderKnob.bmp",0,255,d3d_fogcolor1.blue);
-	hslider(283,370,271,"SliderKnob.bmp",100,50000,camera.fog_end);
+	hslider(283,255,271,"SliderKnob.bmp",0,255,_d3d_fogcolor1_red);
+	hslider(283,291,271,"SliderKnob.bmp",0,255,_d3d_fogcolor1_blue);
+	hslider(283,329,271,"SliderKnob.bmp",0,255,_d3d_fogcolor1_green);
+	hslider(283,370,271,"SliderKnob.bmp",100,50000,_camera_fog_end);
 	
 	flags = TRANSLUCENT;
 	alpha = 75;
@@ -132,7 +255,7 @@ PANEL *NewGame_Screen3 = {
 	
 	bmap = "NewGame_Screen3.bmp";
 	
-	button(661,354,"button_Start_on.png","button_Start_off.png","button_Start_on.png",NULL,LaunchGameSession,NULL);
+	button(661,354,"button_Start_on.png","button_Start_off.png","button_Start_on.png",NULL,LaunchGameSession,GSEMenuMouseHover);
 	
 	flags = TRANSLUCENT;
 	alpha = 75;
@@ -202,17 +325,21 @@ PANEL *Options_Graphics = {
 	button(241,201,"arrow_left.png","arrow_left.png","arrow_left.png",NULL,GOptionsAdjustSettings,NULL);
 	button(400,201,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
+	button_toggle(30,269,"Options_checkbox_SSAO_on.bmp","Options_checkbox_SSAO_off.bmp","Options_checkbox_SSAO_on.bmp","Options_checkbox_SSAO_on.bmp",NULL,GInDevShow,NULL);
+	button_toggle(30,300,"Options_checkbox_HDR_on.bmp","Options_checkbox_HDR_off.bmp","Options_checkbox_HDR_on.bmp","Options_checkbox_HDR_on.bmp",NULL,GInDevShow,NULL);
+	button_toggle(250,269,"Options_checkbox_DoF_on.bmp","Options_checkbox_DoF_off.bmp","Options_checkbox_DoF_on.bmp","Options_checkbox_DoF_on.bmp",NULL,GInDevShow,NULL);
+	
 	//	button(241,231,"arrow_left.png","arrow_left.png","arrow_left.png",GOptionsAdjustSettings,NULL,NULL);
 	//	button(400,231,"arrow_right.png","arrow_right.png","arrow_right.png",GOptionsAdjustSettings,NULL,NULL);
 	//	
 	
 	//
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
 	
 	flags = TRANSLUCENT;
 	
@@ -239,12 +366,12 @@ PANEL *Options_Sound = {
 	button(400,141,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
 	//
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
 	
 	flags = TRANSLUCENT;
 	
@@ -258,12 +385,12 @@ PANEL *Options_Themes = {
 	
 	bmap = "Options_Themes.bmp";
 	
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
 	
 	flags = TRANSLUCENT;
 	
@@ -277,12 +404,12 @@ PANEL *Options_Maintenance = {
 	
 	bmap = "Options_Maintenance.bmp";
 	
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
 	
 	flags = TRANSLUCENT;
 	
@@ -379,25 +506,34 @@ PANEL *InsertObject_Inputter = {
 	
 	*/
 	
-	bmap = "InputPalette_4.bmp";
+	bmap = "InputPalette_20.bmp";
 	
 	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,30,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,60,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
 	button(0,90,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,120,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,150,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,180,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,210,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,240,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,270,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,300,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,330,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,360,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,390,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,420,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,450,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	//	button(0,480,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,120,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	
+	button(0,150,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,180,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,210,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,240,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,270,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	
+	button(0,300,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,330,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,360,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,390,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,420,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	
+	button(0,450,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,480,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,510,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,540,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button(0,570,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	
+	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GGROUNDSTR_Up,NULL);
+	button(247,565,"sort_down.png","sort_down.png","sort_down.png",NULL,GGROUNDSTR_Down,NULL);
 
 	flags = TRANSLUCENT;
 
@@ -725,9 +861,9 @@ PANEL *panMain_Bottom = {
 	bmap = "panMain_Bottom.bmp";
 	
 	button(0,0,"home.png","home.png","home.png",NULL,GHomeShow,NULL);
-	button(0,0,"pathing.png","pathing.png","pathing.png",NULL,GTerrainSubmenuShow,NULL);
 	button(0,0,"objects.png","objects.png","objects.png",NULL,GInsertObjectShow,NULL);
-	button(0,0,"path_32.png","path_32.png","path_32.png",NULL,GPathSubmenuShow,NULL);
+	button(0,0,"pathing.png","pathing.png","pathing.png",NULL,GTerrainSubmenuShow,NULL);
+	//	button(0,0,"path_32.png","path_32.png","path_32.png",NULL,GPathSubmenuShow,NULL);
 	
 	
 	flags = OVERLAY | SHOW;
@@ -800,7 +936,7 @@ PANEL *MainMenu_Item1 = {
 	layer = 2;
 	
 	bmap = "button_NewGame_off.bmp";
-	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,NULL);
+	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,GSEMenuMouseHover);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
@@ -813,7 +949,7 @@ PANEL *MainMenu_Item2 = {
 	layer = 2;
 	
 	bmap = "button_LoadGame_off.bmp";
-	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,NULL);
+	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,GSEMenuMouseHover);
 
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -826,7 +962,7 @@ PANEL *MainMenu_Item3 = {
 	layer = 2;
 	
 	bmap = "button_Options_off.bmp";
-	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,NULL);
+	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,GSEMenuMouseHover);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -839,7 +975,7 @@ PANEL *MainMenu_Item4 = {
 	layer = 2;
 	
 	bmap = "button_Achievements_off.bmp";
-	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,NULL,NULL);
+	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,GInDevShow,GSEMenuMouseHover);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -852,7 +988,7 @@ PANEL *MainMenu_Item5 = {
 	layer = 2;
 	
 	bmap = "button_Credits_off.bmp";
-	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GCreditsShow,NULL);
+	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GCreditsShow,GSEMenuMouseHover);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -865,7 +1001,7 @@ PANEL *MainMenu_Item6 = {
 	layer = 2;
 	
 	bmap = "button_Help_on.bmp";
-	button(0,0,"button_Help_on.bmp","button_Help_off.bmp","button_Help_on.bmp",NULL,NULL,NULL);
+	button(0,0,"button_Help_on.bmp","button_Help_off.bmp","button_Help_on.bmp",NULL,GInDevShow,GSEMenuMouseHover);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
@@ -1050,7 +1186,116 @@ MATERIAL *mat_select =
 
 ////////////////////////////////////////////////////////////
 // Particle effects or anything else related will be defined here.
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////// 
+
+void rain_event(PARTICLE* p) {
+	if((p.x-camera.x)*cos(camera.pan) + (p.y-camera.y)*sin(camera.pan) + (p.z-camera.z)*sin(camera.tilt) < 0)p.lifespan = 0;
+	p.skill_d = (p.skill_d + time_step*(var)1.000)%100;
+}
+
+void rain_base(PARTICLE* p) {
+	p.size = random(0.867)+(2.133);
+	p.alpha = random(18.265)+(40.735);
+	p.red = 53;
+	p.green = 80;
+	p.blue = 106;
+	p.skill_c = 0.5;
+	parted_temp_vec.x = random(191.406)+208.594;
+	parted_temp_vec.y = random(600.000)+-300.000;
+	parted_temp_vec.z = 100.000;
+	vec_rotate(parted_temp_vec,camera.pan);
+	vec_add(p.x,parted_temp_vec);
+	p.vel_x = random(0.799)+(-0.399);
+	p.vel_y = random(0.799)+(-0.399);
+	p.vel_z = (-3.000);
+	p.lifespan = 40.000;
+	p.gravity = 1.000;
+	p.bmap = drop1_map;
+	p.flags = BRIGHT | TRANSLUCENT | MOVE;
+	p.skill_x = p.vel_x;
+	p.skill_y = p.vel_y;
+	p.skill_z = p.vel_z;
+	p.event = rain_event;
+}
+
+/////////////////////////////////creation/////////////////////////////////
+
+void rain(var wtoggle, var density) {
+   
+   proc_kill(4);
+	
+	if(wtoggle) {
+		
+		ToggleRain = 1;
+		
+		} else {
+		
+		ToggleRain = 0;
+		return; 
+		
+	}
+	
+	var eff_frac = 0;
+	
+	while ( ToggleRain ) {
+		
+		vec_set(parted_temp_vec,nullvector);
+		vec_add(parted_temp_vec,camera.x);
+		eff_frac += 5*density*time_step*6.25;
+		
+		if(eff_frac >= 1) {
+			
+			effect(rain_base,integer(eff_frac),parted_temp_vec,nullvector);
+			eff_frac -= integer(eff_frac);
+			
+		}
+		
+		wait(1);
+		
+	}
+}
+
+void snow(var wtoggle, var density, VECTOR *wind)
+{
+	proc_kill(4);	// terminate previous snow functions
+	
+	if( !KERNEL_IS_RUNNING ) return;
+	if(!wtoggle) {
+		
+		ToggleSnow = 0;
+		return;
+		
+	}
+	else ToggleSnow = 1;
+	
+	if(!density) density = 2000;
+	
+	VECTOR camera_lastpos; // for determining the camera movement direction
+	vec_set(camera_lastpos,camera.x);
+
+	// store the wind speed locally
+	if(!wind) wind = vector(-3,2,0);
+	VECTOR wind_speed;
+	vec_set(wind_speed,wind);
+
+	var num_snow = 1;	// number of snow flakes per tick
+	while(ToggleSnow)
+	{
+		
+		// place snow origin slightly in camera movement direction		
+		VECTOR snow_pos;
+		vec_diff(snow_pos,camera.x,camera_lastpos);
+		vec_set(camera_lastpos,camera.x);
+		vec_scale(snow_pos,P_SNOWRANGE*0.2);
+		vec_add(snow_pos,camera.x);
+		// create snow flakes		
+		effect(p_snow,num_snow*time_frame,snow_pos,wind_speed);
+		// increase number of flakes until density is reached		
+		num_snow = minv(density,num_snow+time_frame); 
+		wait(1);
+		
+	}
+}
 
 ////////////////////////////////////////////////////////////
 // Spiral
@@ -2232,7 +2477,7 @@ void p_composition_create(VECTOR *position) {
 ENTITY *sky_horizon =
 { //this is needed to fix the bad 3dgs horizon merging
 	type = "horizon.tga";
-	layer = 5; 
+	layer = 10; 
 	scale_x = 0.25;
 	scale_y = 0.25;
 	tilt = -60;//adjust this when you change sky_curve or sky_clip settings
@@ -2244,7 +2489,7 @@ ENTITY *sky_horizon =
 ENTITY *sky_cloud1 =
 { 
 	type = "clouds.tga";
-	layer = 2;  
+	layer = 4;
 	u = cloud1_speed_x; 
 	v = cloud1_speed_y; 
 	scale_y = cloud1_scale_x; 
@@ -2258,7 +2503,7 @@ ENTITY *sky_cloud1 =
 ENTITY *sky_cloud2 =
 { 
 	type = "clouds.tga";
-	layer = 3;//4; 
+	layer = 6; 
 	u = cloud2_speed_x; 
 	v = cloud2_speed_y; 
 	scale_x = cloud2_scale_x; 
@@ -2273,7 +2518,7 @@ ENTITY *sky_cloud2 =
 ENTITY *sky_cloud3 =
 { 
 	type = "clouds_bad.tga";
-	layer = 4; 
+	layer = 8;
 	u = cloud3_speed_x; 
 	v = cloud3_speed_y; 
 	scale_x = cloud3_scale_x; 
@@ -2288,7 +2533,7 @@ ENTITY *sky_cloud3 =
 ENTITY *sky_day =
 { 
 	type = "sky_day.tga";
-	layer = 1; 
+	layer = 2;
 	scale_x = 0.25;
 	tilt = -20;//-10;
 	red = sky_add_red;
@@ -2302,7 +2547,7 @@ ENTITY *sky_day =
 ENTITY *sky_sun =
 {
 	type = "sky_sun.tga";
-	layer = 6;
+	layer = 12;
 	alpha = sun_alpha;
 	flags2 = SKY;
 	flags = TRANSLUCENT|PASSABLE|BRIGHT;
@@ -2311,7 +2556,7 @@ ENTITY *sky_sun =
 ENTITY *sky_suncorona =
 {
 	type = "sky_suncorona.tga";
-	layer = 3;
+	layer = 6;
 	alpha = sun_corona_alpha;
 	flags2 = SKY;
 	flags = TRANSLUCENT|PASSABLE|BRIGHT;
@@ -2320,7 +2565,7 @@ ENTITY *sky_suncorona =
 ENTITY *sky_sunshine =
 {
 	type = "sky_sunshine.tga";
-	layer = 7;
+	layer = 14;
 	alpha = sun_shine_alpha;
 	flags2 = SKY;
 	flags = TRANSLUCENT|PASSABLE|BRIGHT;
@@ -2329,7 +2574,7 @@ ENTITY *sky_sunshine =
 ENTITY *sky_night =
 { 
 	type = "sky_night.tga";  
-	layer = 1; 
+	layer = 2;
 	alpha = 0;//night_sky_alpha; 
 	flags2 = SKY|DOME; 
 	flags = TRANSLUCENT|PASSABLE; 
@@ -2338,7 +2583,7 @@ ENTITY *sky_night =
 ENTITY *sky_moon =
 {
 	type = "sky_moon.tga";
-	layer = 2;
+	layer = 4;
 	alpha = moon_alpha;
 	flags2 = SKY;
 	flags = TRANSLUCENT|PASSABLE;
@@ -2347,7 +2592,7 @@ ENTITY *sky_moon =
 ENTITY *flare1_ent =
 {
 	type = "lens_01.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2356,7 +2601,7 @@ ENTITY *flare1_ent =
 ENTITY *flare2_ent =
 {
 	type = "lens_02.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2365,7 +2610,7 @@ ENTITY *flare2_ent =
 ENTITY *flare4_ent =
 {
 	type = "lens_04.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2374,7 +2619,7 @@ ENTITY *flare4_ent =
 ENTITY *flare5_ent =
 {
 	type = "lens_05.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2383,7 +2628,7 @@ ENTITY *flare5_ent =
 ENTITY *flare6_ent =
 {
 	type = "lens_06.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2392,7 +2637,7 @@ ENTITY *flare6_ent =
 ENTITY *flare7_ent =
 {
 	type = "lens_07.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2402,7 +2647,7 @@ ENTITY *flare8_ent =
 {
 	type = "lens_08.tga";
 	view = camera;
-	layer = 8;
+	layer = 16;
 	scale_x = 2;
 	scale_y = 2;
 }
@@ -2411,7 +2656,7 @@ ENTITY *flare9_ent =
 {
 	type = "lens_09.tga";
 	view = camera;
-	layer = 8;
+	layer = 16;
 	scale_x = 2;
 	scale_y = 2;
 }
@@ -2419,7 +2664,7 @@ ENTITY *flare10_ent =
 {
 	type = "lens_10.tga";
 	view = camera;
-	layer = 8;
+	layer = 16;
 	scale_x = 2;
 	scale_y = 2;
 }
@@ -2427,7 +2672,7 @@ ENTITY *flare10_ent =
 ENTITY *flare11_ent =
 {
 	type = "lens_11.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2436,7 +2681,7 @@ ENTITY *flare11_ent =
 ENTITY *flare12_ent =
 {
 	type = "lens_12.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2445,7 +2690,7 @@ ENTITY *flare12_ent =
 ENTITY *flare13_ent =
 {
 	type = "lens_13.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2454,7 +2699,7 @@ ENTITY *flare13_ent =
 ENTITY *flare14_ent =
 {
 	type = "lens_14.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;	
 	scale_x = 2.5;
 	scale_y = 2.5;
@@ -2463,7 +2708,7 @@ ENTITY *flare14_ent =
 ENTITY *flare15_ent =
 {
 	type = "lens_15.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2472,7 +2717,7 @@ ENTITY *flare15_ent =
 ENTITY *flare16_ent =
 {
 	type = "lens_16.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2481,7 +2726,7 @@ ENTITY *flare16_ent =
 ENTITY *flare17_ent =
 {
 	type = "lens_17.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2490,7 +2735,7 @@ ENTITY *flare17_ent =
 ENTITY *flare18_ent =
 {
 	type = "lens_18.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2499,7 +2744,7 @@ ENTITY *flare18_ent =
 ENTITY *flare19_ent =
 {
 	type = "lens_19.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2;
 	scale_y = 2;
@@ -2508,11 +2753,16 @@ ENTITY *flare19_ent =
 ENTITY *flare20_ent =
 {
 	type = "lens_20.tga";
-	layer = 8;
+	layer = 16;
 	view = camera;
 	scale_x = 2.8;
 	scale_y = 2.8;
 }
+
+void GWeatherMode_RainOnly() { _weather_mode = RAIN_ONLY; }
+void GWeatherMode_SnowOnly() { _weather_mode = SNOW_ONLY; }
+void GWeatherMode_Nothing() { _weather_mode = NO_RAIN_SNOW; }
+void GWeatherMode_RainSnow() { _weather_mode = RAIN_SNOW; }
 
 /*
 --------------------------------------------------
@@ -2651,6 +2901,10 @@ void GGPanelDrag(PANEL *p)
 
 Desc:
 
+If you have two panels that is attached to each other, with one 
+(or both) is draggable, then make sure to update their positions 
+after the while(mouse_left) loop.
+
 Returns: -
 --------------------------------------------------
 */
@@ -2678,12 +2932,20 @@ void GPanelDrag(PANEL *p)
 		wait(1);
 	}
 
-	//hack to prevent shit happens. f.e. after dragged the guis' elements didn't retain their original location.
+	//hack to prevent something happens. f.e. after dragged the guis' elements didn't retain their original location.
 	if(p == panHome) GGUIUpdate(panHome);
 	if(p == panProp) GGUIUpdate(panProp);
+	
+	if(p == Stats) {
+		
+		StatsPanel->pos_x = Stats->pos_x + 266;
+		StatsPanel->pos_y = Stats->pos_y + 66;
+		
+		
+	}
 }
 
-/* 
+/*
 --------------------------------------------------
 void GPanelCenter(PANEL *p)
 
@@ -2760,21 +3022,16 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
-void GPanelResize(PANEL *p, char c) {
+void GPanelResize(PANEL *p, int c) {
 	
 	while(p == NULL) wait(1);
 	
 	switch(c) {
 		
-		case 'x': p.scale_x = sys_metrics(0)/bmap_width(p.bmap);
-		break;
+		case RESIZE_X: p.scale_x = sys_metrics(0)/bmap_width(p.bmap); break;
+		case RESIZE_Y: p.scale_y = sys_metrics(1)/bmap_height(p.bmap); break;
 		
-		case 'y': p.scale_y = sys_metrics(1)/bmap_height(p.bmap);
-		break;
-		
-		default:
-		
-		p.pos_x = p.pos_y = 0;
+		case RESIZE_XY:
 		
 		p.scale_x = sys_metrics(0)/bmap_width(p.bmap);
 		p.scale_y = sys_metrics(1)/bmap_height(p.bmap);
@@ -2817,15 +3074,17 @@ void GGUIInit() {
 	
 	wait(2);
 	
-	GPanelResize(CreateWorld,'t');
+	GPanelResize(CreateWorld,RESIZE_XY);
 	CreateWorldCoffee.pos_x = screen_size.x - bmap_width(CreateWorldCoffee.bmap) - BORDER * 2;
 	CreateWorldCoffee.pos_y = screen_size.y - bmap_height(CreateWorldCoffee.bmap) - BORDER * 2;
 	
 	ReleaseInfo.pos_x = screen_size.x - str_width( (ReleaseInfo->pstring) [1], ReleaseInfo->font ) - BORDER * 2;
 	ReleaseInfo.pos_y = screen_size.y - BORDER * 4;
 	
-	GPanelResize(panCAMRecorder,'t'); // x+y-scale
-	GPanelResize(panScreenshot,'t');
+	GPanelResize(panCAMRecorder,RESIZE_XY); // x+y-scale
+	GPanelResize(panScreenshot,RESIZE_XY);
+	GPanelCenter(FPCrosshair);
+	GPanelCenter(InDev);
 	
 	GPanelAlignMainMenu(NewGame_Screen1);
 	GPanelAlignMainMenu(NewGame_ScreenDyn_Step1);
@@ -2836,7 +3095,6 @@ void GGUIInit() {
 	GPanelAlignMainMenu(Options_Themes);
 	GPanelAlignMainMenu(Options_Maintenance);
 	GPanelAlignMainMenu(LoadGame);
-	
 	
 	NewGame_ScreenLeft.pos_x = NewGame_Screen1.pos_x - NewGame_Screen1.pos_x/2;
 	NewGame_ScreenLeft.pos_y = NewGame_Screen1.pos_y + bmap_width(NewGame_Screen1.bmap)/4;
@@ -2887,6 +3145,12 @@ void GGUIInit() {
 	screen_size.x - bmap_width(Options_Graphics.bmap) - BORDER*3;
 	
 	*/
+	
+	MusicPlayer.pos_x = screen_size.x - bmap_width ( MusicPlayer.bmap ) - BORDER * 2;
+	MusicPlayer.pos_y = screen_size.y - BORDER * 8 - bmap_height(MusicPlayer.bmap) ;
+	
+	TerrainToolbar.pos_y = screen_size.y - BORDER * 5 - bmap_height(TerrainToolbar.bmap);
+	TerrainToolbar.pos_x = BORDER;
 	
 	ZTool.pos_x = screen_size.x - bmap_width(ZTool.bmap) - BORDER * 2;
 	ZTool.pos_y = (screen_size.y - bmap_height(ZTool.bmap))/2;
@@ -3038,10 +3302,80 @@ void GTerrainSubmenuShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	/*
+	
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
 
 	set(buttonlst_submenu_terrain,SHOW);
+	
+	*/
+	
+	if( !is(TerrainToolbar,SHOW) ) {
+		
+		set(TerrainToolbar,SHOW);
+		TerrainEditMode = 1;
+		
+		button_state(TerrainToolbar,1,1);
+		
+		if(marker) Scale(marker, SCALE_MARKER_TERRAIN);
+		
+		
+	}
+	else {
+		
+		TerrainEditMode = 0;
+		reset(TerrainToolbar,SHOW);
+		
+		if(marker) Scale(marker, SCALE_MARKER );
+		
+		return;
+		
+	}
+	
+	while( is(TerrainToolbar,SHOW) ) {
+		
+		if(bSize<0) bSize=0;
+		//		if(sizeh<0) sizeh=0;
+		
+		if(key_shift) bSize += mickey.z/20*50*time_step;
+		//		if(key_ctrl) sizeh +=mickey.z/200*time_step;
+		//		if(key_alt) tMaxHeight +=mickey.z/20*time_step;
+		
+		wait(1);
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void GTerrainLoadGeoWrapper()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GTerrainLoadGeoWrapper() {
+	
+	TDeform_LoadHeightFrom(TerrainEnt);
+	
+}
+
+/*
+--------------------------------------------------
+void GTerrainSaveGeoWrapper()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GTerrainSaveGeoWrapper() {
+	
+	TDeform_saveterrain(TerrainEnt);
+	
 }
 
 /* 
@@ -3381,6 +3715,8 @@ void GCreditsShow() {
 	
 	var rollspeed = .5;
 	
+	GSEMenuMouseClick();
+	
 	//	reset(panNewGame,SHOW);
 	GWorldNewHide();
 	GLoadGameHide();
@@ -3512,7 +3848,7 @@ void GLoadMainMenu() {
 	launch_newgame_from_main = 1;
 	
 	level_load("dry_menu.wmb");
-	game_load(pref_savebmaps,0);
+	//	game_load(pref_savebmaps,0);
 	
 	//	GPanelSelect(panMMenu);
 	
@@ -3544,6 +3880,7 @@ void GOptionsShow() {
 		
 	}
 	
+	//	GSEMenuMouseClick();
 	
 	guiCurrentViewPreset = 2;
 	
@@ -3901,6 +4238,7 @@ void GWorldNewShow() {
 		
 	}
 	
+	GSEMenuMouseClick();
 	
 	guiCurrentViewPreset = 1;
 	
@@ -3913,38 +4251,52 @@ void GWorldNewShow() {
 	//	set(NewGame_ScreenRight,SHOW);
 	set(NewGame_Screen1,SHOW);
 	
+	// Set default values
+	int i = 1;
+	for(; i<5;i++) button_state(NewGame_ScreenDyn_Step1,i,1);
+	
 	InMenu_NewGame = 1;
 	
 	while(InMenu_NewGame) {
 		
-		if( is(NewGame_ScreenDyn_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType == 1) ) {
+		if( is(NewGame_ScreenDyn_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType == WORLD_DYNAMIC) ) {
 			
-			moon_scale_fac = new_moon_scale_fac;
-			time_speed_night = new_time_speed_night;
-			night_sky_scale_x = new_night_sky_scale_x;
-			night_sky_speed_x = new_night_sky_speed_x;
+			moon_scale_fac = _moon_scale_fac;
+			time_speed_night = _time_speed_night;
+			night_sky_scale_x = _night_sky_scale_x;
+			night_sky_speed_x = _night_sky_speed_x;
+			time_speed = _time_speed;
 			
 			if(is(NewGame_ScreenDyn_Step1,SHOW)) {
 				
-				if( button_state(NewGame_ScreenDyn_Step1,1,-1) ) new_load_lensflare = 1;
-				else new_load_lensflare = 0;
-				
-				if( button_state(NewGame_ScreenDyn_Step1,2,-1) ) new_use_sun = 1;
-				else new_use_sun = 0;
-				
-				if( button_state(NewGame_ScreenDyn_Step1,3,-1) ) new_use_moon = 1;
-				else new_use_moon = 0;
-				
-				if( button_state(NewGame_ScreenDyn_Step1,4,-1) ) use_nightstars = 1;
-				else use_nightstars = 0;
+				_load_lensflare = button_state(NewGame_ScreenDyn_Step1,1,-1);
+				_use_sun = button_state(NewGame_ScreenDyn_Step1,2,-1);
+				_use_moon = button_state(NewGame_ScreenDyn_Step1,3,-1);
+				_use_nightstars = button_state(NewGame_ScreenDyn_Step1,4,-1);
 				
 			}	
 			
 		}
 		
-		if( is(NewGame_ScreenStatic_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType > 1) ) {
+		if( is(NewGame_ScreenStatic_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType == WORLD_STATIC) ) {
 			
-			wait(1);
+			_fog_color = fog_color = button_state(NewGame_ScreenStatic_Step1,1,-1);
+			sun_light = _sun_light;
+			d3d_fogcolor1.red = _d3d_fogcolor1_red;
+			d3d_fogcolor1.green = _d3d_fogcolor1_green;
+			d3d_fogcolor1.blue = _d3d_fogcolor1_blue;
+			camera.fog_end = _camera_fog_end;
+			
+			/*
+			
+			//		   Uncomment the following lines to get the variable fog effect ;)
+			//		   the panel will update its values very slow though.
+			
+			d3d_fogcolor1.red = random(255); wait(-1);
+			d3d_fogcolor1.green = random(255); wait(-1);
+			d3d_fogcolor1.blue = random(255); wait(-1);
+			
+			*/
 			
 		}
 		
@@ -4047,12 +4399,13 @@ void GWorldNewHide() {
 	//	reset(panNewGame,SHOW);
 	reset(files_list_GROUNDSTR,SHOW);
 	reset(files_list_SKYSTR,SHOW);
+	reset(NewGame_PreviewButton,SHOW);
 	
 	InMenu_NewGame = 0;
 	
 	LoadMystymood(0,0);
 	
-	if(WorldType == 1) GNewGameResetDynamicSettings();
+	if(WorldType == WORLD_DYNAMIC) GNewGameResetDynamicSettings();
 	else GNewGameResetStaticSettings();
 	
 }
@@ -4389,9 +4742,9 @@ void GSelectObject(var ID) {
 	
 	int _ID = ID-1;
 	
-	if(!str_len( (files_list.pstring)[_ID] ) || str_cmp((files_list.pstring)[_ID]," ") )  {
+	if( str_cmp( (files_list.pstring)[_ID],undef) )  {
 		
-		str_cpy(TEMPSTR," ");
+		str_cpy(TEMPSTR,undef);
 		
 		_beep();
 		return;
@@ -4560,17 +4913,23 @@ void GSelectLight(var ID) {
 		
 		case 1:
 		// RGB color code for Pure Red
+		temp_light = CopyColor(255,0,0);
+		/*
 		temp_light.red = 255;
 		temp_light.green = 0;
 		temp_light.blue = 0;
+		*/
 		
 		break;
 		
 		case 2:
 		// RGB color code for Pure Green
+		temp_light = CopyColor(0,255,0);
+		/*
 		temp_light.red = 0;
 		temp_light.green = 255;
 		temp_light.blue = 0;
+		*/
 		
 		break;
 		
@@ -4583,42 +4942,54 @@ void GSelectLight(var ID) {
 		
 		So red + green = yellow
 		*/
-		
+		temp_light = CopyColor(255,255,0);
+		/*
 		temp_light.red = 255;
 		temp_light.green = 255;
 		temp_light.blue = 0;
+		*/
 		
 		break;
 		
 		case 4:
 		// RGB color code for Teal from http://en.wikipedia.org/wiki/Teal
+		temp_light = CopyColor(54,117,136);
+		/*
 		temp_light.red = 54;
 		temp_light.green = 117;
 		temp_light.blue = 136;
+		*/
 		
 		break;
 		
 		case 5:
 		// RGB color code for Bud Green from http://en.wikipedia.org/wiki/List_of_colors:_A%E2%80%93F
 		// Bonus: May Green, (76, 145, 65).
+		temp_light = CopyColor(123,182,97);
+		/*
 		temp_light.red = 123;
 		temp_light.green = 182;
 		temp_light.blue = 97;
+		*/
 		
 		break;
 		
 		case 6:
 		// RGB color code for Pure White
-		temp_light.red = temp_light.green = temp_light.blue = 255;
+		temp_light = CopyColor(255,255,255);
+		//temp_light.red = temp_light.green = temp_light.blue = 255;
 		
 		break;
 		
 		case 7:
 		// RGB color code for Cyan from http://en.wikipedia.org/wiki/Cyan
 		// green + blue = cyan
+		temp_light = CopyColor(0,255,255);
+		/*
 		temp_light.red = 0;
 		temp_light.green = 255;
 		temp_light.blue = 255;
+		*/
 		
 		break;
 		
@@ -4632,9 +5003,12 @@ void GSelectLight(var ID) {
 		with a lower intensity green light, and the blue light turned off.
 		
 		*/
+		temp_light = CopyColor(255,127,0);
+		/*
 		temp_light.red = 255;
 		temp_light.green = 127;
 		temp_light.blue = 0;
+		*/
 		
 		break;
 		
@@ -4645,26 +5019,34 @@ void GSelectLight(var ID) {
 		violet is simulated by purple, by combining blue light at high intensity with a less intense red light on a black screen. 
 		The range of purples is created by combining blue and red light of any intensities; the chromaticities formed this way line along the "line of purples".
 		*/
-		
+		temp_light = CopyColor(143,0,255);
+		/*
 		temp_light.red = 143;
 		temp_light.green = 0;
 		temp_light.blue = 255;
+		*/
 		
 		break;
 		
 		case 10:
 		// RGB color code for Lavender from http://en.wikipedia.org/wiki/Lavender_(color)
+		temp_light = CopyColor(230,230,250);
+		/*
 		temp_light.red = 230;
 		temp_light.green = 230;
 		temp_light.blue = 250;
+		*/
 		
 		break;
 		
 		case 11:
 		// RGB color code for Brown from http://en.wikipedia.org/wiki/Brown
+		temp_light = CopyColor(150,75,0);
+		/*
 		temp_light.red = 150;
 		temp_light.green = 75;
 		temp_light.blue = 0;
+		*/
 		
 		break;
 		
@@ -4676,9 +5058,12 @@ void GSelectLight(var ID) {
 		The color electric indigo is a bright and saturated color between the traditional indigo and violet. 
 		This is the brightest color indigo that can be approximated on a computer screen[citation needed]—it is a color located between the (primary) blue and the color violet on the RGB color wheel.
 		*/
+		temp_light = CopyColor(75,0,130);
+		/*
 		temp_light.red = 75;
 		temp_light.green = 0;
 		temp_light.blue = 130;
+		*/
 		
 		break;
 		
@@ -4719,7 +5104,7 @@ void GPreMainMenu() {
 		
 	}
 	
-	GPanelResize(BackgroundScreen,'1');
+	GPanelResize(BackgroundScreen,RESIZE_XY);
 	
 	set(BackgroundScreen,SHOW);
 	set(PreMainMenuLoading,SHOW);
@@ -4739,6 +5124,8 @@ Returns: -
 void GOptions_Graphics() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(is(Options_Sound,SHOW)) {
 		
@@ -4826,6 +5213,8 @@ void GOptions_Sound() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	if(is(Options_Graphics,SHOW)) {
 		
 		reset(Options_Graphics, SHOW);
@@ -4866,6 +5255,8 @@ void GOptions_Themes() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	if(is(Options_Graphics,SHOW)) {
 		
 		reset(Options_Graphics, SHOW);
@@ -4884,7 +5275,7 @@ void GOptions_Themes() {
 	
 	set(Options_Themes,SHOW);
 	
-	
+	GInDevShow();
 	
 }
 
@@ -4900,6 +5291,8 @@ Returns: -
 void GOptions_Maintenance() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -4919,7 +5312,7 @@ void GOptions_Maintenance() {
 	
 	set(Options_Maintenance,SHOW);
 	
-	
+	GInDevShow();
 	
 }
 
@@ -4935,6 +5328,8 @@ Returns: -
 void GOptions_SaveSettings() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	//	int temporary_BitDepth;
 	
@@ -5017,6 +5412,8 @@ Returns: -
 void GOptionsAdjustSettings(var ID) {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -5217,6 +5614,8 @@ void GLoadGameShow() {
 		
 	}
 	
+	GSEMenuMouseClick();
+	
 	GWorldNewHide();
 	GOptionsHide();
 	GTrophiesHide();
@@ -5258,6 +5657,8 @@ Returns: -
 */
 void GTrophiesShow() {
 	
+	GSEMenuMouseClick();
+	
 	GHelpHide();
 	GWorldNewHide();
 	GLoadGameHide();
@@ -5290,6 +5691,8 @@ Returns: -
 --------------------------------------------------
 */
 void GHelpShow() {
+	
+	GSEMenuMouseClick();
 	
 	GWorldNewHide();
 	GLoadGameHide();
@@ -5401,6 +5804,8 @@ Returns: -
 */
 void GNewGame_PreviewScene() {
 	
+	GSEMenuMouseClick();
+	
 	GMainMenuHide();
 	
 }
@@ -5418,9 +5823,9 @@ void GNewGame_UnPreviewScene() {
 	
 	if(event_type == EVENT_CLICKUP) return;
 	
-	GMainMenuShow();
+	//	GSEMenuMouseClick();
 	
-	wait(1);	
+	GMainMenuShow();
 	
 }
 
@@ -5436,6 +5841,8 @@ Returns: -
 void GLOADGAMESTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(LOADGAMESTR_Scaler > 0) {
 		
@@ -5458,6 +5865,8 @@ void GLOADGAMESTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	LOADGAMESTR_Scaler += 1;
 	FillFromPool(files_list_LOADGAMESTR, files_list_LOADGAMESTR_Pool, 8, LOADGAMESTR_Scaler);
 	
@@ -5475,6 +5884,8 @@ Returns: -
 void GSKYSTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(SKYSTR_Scaler > 0) {
 		
@@ -5498,6 +5909,8 @@ void GSKYSTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	SKYSTR_Scaler += 1; // ++
 	FillFromPool(files_list_SKYSTR, files_list_SKYSTR_Pool, 4, SKYSTR_Scaler);
 	
@@ -5515,6 +5928,8 @@ Returns: -
 void GGROUNDSTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
 	
 	if(GROUNDSTR_Scaler > 0) {
 		
@@ -5538,6 +5953,8 @@ void GGROUNDSTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	GROUNDSTR_Scaler += 1;
 	FillFromPool(files_list_GROUNDSTR, files_list_GROUNDSTR_Pool, 4, GROUNDSTR_Scaler);
 	
@@ -5556,11 +5973,13 @@ void GSwitchNewGameScreen ( var ID ) {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
+	GSEMenuMouseClick();
+	
 	if( (int) ID == 1) {
 		
 		if(is(NewGame_Screen3,SHOW)) {
 			
-			if(WorldType == 1) { // Dynamic world was picked up before
+			if(WorldType == WORLD_DYNAMIC) { // Dynamic world was picked up before
 				
 				reset(NewGame_ScreenStatic_Step1,SHOW);
 				set(NewGame_ScreenDyn_Step1,SHOW);
@@ -5586,6 +6005,8 @@ void GSwitchNewGameScreen ( var ID ) {
 			reset(files_list_GROUNDSTR,SHOW);
 			reset(files_list_SKYSTR,SHOW);
 			
+			set(NewGame_PreviewButton,SHOW);
+			
 			return;
 			
 		}
@@ -5594,6 +6015,7 @@ void GSwitchNewGameScreen ( var ID ) {
 			
 			reset(NewGame_ScreenDyn_Step1,SHOW);
 			reset(NewGame_ScreenStatic_Step1,SHOW);
+			reset(NewGame_PreviewButton,SHOW);
 			
 			set(NewGame_Screen1,SHOW);
 			reset(NewGame_ScreenRight,SHOW);
@@ -5615,7 +6037,7 @@ void GSwitchNewGameScreen ( var ID ) {
 		
 		if(is(NewGame_Screen1,SHOW)) {
 			
-			if(WorldType == 1) { // Dynamic world was picked up before
+			if(WorldType == WORLD_DYNAMIC) { // Dynamic world was picked up before
 				
 				reset(NewGame_ScreenStatic_Step1,SHOW);
 				set(NewGame_ScreenDyn_Step1,SHOW);
@@ -5637,6 +6059,7 @@ void GSwitchNewGameScreen ( var ID ) {
 			
 			set(NewGame_ScreenRight,SHOW);
 			set(NewGame_ScreenLeft,SHOW);
+			set(NewGame_PreviewButton,SHOW);
 			
 			return;
 			
@@ -5646,11 +6069,12 @@ void GSwitchNewGameScreen ( var ID ) {
 			
 			reset(NewGame_ScreenDyn_Step1,SHOW);
 			reset(NewGame_ScreenStatic_Step1,SHOW);
+			reset(NewGame_PreviewButton,SHOW);
 			
 			set(NewGame_Screen3,SHOW);
 			reset(NewGame_ScreenRight,SHOW);
 			
-			if(!mystymood_active && WorldType == 1) LoadMystymood(1,1);
+			if(!mystymood_active && WorldType == WORLD_DYNAMIC) LoadMystymood(1,1);
 			
 			set(InputBox_GROUNDSTR,SHOW);
 			set(InputBox_SKYSTR,SHOW);
@@ -5683,6 +6107,285 @@ void GNewGame_ChooseWorld(var ID) {
 	
 	WorldType = (int) ID;
 	
+	//	GSEMenuMouseClick();
+	
 	GSwitchNewGameScreen(2);
 	
 }
+
+/*
+--------------------------------------------------
+void GToggleMusicPlayerRandomize()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GToggleMusicPlayerRandomize() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
+	
+	if(button_state(MusicPlayer,5,-1)) mpRandomize = 1;
+	else mpRandomize = 0;
+	
+}
+
+/*
+--------------------------------------------------
+void GBlackboardAlphaFade()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GBlackboardAlphaFade() {
+	
+	BBTranslucency = Blackboard->alpha;
+	Blackboard->alpha = 20;
+	
+}
+
+/*
+--------------------------------------------------
+void GBlackboardAlphaRestore()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GBlackboardAlphaRestore() {
+	
+	if(BBTranslucency) Blackboard->alpha = BBTranslucency;
+	
+}
+
+/*
+--------------------------------------------------
+void GToggleStatistics()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GToggleStatistics() {
+	
+	if(event_type == EVENT_RELEASE) return;
+
+	if( is(StatsPanel,SHOW) )   {
+		
+		reset(StatsPanel,SHOW);
+		reset(Stats,SHOW);
+		
+		return;
+		
+	}
+	
+	StatsPanel->pos_x = 50;
+	StatsPanel->pos_y = 50;
+	
+	GSEMenuMouseClick();
+	
+	set(StatsPanel,SHOW);
+	set(Stats,SHOW);
+	
+	while( is(StatsPanel,SHOW) ) {
+		
+		ConvertToCTFormat((StatsPanel.pstring) [0], CountObjects, MAX_OBJECTS);
+		ConvertToCTFormat((StatsPanel.pstring) [1], CountParticles, MAX_PARTICLES);
+		ConvertToCTFormat((StatsPanel.pstring) [2], CountLights, MAX_LIGHTS);
+		ConvertToCTFormat((StatsPanel.pstring) [3], CountSounds, MAX_SOUNDS );
+		ConvertToCTFormat((StatsPanel.pstring) [4], CountSprites, MAX_SPRITES);
+		ConvertToCTFormat((StatsPanel.pstring) [5], CountObjects+CountParticles+CountLights+CountSounds+CountSprites, MAX_TOTAL);
+		
+		StatsPanel->pos_x = Stats->pos_x + 266;
+		StatsPanel->pos_y = Stats->pos_y + 66;
+		
+		wait(1);
+		
+	}
+}
+
+/*
+--------------------------------------------------
+void GInDevHide()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GInDevHide() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	reset(InDev,SHOW);
+	
+}
+
+/*
+--------------------------------------------------
+void GInDevShow()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GInDevShow() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	GSEMenuMouseClick();
+	
+	set(InDev,SHOW);
+	
+}
+
+
+/*
+--------------------------------------------------
+void GSEMenuMouseHover()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GSEMenuMouseHover() {
+	
+	proc_kill(4);
+	
+	str_cpy(sndConnectorShared,PATH_SOUNDS_); // STRING specifically for sndConnectorShared
+	str_cat(sndConnectorShared,SE_MM_hover);
+	
+	sndPlay(sndConnectorShared);
+	
+}
+
+/*
+--------------------------------------------------
+void GSEMenuMouseClick()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void GSEMenuMouseClick() {
+	
+	proc_kill(4);
+	
+	str_cpy(sndConnectorShared,PATH_SOUNDS_);
+	str_cat(sndConnectorShared,SE_MM_click);
+	
+	sndPlay(sndConnectorShared);
+	
+}
+
+/*
+--------------------------------------------------
+void GPanelMoveAlpha(PANEL *p, var mode, var oldpos, var newpos, var oldAlpha, var newAlpha, var speed) {
+	
+	Desc:
+
+	Returns: -
+	--------------------------------------------------
+	*/
+	void GPanelMoveAlpha(PANEL *p, var mode, var oldpos, var newpos, var oldAlpha, var newAlpha, var speed) {
+		
+		while(!p) wait(1);
+		
+		speed = abs(speed);
+		if( speed <= 0) speed = 5;
+		
+		int OldFlag = is(p,TRANSLUCENT), OldAlpha = p->alpha;
+		
+		if(oldpos > newpos) {
+			
+			var swapped = oldpos + newpos;
+			oldpos = swapped - oldpos;
+			newpos = swapped - newpos;
+			
+		}
+
+		set(p,TRANSLUCENT);
+
+		if(mode == X) { // Move along the x-axis
+
+			p.pos_x = oldpos;
+
+			while(p.pos_x <= newpos) {
+				
+				p.pos_x += speed * time_step;
+				p.alpha = GetPercent(p.pos_x, newpos);
+				
+				wait(1);
+			}
+
+			p.pos_x = newpos;
+			
+		}
+		
+		else { // y-axis
+			
+			p.pos_y = oldpos;
+
+			while(p.pos_y <= newpos) {
+				
+				p.pos_y += speed * time_step;
+				p.alpha = GetPercent(p.pos_y, newpos);
+				
+				wait(1);
+			}
+
+			p.pos_y = newpos;
+			
+			
+		}
+		
+		p.alpha = GetPercent(1,1); // = 100%
+		
+		if( !OldFlag ) {
+			
+			p->alpha = OldAlpha;
+			reset(p,TRANSLUCENT);
+			
+		}
+		
+	}
+
+	/*
+	--------------------------------------------------
+	void GPanelMoveAlphaX(PANEL *Panel, var oldx, var newx, var speed)
+
+	Desc:
+
+	Returns: -
+	--------------------------------------------------
+	*/
+	void GPanelMoveAlphaX(PANEL *Panel, var oldx, var newx, var speed) {
+		
+		GPanelMoveAlpha(Panel,X,oldx,newx,0,0,speed);   
+		
+	}
+
+	/*
+	--------------------------------------------------
+	void GPanelMoveAlphaY(PANEL *Panel, var oldy, var newy, var speed)
+
+	Desc: 
+
+	Returns: -
+	--------------------------------------------------
+	*/
+	void GPanelMoveAlphaY(PANEL *Panel, var oldy, var newy, var speed) {
+		
+		GPanelMoveAlpha(Panel,Y,oldy,newy,0,0,speed);
+		
+	}

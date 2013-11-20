@@ -1313,6 +1313,8 @@ void fireSsaoEvent (EVENT ev)
 // startup
 void _SSAO() {
    
+   while( !KERNEL_IS_RUNNING ) wait(1);
+   
 	// strings
 
 	int i;
@@ -1337,7 +1339,7 @@ void _SSAO() {
 	
 	while(proc_status(loadSsaoShaders)) wait(1);
 	
-	runSsao();
+	runSsao(SSAO_MODE_SOURCE);
 	
 }
 

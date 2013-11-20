@@ -21,6 +21,7 @@ its name implies.
 	#include <acknex.h> // standard engine objects
 	#include <d3d9.h> // Shade-C
 	#include <strio.c> // for the scripting language
+	#include <particles.c> // cool effects such as snow()
 	
 	//////////////////////////////////////////////////////////////
 	#define PRAGMA_PATH "./src"

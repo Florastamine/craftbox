@@ -64,6 +64,8 @@ void OpenDebug() {
 	
 	if(!is(Framerate,SHOW)) set(Framerate,SHOW);
 	
+	warn_level = 6;
+	
 	if (!on_f2) on_f2 = def_save;
 	if (!on_f3) on_f3 = def_load;
 	if (!on_f4) on_f4 = def_video;
@@ -78,13 +80,21 @@ void OpenDebug() {
 	//		if (!on_close) on_close = def_exit;
 	
 	while(1) {
-	   
-	   first = total_frames;
-	   wait(-1);
-	   FPS = total_frames - first;
-	   
-	   wait(1);
-	   
+		
+		//		DEBUG_VAR(moon_scale_fac,10);
+		//		DEBUG_VAR(time_speed_night,30);
+		//		DEBUG_VAR(time_speed,50);
+		//		DEBUG_VAR(night_sky_scale_x,70);
+		//		DEBUG_VAR(night_sky_speed_x,90);
+		//		DEBUG_VAR(sun_grow_z,110);
+		DEBUG_VAR(TerrainEditMode,50);
+//		
+//		first = total_frames;
+//		wait(-1);
+//		FPS = total_frames - first;
+		
+		wait(1);
+		
 	}
 	
 }

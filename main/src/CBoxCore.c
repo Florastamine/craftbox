@@ -26,6 +26,12 @@ http://mp3.zing.vn/bai-hat/Viva-la-Vida-Coldplay/ZW60CI7D.html
 http://mp3.zing.vn/bai-hat/I-m-On-One-DJ-Khaled-ft-Drake-Rick-Ross/ZWZCCCU9.html
 http://en.wikipedia.org/wiki/MIT_License
 http://en.wikipedia.org/wiki/LGPL
+http://en.wikipedia.org/wiki/List_of_colors_(compact)
+http://www.woim.net/song/9727/trieu-doa-hoa-hong.html
+http://www.woim.net/song/6102/late-autumn.html
+http://www.woim.net/song/5029/flying-petals.html
+http://www.woim.net/song/61506/im-here.html
+http://naturesoundsfor.me/Snowstorm
 
 - Objects
 - Sounds
@@ -41,6 +47,903 @@ http://en.wikipedia.org/wiki/LGPL
 
 //#include "CBoxDDecl.c"
 #include "CBoxAct.c"
+
+/*
+--------------------------------------------------
+void place_mesh_on_ground(ENTITY* _ent, int _dist)
+
+Desc:
+By PadMalcom (http://www.opserver.de/ubb7/ubbthreads.php?ubb=showflat&Number=425689#Post425689)
+
+Returns: -
+--------------------------------------------------
+*/
+void place_mesh_on_ground(ENTITY* _ent, int _dist) {
+	
+	var nVertexCount = ent_status(_ent, 0);
+	var i;
+	VECTOR* vecTemp;
+	CONTACT* c;
+	for (i=1; i<=nVertexCount; i++) {
+		c = ent_getvertex(_ent, NULL, i);
+		if (c != NULL) {
+			if(c_trace(	vector(c.v.x, c.v.z, c.v.y + 1024),
+			vector(c.v.x, c.v.z, c.v.y - 1024),
+			IGNORE_MODELS | IGNORE_SPRITES | IGNORE_PASSABLE | IGNORE_PASSENTS | USE_POLYGON))
+			{
+				c.v.y = target.z+_dist;
+			}
+			ent_setvertex(_ent, c, i);
+		}
+	}
+}
+
+/*
+--------------------------------------------------
+int range(x,y,z)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+int range(x,y,z) {
+	z+=y;
+	if(x >= y && x <= z) return 1;
+	return 0;
+}
+
+/*
+--------------------------------------------------
+COLOR *CopyColor(var r, var g, var b)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+COLOR *CopyColor(var r, var g, var b) {
+	
+	WriteLog("[ ] Copying COLOR* struct...");
+	NewLine();
+	
+	COLOR *ret;
+	ret.red = abs(r);
+	ret.green = abs(g);
+	ret.blue = abs(b);
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+	return ret;
+	
+}
+
+/*
+--------------------------------------------------
+void TDeform_changeBrushSingle()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+//void TDeform_changeBrushSingle() { bType = B_SIBGLE; }
+
+/*
+--------------------------------------------------
+void TDeform_changeBrushMultiple()
+
+Desc:
+
+Returns: - 
+--------------------------------------------------
+*/
+//void TDeform_changeBrushMultiple() { bType = B_MULT;	}
+
+/*
+--------------------------------------------------
+void TDeform_changeBrushMultipleSmooth()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+//void TDeform_changeBrushMultipleSmooth() { bType = B_MULT_SMOOT; }
+
+/*
+--------------------------------------------------
+void TDeform_changeBrushRaise()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_changeBrushRaise() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if( button_state(TerrainToolbar,2,-1)) button_state(TerrainToolbar,2,0); // The lower button
+	bHeight = DEF_UPPER;
+	
+}
+
+/*
+--------------------------------------------------
+void TDeform_changeBrushLower()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_changeBrushLower() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if (button_state(TerrainToolbar,1,-1)) button_state(TerrainToolbar,1,0); // The raise button
+	bHeight = DEF_LOWER;
+	
+}
+
+/*
+--------------------------------------------------
+void TDeform_deform_terrain()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_deform_terrain() // this void runs as soon as the player clicks the terrain with the left or right mouse button
+{
+	
+	if(!TerrainEditMode) return;
+
+	VECTOR target_coords;
+	VECTOR temp;
+	int ping=1;
+	int vertex_number;  
+	VECTOR vertex_pos;
+
+	while (mouse_left)
+	{
+		vec_set(target_coords, temp_pos);		
+		
+		/*
+		
+		if(mouse_left) bHeight = DEF_UPPER;				
+		else bHeight = DEF_LOWER;
+		
+		*/
+		
+		if(bType == B_SIBGLE) TDeform_single();
+		if(bType == B_MULT) TDeform_multiple();
+		if(bType == B_MULT_SMOOT) TDeform_multipleSmooth();
+		
+		//just_testing = my.skill1;
+		wait (1);
+	}
+
+
+}
+
+/*
+--------------------------------------------------
+void on_level_event(percent)
+
+Desc: A modified version of the on_level_event that is shown in the 3D Gamestudio manual.
+
+Returns: -
+--------------------------------------------------
+*/
+void on_level_event(percent)
+{
+	
+	set(pLoadBar,SHOW | LIGHT);   // switch load bar on
+	pLoadBar.pos_y = screen_size.y - 40;
+	pLoadBar.size_x = GetPercent( percent,100 ) * screen_size.x/100; // because max percent = 100
+	pLoadBar.size_y = 30;
+	
+	if (percent >= 100) reset(pLoadBar,SHOW);
+	pLoadBar.size_x = 0;
+	
+}
+
+/*
+--------------------------------------------------
+void TDeform_single()
+
+Desc: Deform Single Vertex, no smooth
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_single()
+{
+
+	proc_kill(4);
+
+	var vertex_number = ent_nextvertex(my,temp_pos);
+	CONTACT* c = ent_getvertex(my,NULL,vertex_number);     
+	
+	if(bHeight == DEF_UPPER)
+	{
+		c.z += sizeh * brush_speed;  // increase the vertex height
+		c.v = NULL;
+		if(c.z <= tMaxHeight) ent_setvertex(my,c,vertex_number);     // update the mesh
+		
+		else if(bHlimit)
+		{
+			c.z=tMaxHeight;
+			ent_setvertex(my,c,vertex_number);     // update the mesh		
+		}
+	}
+	else if(bHeight == DEF_LOWER)
+	{
+		c.z -= sizeh * brush_speed;  // increase the vertex height
+		c.v = NULL; 
+		if(c.z >= 0) ent_setvertex(my,c,vertex_number);     // update the mesh
+		else if(bHlimit)
+		{	
+			c.z=0;
+			ent_setvertex(my,c,vertex_number);    // update the mesh		
+		}
+		
+	}
+
+}
+
+/*
+--------------------------------------------------
+void TDeform_multiple()
+
+Desc:Deform Multiple Vertex no smooth
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_multiple()
+{
+
+	proc_kill(4);
+	proc_mode = PROC_EARLY;
+	
+	VECTOR vertex_pos;
+	int ping=1;
+
+	CONTACT* c;    
+
+	while(ping <= ent_status(TerrainEnt,1))
+	{	 		
+		vec_for_vertex(vertex_pos,TerrainEnt,ping);	
+		
+		if(vec_dist(vertex_pos,temp_pos)<=bSize)
+		{
+			c = ent_getvertex(TerrainEnt,NULL,ping);
+			
+			if(bHeight == DEF_UPPER)
+			{
+				c.z += sizeh * brush_speed;  // increase the vertex height
+				c.v = NULL;
+				
+				if(c.z <= tMaxHeight) ent_setvertex(my,c,ping);    			// update the mesh					
+				else if(bHlimit)
+				{
+					c.z = tMaxHeight;
+					ent_setvertex(my,c,ping);    			// update the mesh					
+					
+				}
+			}
+			else if(bHeight == DEF_LOWER)
+			{
+				
+				c.z -= sizeh * brush_speed;  // increase the vertex height
+				c.v = NULL;
+				
+				if(c.z >= 0) ent_setvertex(my,c,ping);    			// update the mesh					
+				else if(bHlimit)
+				{
+					c.z = 0;
+					ent_setvertex(my,c,ping);    			// update the mesh					
+					
+				}
+				
+				
+				
+			}
+		}		
+		ping +=1;				
+	}
+
+}
+
+/*
+--------------------------------------------------
+void TDeform_multipleSmooth()
+
+Desc: Deform multiple vertices with smooth
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_multipleSmooth()
+{
+
+	proc_kill(4);
+	proc_mode = PROC_EARLY;
+
+	int ping=1;
+	VECTOR vertex_pos;
+	CONTACT* c;
+
+	while(ping <= ent_status(TerrainEnt,1))
+	{	
+		vec_for_vertex(vertex_pos,TerrainEnt,ping);			
+		
+		if(vec_dist(vertex_pos,temp_pos)<=bSize)
+		{	
+			
+			c = ent_getvertex(my,NULL,ping);
+			
+			if(bHeight == DEF_UPPER)
+			{	
+				
+				c.z += (sizeh/vec_dist(vertex_pos,temp_pos)) * brush_speed;
+				c.v = NULL;			
+				
+				if(c.z <= tMaxHeight) ent_setvertex(my,c,ping);   		 	// update the mesh			
+				else if(bHlimit)
+				{
+					c.z = tMaxHeight;
+					c.v = NULL;			
+					ent_setvertex(my,c,ping);
+				}
+			}
+			else if(bHeight == DEF_LOWER)
+			{
+				c.z -= (sizeh/vec_dist(vertex_pos,temp_pos)) * brush_speed;
+				c.v = NULL;			
+				
+				if(c.z >= 0) ent_setvertex(my,c,ping);   		 	// update the mesh			
+				else if(bHlimit)
+				{
+					c.z = 0;
+					c.v = NULL;			
+					ent_setvertex(my,c,ping);
+				}
+				
+			}
+			
+			
+			
+		}			
+		ping +=1;		
+		
+	}	
+}
+
+/*
+--------------------------------------------------
+void TDeform_saveterrain(ENTITY *terrain)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_saveterrain(ENTITY *terrain)
+{
+	
+	proc_kill(4);
+	
+	WriteLog("[ ] Saving terrain data to ");
+	
+	while(!terrain) wait(1);
+	
+	STRING *savestr = "#400";
+	
+	str_cpy(savestr,TERRAINDATA);
+	str_cat(savestr,terrain->type ); // 4 = ".hmp";
+	str_cat(savestr,".txt");
+	
+	WriteLog(savestr);
+	WriteLog(", please wait.");
+	NewLine();
+	
+	var terrainHandle = file_open_write(savestr);
+	if(!terrainHandle) {
+		
+		WriteLog("!! [ERROR] Cannot open ");
+		WriteLog(savestr);
+		WriteLog(" for writing terrain geometry data. Operation aborted.");
+		NewLine();
+		
+		return;
+		
+	}
+	
+	VECTOR mesh_coords;
+	var index = 0;
+	while(index <= total_vertices) // go through all the vertices
+	{
+		vec_for_mesh(mesh_coords.x, terrain, index); // and get their z coordinates		
+		file_var_write(terrainHandle,mesh_coords.z);
+		
+		index++;
+	}
+	
+	var _size = file_length(terrainHandle)*1024; // original in bytes, convert to KBs
+	
+	file_close(terrainHandle);
+	
+	WriteLog("[X] Task completed, file size: ");
+	WriteLog(_size);
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
+void TDeform_LoadHeightFrom(ENTITY *terrain)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void TDeform_LoadHeightFrom(ENTITY *terrain) {
+	
+	proc_kill(4);
+	
+	WriteLog("[ ] Attempting to load terrain data from ");
+	
+	while(!terrain) wait(1);
+	
+	STRING *loadstr = "#400";
+	
+	str_cpy(loadstr,TERRAINDATA);
+	str_cat(loadstr,terrain->type);
+	str_cat(loadstr,".txt");
+	
+	WriteLog(loadstr);
+	WriteLog(", please wait.");
+	NewLine();
+
+	if(file_exists(loadstr))  // previously saved data exists?
+	{
+		
+		var terrainHandle = file_open_read(loadstr);
+		
+		var index = 0;
+		while(index <= total_vertices) // then load the previously stored height values and apply them to the terrain
+		{
+			// no need to load the x and y coordinates of the terrain - they can't be changed
+			vec_to_mesh(vector (0, 0, file_var_read(terrainHandle) ), terrain, index);
+			index += 1;
+			
+		}
+		
+		file_close(terrainHandle);
+		} else {
+		
+		WriteLog("Failed to open ");
+		WriteLog(loadstr);
+		WriteLog(" for passing geometry data to terrain. Operation aborted.");
+		NewLine();
+		
+	}
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
+STRING *StringForBool(var in)
+
+Desc: This was created specifically for WriteLogHeaders()...
+
+Returns: Converted input.
+--------------------------------------------------
+*/
+STRING *StringForBool(var in) {
+	
+	if(in) return str_create("Yes");
+	else return str_create("No");
+	
+}
+
+/*
+--------------------------------------------------
+void WriteLogHeaders()
+
+Desc: 
+
+Returns: -
+--------------------------------------------------
+*/
+void WriteLogHeaders() {
+	
+	// couldn't use plugins here so I just evaluate some 3D Gamestudio's variables.
+	NewLine();
+	
+	WriteLog("-- Log file opened at ");
+	WriteLog("",sys_hours);
+	WriteLog(": ",sys_minutes);
+	WriteLog(": ",sys_seconds);
+	WriteLog(",",sys_day);
+	WriteLog("/ ",sys_month);
+	WriteLog("/ ",sys_year);
+	NewLine();
+	
+	switch(sys_winversion) {
+		
+		/*
+		
+		Range:
+		1 - Windows 98 SE
+		2 - Windows ME
+		3 - Windows 2000
+		4 - Windows 2003
+		5 - Windows XP 
+		6 - Windows Vista or above 
+		
+		*/
+		
+		case 1: WriteLog("Windows 98/98SE detected."); break;
+		case 2: WriteLog("Windows ME detected."); break;
+		case 3: WriteLog("Windows 2000 detected."); break;
+		case 4: WriteLog("Windows 2003 detected."); break;
+		case 5: WriteLog("Windows XP detected."); break;
+		case 6: WriteLog("Windows Vista/7/8 detected."); break;
+		default: WriteLog("Linux or another operating system detected."); break;
+		
+	}
+	
+	NewLine();
+	
+	WriteLog("Allocated memory: ",sys_memory*1024);
+	WriteLog("KB");
+	NewLine();
+	
+	WriteLog("Graphic card shader version (PSVS): ");
+	WriteLog( str_for_num(str_create( d3d_shaderversion ), d3d_shaderversion ) );
+	
+	NewLine();
+	
+	WriteLog("Graphic card features: ");
+	NewLine();
+	
+	WriteLog("Hardware T&L: "); WriteLog( StringForBool(d3d_caps & 1) ); NewLine();
+	WriteLog("Stencil shadows: "); WriteLog( StringForBool(d3d_caps & 4) ); NewLine();
+	WriteLog("Compressed textures: "); WriteLog( StringForBool(d3d_caps & 8) ); NewLine();
+	
+	WriteLog("Higher features: ");
+	WriteLog(StringForBool(d3d_caps & 16));
+	WriteLog(",");
+	WriteLog(StringForBool(d3d_caps & 32));
+	
+	NewLine();	
+}
+
+
+/*
+--------------------------------------------------
+int GetPercent(var consumed, var total)
+
+Desc: Calculate the percent (%) based on "consumed" and "total".
+
+Returns: Percent (%).
+--------------------------------------------------
+*/
+int GetPercent(var consumed, var total) {
+	
+	return (abs(consumed)*100)/abs(total);
+	
+}
+
+/*
+--------------------------------------------------
+void ConvertToCTFormat(STRING *dest, var TrackVariable, var TotalVariable )
+
+Desc: Takes TrackVariable and TotalVariable as input, convert them into 
+the following format:
+
+"(TrackVariable/TotalVariable) (% used) "
+
+then sends the result back to dest.
+
+Call it once to let dest be static, or place in a loop 
+to dynamically update dest based on TrackVariable and TotalVariable's changes.
+
+This is very useful, f.e. you don't have to define several texts for numbers/strings/symbols, and align them manually, which is very ugly and time-consuming.
+
+Returns: -
+--------------------------------------------------
+*/
+void ConvertToCTFormat(STRING *dest, var TrackVariable, var TotalVariable ) {
+	
+	STRING *s = "#400";
+	
+	str_for_num(dest,TrackVariable);
+	str_cat(dest,"/");
+	str_cpy(s,dest);
+	
+	s = str_for_num(s,TotalVariable);
+	str_cat(dest,s);
+	str_cat(dest," (");
+	
+	s = str_for_int(s,GetPercent(TrackVariable,TotalVariable));
+	str_cat(dest,s);
+	str_cat(dest,"%)");
+	
+	
+}
+
+/*
+--------------------------------------------------
+void WriteToBlackboard(STRING *str, STRING *str2, var duration) 
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void WriteToBlackboard(STRING *str, STRING *str2, var duration) {
+	
+	if(proc_status(WriteToBlackboard)) return; // avoid proc_kill(4).
+	
+	WriteLog("[ ] Writing to blackboard -> ");
+	
+	var dy = BORDER * 2; // adjust the destination y here
+	
+	if(!str_len (str) && !str_len(str2) ) {
+		
+		WriteLog("empty");
+		NewLine();
+		
+		return;
+		
+	}
+	
+	TEXT *notistr = txt_create(2,1);
+	while(proc_status( txt_create )) wait(1);
+	
+	Blackboard->pos_x = BORDER;
+	Blackboard->pos_y = -bmap_height(Blackboard->bmap);
+	
+	notistr->font = font_create("Arial#23b");
+	notistr->pos_x = Blackboard.pos_x + BORDER;
+	notistr->pos_y = Blackboard.pos_y + BORDER*2.5;
+	layer_sort(notistr,Blackboard->layer+1);
+	
+	str_cpy( (notistr.pstring) [0], str);
+	str_cpy( (notistr.pstring) [1], str2);
+	
+	set(Blackboard,SHOW);
+	set(notistr,SHOW);
+	
+	Blackboard->alpha = 0;
+	
+	while(Blackboard->pos_y <= dy ) {
+		
+		Blackboard->pos_y += 25 * time_step;
+		notistr->pos_y = Blackboard->pos_y;
+		Blackboard->alpha = GetPercent(Blackboard->pos_y, dy);
+		
+		wait(1);
+		
+	}
+	
+	wait(- abs(duration) );
+	
+	while(Blackboard->pos_y >= -bmap_height(Blackboard->bmap) ) {
+		
+		Blackboard->pos_y -= 25 * time_step;
+		notistr->pos_y = Blackboard->pos_y;
+		
+		Blackboard->alpha = 100 - GetPercent(Blackboard->pos_y, -bmap_height(Blackboard->bmap) );
+		
+		wait(1);
+		
+	}
+	
+	reset(Blackboard,SHOW);
+	reset(notistr,SHOW);
+	
+	str_remove( (notistr.pstring) [0] );
+	str_remove( (notistr.pstring) [1] );
+	txt_remove(notistr);
+	
+	NewLine();
+	WriteLog("[X] Task completed.");
+	
+}
+
+/*
+--------------------------------------------------
+void ToggleMusicPlayer()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void ToggleMusicPlayer() {
+	
+	if(is(MusicPlayer,SHOW)) {
+		
+		reset(MusicPlayer,SHOW);
+		reset(MusicPlayerInfo,SHOW);
+		
+		return;
+		
+	}
+	
+	set(MusicPlayer,SHOW);
+	set(MusicPlayerInfo,SHOW);
+	
+	while(is(MusicPlayer,SHOW)) {
+		
+		MusicPlayerInfo.pos_x = MusicPlayer.pos_x + 170;
+		MusicPlayerInfo.pos_y = MusicPlayer.pos_y + 130;
+		
+		wait(1);
+		
+	}	
+}
+
+/*
+--------------------------------------------------
+void mpLoad(STRING *scan_path, STRING *scan_ext)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpLoad(STRING *scan_path, STRING *scan_ext) {
+	
+	WriteLog("[ ] Scanning for external music...");
+	
+	STRING *_scan_path = str_create(scan_path); // Prevent modification of the original string
+	
+	mpSongs = txt_for_dir(mpPool, str_cat(_scan_path,scan_ext) );
+	while(proc_status(txt_for_dir)) wait(1);
+	
+	str_remove(_scan_path);
+	
+	WriteLog(", found " , (var) mpSongs ); // 
+	WriteLog(" tracks.");
+	NewLine();
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
+void mpPlay(STRING *songName)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpPlay(STRING *songName) {
+	
+	WriteLog("[ ] Now playing: ");
+	
+	if(media_playing(mpHandle)) media_stop(mpHandle);
+	if(mpCount > mpSongs - 1 || mpCount < 0) return;
+	
+	str_cpy(_mpSongTemp,songName);
+	str_trunc(_mpSongTemp, str_len(EXT_MUSIC)-1 ); // because our four chars are: .ogg
+	
+	WriteLog(_mpSongTemp);
+	NewLine();
+	
+	str_cpy(mpSongTemp,PATH_MUSIC);
+	str_cat(mpSongTemp,songName);
+	
+	str_for_num(_mpCount, mpCount); // strcpy is unnecessary here
+	
+	mpHandle = media_play(mpSongTemp,NULL,VOL_MUSIC);
+	
+	while(media_playing(mpHandle)) wait(1);
+	mpNext();
+	
+}
+
+/*
+--------------------------------------------------
+void mpNext() 
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpNext() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(mpCount < mpSongs) {
+		
+		if(mpRandomize) mpCount = (int) random(mpSongs);
+		else mpCount += 1;
+		mpPlay( (mpPool.pstring)[mpCount] );
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void mpPrev()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpPrev() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(mpCount >= 0) {
+		
+		if(mpRandomize) mpCount = (int) random(mpSongs);
+		else mpCount -= 1;
+		mpPlay( (mpPool.pstring)[mpCount] );
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void mpPause() 
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpPause() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(media_playing(mpHandle)) {
+		
+		media_pause(mpHandle);
+		mpPauseMark = 1;
+		
+	}
+	
+}
+
+/*
+--------------------------------------------------
+void mpResume()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void mpResume() {
+	
+	if(event_type == EVENT_RELEASE) return;
+	
+	if(mpPauseMark) media_start(mpHandle);
+	
+}
 
 /*
 --------------------------------------------------
@@ -214,6 +1117,15 @@ int GenerateWaypoint()
 	
 }
 
+int GenerateTerrain() {
+	
+	TerrainEnt = my;	
+	total_vertices = ent_status(my,1);
+	my.emask |= ENABLE_TOUCH|ENABLE_CLICK|ENABLE_RIGHTCLICK|DYNAMIC;	
+	my.event = TDeform_deform_terrain;	
+	
+}
+
 /*
 --------------------------------------------------
 int GenerateSound()
@@ -309,7 +1221,7 @@ int GenerateLight() {
 		
 		if(my.LightMode == Disco) { // Lights that change its r/g/b values continuously.
 			
-			random_seed(0);
+			//			random_seed(0);
 			
 			my.red = random(255);
 			my.green = random(255);
@@ -489,7 +1401,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp.ObjectDynamic = 0; // This is a static object
 		tmp.ObjectPhysics = 0; // And physics aren't enabled by default.		
 		
-		LoadCBOIF(tmp);
+		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -529,6 +1441,8 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 			
 			case part_composition: 
 			tmp = ent_create("desktop_effect.png",temp_pos,emit_composition); break;
+			
+			return tmp;
 			
 			default:
 			
@@ -616,7 +1530,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		LoadCBOIF(tmp);
+		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -641,7 +1555,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		LoadCBOIF(tmp);
+		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -653,7 +1567,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 	
 	if(TEMP_OBJECT_TYPE == Terrain) {
 		
-		tmp = ent_create(TEMPSTR,temp_pos,NULL);
+		tmp = ent_create(TEMPSTR,temp_pos,GenerateTerrain);
 		
 		while(!tmp) wait(1);
 		WriteLog("[ ] Finished creating the temporary terrain object. Passing values...");
@@ -668,7 +1582,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		LoadCBOIF(tmp);
+		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -696,7 +1610,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = ObjectNode;
 		
-		LoadCBOIF(tmp);
+		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -821,17 +1735,19 @@ it was partly rewritten and used as the base code for craftbox.
 Returns: -
 --------------------------------------------------
 */
-
 void FollowPointer() {
-
-	proc_mode = PROC_LATE  ; // I'm so stupid...
+	
+	if(proc_status(FollowPointer)) return;
 
 	WriteLog("[ ] Setting up the pointer...");
 	NewLine();
+	
+	proc_mode = PROC_LATE;
 
 	if(!KERNEL_IS_RUNNING) {
 		
 		_beep();
+		
 		WriteLog("!! [ERROR] You must first start the kernel before FollowPointer() can be executed.");
 		NewLine();
 		
@@ -839,11 +1755,22 @@ void FollowPointer() {
 		
 	}
 
+	marker = me;
+	set(marker,POLYGON | PASSABLE | UNTOUCHABLE | TRANSLUCENT);
+	marker.emask &= ~ENABLE_TOUCH|ENABLE_CLICK|ENABLE_RIGHTCLICK|DYNAMIC;		
+	marker.event = TDeform_deform_terrain;	
+	marker.alpha = 60;
+	Scale(marker,SCALE_MARKER);
+	
+	VECTOR vv0; //Center
+	VECTOR vv1; //left
+	VECTOR vv2; //right
+	VECTOR vv3; //Up
+	VECTOR vv4; //Down
 
-	fpsf_marker = me;
-	set(fpsf_marker,PASSABLE | POLYGON);
+	var v0, v1, v2, v3, v4;
 
-	while(KERNEL_IS_RUNNING) {
+	while( KERNEL_IS_RUNNING  ) {
 		
 		cpos1.x = mouse_pos.x;
 		cpos1.y = mouse_pos.y;
@@ -851,20 +1778,49 @@ void FollowPointer() {
 		vec_for_screen(cpos1,camera);
 		cpos2.x = mouse_pos.x;
 		cpos2.y = mouse_pos.y;
-		cpos2.z = 200000;
+		cpos2.z = pow(10,6);
 		vec_for_screen(cpos2,camera);
-
+		
 		c_trace(cpos1.x,cpos2.x,
-		IGNORE_ME | IGNORE_PASSABLE | IGNORE_SPRITES | IGNORE_PUSH | 
+		IGNORE_ME | IGNORE_YOU | IGNORE_PASSABLE | IGNORE_SPRITES | IGNORE_PUSH | 
 		USE_BOX | USE_POLYGON);
 		
-		vec_set(fpsf_marker.x,hit.x);
-		vec_set(fpsf_marker.y,hit.y);
-		vec_set(fpsf_marker.z,hit.z);
+		vec_set(marker.x,hit.x);
+		vec_set(marker.y,hit.y);
+		vec_set(marker.z,hit.z);
 		
 		vec_set(temp_pos.x,hit.x);
 		vec_set(temp_pos.y,hit.y);
 		vec_set(temp_pos.z,hit.z);
+		
+		if(TerrainEnt && bSize >=10 && bType != B_SIBGLE && TerrainEditMode)
+		{
+			
+			// put Scale(marker, SCALE_MARKER_TERRAIN); would be rather expensive
+			// unnecessary instrunctions are repeated over and over
+			// so check GTerrainSubmenuShow() for more detail
+			
+			v0 = ent_nextvertex(TerrainEnt,_vec(temp_pos.x,temp_pos.y,temp_pos.z)); 
+			v1 = ent_nextvertex(TerrainEnt,_vec(temp_pos.x-bSize-10,temp_pos.y,temp_pos.z)); 
+			v2 = ent_nextvertex(TerrainEnt,_vec(temp_pos.x+bSize-10,temp_pos.y,temp_pos.z)); 
+			v3 = ent_nextvertex(TerrainEnt,_vec(temp_pos.x,temp_pos.y-bSize-10,temp_pos.z)); 
+			v4 = ent_nextvertex(TerrainEnt,_vec(temp_pos.x,temp_pos.y+bSize-10,temp_pos.z));
+			
+			vec_for_vertex(vv0,TerrainEnt,v0);
+			vec_for_vertex(vv1,TerrainEnt,v1);
+			vec_for_vertex(vv2,TerrainEnt,v2);
+			vec_for_vertex(vv3,TerrainEnt,v3);
+			vec_for_vertex(vv4,TerrainEnt,v4);		
+			
+			draw_point3d(_vec(vv0.x,vv0.y,vv0.z-10), _vec(0,0,255), 100,10);
+			draw_point3d(_vec(vv1.x,vv1.y,vv1.z-10), _vec(0,255,255), 100,8);
+			draw_point3d(_vec(vv2.x,vv2.y,vv2.z-10), _vec(0,255,255), 100,8);
+			draw_point3d(_vec(vv3.x,vv3.y,vv3.z-10), _vec(0,255,255), 100,8);
+			draw_point3d(_vec(vv4.x,vv4.y,vv4.z-10), _vec(0,255,255), 100,8);	
+			draw_line3d(_vec(vv0.x,vv0.y,0), _vec(255,255,255), 100);
+			//			draw_line3d(_vec(vv0.x,vv0.y,tMaxHeight), _vec(255,255,255), 100);
+			
+		}
 		
 		wait(1);
 		
@@ -1952,7 +2908,7 @@ void ObjectManipulationCore()
 	WriteLog("[ ] We are at the nuclear core! Oh wait...no, not that stupid core again...");
 	NewLine();
 	
-	while(mouse_left && (manip_type > 0 && manip_type < 4)) // [0..4]
+	while(mouse_left && manip_type > 0 && manip_type < 4 ) // [0..4]
 	{
 		
 		if(manip_type == scale) 
@@ -2378,6 +3334,7 @@ void LaunchGameSession() {
 	GOptionsHide();
 	GTrophiesHide();
 	GHelpHide();
+	GInDevHide();
 	
 	set(CreateWorldCoffee,SHOW);
 	set(CreateWorld,SHOW);
@@ -2386,14 +3343,15 @@ void LaunchGameSession() {
 	LoadNewLevel();
 	while(proc_status(LoadNewLevel)) wait(1);
 
-	SessionsCount += 1;
-
 	GGUIShow();
+	while(proc_status(GGUIShow)) wait(1);
 	
 	reset(CreateWorldCoffee,SHOW);
 	reset(CreateWorld,SHOW);
 	
 	time = dtimer();
+	
+	SessionsCount += 1;
 	
 	WriteLog("[X] Task completed, launched game session #",SessionsCount);
 	WriteLog(" , cost ",time ); // convert to sec: multiply it by pow(10,6) (microsecs)
@@ -2422,15 +3380,28 @@ void LoadNewLevel() {
 	NewLine();
 	
 	/* _cube = */
-	if( !str_cmp(SKYSTR,undef) )
-	ent_createlayer(SKYSTR,SKY | CUBE | SHOW, 999);
-
+	if( !str_cmp(SKYSTR,undef) ) {
+		
+		// This allows different types of skies can be created.
+		if( str_stri(SKYSTR,"+6") ) skycube = ent_createlayer(SKYSTR,SKY | CUBE | SHOW, 1); // If you want to hide the sun, moon, everythiing just set layer to 999
+		else skycube = ent_createlayer(SKYSTR,SKY | CYLINDER | SHOW,1);
+		
+	}
+	else { // Default sky cube
+		
+		// the reason why i use SKYSTR here is: SKYSTR can be read later in act_glass.
+		str_cpy(SKYSTR,PATH_SKIES);
+		str_cat(SKYSTR,"cubemap+6.tga"); // cubemap+6.tga is mandatory
+		skycube = ent_createlayer(SKYSTR,SKY | CUBE | SHOW, 1); // again, set layer = 999 or larger to disable moon, sun, etc.
+		
+	}
+	
 	WriteLog("[ ] Loading miscellaneous stuff...");
 	NewLine();
 
 	//	camera.ambient = -75;
 
-	ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
+	marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 
 	manip_type = scale + 1;
@@ -2672,6 +3643,10 @@ void LoadKernel() {
 
 	WriteLog("[SYS] Loading kernel");
 	NewLine();
+	
+	// Let's precache some contents first
+	PrecacheContent();
+	while(proc_status(PrecacheContent)) wait(1);
 
 	STRING *_s = "#64";
 
@@ -2748,12 +3723,17 @@ void LoadKernel() {
 	on_bksp = TakeScreenshot;
 	on_exit = ExitEvent;
 	on_close = ExitEvent;
+	on_level = on_level_event;
 
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
 	sky_clip = -10;
-
-	mouse_map = mouse;
+	
+	// This allows custom cursors to be created (by copying strings to STRING *mouse)
+	BMAP *mouseimg;
+	if(str_len(mouse_str) && !str_cmp(mouse_str,undef)) mouseimg = bmap_create(mouse_str);
+	else mouseimg = bmap_create("mouse_pointer.png"); // default cursor
+	mouse_map = mouseimg;
 
 	vec_zero(parted_temp_vec);
 	vec_zero(parted_temp2_vec);
@@ -2774,6 +3754,13 @@ void LoadKernel() {
 
 	// Initialize shaders
 	SetupShader();
+	
+	// Load ogg music from PATH_MUSIC
+	mpLoad(PATH_MUSIC,EXT_MUSIC);
+	while(proc_status(mpLoad)) wait(1);
+	
+	str_cpy(PLAYTEST_LOADSCREENSTR,undef);
+	camera.fog_start = 0;
 
 	// Intialize and read custom materials' properties.
 	int i;
@@ -2826,8 +3813,6 @@ void LoadKernel() {
 
 	reset(BackgroundScreen,SHOW);
 	reset(PreMainMenuLoading,SHOW);
-
-	GLoadMainMenu();
 	
 	WriteLog("[ ] Executing miscellaneous stuff.");
 	NewLine();
@@ -2843,6 +3828,15 @@ void LoadKernel() {
 	while(proc_status(FolderScan)) wait(1);
 
 	KERNEL_IS_RUNNING = 1;
+	
+	WriteLog("[ ] Loading main menu...");
+	NewLine();
+	
+	GLoadMainMenu();
+	while(proc_status(GLoadMainMenu)) wait(1);
+	
+	// This isn't supposed to be in the kernel code...
+	// mpPlay("Funny_Death_-_She_Never_Existed.ogg");
 	
 	mouse_mode = 4;
 
@@ -2877,10 +3871,26 @@ void LoopKernel() {
 
 	while(KERNEL_IS_RUNNING) {
 		
+		// These key combinations can be pressed even if game isn't running, as long as the kernel is up and running already.
+		// for example: the music player
+		if(key_m) {
+			
+			while(key_m) wait(1);
+			ToggleMusicPlayer();
+			
+		}
+		
+		if(key_t) {
+			
+			while(key_t) wait(1);
+			GToggleStatistics();
+			
+		}
+		
 		if(IN_GAME) 
 		{
 			
-			// Prevent the cursor from going outside the level border
+			//			// Prevent the cursor from going outside the level border
 			if(!temp_pos.x) temp_pos.x = level_ent.max_x;
 			if(!temp_pos.y) temp_pos.y = level_ent.max_y;
 			if(!temp_pos.z) temp_pos.z = level_ent.max_z;	
@@ -2956,7 +3966,7 @@ void LoopKernel() {
 					
 				}
 				
-				ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
+				marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 				cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 				
 			}
@@ -2969,18 +3979,76 @@ void LoopKernel() {
 				if(!mouse_panel)
 				{
 					
-					// Allow placing entities freely only on top 
-					// of neutral objects (e.g. terrains) or on solid
-					// ground (which means !mouse_ent)
-					if(!mouse_ent) { // Nothing is on top of the cursor
+					// Something is on top...
+					if(mouse_ent) {
 						
-						if(manip_type == scale + 1) {
+						//..but it's a neutral or terrain object
+						if(mouse_ent.ObjectType == Neutral || mouse_ent.ObjectType == Terrain) {
 							
-							CreateObject();
+							if(manip_type == scale + 1) {
+								
+								CreateObject();
+								
+							}
+							
+						}
+						
+						else {
+							
+							if(select)
+							{
+								
+								if(select.ObjectType == Light) GLightWindowHide();
+								if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowHide();
+								if(select.ObjectType == Sound) GSoundWindowHide();
+								if(select.ObjectType == Particle) GParticleWindowHide();
+								//							if(select.ObjectType == Terrain) return;
+								
+								select.material = mat_temp;
+								select = NULL;
+							}
+							
+							select = mouse_ent;
+							
+							mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
+							select.material = mat_select;
+							
+							if(select.ObjectType == Light) GLightWindowShow();
+							else GLightWindowHide();
+							
+							if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowShow();
+							else GPropertiesWindowHide();
+							
+							if(select.ObjectType == Sound) GSoundWindowShow();
+							else GSoundWindowHide();
+							
+							if(select.ObjectType == Particle) GParticleWindowShow();
+							else GParticleWindowHide();
+							
+							PassObjectPropertiesToGUI(select);
 							
 						}
 						
 					}
+					
+					else { // Nothing is on top
+						
+						// Allow placing entities freely only on top 
+						// of neutral objects (e.g. terrains) or on solid
+						// ground (which means !mouse_ent)
+						if(!mouse_ent) { // Nothing is on top of the cursor
+							
+							if(manip_type >= scale + 1) {
+								
+								CreateObject();
+								
+							}
+							
+						}
+						
+					}
+					
+					/*
 					
 					// Something is on top but it's a neutral or terrain object
 					else if(mouse_ent.ObjectType == Neutral || mouse_ent.ObjectType == Terrain) {
@@ -3031,11 +4099,15 @@ void LoopKernel() {
 						
 					}
 					
+					*/
+					
 					wait(1);
 					
 				}		
 				
 			}
+			
+			/*
 			
 			if(PLAYTESTING && play_as_fp) {
 				
@@ -3045,6 +4117,8 @@ void LoopKernel() {
 				set(panCAMRecorderREC,SHOW);
 				
 			}
+			
+			*/
 			
 		}
 		wait(1);
@@ -3259,11 +4333,17 @@ void CBox_startup() {
 	ConfigFileRead(FILE_CONFIG);
 
 	video_window(NULL,NULL,0,"craftbox Pre-Alpha, Milestone 4.x");
-
+	
+	// These are fixed variables 
 	mouse_range = 500000;
 	random_seed(0); // e.g. random light generators.
-	terrain_chunk = 0;
+	terrain_chunk = 0; //
 	fps_max = 70;
+	clip_particles = 1; // cut off particles from far
+	preload_mode = 3+4; // preload ents & precalculate env lights
+	if(edition > 2) max_lights = 100; // still can't afford a comm license
+	//	max_paths = max_entities = max_particles = pow(10,5);
+	tex_share = 1;
 
 	while(1) {
 		
@@ -3807,6 +4887,8 @@ Returns: -
 */
 void func_particle_segment()
 {
+	/*
+	
 	vec_set(temporary, segment_end);
 	vec_sub(segment_end, segment_start);
 	segment_length = vec_length(segment_end);
@@ -3821,6 +4903,10 @@ void func_particle_segment()
 		segment_length -= 2;
 		
 	}
+	
+	*/
+	
+	wait(1);
 }
 
 /*
@@ -3834,6 +4920,9 @@ Returns: -
 */
 void func_particle_segment()
 {
+	
+	/*
+	
 	vec_set(temporary, stroke_start);
 	vec_sub(stroke_end, stroke_start);
 	stroke_length = vec_length(stroke_end);
@@ -3851,6 +4940,10 @@ void func_particle_segment()
 		func_particle_segment();
 		stroke_length -= 100; // keep the same value here
 	}
+	
+	*/
+	
+	wait(1);
 }
 
 /*
@@ -3864,6 +4957,8 @@ Returns: -
 */
 void func_increase_brightness()
 {
+	/*
+	
 	lightning_on = 1;
 
 	lightning = 255;
@@ -3880,6 +4975,10 @@ void func_increase_brightness()
 
 	wait(random(50));	
 	lightning_on = 0;
+	
+	*/
+	
+	wait(1);
 }
 
 /*
@@ -3892,7 +4991,11 @@ Returns: -
 --------------------------------------------------
 */
 void weather_change() {
+	
+	//   Uncomment the following lines to unlock the old effects that was packed with Mystymood.
+	//	Replace 'em with newer and Mystymood-independent code.
 
+	/*
 	if(!mystymood_active) return; // Activates weather ONLY IF Mystymood is active.
 
 	VECTOR temp;
@@ -3921,10 +5024,10 @@ void weather_change() {
 
 	weather_state = 0;
 
-	while(1)
+	while(mystymood_active)
 	{
 		
-		random_seed(0);
+		//		random_seed(0);
 		rand_count = integer(random(6));//creates a integer random number 0-4		
 		
 		//////////////////////////////////////////////////////////////
@@ -4203,6 +5306,26 @@ void weather_change() {
 		
 		wait(1);		
 	}	
+	
+	*/
+	
+}
+
+void UnloadMystymood() {
+	
+	LoadMystymood(0,0);
+	
+	sky_horizon.flags2 &= ~SHOW;
+	sky_cloud1.flags2 &= ~SHOW;
+	sky_cloud2.flags2 &= ~SHOW;
+	sky_cloud3.flags2 &= ~SHOW;
+	sky_day.flags2 &= ~SHOW;
+	sky_sun.flags2 &= ~SHOW;
+	sky_suncorona.flags2 &= ~SHOW;
+	sky_sunshine.flags2 &= ~SHOW;
+	sky_night.flags2 &= ~SHOW;
+	sky_moon.flags2 &= ~SHOW;
+	
 }
 
 /*
@@ -4310,14 +5433,31 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	sky_cloud1.flags2 |= SHOW;
 	sky_cloud2.flags2 |= SHOW;
 	sky_cloud3.flags2 |= SHOW;
-	sky_day.flags2 |= SHOW;
-	sky_sun.flags2 |= SHOW;
-	sky_suncorona.flags2 |= SHOW;
-	sky_sunshine.flags2 |= SHOW;
-	sky_night.flags2 |= SHOW;
-	sky_moon.flags2 |= SHOW;
+	sky_day.flags2 |= SHOW;	
+	
+	if(_use_nightstars) {
+		
+		sky_night.flags2 |= SHOW;
+		
+	}
+	
+	if(_use_moon) {
+		
+		sky_moon.flags2 |= SHOW;
+		
+	}
+	
+	if(_use_sun) {
+		
+		sky_sun.flags2 |= SHOW;
+		sky_suncorona.flags2 |= SHOW;
+		sky_sunshine.flags2 |= SHOW;
+		
+	}
 
 	VECTOR temp;
+	
+	/*
 	
 	if( str_stri(command_str," -dev") ) {
 		
@@ -4325,8 +5465,8 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		on_alt = good_weather;
 		
 	}
-
-	weather_change();
+	
+	*/
 
 	sky_sun.scale_x = sun_scale_x;
 	sky_sun.scale_y = sun_scale_y;
@@ -4342,6 +5482,8 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	
 	WriteLog("[X] Task completed, activated Mystymood.");
 	NewLine();
+	
+	//	weather_change();
 
 	while(mystymood_active) {
 		
@@ -4349,7 +5491,7 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		vec_set(sky_color.blue,d3d_fogcolor1.blue);	
 		vec_set(sky_horizon.blue,d3d_fogcolor1.blue);
 		
-		if(weather_state == 0 && trigg_active_id < 0) {
+		//		if( !weather_state && trigg_active_id < 0) {
 			
 			if(!dynamic_day_night) func_fade_colors(d3d_fogcolor1,current_color,fog_dynamic_day_night_off);
 			
@@ -4359,7 +5501,7 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 			if(camera.fog_end>land_fog_far) camera.fog_end -= weather_fade_speed*time_step;
 			else camera.fog_end += weather_fade_speed*time_step;
 			
-		}	
+		//		}
 		
 		vec_set(current_color,d3d_fogcolor1);
 		
@@ -4370,7 +5512,7 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 		vec_set(sky_sun.x,temp);
 		
-		if(use_moon) {
+		if(_use_moon) {
 			
 			vec_set(temp,sky_sun.x); 
 			vec_inverse(temp);
@@ -4379,8 +5521,10 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 		if(dynamic_day_night) {
 			
-			if(sun_angle.pan > 230 && sun_angle.pan < 360) {sun_angle.pan += 0.01*time_speed_night*time_step;}
-			else{sun_angle.pan += 0.01*time_speed*time_step;}
+			if(sun_angle.pan > 230 && sun_angle.pan < 360)
+			
+			sun_angle.pan += .01*time_speed_night*time_step;
+			else sun_angle.pan += .01*time_speed*time_step;
 			
 			sun_angle.pan %= 360;
 			sun_angle.tilt = fsin(sun_angle.pan, max_zenith);
@@ -4390,8 +5534,14 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 				
 				if(sky_sun.scale_x<sun_scale_x+1 && sky_sun.scale_y<sun_scale_y+1) {
 					
+					sky_sun.scale_x = sky_sun.scale_y += .01 * (time_speed/10) * time_step;
+					
+					/*
+					
 					sky_sun.scale_x += 0.01*time_step*time_speed/10;
 					sky_sun.scale_y += 0.01*time_step*time_speed/10;
+					
+					*/
 					
 				}	
 				
@@ -4401,8 +5551,14 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 				
 				if(sky_sun.scale_x>sun_scale_x && sky_sun.scale_y>sun_scale_y) {
 					
+					sky_sun.scale_x = sky_sun.scale_y -= .01 * (time_speed/10) * time_step;
+					
+					/*
+					
 					sky_sun.scale_x -= 0.01*time_step*time_speed/10;
 					sky_sun.scale_y -= 0.01*time_step*time_speed/10;
+					
+					*/
 					
 				}
 			}
@@ -4417,10 +5573,10 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 		if(sun_angle.pan > 0 && sun_angle.pan < 40) {
 			
-			if (sky_cloud1.alpha < 80) {sky_cloud1.alpha += sky_fade_speed*time_step*time_speed;} 
-			if (sky_cloud2.alpha < 60) {sky_cloud2.alpha += sky_fade_speed*time_step*time_speed;}
-			if (sky_day.alpha < 60) {sky_day.alpha += sky_fade_speed*time_step*time_speed;}
-			if (sky_night.alpha > 1) {sky_night.alpha -= sky_fade_speed*time_step*time_speed;}	
+			if (sky_cloud1.alpha < 80) sky_cloud1.alpha += sky_fade_speed*time_step*time_speed;
+			if (sky_cloud2.alpha < 60) sky_cloud2.alpha += sky_fade_speed*time_step*time_speed;
+			if (sky_day.alpha < 60) sky_day.alpha += sky_fade_speed*time_step*time_speed;
+			if (sky_night.alpha > 1) sky_night.alpha -= sky_fade_speed*time_step*time_speed;	
 			
 		}
 		
@@ -4435,6 +5591,7 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 			
 		}
 		
+		// Fade into the night...
 		if(sun_angle.pan > 160 && sun_angle.pan < 190) {
 			
 			if (sky_cloud1.alpha > 10) {sky_cloud1.alpha -= sky_fade_speed*time_step*time_speed;} 
@@ -4501,6 +5658,284 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 
 /*
 --------------------------------------------------
+void LoadObjectCustomSettings(ENTITY *from)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void LoadObjectCustomSettings(ENTITY *from) {
+	
+	wait(1);
+	
+	/*
+	
+	var temp;
+	STRING *CBOIF = "#200"; // this is the limit
+	//   str_cpy(CBOIF, (STRING *) from->type );
+	
+	// LoadObjectCustomSettings uses TEMPSTR to evaluate the exact path without having to
+	// do it again. Because of this: If you use LoadObjectCustomSettings in other places than 
+	// CreateObject(), it won't work, because either TEMPSTR is left undefined 
+	// or containing wrong data!
+	str_cpy(CBOIF,TEMPSTR);
+	
+	str_cat(CBOIF,".cboif");
+	
+	var CBOIFHNDL = file_open_read(CBOIF);
+	
+	if(file_length(CBOIFHNDL) <= 0) {
+		
+		// File is empty, no need to pass anything
+		file_close(CBOIFHNDL);
+		
+		return;
+		
+	}
+	
+	// Dirty, ugly code.
+	// Don't have time to optimize them though.
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.scale_x = temp;
+	
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.scale_y = temp;
+	
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.scale_z = temp;
+	
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.pan = temp;
+	
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.tilt = temp;
+	
+	temp = file_var_read(CBOIFHNDL);
+	if(temp != -1) from.roll = temp;
+	
+	// flags after
+	// NARROW, FAT, CLIPPED, CAST, SPOTLIGHT
+	// OVERLAY, DECAL, NOFILTER, SHOW/INVISIBLE,
+	// ANIMATE, DYNAMIC
+	
+	if(file_var_read(CBOIFHNDL)) set(from,PASSABLE);
+	else reset(from,PASSABLE);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,POLYGON);
+	else reset(from,POLYGON);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,UNTOUCHABLE);
+	else reset(from,UNTOUCHABLE);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,SHADOW);
+	else reset(from,SHADOW);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,TRANSLUCENT);
+	else reset(from,TRANSLUCENT);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,BRIGHT);
+	else reset(from,BRIGHT);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,LIGHT);
+	else reset(from,LIGHT);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,UNLIT);
+	else reset(from,UNLIT);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,NOFOG);
+	else reset(from,NOFOG);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,ZNEAR);
+	else reset(from,ZNEAR);
+	
+	//+flags
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG1);
+	else reset(from,FLAG1);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG2);
+	else reset(from,FLAG2);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG3);
+	else reset(from,FLAG3);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG4);
+	else reset(from,FLAG4);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG5);
+	else reset(from,FLAG5);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG6);
+	else reset(from,FLAG6);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG7);
+	else reset(from,FLAG7);
+	
+	if(file_var_read(CBOIFHNDL)) set(from,FLAG8);
+	else reset(from,FLAG8);
+	
+	//+skills
+	int i = 30; // pass from skill 30 and up, also pass 30 skills
+	var temp;
+	
+	while(i < 60) {
+		
+		temp = file_var_read(CBOIFHNDL);
+		if(temp != -1) from.skill[i] = temp;
+		
+		i += 1;
+		
+		wait(1);
+		
+	}
+	
+	file_close(CBOIFHNDL);
+	
+	*/
+	
+}
+
+/*
+--------------------------------------------------
+void WriteObjectCustomSettings(ENTITY *ent)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void WriteObjectCustomSettings(ENTITY *ent) {
+	
+	while(!ent) wait(1);
+	
+	STRING *tempstr = "#500";
+	str_cpy(tempstr,TEMPSTR);
+	str_cat(tempstr, str_create(".cboif") );
+	
+	var hndl = file_open_write(tempstr);
+	
+	file_var_write(tempstr,ent.scale_x);
+	file_var_write(tempstr,ent.scale_y);
+	file_var_write(tempstr,ent.scale_z);
+	
+	file_var_write(tempstr,ent.pan);
+	file_var_write(tempstr,ent.tilt);
+	file_var_write(tempstr,ent.roll);
+	
+	file_var_write(tempstr,is(ent,PASSABLE) );
+	file_var_write(tempstr,is(ent,POLYGON) );
+	file_var_write(tempstr,is(ent,UNTOUCHABLE) );
+	file_var_write(tempstr,is(ent,SHADOW) );
+	file_var_write(tempstr,is(ent,TRANSLUCENT) );
+	file_var_write(tempstr,is(ent,BRIGHT));
+	file_var_write(tempstr,is(ent,LIGHT));
+	file_var_write(tempstr,is(ent,UNLIT) );
+	file_var_write(tempstr,is(ent,NOFOG) );
+	file_var_write(tempstr,is(ent,ZNEAR) );
+	
+	file_var_write(tempstr,is(ent,FLAG1) );
+	file_var_write(tempstr,is(ent,FLAG2) );
+	file_var_write(tempstr,is(ent,FLAG3) );
+	file_var_write(tempstr,is(ent,FLAG4) );
+	file_var_write(tempstr,is(ent,FLAG5) );
+	file_var_write(tempstr,is(ent,FLAG6) );
+	file_var_write(tempstr,is(ent,FLAG7) );
+	file_var_write(tempstr,is(ent,FLAG8) );
+	
+	int i = 30;
+	while(i < 90) { // write from skill31..skill90
+		
+		file_var_write(tempstr,ent.skill[i]);
+		
+		i++;
+		
+	}
+	
+	file_close(tempstr);
+	
+}
+
+/*
+--------------------------------------------------
+void sndPlay(STRING *str)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void sndPlay(STRING *str) {
+	
+	if( str_len(str) ) {
+		
+		var hndl = media_play(str,NULL,VOL_EFFECTS);
+		//		var hndl = snd_play(snd_create(str),VOL_EFFECTS,0);
+		if(!hndl) return;
+		
+		//		while(snd_playing(hndl)) wait(1);
+		while(media_playing(hndl)) wait(1);
+		
+		
+	} else return;
+	
+}
+
+/*
+--------------------------------------------------
+void Scale(ENTITY *ent, var amount)
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void Scale(ENTITY *ent, var amount) {
+	
+	while(!ent) wait(1);
+	
+	// modify global variables
+	ent.scale_x = ent.scale_y = ent.scale_z = amount; // freely, even if it is a negative number
+	
+}
+
+/*
+--------------------------------------------------
+void PrecacheContent()
+
+Desc: Precache game data. This increases load time, but prevents a little slow down (jerk)
+when the entity is shown for the first time.
+This is optional, and by default is included with the kernel loading code.
+Uncomment PrecacheContent() in LoadKernel() to turn off content precaching.
+
+Returns: -
+--------------------------------------------------
+*/
+void PrecacheContent() {
+	
+	WriteLog("[SYS] Precaching  game content...");
+	NewLine();
+	
+	var   old_VOL_EFFECTS = VOL_EFFECTS,
+	old_VOL_MUSIC = VOL_MUSIC;
+	
+	VOL_EFFECTS = VOL_MUSIC = 0;
+	
+	GSEMenuMouseHover();
+	wait_for(GSEMenuMouseHover);
+	
+	GSEMenuMouseClick();
+	wait_for(GSEMenuMouseClick);
+	
+	VOL_EFFECTS = old_VOL_EFFECTS;
+	VOL_MUSIC = old_VOL_MUSIC;
+	
+	WriteLog("[X] Finished precaching contents.");
+	NewLine();
+	
+}
+
+/*
+--------------------------------------------------
 void LoadPlayground()
 
 Desc: Sets up and manages the playground.
@@ -4514,6 +5949,38 @@ void LoadPlayground() {
 
 	WriteLog("[ ] Preparing the playground...");
 	NewLine();
+	
+	var olmouse = mouse_mode;
+	mouse_mode = 0;
+	
+	var tempvol = 0, rainhndl = -1, snowhndl = -1, windhndl = -1;
+	
+	BMAP *b_load;
+	
+	if( str_len(PLAYTEST_LOADSCREENSTR) && !str_cmp(PLAYTEST_LOADSCREENSTR, undef ) ) {
+		
+		b_load = bmap_create(PLAYTEST_LOADSCREENSTR);
+		
+		/*
+		
+		Playtest_Loadscreen.bmap = b_load;
+		
+		GPanelResize(Playtest_Loadscreen,RESIZE_XY);
+		
+		set(Playtest_Loadscreen,SHOW);
+		
+		*/
+		
+	}
+	
+	else b_load = bmap_create("ima_01_03.png");
+	
+	while(proc_status(bmap_create)) wait(1);
+	Playtest_Loadscreen.bmap = b_load;
+	GPanelResize(Playtest_Loadscreen,RESIZE_XY);	
+	set(Playtest_Loadscreen,SHOW);
+	
+	//
 
 	if(select) {
 		
@@ -4563,11 +6030,54 @@ void LoadPlayground() {
 		wait(1);
 		
 	}
+	
+	if( (int) WorldType == WORLD_STATIC) {
+		
+		sun_light = _sun_light;
+		fog_color = _fog_color;
+		d3d_fogcolor1.red = _d3d_fogcolor1_red;
+		d3d_fogcolor1.green = _d3d_fogcolor1_green;
+		d3d_fogcolor1.blue = _d3d_fogcolor1_blue;
+		camera.fog_end = _camera_fog_end;
+		
+	}
+	else {  // WORLD_DYNAMIC
+		
+		LoadMystymood(1,_load_lensflare);		
+		
+	}
 
-	mouse_mode = 0;
-
-	ent_remove(fpsf_marker);
+	ent_remove(marker);
 	ent_remove(cam);
+	
+	switch( (int) _weather_mode ) {
+		
+		case RAIN_ONLY: 
+		rain(1,8);
+		rainhndl = snd_loop(rain_wav,VOL_EFFECTS,0);
+		break;
+		
+		case SNOW_ONLY:
+		snow(5000,camera.x,NULL);
+		snowhndl = snd_loop(snowstorm_ambient,VOL_EFFECTS,0);
+		break;
+		
+		case RAIN_SNOW: 
+
+		rain(1,8);
+		snow(5000,camera.x,NULL);
+		
+		rainhndl = snd_loop(rain_wav,VOL_EFFECTS,0);
+		snowhndl = snd_loop(snowstorm_ambient,VOL_EFFECTS,0);
+		
+		break;
+		
+		case NO_RAIN_SNOW: wait(.1); break;
+		
+		default: wait(.1); break;
+		
+	}
+	
 
 	GGUIHide();
 
@@ -4595,6 +6105,19 @@ void LoadPlayground() {
 		
 	}
 	*/
+	
+	/*
+	while(tempvol<=VOL_EFFECTS) {
+		
+		tempvol += 5;
+		if(rainhndl) snd_tune(rainhndl,tempvol,0,0);
+		if(snowhndl) snd_tune(snowhndl,tempvol,0,0);
+		
+		wait(1);
+		
+	}*/
+	
+	if(is(Playtest_Loadscreen,SHOW)) reset(Playtest_Loadscreen,SHOW);
 
 	while(PLAYTESTING) {
 		
@@ -4603,6 +6126,14 @@ void LoadPlayground() {
 		
 		temp_cam += 3 * time_step;
 		camera.z += .5 * sin(temp_cam);
+		
+		if(key_space) {
+			
+			while(key_space) wait(1);
+			if(!mouse_mode) mouse_mode = 2;
+			else mouse_mode = 0;
+			
+		}
 		
 		if(key_esc) {
 			
@@ -4615,7 +6146,29 @@ void LoadPlayground() {
 			
 		}
 		
+		if(mouse_mode) vec_set(mouse_pos,mouse_cursor);
+		
 		wait(1);
+		
+	}
+	
+	// Destroy weather effects and its sounds
+	rain(0,0);
+	snow(0,0,NULL);
+	
+	if(rainhndl != -1) snd_stop(rainhndl);
+	if(snowhndl != -1) snd_stop(snowhndl);
+	
+	if(mystymood_active) {
+		
+		UnloadMystymood();
+		
+		fog_color = 0;
+
+		//		camera.fog_start = 0;
+		//		camera.fog_end = land_fog_far;//300;
+		//
+		//		vec_set(d3d_fogcolor1,fog_day);//set the default day fog-color 
 		
 	}
 
@@ -4632,8 +6185,9 @@ void LoadPlayground() {
 		
 	}
 
-	mouse_mode = 4;
-	ent_create("marker.mdl",nullvector,FollowPointer); // Create a mouse pointer.
+	mouse_mode = olmouse;
+	
+	marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 	cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
 
 	GGUIShow();
