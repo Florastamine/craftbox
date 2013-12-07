@@ -5,12 +5,17 @@ CBox.c
 This file is responsible for setting up the environment
 and calling the main modules.
 
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
 craftbox was written from scratch (just about 30 lines of code for codebase), in five months.
 
 TODO:
 <+++
 
 Milestone 5.1:  C 91.6% | C++ 8.1% | Objective-C 0.3%
+Milestone 6: C 95.8% | C++ 0.1% | Objective-C 4.1%
 
 List of things to do :
 - Fix the bug related to rEntCount and the black bitmap after create_dxmat.
@@ -58,15 +63,18 @@ Static; can't be affected.
 
 >+++
 --------------------------------------------------
+
 */
 
 #include "CBox8.c"
-#include "CBox.h"
-#include "CBoxShader.c"
-#include "CBoxCore.c"
-#include "CBoxShell.c"
-#include "CBoxScratch.c"
-#include "CBoxDebug.c"
+
+#include "head.h"
+#include "graphics.c"
+#include "world.c"
+#include "kernel.c"
+#include "shell.c"
+#include "lab.c"
+#include "debug.c"
 
 /*
 --------------------------------------------------
@@ -77,24 +85,15 @@ Desc: Acts like a bootstrapper.
 Returns: -
 --------------------------------------------------
 */
-
-void slow() {
-	
-	while(time_factor>0) {
-		
-		time_factor -= .01;
-		
-		DEBUG_VAR(time_factor,100);
-		
-		wait(1);
-		
-	}
-	
+void SaveMapDemo() {
+   
+   SaveWorld("test",1);
+   
 }
 
 void main(void)  {
 	
-	max_particles = 100000;
+	max_particles = max_entities = 20000;
 	
 	if( !str_stri(command_str," -dwl") ) { // Do not output logfiles.
 		
@@ -124,7 +123,12 @@ void main(void)  {
 		
 		LoopKernel();
 		
-		on_p=slow;
+		//		on_p = PerformSeed;
+		//		on_i = RemoveSeedEnts;
+		//		on_u = RecreateSeedMap;
+		//		on_k = SeedEntSelector;
+		on_p = SaveMapDemo;
+		
 	}
 	
 	if( str_stri(command_str," -com") ) { // C_TRACE_OPTIMIZATION instead of DISTANCE_OPTIMIZATION

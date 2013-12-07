@@ -14,14 +14,16 @@ its name implies.
 --------------------------------------------------
 */
 
+
 #ifndef default_c
 
 	#define default_c
 	
 	#include <acknex.h> // standard engine objects
-	#include <d3d9.h> // Shade-C
-	#include <strio.c> // for the scripting language
-	#include <particles.c> // cool effects such as snow()
+	//	#include <d3d9.h> // Shade-C
+	//	#include <strio.c> // for the scripting language
+	#include <particles.c> // effects such as snow()
+	#include <level.c>
 	
 	//////////////////////////////////////////////////////////////
 	#define PRAGMA_PATH "./src"
