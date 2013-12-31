@@ -42,6 +42,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 	}
 	
+	if( is(InsertObject,SHOW) ) { // If this panel is being shown
+	   
+	   return;
+	   
+	}
+	
 	ENTITY *tmp;
 	
 	if(TEMP_OBJECT_TYPE > Object && TEMP_OBJECT_TYPE < ObjectNode) {
@@ -258,6 +264,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp.ambient = 100;
 		
 		tmp.scale_x = tmp.scale_y = tmp.scale_z *= 1.5;
+		tmp.z += 50;
 		
 		tmp.ObjectType = ObjectNode;
 		
@@ -1071,9 +1078,9 @@ ENTITY *Gun = {
 	
 	type = "gun.mdl";
 	
-	x = 47.456;
-	y = -10.933;
-	z = -27.104;
+	x = 27;
+	y = -5;
+	z = -22;
 	
 	scale_x = 2;
 	scale_y = 2;

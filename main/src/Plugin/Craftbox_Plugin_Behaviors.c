@@ -666,40 +666,56 @@ action general_action() {
 ////////////////////////////////////////////////////////////
 // A patroller and a node.
 ////////////////////////////////////////////////////////////
-action a_patroller()
+action AI_Patrol()
 {
-	while(my == NULL) wait(1);
-
+	
 	VECTOR temp[3];
-	set(my,POLYGON | SHADOW);
+	set(my,POLYGON /*| SHADOW*/);
 
 	while(true)
 	{
 		c_scan(my.x, my.pan, vector(360, 60, 1000), IGNORE_ME | SCAN_ENTS | SCAN_LIMIT);
 		if(you)
 		{
-			my_target_node = you;
-			my_target_node.scale_z = 2;
-			vec_set(temp, my_target_node.x);
-			vec_sub(temp, my.x);
-			vec_to_angle(my.pan, temp);
-			my.tilt = 0;
-			while (vec_dist (my.x, my_target_node.x) > 50)
-			{
-				my.skill22 += 5 * time_step;
-				c_move(my, vector(5 * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE); // 5 = movement speed
-				ent_animate(my, "walk", my.skill22, ANM_CYCLE);
-				wait (1);
+			
+			if(you.ObjectType == ObjectNode) { // Found a node
+				
+				/*
+				
+				Va cung nhu song, trai tim nguoi con gai dang yeu khong chap nhan
+				su tam thuong, nho hep, luon vuon toi cai lon lao de co the dong cam, 
+				dong dieu voi minh. "Song khong hieu noi minh, song tim ra tan be ".
+				
+				*/
+				if(you._NODE_HEARTBEAT == my._NODE_HEARTBEAT) {
+					
+					you.scale_z = 2;
+					vec_set( temp, you.x );
+					vec_sub(temp,my.x);
+					vec_to_angle(my.pan, temp);
+					my.tilt = 0;
+					
+					while (vec_dist (my.x, you.x) > 50)
+					{
+						my.skill22 += 5 * time_step;
+						c_move(my, vector(5 * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE); // 5 = movement speed
+						ent_animate(my, "walk", my.skill22, ANM_CYCLE);
+						wait (1);
+					}
+					my.skill99 = 0;
+					while (my.skill99 < you.skill1)
+					{
+						my.skill99 += time_step / 16;
+						ent_animate(my, "stand", my.skill22, ANM_CYCLE);
+						my.skill22 += 3 * time_step;
+						wait (1);
+					}
+					ent_remove(you);
+					
+				}
+				
 			}
-			my.skill99 = 0;
-			while (my.skill99 < my_target_node.skill1)
-			{
-				my.skill99 += time_step / 16;
-				ent_animate(my, "stand", my.skill22, ANM_CYCLE);
-				my.skill22 += 3 * time_step;
-				wait (1);
-			}
-			ent_remove(my_target_node);
+			
 		}
 		else
 		{

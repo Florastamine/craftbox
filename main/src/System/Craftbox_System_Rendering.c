@@ -131,7 +131,7 @@ int SetupShader() {
 	WriteLog("[ ] Setting up shaders");
 	NewLine();
 	
-	//	return;
+	return;
 	
 	if(edition < 3) {
 		

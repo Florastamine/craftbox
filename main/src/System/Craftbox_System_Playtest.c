@@ -255,6 +255,17 @@ void LoadPlayground() {
 	cam.pan = _oldcampos.pan;
 	cam.tilt = _oldcampos.tilt;
 	cam.roll = _oldcampos.roll;
+	
+	if( is(panCAMRecorder,SHOW) ) {
+	   
+	   reset(panCAMRecorder,SHOW);
+	   reset(panCAMRecorder_digits,SHOW);
+	   reset(panCAMRecorderREC,SHOW);
+	   reset(FPCrosshair,SHOW);
+	   
+	   Gun.flags2 &= ~SHOW;
+	   
+	}
 
 	GGUIShow();
 	//	def_move();

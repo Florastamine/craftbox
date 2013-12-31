@@ -113,14 +113,6 @@ Static; can't be affected.
 #include "./src/Plugin/Craftbox_Plugin_Clock.c"
 #include "./src/Plugin/Craftbox_Plugin_Slow_Motion.c"
 
-COLOR *LineConnectColor = {
-   
-   red = 0;
-   blue = 0;
-   green = 255;
-   
-}
-
 void LineConnect(ENTITY *connector, ENTITY *connected)
 {
 	while(connector && connected)

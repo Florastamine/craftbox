@@ -24,6 +24,20 @@ NOTES:
 --------------------------------------------------
 */
 
+PANEL *PreviewBox = {
+   
+   layer = 15;
+   
+   bmap = "terrain_brush_lower.png";
+	
+	pos_x = 10;
+	pos_y = 10;
+	
+	flags = SHOW;
+	
+	
+}
+
 void GQuitCraftbox() {
 	
 	if(event_type == EVENT_RELEASE) return;
@@ -43,9 +57,7 @@ void GUnQuitCraftbox() {
 
 void GOpenPropertiesWindow() {
 	
-	if(event_type == EVENT_RELEASE) return;
-	
-	if(!select) return;
+	if(event_type == EVENT_RELEASE || !select) return;
 	
 	reset(RightClickMenu,SHOW);
 	
@@ -3132,6 +3144,8 @@ void GGUIInit() {
 	
 	wait(2);
 	
+	layer_sort(PreviewBox,InsertObject->layer+1);
+	
 	GPanelResize(CreateWorld,RESIZE_XY);
 	GPanelCenter(InsertObject);
 	//	GPanelResize(seedPanelCover,RESIZE_XY);
@@ -4882,6 +4896,7 @@ void GInsertObjectShow() {
 	}		
 	set(IO_ObjectTab,SHOW);
 	set(InsertObject_Inputter,SHOW);
+	set(InsertObject,SHOW);
 	
 	int i;
 	for(i = 2;i<=8;i++) button_state(IO_ObjectTab,i,0);
@@ -4934,7 +4949,7 @@ Returns: -
 */
 void GInsertObjectHide() {
 	
-	
+	reset(InsertObject,SHOW);
 	reset(InsertObject,SHOW);
 	reset(IO_ObjectTab,SHOW);
 	reset(InsertObject_Inputter,SHOW);
@@ -4942,6 +4957,21 @@ void GInsertObjectHide() {
 	reset(InsertParticle,SHOW);
 	
 	reset(files_list_TEMPSTR,SHOW);
+	
+}
+
+void LoadPreview() {
+	
+	STRING *previewFile = str_cat(TEMPSTR,"0.bmp");
+	
+	//   if(  file_exists(str_create(str_cat(TEMPSTR,"0.bmp")))) 
+	
+	if(file_exists(previewFile))
+	{
+		
+		PreviewBox->bmap = bmap_create(previewFile);
+		
+	}
 	
 }
 
@@ -5036,6 +5066,9 @@ void GSelectObject(var ID) {
 			
 			
 			str_cat(TEMPSTR,(files_list_TEMPSTR.pstring)[_ID]);
+			
+			LoadPreview();			
+			
 			GInsertObjectHide();
 			
 			mark_seedEntstr = 1;

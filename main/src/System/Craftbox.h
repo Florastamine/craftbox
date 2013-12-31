@@ -683,6 +683,7 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define SCALE_MARKER .75
 #define SCALE_MARKER_TERRAIN 0
 
+#define _NODE_HEARTBEAT skill28
 #define _BEING_MANIPULATED skill29
 
 #define _HEALTH skill30
@@ -691,7 +692,6 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define _PERFORM_ANIMATIONS skill33
 #define _TEAM skill34
 #define _FOLLOW_ANOTHER skill35
-#define _myID skill36
 
 var SecondsPassed = 0, MinutesPassed = 0, HoursPassed = 0, DaysPassed = 0, MonthsPassed = 0, SeasonsPassed = 0, YearsPassed = 0;
 int StopClock;
@@ -756,7 +756,7 @@ STRING *VAREXPLORER_REPORTSTR = "report";
 STRING *VAREXPLORER_FACTORYSTR = "default";
 
 STRING *FILE_SCREENSHOT = "craftbox";
-STRING *FILE_CONFIG = "./src/System/ExternalData/settings.cfg";
+STRING *FILE_CONFIG = "./src/System/settings.cfg";
 STRING *FILE_CUSTOM_MAT_1 = "./src/System/mat_custom_1.cfg";
 STRING *FILE_CUSTOM_MAT_2 = "./src/System/mat_custom_2.cfg";
 STRING *FILE_CUSTOM_MAT_3 = "./src/System/mat_custom_3.cfg";
@@ -1369,7 +1369,8 @@ PANEL *Statistics,
 *BackMenu_Background,
 *BackMenu_Items,
 *QuitDialog,
-*RightClickMenu;
+*RightClickMenu,
+*PreviewBox;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
@@ -1652,6 +1653,7 @@ var alpha_value = 100;
 var canvas_modified = 0;
 var paint_outside;
 COLOR *current_color2 = { red = 0; green = 255; blue = 255; } // Cyan
+COLOR *LineConnectColor = { red = 0; blue = 0; green = 255; }
 BMAP* canvas;
 BMAP* canvas_paint;
 var mark_seedEntstr = 0;

@@ -22,11 +22,13 @@ int GenerateWaypoint()
 	WriteLog( temp_ );
 	NewLine();
 
-	my_target_node = me;
-	my_target_node._BEING_MANIPULATED = 0;
+	my = me;
+	my._BEING_MANIPULATED = 0;
+	my._NODE_HEARTBEAT = 0;
 	
-	my_target_node.emask |= (ENABLE_SCAN | ENABLE_CLICK);
+	my.emask |= (ENABLE_SCAN | ENABLE_CLICK);
 	my.event = ObjectManipulationCore;
+	my.skin = random(5);
 	
 	while(my) {
 		
