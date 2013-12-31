@@ -30,13 +30,30 @@ List of things to do :
 - [X] More detalied logging.
 - Integrate the shader library from Slin's collection
 - [X] Default config. in ConfigFileRead().
-- Fill int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct).
+- [X] Fill int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct).
 
 Optimizations that need to be performed:
 - Shade-C (for performance)
 - Mystymood (for performance)
 - RemoveFromTextureProjectionArray(ENTITY *) (for performance)
 - Functions, variables, #define statements. (clear unnecessary vars, there are too many)
+
+Code readibility: SUPER SUPER INCREDIBLY HELL NO I CAN'T READ IT-level
+
+http://mp3.zing.vn/bai-hat/Silent-Hill-Promise-Reprise-Piano-Unknow/IW9OIZD6.html
+http://mp3.zing.vn/album/Piano-Spa-In-Love-Mr-Tuk-Bo-Tree/ZWZACZFW.html?st=12
+http://www.youtube.com/watch?v=evSwhNl-HhQ
+http://mp3.zing.vn/bai-hat/Power-Kanye-West/ZWZA707C.html
+http://mp3.zing.vn/bai-hat/Viva-la-Vida-Coldplay/ZW60CI7D.html
+http://mp3.zing.vn/bai-hat/I-m-On-One-DJ-Khaled-ft-Drake-Rick-Ross/ZWZCCCU9.html
+http://en.wikipedia.org/wiki/MIT_License
+http://en.wikipedia.org/wiki/LGPL
+http://en.wikipedia.org/wiki/List_of_colors_(compact)
+http://www.woim.net/song/9727/trieu-doa-hoa-hong.html
+http://www.woim.net/song/6102/late-autumn.html
+http://www.woim.net/song/5029/flying-petals.html
+http://www.woim.net/song/61506/im-here.html
+http://naturesoundsfor.me/Snowstorm
 
 >+++
 
@@ -66,15 +83,62 @@ Static; can't be affected.
 
 */
 
-#include "CBox8.c"
+#include "./src/System/Craftbox.h"
+#include "./src/System/Craftbox_System_Rendering.c"
+#include "./src/System/Craftbox_System_Console.c"
+#include "./src/System/Craftbox_System_Log.c"
+#include "./src/System/Craftbox_System_Crypto.c"
+#include "./src/System/Craftbox_System_Event.c"
+#include "./src/System/Craftbox_System_Debug.c"
+#include "./src/System/Craftbox_System_BootPoint.c"
+#include "./src/System/Craftbox_System_Clipboard.c"
+#include "./src/System/Craftbox_System_ExternalIO.c"
+#include "./src/System/Craftbox_System_GameIO.c"
+#include "./src/System/Craftbox_System_String.c"
+#include "./src/System/Craftbox_System_Save_Load.c"
+#include "./src/System/Craftbox_System_Scene.c"
+#include "./src/System/Craftbox_System_Environment.c"
+#include "./src/System/Craftbox_System_Object.c"
+#include "./src/System/Craftbox_System_Material.c"
+#include "./src/System/Craftbox_System_Default_Actor.c"
+#include "./src/System/Craftbox_System_Playtest.c"
+#include "./src/System/Craftbox_System_Interface.c"
 
-#include "head.h"
-#include "graphics.c"
-#include "world.c"
-#include "kernel.c"
-#include "shell.c"
-#include "lab.c"
-#include "debug.c"
+#include "./src/Plugin/Craftbox_Plugin_Blackboard.c"
+#include "./src/Plugin/Craftbox_Plugin_Music_Player.c"
+#include "./src/Plugin/Craftbox_Plugin_Terrain_Deform.c"
+#include "./src/Plugin/Craftbox_Plugin_Terrain_Seed.c"
+#include "./src/Plugin/Craftbox_Plugin_Behaviors.c"
+#include "./src/Plugin/Craftbox_Plugin_Dialogues.c"
+#include "./src/Plugin/Craftbox_Plugin_Clock.c"
+#include "./src/Plugin/Craftbox_Plugin_Slow_Motion.c"
+
+COLOR *LineConnectColor = {
+   
+   red = 0;
+   blue = 0;
+   green = 255;
+   
+}
+
+void LineConnect(ENTITY *connector, ENTITY *connected)
+{
+	while(connector && connected)
+	{
+		draw_line3d(vector(connector.x, connector.y, connector.z), NULL, 100);
+		draw_line3d(vector(connected.x, connected.y, connected.z), LineConnectColor, 100);
+		
+		wait (1);
+	}
+
+}
+
+
+void p(){
+   
+   LineConnect(player, CameraLoc);
+   
+}
 
 /*
 --------------------------------------------------
@@ -86,36 +150,41 @@ Returns: -
 --------------------------------------------------
 */
 void SaveMapDemo() {
-   
-   SaveWorld("test",1);
-   
+	
+	SaveWorld("test",1);
+	
 }
+
+void Fill() {
+	
+	you = ent_next(NULL);
+	while(you) {
+		
+		WriteObjectCustomSettings(you);
+		while(proc_status (WriteObjectCustomSettings) ) wait(1);
+		
+		you = ent_next(you);
+		
+		wait(1);     
+		
+	}
+	
+}
+
 
 void main(void)  {
 	
-	max_particles = max_entities = 20000;
-	
-	if( !str_stri(command_str," -dwl") ) { // Do not output logfiles.
+	if( !str_stri(command_str,PARAM_NOLOGFILE) ) {
 		
 		LOGFILEHNDL = file_open_append(FILE_LOG);
 		
-		WriteLogHeaders(); // Write header information
+		WriteLogHeaders();
 		while(proc_status(WriteLogHeaders)) wait(1);
 		
 	}
 	
-	if( str_stri(command_str," -dev") ) { // Enable debugging + statistics, not fully implemented yet
-		
-		OpenDebug();
-		
-	}
-	
-	if( str_stri(command_str," -dlk") ) { // -dlk: Do not load the kernel
-		
-		Console();
-		
-	}
-	
+	if( str_stri(command_str,PARAM_DEV) ) OpenDebug();
+	if( str_stri(command_str,PARAM_SUSPENDKERNEL) ) Console();	
 	else {
 		
 		LoadKernel();
@@ -123,15 +192,12 @@ void main(void)  {
 		
 		LoopKernel();
 		
-		//		on_p = PerformSeed;
-		//		on_i = RemoveSeedEnts;
-		//		on_u = RecreateSeedMap;
-		//		on_k = SeedEntSelector;
-		on_p = SaveMapDemo;
+		on_p = Fill;
+		on_k=p;
 		
 	}
 	
-	if( str_stri(command_str," -com") ) { // C_TRACE_OPTIMIZATION instead of DISTANCE_OPTIMIZATION
+	if( str_stri(command_str,PARAM_USECTRACE) ) {
 		
 		C_TRACE_OPTIMIZATION = 1;
 		DISTANCE_OPTIMIZATION = 0;
