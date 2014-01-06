@@ -1222,7 +1222,7 @@ void Scale(ENTITY *ent, var amount) {
 
 ENTITY *SkyCube = {
 	
-	type = "./2d/skies/s_s_greenland+6.tga";
+	type = "./Cooked2D/Skies/s_s_greenland+6.tga";
 	
 	flags2 = SKY | CUBE | SHOW;
 	

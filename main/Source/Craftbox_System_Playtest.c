@@ -48,7 +48,18 @@ void LoadPlayground() {
 	GPanelResize(Playtest_Loadscreen,RESIZE_XY);	
 	set(Playtest_Loadscreen,SHOW);
 	
-	//
+	if( PlayerPresent <= 0 ) { // There was no player!
+	   
+	   error("Insert AT LEAST one player into the scene!");
+	   
+	   reset(Playtest_Loadscreen,SHOW);
+	   mouse_mode = olmouse;
+	   
+	   return;
+	   
+	}
+	
+	
 	ent_remove(marker);
 	ent_remove(cam);
 
@@ -184,15 +195,6 @@ void LoadPlayground() {
 			while(key_space) wait(1);
 			if(!mouse_mode) mouse_mode = 2;
 			else mouse_mode = 0;
-			
-		}
-		
-		if(key_esc) {
-			
-			while(key_esc) wait(1);
-			
-			PLAYTESTING = 0;
-			from_test_play = 0; // reset
 			
 		}
 		

@@ -43,9 +43,9 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 	}
 	
 	if( is(InsertObject,SHOW) ) { // If this panel is being shown
-	   
-	   return;
-	   
+		
+		return;
+		
 	}
 	
 	ENTITY *tmp;
@@ -478,7 +478,7 @@ void ObjectCopy() {
 		
 		PassObjectDataToClipboard(select,clipboard);
 		
-		if(select.ObjectType == Object) 
+		if(select.ObjectType > Object && select.ObjectType <= ObjectNode) 
 		{
 			//		// Perform manual access to clipboard to copy material
 			clipboard.m = mat_temp;
@@ -559,11 +559,9 @@ void ObjectManipulationCore()
 	my._BEING_MANIPULATED += 1;
 
 	if((my._BEING_MANIPULATED % 2) == 1) // clicked the object?
-
 	{
 
-		while (mouse_left) {wait (1);} // wait until the player releases the left mouse button
-
+		while (mouse_left) wait(1);
 		while (!mouse_left) // move the object until the player presses the mouse button again
 
 		{
@@ -612,8 +610,13 @@ void ObjectManipulationCore()
 				case scale:
 				
 				if( button_state(panMain_Top,3,-1) ) {
+				   
+				   /*if(my->scale_x >= MINIMUM_SCALE_CONSTANT) */Scale(my, my->scale_z + mickey.z*SCALE_SPEED*.1); // a typical attempt to reduce the scrolling speed
 					
-					if(mouse_right) {
+					/*
+					
+					
+					if( mickey->z ) {
 						
 						Scale(my, my.scale_x + SCALE_SPEED);
 						
@@ -625,6 +628,8 @@ void ObjectManipulationCore()
 						}
 						
 					}
+					
+					*/
 					
 				}
 				
@@ -651,7 +656,7 @@ void ObjectManipulationCore()
 		
 		if( ValidHit() ) {
 			
-			vec_set(my.z,hit.z);
+			vec_set(my.x,hit.x);
 			reset(my,PASSABLE);
 			
 		}
@@ -713,73 +718,74 @@ void ObjectManipulationInterface()
 	// for example in the editor
 	while(my) {
 		
-		if(PLAYTESTING) {
-			
-			if(DISTANCE_OPTIMIZATION) {
-				
-				if(!fog_color) Dist = FIXED_CULLING_DISTANCE;
-				else { // Fog is active?
-					
-					Dist = camera.fog_end + FOG_CULLING_DISTANCE;			   
-					
-				}
-				
-				if(vec_dist(player->x,my->x) >= Dist)
-				{
-					set(my,TRANSLUCENT);
-					while(my->alpha > 0)
-					{
-						my->alpha -= 5 * time_step;
-						wait(1);
-					}
-					reset(my,SHOW);
-				}
-				else
-				{
-					reset(my,SHOW);
-					my->alpha = 0;
-					while(my->alpha <= 100)
-					{
-						my->alpha += 5 * time_step;
-						wait(1);
-					}
-					reset(my,TRANSLUCENT);
-				}
-				
-			}
-			
-			else { // C_TRACE_OPTIMIZATION
-				
-				// Cac entity trong tam nhin khong the cull lan nhau
-				if(!is(my,FLAG2)) set(my,FLAG2);
-				
-				wait (random(20)); // spread the cpu load over 20 consecutive frames
-				if(!c_trace(my->x,player->x,IGNORE_ME | IGNORE_FLAG2 | IGNORE_CONTENT | IGNORE_PASSENTS))
-				{
-					reset(my,INVISIBLE); // then show it!
-					while (my.alpha < 100) // run this loop until the entity becomes opaque again
-					{
-						my.alpha += 25 * time_step;
-						wait (1);
-					}
-					reset(my,TRANSLUCENT); // get rid of some nasty artifacts when the entity is completely visible
-				}
-				else
-				{
-					
-					set(my,TRANSLUCENT);
-					while (my.alpha > 0)
-					{
-						my.alpha -= 25 * time_step;
-						wait(1);
-					}
-					set(my,INVISIBLE);
-				}
-				
-			}
-			
-		}
-		
+		//		if(PLAYTESTING) {
+			//			
+			//			if(DISTANCE_OPTIMIZATION) {
+				//				
+				//				if(!fog_color) Dist = FIXED_CULLING_DISTANCE;
+				//				else { // Fog is active?
+					//					
+					//					Dist = camera.fog_end + FOG_CULLING_DISTANCE;			   
+					//					
+				//				}
+				//				
+				//				if(vec_dist(player->x,my->x) >= Dist)
+				//				{
+					//					set(my,TRANSLUCENT);
+					//					while(my->alpha > 0)
+					//					{
+						//						my->alpha -= 5 * time_step;
+						//						wait(1);
+					//					}
+					//					reset(my,SHOW);
+				//				}
+				//				else
+				//				{
+					//					reset(my,SHOW);
+					//					my->alpha = 0;
+					//					while(my->alpha <= 100)
+					//					{
+						//						my->alpha += 5 * time_step;
+						//						wait(1);
+					//					}
+					//					reset(my,TRANSLUCENT);
+				//				}
+				//				
+			//			}
+			//			
+			//			else { // C_TRACE_OPTIMIZATION
+				//				
+				//				 Cac entity trong tam nhin khong the cull lan nhau
+				//				if(!is(my,FLAG2)) set(my,FLAG2);
+				//				
+				//				wait (random(20)); // spread the cpu load over 20 consecutive frames
+				//				if(!c_trace(my->x,player->x,IGNORE_ME | IGNORE_FLAG2 | IGNORE_CONTENT | IGNORE_PASSENTS))
+				//				{
+					//					reset(my,INVISIBLE); // then show it!
+					//					while (my.alpha < 100) // run this loop until the entity becomes opaque again
+					//					{
+						//						my.alpha += 25 * time_step;
+						//						wait (1);
+					//					}
+					//					reset(my,TRANSLUCENT); // get rid of some nasty artifacts when the entity is completely visible
+				//				}
+				//				else
+				//				{
+					//					
+					//					set(my,TRANSLUCENT);
+					//					while (my.alpha > 0)
+					//					{
+						//						my.alpha -= 25 * time_step;
+						//						wait(1);
+					//					}
+					//					set(my,INVISIBLE);
+				//				}
+				//				
+			//			}
+			//			
+			//			
+		//		}
+		//		
 		wait(1);
 		
 	}
@@ -1076,10 +1082,10 @@ ENTITY *Gun = {
 	
 	layer = 1000;
 	
-	type = "gun.mdl";
+	type = "./CookedObjects/gun.mdl";
 	
-	x = 27;
-	y = -5;
+	x = 23;
+	y = -2;
 	z = -22;
 	
 	scale_x = 2;
@@ -1095,8 +1101,6 @@ void Gun_startup() {
 	VECTOR trace_coords;
 	
 	while(1) {
-		
-		DEBUG_VAR(camera.arc,50);
 		
 		Gun.x += 5 * (key_y-key_u)*time_step;
 		Gun.y += 5 * (key_h-key_j)*time_step;

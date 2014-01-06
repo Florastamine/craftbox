@@ -167,6 +167,7 @@ void LoadKernel() {
 	on_exit = ExitEvent;
 	on_close = ExitEvent;
 	on_level = on_level_event;
+	on_esc = Event_key_esc;
 
 	// Initialization for loopix-project.com's MystyMood_Lite-C
 	sky_curve = 2;
@@ -325,8 +326,14 @@ void LoopKernel() {
 		// all the instructions from '{' to '}' (plus the if) to remove this feature.
 		if(fog_color) {
 			
+			/*
+			
 			camera.clip_far = camera.fog_end + FOG_END_CLIP; // Clip far
 			camera.clip_near = camera.fog_start - FOG_START_CLIP; // Clip near
+			
+			*/
+			
+			wait(1);
 			
 		}
 		
@@ -408,22 +415,6 @@ void LoopKernel() {
 		}
 		
 		// These keys are pressed solely.
-		
-		// I seperately defined key_esc here
-		// so I must disable the one that has been defined 
-		// in ka7def2.c/default.c
-		if(key_esc && !from_test_play && !proc_status(LoadPlayground) ) { // If ESC is pressed and we're not pressing ESC while we were in testing mode.
-			// plus don't allow [ESC] to be pressed while preparing playtest.
-			
-			while(key_esc) wait(1);
-			
-			//				GHomeShow();
-			
-			if(is(BackMenu_Background,SHOW) ) GBackMenuHide();
-			else GBackMenuShow();
-			
-			
-		}
 		
 		if(key_r && str_stri(command_str,PARAM_DEV) ) { // This is only allowed in developer mode
 			

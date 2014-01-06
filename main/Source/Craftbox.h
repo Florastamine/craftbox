@@ -46,39 +46,21 @@ Everybody is welcome to help fixing those bugs...THANKS!!!
 --------------------------------------------------
 */
 
-#define PRAGMA_PATH "./src/System"
-#define PRAGMA_PATH "./src/System/Rendering"
-#define PRAGMA_PATH "./src/Plugin"
+#define PRAGMA_PATH "./Source/Rendering"
 
-#define PRAGMA_PATH "./2d/gui"
-#define PRAGMA_PATH "./2d/tex"
-#define PRAGMA_PATH "./2d/skies" // Skies can either be cube, or dome
+#define PRAGMA_PATH "./Cooked2D"
+#define PRAGMA_PATH "./Cooked2D/Skies"
 
-#define PRAGMA_PATH "./objects/sys"
-#define PRAGMA_PATH "./objects/anms"
-#define PRAGMA_PATH "./objects/arch"
-#define PRAGMA_PATH "./objects/blands"
-#define PRAGMA_PATH "./objects/chars"
-#define PRAGMA_PATH "./objects/etc"
-#define PRAGMA_PATH "./objects/food"
-#define PRAGMA_PATH "./objects/machs"
-#define PRAGMA_PATH "./objects/plants"
-#define PRAGMA_PATH "./objects/tportts"
-#define PRAGMA_PATH "./objects/sprites"
-
-#define PRAGMA_PATH "./sounds"
-#define PRAGMA_PATH "./sounds/music"
-
-#define PRAGMA_PATH "./levels"
-#define PRAGMA_PATH "./levels/grounds"
+#define PRAGMA_PATH "./CookedSounds"
+#define PRAGMA_PATH "./CookedSounds/Music"
 
 #include <acknex.h> // standard engine objects
+#include <stdio.h> // Screen space ambient occlusion
 #include <d3d9.h> // Shade-C
-//	#include <strio.c> // for the scripting language
+//	#include <strio.c> // for the scripting language (nevermind, commented out, using Lua)
 #include <particles.c> // effects such as snow()
 #include <level.c>
 //////////////////////////////////////////////////////////////
-
 
 TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
 
@@ -104,205 +86,22 @@ var directions[18] = {180, 0, 0, 90, 0, 0, 0, 0, 0, -90, 0, 0, 90, -90, 0, 90, 9
 STRING *tempstring1 = "#200";
 STRING *tempstring2 = "#200";
 STRING *_ts_ = "#200";
-
+int CameraPosID_temp;
 void write8(var);
 void write16(var);
 void str_padding(STRING *, var, var);
 void write_cubemap();
 void capture_cubemap();
 
-VIEW* viewMap = 
-{
-	flags = WIREFRAME | NOCULL; 
-	layer = 1; 
-	roll = 270; 
-	tilt = -90; 
-	arc = 10; 
-}
-
-PANEL* def_debug_pan = 
-{
-	pos_x = 5; 
-	pos_y = 5; 
-	layer = 998;
-
-	digits(0,2,"%4.0fx","Arial#14b",1,screen_size.x);
-	digits(30,2,"%.0f","Arial#14b",1,screen_size.y);
-	digits(0,12,"fps%5.0f","Arial#14b",16,def_dfps);
-	digits(0,22,"pps%5.0fk","Arial#14b",0.016,def_dtps);
-	digits(0,32,"x%7.0f","Arial#14b",1,camera.x);
-	digits(0,42,"y%7.0f","Arial#14b",1,camera.y);
-	digits(0,52,"z%7.0f","Arial#14b",1,camera.z);
-	digits(0,62,"pan%5.0f","Arial#14b",1,def_cang.pan);
-	digits(0,72,"til%5.0f","Arial#14b",1,def_cang.tilt);
-	digits(0,82,"rol%5.0f","Arial#14b",1,def_cang.roll);
-
-	digits(65,2,"ms/frame","Arial#14b",0,0);
-	digits(65,12,"geo%5.1f","Arial#14b",1,def_dtlv);
-	digits(65,22,"ent%5.1f","Arial#14b",1,time_entities);
-	digits(65,32,"par%5.1f","Arial#14b",1,time_effects);
-	digits(65,42,"drw%5.1f","Arial#14b",1,time_draw);
-	digits(65,52,"pan%5.1f","Arial#14b",1,time_panels);
-	digits(65,62,"ref%5.1f","Arial#14b",1,def_dtrf);
-	digits(65,72,"srv%5.1f","Arial#14b",1,def_dtcs);
-	digits(65,82,"fnc%5.1f","Arial#14b",1,def_dtac);
-
-	digits(130,2,"count of","Arial#14b",0,0);
-	digits(130,12,"ent%5.0f","Arial#14b",1,num_entities);
-	digits(130,22,"vis%5.0f","Arial#14b",1,num_visents);
-	digits(130,32,"tri%5.0fk","Arial#14b",0.001,num_vistriangles);
-	digits(130,42,"par%5.0f","Arial#14b",1,num_particles);
-	digits(130,52,"lit%5.0f","Arial#14b",1,num_lights);
-	digits(130,62,"snd%5.0f","Arial#14b",1,def_dsnd);
-	digits(130,72,"fnc%5.0f","Arial#14b",1,num_actions);
-	digits(130,82,"bdy%5.0f","Arial#14b",1,num_bodies);
-
-	digits(200,2,"memory MB","Arial#14b",0,0);
-	digits(200,12,"nex%5.0f","Arial#14b",1,nexus);
-	digits(200,22,"mem%5.0f","Arial#14b",1,sys_memory);
-	digits(200,32,"geo%5.0f","Arial#14b",1,d3d_texsurfs);
-	digits(200,42,"shd%5.0f","Arial#14b",1,d3d_texsmaps);
-	digits(200,52,"ent%5.0f","Arial#14b",1,d3d_texskins);
-	digits(200,62,"fre%5.0f","Arial#14b",1,d3d_texfree);
-}
-
-void def_box(var x1,var y1,var x2,var y2,VECTOR* color)
-{
-	draw_line(vector(x1,y1,0),NULL,100);
-	draw_line(vector(x2,y1,0),color,100);
-	draw_line(vector(x2,y2,0),color,100);
-	draw_line(vector(x1,y2,0),color,100);
-	draw_line(vector(x1,y1,0),color,100);
-}
-
-void def_debug() 
-{
-	if(key_alt) 
-	{ 
-		diag_status(); 
-		return; 
-	}
-	
-	if(key_shift) 
-	{
-		diag_status();
-		freeze_mode = !freeze_mode;
-		
-		if (freeze_mode) {
-			
-			def_oldmouse = mouse_mode;
-			mouse_mode = 4;
-			mouse_pointer = 2;
-			
-		} 
-		else mouse_mode = def_oldmouse;
-		
-		while (freeze_mode) {
-			if(mouse_left) watched = mouse_ent;
-			wait(1);
-		}
-		return;
-	}
-
-	if (key_ctrl) {
-		toggle(viewMap,SHOW);
-		while is(viewMap,SHOW) {
-			vec_set(&viewMap->x,&camera->x);
-			viewMap->z += 10000;
-			wait(1);
-		}
-		return;
-	}
-	
-	if(d3d_lines) {
-		reset(def_debug_pan,SHOW);
-		d3d_lines = 0;
-		diag_mode &= ~1;
-		} else {
-		if is(def_debug_pan,SHOW) {
-			d3d_lines = 3;
-			} else {
-			set(def_debug_pan,SHOW);
-			diag_mode |= 1;
-			while is(def_debug_pan,SHOW) {
-				def_dfps = 0.9*def_dfps+0.1/time_frame;
-				def_dtps = 0.9*def_dtps+0.1*num_vistriangles/time_frame;
-				def_dtlv = time_level+time_sky;
-				def_dtcs = time_client+time_server;
-				def_dtrf = time_update+time_idle;
-				def_dtac = time_actions+time_pfuncs;
-				def_dsnd = num_mediastreams + num_sounds;
-				def_cang.pan = cycle(camera->pan,0,360); 
-				def_cang.tilt = cycle(camera->tilt,-180,180); 
-				def_cang.roll = cycle(camera->roll,-180,180); 
-				def_box(def_debug_pan->pos_x-3,def_debug_pan->pos_y-2,
-				def_debug_pan->pos_x+314,def_debug_pan->pos_y+103,
-				vector(255,255,255));
-				
-				wait(1);
-			}
-		}
-	}
-}
-
-void def_shot() 
-{ 
-	file_for_screen("shot_",def_shot_num); 
-	def_shot_num++; 
-}
-
-void def_save() { game_save(app_name,1,SV_ALL-SV_INFO); }
-void def_load() { game_load(app_name,1); }
-
-void def_video() 
-{
-	var mode = video_mode;
-	while(1) {
-		if (!key_shift) 
-		mode++; 
-		else 
-		mode--;
-		mode = cycle(mode,6,12); 
-		if (video_switch(mode,0,0)) 
-		break;
-	}
-}
-
-void def_screen() 
-{
-	if (!key_alt) 
-	return;
-	var mode = video_screen + 1;
-	if (mode > 2) 
-	mode = 1;
-	if(!video_switch(0,0,mode)) {
-		
-		printf("This video mode is not supported.");
-		
-	}
-}
-
-void def_console() /* ~ */
-{
-	def_ctxt->pos_x = 2;
-	def_ctxt->pos_y = screen_size.y/4;
-	toggle(def_ctxt,SHOW);
-	while is(def_ctxt,SHOW) {
-		inkey((def_ctxt->pstring)[1]);
-		if (13 == result) {
-			void* found = var_for_name((def_ctxt->pstring)[1]);
-			if (!found) execute((def_ctxt->pstring)[1]);
-		} else
-		reset(def_ctxt,SHOW);
-	}
-}
-
-TEXT* def_dtxt = {
-	pos_x = 2; pos_y = 2; layer = 999;
-	string = watch_str;
-	flags = SHOW;
-}
-
+void def_box(var, var, var, var, VECTOR *);
+void def_debug();
+void def_shot();
+void def_save();
+void def_load();
+void def_video();
+void def_screen();
+void def_console();
+void draw_rotated_bbox(ENTITY *);
 
 //----------------------------------------------------------------------------- write_cubemap
 void write8(var bte) // write char
@@ -543,11 +342,12 @@ typedef struct {
 	BOOL pPhysics, pStatic, _flags[ 8 ];
 	
 	// Some vars define its physical properties
-	var mass, friction;
+	// var mass, friction
 	
 	MATERIAL *m;
 	
 	////////////// Particle objects
+	int _ParticleID;
 	
 	////////////// Light objects
 	var _red, _green, _blue, _range;
@@ -610,20 +410,27 @@ DISTANCE_OPTIMIZATION = true;
 
 // Fixed values got by capturing
 VECTOR *MENU_CAMERA_LAUNCH_pos = { x = -240; y = -300; z = -36; }
-VECTOR *MENU_CAMERA_NEW_GAME_pos = { x = 230; y = -193; z = -45; }
+VECTOR *MENU_CAMERA_NEW_GAME_pos = { x = 437; y = -215; z = -98; }
+//VECTOR *MENU_CAMERA_NEW_GAME_pos = { x = 230; y = -193; z = -45; }
 VECTOR *MENU_CAMERA_LOAD_GAME_pos = { x = 213; y = -176; z = -91; }
 VECTOR *MENU_CAMERA_HELP_pos = { x = -76; y = 86; z = -33;}
 VECTOR *MENU_CAMERA_TROPHIES_pos = { x = -44; y = 126; z = -90; }
-VECTOR *MENU_CAMERA_LAUNCH_GAME_pos = { x = 517; y = -351; z = -88; }
+//VECTOR *MENU_CAMERA_LAUNCH_GAME_pos = { x = 517; y = -351; z = -88; }
+VECTOR *MENU_CAMERA_LAUNCH_GAME_pos = { x = 935; y = -228; z = 164; }
 VECTOR *MENU_CAMERA_EXIT_pos = { x = 184; y = 260; z = -92; }
 
-ANGLE *MENU_CAMERA_NEW_GAME_ang = { pan = 280; tilt = -58; roll = 0; }
+ANGLE *MENU_CAMERA_NEW_GAME_ang = { pan = 329; tilt = 0; roll = 0; }
+//ANGLE *MENU_CAMERA_NEW_GAME_ang = { pan = 280; tilt = -58; roll = 0; }
 ANGLE *MENU_CAMERA_LOAD_GAME_ang = { pan = 256; tilt = -5; roll = 0; }
 ANGLE *MENU_CAMERA_LAUNCH_ang = { pan = 25; tilt = -15; roll = 0; }
 ANGLE *MENU_CAMERA_HELP_ang = { pan = 304; tilt = -9; roll = 0; }
 ANGLE *MENU_CAMERA_TROPHIES_ang = { pan = 64; tilt = 1; roll = 0; }
-ANGLE *MENU_CAMERA_LAUNCH_GAME_ang = { pan = 332; tilt = -2; roll = 0; }
+//ANGLE *MENU_CAMERA_LAUNCH_GAME_ang = { pan = 332; tilt = -2; roll = 0; }
+ANGLE *MENU_CAMERA_LAUNCH_GAME_ang = { pan = 304; tilt = -9; roll = 0; }
 ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
+
+#define ACTIVE 1
+#define INACTIVE 0
 
 #define CINPUT_TAB 9
 #define CINPUT_ENTER 13
@@ -656,7 +463,7 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define MINIMUM_RESOLUTION_Y 768
 
 #define MINIMUM_SCALE_CONSTANT .5
-#define SCALE_SPEED .05
+#define SCALE_SPEED .002
 
 #define DYNAMIC_LIGHT_DISCO_SPEED 0.1
 
@@ -683,6 +490,7 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define SCALE_MARKER .75
 #define SCALE_MARKER_TERRAIN 0
 
+#define _NODE_STATE skill27
 #define _NODE_HEARTBEAT skill28
 #define _BEING_MANIPULATED skill29
 
@@ -692,6 +500,10 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define _PERFORM_ANIMATIONS skill33
 #define _TEAM skill34
 #define _FOLLOW_ANOTHER skill35
+
+int PlayerPresent = 0;
+int AllowREC = 1;
+int AllowCompass = 1;
 
 var SecondsPassed = 0, MinutesPassed = 0, HoursPassed = 0, DaysPassed = 0, MonthsPassed = 0, SeasonsPassed = 0, YearsPassed = 0;
 int StopClock;
@@ -738,30 +550,28 @@ BMAP *mouse_painttex = "pen.png";
 STRING *_mpCount = "#5";
 STRING *_mpSongTemp = "#100";
 
-SOUND *__beep = "beep.wav";
-SOUND *footstep = "tap.wav";
-STRING *SE_MM_hover = "button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
-STRING *SE_MM_click = "button-30_CMMclickon.wav";
-
-STRING *LEVEL_MENU = "background.wmb";
+SOUND *__beep = "./CookedSounds/beep.wav";
+SOUND *footstep = "./CookedSounds/tap.wav";
+STRING *SE_MM_hover = "./CookedSounds/button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
+STRING *SE_MM_click = "./CookedSounds/button-30_CMMclickon.wav";
 
 STRING *RELEASE_STR_VER = "0.1";
 STRING *RELEASE_STR_INFO = "pre-alpha";
 
 // Background level
-STRING *LEVEL_MENU = "background.wmb";
+STRING *LEVEL_MENU = "./CookedWorlds/background.wmb";
 
 STRING *VAREXPLORER_EXITSTR = "exit";
 STRING *VAREXPLORER_REPORTSTR = "report";
 STRING *VAREXPLORER_FACTORYSTR = "default";
 
 STRING *FILE_SCREENSHOT = "craftbox";
-STRING *FILE_CONFIG = "./src/System/settings.cfg";
-STRING *FILE_CUSTOM_MAT_1 = "./src/System/mat_custom_1.cfg";
-STRING *FILE_CUSTOM_MAT_2 = "./src/System/mat_custom_2.cfg";
-STRING *FILE_CUSTOM_MAT_3 = "./src/System/mat_custom_3.cfg";
-STRING *FILE_CUSTOM_MAT_4 = "./src/System/mat_custom_4.cfg";
-STRING *FILE_CREDITS_TEXT = "./src/System/Huy.cbt";
+STRING *FILE_CONFIG = "./Source/settings.cfg";
+STRING *FILE_CUSTOM_MAT_1 = "./Source/mat_custom_1.cfg";
+STRING *FILE_CUSTOM_MAT_2 = "./Source/mat_custom_2.cfg";
+STRING *FILE_CUSTOM_MAT_3 = "./Source/mat_custom_3.cfg";
+STRING *FILE_CUSTOM_MAT_4 = "./Source/mat_custom_4.cfg";
+STRING *FILE_CREDITS_TEXT = "./Source/Huy.cbt";
 STRING *FILE_LOG = "./CBox.log";
 
 STRING *FILE_GAME_INTRO_VIDEO = "#300";
@@ -781,29 +591,26 @@ STRING *EXT_SAVEDGAMES = "s";
 STRING *EXT_MUSIC = "*.ogg";
 STRING *EXT_CBOIF = ".cboif";
 
-STRING *PATH_SOUNDS = "./sounds/";
-STRING *PATH_SOUNDS_ = "sounds\\";
+STRING *PATH_SOUNDS = "./CookedSounds/";
+STRING *PATH_SOUNDS_ = "CookedSounds\\";
 STRING *sndConnectorShared = "#400";
 
-STRING *PATH_SPRITES = "./objects/sprites/";
-STRING *PATH_TERRAINS = "./objects/blands/";
-STRING *PATH_OBJECTS_ANMS = "./objects/anms/";
-STRING *PATH_OBJECTS_ARCHS = "./objects/archs/";
-STRING *PATH_OBJECTS_CHARS = "./objects/chars/";
-STRING *PATH_OBJECTS_ETC = "./objects/etc/";
-STRING *PATH_OBJECTS_FOOD = "./objects/food/";
-STRING *PATH_OBJECTS_MACHS = "./objects/machs/";
-STRING *PATH_OBJECTS_PLANTS = "./objects/plants/";
-STRING *PATH_OBJECTS_SYS = "./objects/sys/";
-STRING *PATH_OBJECTS_TPORTTS = "./objects/tportts/";
+STRING *PATH_SPRITES = "./CookedObjects/Decals/";
+STRING *PATH_TERRAINS = "./CookedObjects/Lands/";
+STRING *PATH_OBJECTS_ANMS = "./CookedObjects/Animals/";
+STRING *PATH_OBJECTS_ARCHS = "./CookedObjects/Architecture/";
+STRING *PATH_OBJECTS_CHARS = "./CookedObjects/Characters/";
+STRING *PATH_OBJECTS_ETC = "./CookedObjects/EverydayObjects/";
+STRING *PATH_OBJECTS_FOOD = "./CookedObjects/Food/";
+STRING *PATH_OBJECTS_MACHS = "./CookedObjects/Machines/";
+STRING *PATH_OBJECTS_PLANTS = "./CookedObjects/Plants/";
+STRING *PATH_OBJECTS_SYS = "./CookedObjects/";
+STRING *PATH_OBJECTS_TPORTTS = "./CookedObjects/Transports/";
 
-STRING *PATH_SKIES = "./2d/skies/";
-
-STRING *PATH_GROUNDS = "./levels/grounds/";
-
-STRING *PATH_SAVEDGAMES = "./levels/";
-
-STRING *PATH_MUSIC = "sounds\\music\\";
+STRING *PATH_SKIES = "./Cooked2D/Skies/";
+STRING *PATH_GROUNDS = "./CookedWorlds/CookedGrounds/";
+STRING *PATH_SAVEDGAMES = "./CookedWorlds/";
+STRING *PATH_MUSIC = "CookedSounds\\Music";
 
 STRING *TERRAINDATA = "_geodata";
 STRING *SEEDMASKDATA = "_seed_mask";
@@ -848,7 +655,7 @@ TEXT *DialogueContainer = { strings(1000); /* stores 1000 lines for each dialogu
 TEXT *Dialogue = {
 	
 	strings(1);
-	font = "Arial#25b";
+	font = "Arial#16b";
 	
 }
 
@@ -1013,6 +820,28 @@ var moon_scale_fac = 1.5;
 #define DynamicContent 18 // Entities which are marked with this are deleted when playtesting mode has finished.
 #define SeedEnt 19 // Entities crated by the ent_seed function.
 
+#define Trigger_PlayerStandard 20
+#define Trigger_PlayerBike 21
+#define Trigger_PlayerBulldozer 22
+#define Trigger_PlayerHelicopter 23
+#define Trigger_ForceFieldHurt 24
+#define Trigger_ForceFieldKillInstantly 25
+#define Trigger_PlayVideoFile 26
+#define Trigger_ChangeLevel 27
+#define Trigger_ChangeSkybox 28
+#define Trigger_FogAdjustment 29
+#define Trigger_MusicPlayerController 30
+#define Trigger_TimeFactorController 31
+#define Trigger_TerrainModifyvertex 32
+#define Trigger_SpawnEntity 33
+#define Trigger_SpawnConversation 34
+#define Trigger_SpawnMessage 35
+#define Trigger_SpawnNotification 36
+#define Trigger_WinZone 37
+#define Trigger_FailZone 38
+#define Trigger_ModifyCameraArc 39
+#define Trigger_SpawnParticle 40
+
 // Defines for materials
 #define select_mat_null 15
 
@@ -1042,19 +871,6 @@ var moon_scale_fac = 1.5;
 
 STRING *current_folder = "a",
 *file_selected = "a";
-
-/*
-
-TEXT *files_list = {
-	
-	layer = 15;
-	
-	strings(800);
-	font = "Arial#27b";   
-	
-}
-
-*/
 
 TEXT *files_list_SKYSTR = {
 	
@@ -1093,6 +909,10 @@ TEXT *files_list_TEMPSTR = {
 	strings(20);
 	
 	font = "Arial#27b";
+	
+	red = 0;
+	green = 255;
+	blue = 0;
 	
 }
 
@@ -1335,6 +1155,7 @@ PANEL *Statistics,
 *IO_TerrainTab,
 *LightPresets,
 *InsertParticle,
+*InsertSystemObjects,
 *BackgroundScreen,
 *Options_Graphics,
 *Options_Sound,
@@ -1573,6 +1394,13 @@ void SyncAng(ANGLE *, ANGLE *);
 
 void DialogueInitialize(STRING *);
 void StartDialogue(BMAP *, BMAP *, STRING *);
+void StartDiaryPage(STRING *);
+
+// Implementations for key handlings in different situations
+// for example key_esc
+// because it can trigger itself lots of events when pressed 
+// and we have to decide what event to execute
+void Event_key_esc();
 
 void Event_MouseLeft();
 void Event_MouseRight();
@@ -1586,7 +1414,9 @@ int AddToTextureProjectionArray(ENTITY *);
 void RemoveFromTextureProjectionArray(ENTITY *);
 void ConvertToCTFormat(STRING *, var, var);
 
-// Implementation for writing different types of variables for WriteLog
+void bmap_savetga(BMAP *, char *);
+
+// Implementations for writing different types of variables for WriteLog
 // With somethin like int WriteLog(int); implement them yourself.
 // or use somethin like WriteLog follow an empty string and var.
 // Mother of function overloading.\
@@ -1757,7 +1587,6 @@ void GBackMenuHide();
 void GQuitToMainMenu();
 void GTerrainSubmenuHide();
 void GTerrainSubmenuShow();
-void GQuitDialogToggle();
 void GQuitCraftbox();
 void GUnQuitCraftbox();
 void GOpenPropertiesWindow();
@@ -1862,7 +1691,7 @@ void snow(var, var, VECTOR *);
 void rain(var, var);
 
 // These are particle function prototypes, and were generated
-// by 3rd party tools. So their names are a bit messed up.
+// by 3rd party tools (instead of hard-coded by hand). So their names are a bit messed up.
 // For those who want to modify my code: I've tried naming them properly.
 // But core functions remain unreadable.
 void New_Base_Effect_base_event(PARTICLE *);

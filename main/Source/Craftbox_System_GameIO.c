@@ -199,7 +199,7 @@ void LoadNewLevel() {
 	WriteLog("[ ] Loading ground...");
 	NewLine();
 
-	level_load("dry_original_weak.wmb");
+	level_load("./CookedWorlds/dry_original_weak.wmb");
 
 	WriteLog("[ ] Creating sky cube...");
 	NewLine();

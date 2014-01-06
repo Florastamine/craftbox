@@ -1,3 +1,21 @@
+#include <default.c>
+
+PANEL *diaryPage = {
+	
+	bmap = "diary.bmp";
+	
+	pos_x = 10;
+	pos_y = 10;
+	
+	scale_x = 1.5;
+	scale_y = 1.5;
+	
+	flags = TRANSLUCENT;
+	
+	on_click = GPanelDrag;
+	
+}
+
 // this isn't protected from the NULL textfile - StartDialogue will handle that
 void DialogueInitialize(STRING *textfile) {
 	
@@ -12,7 +30,7 @@ void DialogueInitialize(STRING *textfile) {
 	for(; i<1000;i++) str_cpy ( (DialogueContainer.pstring)[i]," " );
 	
 	while( !completed ) {
-	   
+		
 		file_str_readtow(dialoguehndl,temp,DialogueSentenceDelimiter,200);
 		
 		if( !str_stri(temp, DialogueFileEnd) ) {
@@ -112,5 +130,63 @@ void StartDialogue(BMAP *DialogueInterface, BMAP *avatar, STRING *input) {
 	pan_remove(DialogueInterfacePanel);
 	
 	return;
+	
+}
+
+void StartDiaryPage(STRING *text) {
+	
+	if(proc_status(StartDiaryPage)) return;
+	if(!text) return;
+	
+	DialogueInitialize(text);
+	
+	set(diaryPage,SHOW);
+	diaryPage->alpha = 0;
+	while(diaryPage->alpha <= 100) {
+	   
+	   diaryPage->alpha += 25 * time_step;
+	   wait(1);
+	   
+	}
+	
+	set(Dialogue,SHOW | LIGHT);
+	
+	Dialogue.red = 204;
+	Dialogue.green = 51;
+	Dialogue.blue = 255;
+	
+	var olmouse = mouse_mode;
+	mouse_mode = 2;  
+	
+	int i = 0;
+	while(i < DialogueSentencesCount) {
+		
+		layer_sort(Dialogue,diaryPage->layer+1); //alter GPanelDrag
+		
+		vec_set(mouse_pos,mouse_cursor);
+		
+		Dialogue.pos_x = diaryPage.pos_x + BORDER * 10;
+		Dialogue.pos_y = diaryPage.pos_y + BORDER * 10;
+		
+		str_cpy( (Dialogue.pstring) [0], (DialogueContainer.pstring) [i] );
+		
+		if(key_enter || mouse_right) {
+			
+			while(key_enter || mouse_right) wait(1);
+			i+=1;
+			
+		}
+		
+		wait(1);
+		
+	}
+	
+	DialogueSentencesCount = 0;
+	
+	reset(diaryPage,SHOW);
+	reset(Dialogue,SHOW | LIGHT);
+	diaryPage->alpha = 0;
+	
+	mouse_mode = olmouse;
 	
 }

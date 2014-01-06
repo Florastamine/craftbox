@@ -666,64 +666,77 @@ action general_action() {
 ////////////////////////////////////////////////////////////
 // A patroller and a node.
 ////////////////////////////////////////////////////////////
+ENTITY *_target, *last_target;
 action AI_Patrol()
 {
 	
-	VECTOR temp[3];
+	VECTOR temp;
 	set(my,POLYGON /*| SHADOW*/);
+	my._NODE_HEARTBEAT = 0;
 
-	while(true)
+	while(1)
 	{
-		c_scan(my.x, my.pan, vector(360, 60, 1000), IGNORE_ME | SCAN_ENTS | SCAN_LIMIT);
-		if(you)
-		{
+		if(PLAYTESTING) {
 			
-			if(you.ObjectType == ObjectNode) { // Found a node
+			c_scan(my.x, my.pan, vector(360, 60, 1000), IGNORE_ME | SCAN_ENTS | SCAN_LIMIT);
+			
+			/*
+			
+			Va cung nhu song, trai tim nguoi con gai dang yeu khong chap nhan
+			su tam thuong, nho hep, luon vuon toi cai lon lao de co the dong cam, 
+			dong dieu voi minh. "Song khong hieu noi minh, song tim ra tan be ".
+			
+			*/
+			
+			if( you && 
+			you.ObjectType == ObjectNode && 
+			you._NODE_HEARTBEAT == my._NODE_HEARTBEAT/*&&you._NODE_STATE == ACTIVE */)
+			{
 				
-				/*
+				_target = you;
+				_target.scale_z = 2;
+				vec_set( temp, _target.x );
+				vec_sub(temp,my.x);
+				vec_to_angle(my.pan, temp);
+				my.tilt = 0;
 				
-				Va cung nhu song, trai tim nguoi con gai dang yeu khong chap nhan
-				su tam thuong, nho hep, luon vuon toi cai lon lao de co the dong cam, 
-				dong dieu voi minh. "Song khong hieu noi minh, song tim ra tan be ".
-				
-				*/
-				if(you._NODE_HEARTBEAT == my._NODE_HEARTBEAT) {
-					
-					you.scale_z = 2;
-					vec_set( temp, you.x );
-					vec_sub(temp,my.x);
-					vec_to_angle(my.pan, temp);
-					my.tilt = 0;
-					
-					while (vec_dist (my.x, you.x) > 50)
-					{
-						my.skill22 += 5 * time_step;
-						c_move(my, vector(5 * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE); // 5 = movement speed
-						ent_animate(my, "walk", my.skill22, ANM_CYCLE);
-						wait (1);
-					}
-					my.skill99 = 0;
-					while (my.skill99 < you.skill1)
-					{
-						my.skill99 += time_step / 16;
-						ent_animate(my, "stand", my.skill22, ANM_CYCLE);
-						my.skill22 += 3 * time_step;
-						wait (1);
-					}
-					ent_remove(you);
-					
+				while (vec_dist (my.x, _target.x) > 50)
+				{
+					//					my.skill22 += 5 * time_step;
+					c_move(my, vector(5 * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE); // 5 = movement speed
+					//					ent_animate(my, "walk", my.skill22, ANM_CYCLE);
+					wait (1);
 				}
 				
+				/*
+				my.skill99 = 0;
+				while (my.skill99 < you.skill1)
+				{
+					my.skill99 += time_step / 16;
+					ent_animate(my, "stand", my.skill22, ANM_CYCLE);
+					my.skill22 += 3 * time_step;
+					wait (1);
+				}
+				*/
+				
+				safe_remove(_target);
+				//				_target = ent_next(_target);
+				
+			}
+			else
+			{
+				/*
+				ent_animate(my, "stand", my.skill22, ANM_CYCLE);
+				my.skill22 += 3 * time_step;
+				*/
+				wait(1);
 			}
 			
 		}
-		else
-		{
-			ent_animate(my, "stand", my.skill22, ANM_CYCLE);
-			my.skill22 += 3 * time_step;
-		}
+		
 		wait (1);
 	}
+	
 }
 
 void health_indicator()
@@ -745,7 +758,7 @@ action NeutralEnt() {
 	
 }
 
-action APlayerBike() {
+action Player_Bike() {
 
 	var movement_speed = 0; // initial movement speed
 	var rotation_speed = 3; // rotation speed
@@ -754,6 +767,8 @@ action APlayerBike() {
 	player = my;
 
 	set(my,SHADOW | POLYGON);
+	
+	PlayerPresent += 1;
 
 	while(my)
 	{
@@ -808,7 +823,8 @@ action APlayerBike() {
 		wait (1);
 
 	}
-
+	
+	PlayerPresent -= 1;
 
 }
 
@@ -1111,11 +1127,30 @@ void damage_player() {
 	player._HEALTH -= 0;
 }
 
-action player1()
+void flashpanCAMRecorderREC_startup() {
+	
+	while(1) {
+		
+		if(PLAYTESTING && camera_type) {
+			
+			panCAMRecorderREC->alpha = 0;
+			wait(-1);
+			panCAMRecorderREC->alpha = 100;
+			wait(-1);
+		}
+
+		wait(1);
+		
+	}
+	
+}
+
+action Player_Normal()
 {
 	
 	VECTOR fpos;
 	var gun_height;
+	var gun_bob_rate = 15;
 	//	var _footstep;
 	
 	flashlight = ent_create ("flashlight1.mdl",nullvector,NULL);
@@ -1123,6 +1158,8 @@ action player1()
 	vec_set(flashlight.blue,vector(60,128,120));
 	set(flashlight,PASSABLE | SPOTLIGHT);
 	player = me;
+	
+	PlayerPresent += 1;
 	
 	set(my,UNLIT | POLYGON | SHADOW);
 	my._HEALTH = 100;
@@ -1228,8 +1265,18 @@ action player1()
 				
 				if(key_w) {
 					
-					if(key_shift) sMove = 2;
-					else sMove = 1;
+					if(key_shift) {
+						
+						sMove = 2;
+						gun_bob_rate = 35;
+						
+					}
+					else {
+						
+						sMove = 1;
+						gun_bob_rate = 15;
+						
+					}
 					
 				}
 				
@@ -1324,10 +1371,11 @@ action player1()
 					
 					
 					camera.arc -= mickey.z*0.15 * time_step;
+					panCAMRecorder.alpha = GetPercent(camera.arc,75);
 					if(camera.arc >= 75) camera.arc = 75;
 					if(camera.arc <= 10) camera.arc = 10;
 					
-					gun_height += 15 * time_step;
+					gun_height += gun_bob_rate * time_step;
 					Gun.z += .05 * sin(gun_height);
 					
 				}
@@ -1342,12 +1390,14 @@ action player1()
 		wait(1);
 	}
 	
+	PlayerPresent -= 1;
+	
 }
 
 action camLoc() {
 	
 	CameraLoc = me;
-	set(CameraLoc, PASSABLE);
+	set(CameraLoc, PASSABLE | INVISIBLE);
 	
 	//   CameraLoc.emask &= ~DYNAMIC;
 	
@@ -1380,3 +1430,57 @@ action DefaultLevelObject() {
 	my.ObjectType = Neutral;
 	
 }
+
+action waypoint() {
+	
+	my.ObjectType = ObjectNode;
+	set(my,PASSABLE | BRIGHT);
+	
+	GenerateWaypoint();
+	
+}
+
+action random_guy()
+{ 
+	var anim_percentage;
+
+	var time_passed = 0;
+
+	var random_interval;
+
+	while (1)
+
+	{
+
+		if (time_passed == 0)
+
+		{
+
+			random_interval = 4 + random(6);
+
+		}
+
+		c_move (my, vector(5 * time_step, 0, 0), nullvector, GLIDE); // "5" controls the walking speed
+
+		ent_animate(my, "walk", anim_percentage, ANM_CYCLE);
+
+		anim_percentage += 6 * time_step; // "6" controls the "walk" animation speed
+
+		time_passed += time_step / 16;
+
+		if (time_passed > random_interval)
+
+		{
+
+			time_passed = 0; // reset time_passed
+
+			my.pan += 90 - random(180); // and then add -90...+90 degrees to the pan angle
+
+		}
+
+		wait (1);
+
+	}
+
+}
+

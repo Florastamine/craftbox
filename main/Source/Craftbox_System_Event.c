@@ -272,3 +272,99 @@ void Event_MouseRight() {
 	}
 	
 }
+
+/*
+--------------------------------------------------
+void Event_key_esc()
+
+Desc:
+
+Returns: -
+--------------------------------------------------
+*/
+void Event_key_esc() {
+	
+	while(key_esc) wait(1);
+	
+	if(! from_test_play) {
+		
+		if(!proc_status(LoadPlayground)) {
+			
+			if(IN_GAME) {
+				
+				if(is(BackMenu_Background,SHOW) ) GBackMenuHide();
+				else GBackMenuShow();
+				
+			}
+			
+		}
+		
+		return;
+		
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	if ( is(canvas_pan,SHOW) && canvas_modified) {
+		
+		from_test_play = 1; // fake this var
+		
+		str_cpy(TERRAINSEEDBMAP,TerrainEnt->type );
+		str_cat(TERRAINSEEDBMAP,SEEDMASKDATA);
+		str_cat(TERRAINSEEDBMAP,".tga"); // bmap_savetga
+		
+		bmap_savetga(canvas, TERRAINSEEDBMAP );
+		while(proc_status ( bmap_savetga ) ) wait(1);
+		
+		return;
+		
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	if( !IN_GAME ) {
+		
+		if( !is(QuitDialog,SHOW) ) {
+			
+			GMainMenuHide();
+			set(QuitDialog,SHOW);
+			
+			CameraPosID_temp = guiCurrentViewPreset;
+			guiCurrentViewPreset = MENU_CAMERA_EXIT;
+			
+			
+			} else {
+			
+			reset(QuitDialog,SHOW);
+			GMainMenuShow(); 
+			
+			guiCurrentViewPreset = CameraPosID_temp;
+			
+		}
+		
+		return;
+		
+	}
+	
+	//////////////////////////////////////////////////////////////	
+	
+	if(PLAYTESTING ) {
+		
+		PLAYTESTING = 0;
+		from_test_play = 0; // reset
+		
+		return;
+		
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	if(is(InsertObject,SHOW)) {
+	   
+	   GInsertObjectHide();
+	   
+	   return;
+	   
+	}
+	
+}

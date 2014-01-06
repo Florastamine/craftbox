@@ -35,8 +35,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 	of._alpha = o.alpha;
 	of._ambient = o.ambient;
 	
-	int i = 0;
-	for(; i < MAX_PUBLIC_SKILLS + MAX_PRIVATE_SKILLS ; i++) of._skill[i] = o.skill[i];
+	int i = 0; for(; i < MAX_PUBLIC_SKILLS + MAX_PRIVATE_SKILLS ; i++) of._skill[i] = o.skill[i];
 
 	// TOO LAZY TO USE MULTIPLE CASES IN A SWITCH STATMENT
 	// SO I SPLIT THEM INTO DIFFERENT IFs. IF IT SUCCESS,
@@ -78,6 +77,21 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.pStatic = o.ObjectDynamic;
 		of.pPhysics = o.ObjectPhysics;
+		
+		switch ( o.ObjectType ) {
+		   
+		   case ObjectAnimal: str_cpy( of.name, PATH_OBJECTS_ANMS ); break;
+		   case ObjectArchitecture: str_cpy( of.name, PATH_OBJECTS_ARCHS ); break;
+		   case ObjectCharacter: str_cpy( of.name, PATH_OBJECTS_CHARS ); break;
+		   case ObjectEveryday: str_cpy( of.name, PATH_OBJECTS_ETC ); break;
+		   case ObjectFood: str_cpy( of.name, PATH_OBJECTS_FOOD ); break;
+		   case ObjectMachine: str_cpy( of.name, PATH_OBJECTS_MACHS); break;
+		   case ObjectPlant: str_cpy(of.name,PATH_OBJECTS_PLANTS); break;
+		   case ObjectTransport: str_cpy(of.name, PATH_OBJECTS_TPORTTS); break;
+		   
+		}
+		
+		str_cat( of.name, o->type );		
 		
 		// Flag indicates that the copy progress has done.
 		// Also, it can be used to determine if the clipboard has any piece of data or not.
@@ -122,6 +136,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		//		str_cpy(of.name,o.filename);
 		
 		of.of_objtype = o.ObjectType;
+		str_cpy(of.name, o.SoundFileName );
 		
 		of.dp = 1;
 		
@@ -140,6 +155,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		//		str_cpy(of.name,o.filename);
 		
 		of.of_objtype = o.ObjectType;
+		of._ParticleID = o.ParticleID;
 		
 		of.dp = 1;
 		
@@ -167,6 +183,9 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		WriteLog("[ ] Passing information of a sprite object into clipboard.");
 		NewLine();
+		
+		str_cpy(of.name, PATH_SPRITES);
+		str_cat(of.name, o->type );
 		
 		//		str_cpy(of.name,o.filename);
 		

@@ -23,19 +23,16 @@ NOTES:
 >+++
 --------------------------------------------------
 */
+BMAP *previewImg;
 
 PANEL *PreviewBox = {
-   
-   layer = 15;
-   
-   bmap = "terrain_brush_lower.png";
+	
+	layer = 15;
 	
 	pos_x = 10;
 	pos_y = 10;
 	
-	flags = SHOW;
-	
-	
+	//	flags = SHOW;
 }
 
 void GQuitCraftbox() {
@@ -168,13 +165,10 @@ PANEL *TerrainToolbar = {
 	button(138,10,"load_upload.png""load_upload.png","load_upload.png",NULL,GTerrainSaveGeoWrapper,NULL);
 	button(202,10,"load_download.png","load_download.png","load_download.png",NULL,GTerrainLoadGeoWrapper,NULL);
 	
+	button(403,84,"TerrainToolbar_Close_on.png","TerrainToolbar_Close.png","TerrainToolbar_Close_on.png",NULL,GToggleTerrainEditor,NULL);
+	
 	hslider(289,34,155,"slider.bmp",500,5000,bSize);
 	hslider(289,72,155,"slider.bmp",5,25,brush_speed);
-	//	
-	//	pos_x = 10;
-	//	pos_y = 10;
-	
-	//   flags = SHOW;
 	
 	on_click = GPanelDrag;
 	
@@ -662,7 +656,7 @@ PANEL *InsertObject_Inputter = {
 
 	flags = TRANSLUCENT;
 
-	alpha = 50;
+	alpha = 25;
 
 }
 
@@ -697,6 +691,25 @@ PANEL *InsertParticle = {
 	
 }
 
+PANEL *InsertSystemObjects = {
+	
+	layer = 6;
+	
+	button(0,0,"sys_foot.jpg","sys_foot.jpg","sys_foot.jpg",NULL,NULL,NULL);
+	button(138,0,"sys_bike.jpg","sys_bike.jpg","sys_bike.jpg",NULL,NULL,NULL);
+	
+	// 128 + 30
+	button(0,158,"sys_adjustfog.JPG","sys_adjustfog.JPG","sys_adjustfog.JPG",NULL,NULL,NULL);
+	button(138,158,"sys_changemusic.png","sys_changemusic.png","sys_changemusic.png",NULL,NULL,NULL);
+	button(266,158,"sys_video.jpg","sys_video.jpg","sys_video.jpg",NULL,NULL,NULL);
+	
+	// 158 + 128 + 30
+	button(0,308,"sys_openconversation.png","sys_openconversation.png","sys_openconversation.png",NULL,NULL,NULL);
+	button(138,308,"sys_openletter.png","sys_openletter.png","sys_openletter.png",NULL,NULL,NULL);
+	button(266,308,"sys_spawnwarning.png","sys_spawnwarning.png","sys_spawnwarning.png",NULL,NULL,NULL);
+	
+}
+
 PANEL *InsertObject = {
 	
 	layer = 4;
@@ -705,15 +718,16 @@ PANEL *InsertObject = {
 	//	
 	//	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
 	
-	// 2 -> 7
-	button_toggle(40,50,"IO_ObjectTab_On.png","IO_ObjectTab_Off.png","IO_ObjectTab_On.png",,"IO_SoundTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(150,50,"IO_SoundTab_On.png","IO_SoundTab_Off.png","IO_SoundTab_On.png","IO_SoundTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(260,50,"IO_ParticleTab_On.png","IO_ParticleTab_Off.png","IO_ParticleTab_On.png","IO_ParticleTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(370,50,"IO_LightTab_On.png","IO_LightTab_Off.png","IO_LightTab_On.png","IO_LightTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(480,50,"IO_SpriteTab_On.png","IO_SpriteTab_Off.png","IO_SpriteTab_On.png","IO_SpriteTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(590,50,"IO_TerrainTab_On.png","IO_TerrainTab_Off.png","IO_TerrainTab_On.png","IO_TerrainTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(700,50,"IO_BlockTab_On.png","IO_BlockTab_Off.png","IO_BlockTab_On.png","IO_BlockTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
-	button_toggle(810,50,"IO_SysTab_On.png","IO_SysTab_Off.png","IO_SysTab_On.png","IO_SysTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(40,30,"IO_ObjectTab_On.png","IO_ObjectTab_Off.png","IO_ObjectTab_On.png",,"IO_SoundTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(150,30,"IO_SoundTab_On.png","IO_SoundTab_Off.png","IO_SoundTab_On.png","IO_SoundTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(260,30,"IO_ParticleTab_On.png","IO_ParticleTab_Off.png","IO_ParticleTab_On.png","IO_ParticleTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(370,30,"IO_LightTab_On.png","IO_LightTab_Off.png","IO_LightTab_On.png","IO_LightTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(480,30,"IO_SpriteTab_On.png","IO_SpriteTab_Off.png","IO_SpriteTab_On.png","IO_SpriteTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	//	button_toggle(590,30,"IO_TerrainTab_On.png","IO_TerrainTab_Off.png","IO_TerrainTab_On.png","IO_TerrainTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	//	button_toggle(810,30,"IO_BlockTab_On.png","IO_BlockTab_Off.png","IO_BlockTab_On.png","IO_BlockTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	button_toggle(590,30,"IO_SysTab_On.png","IO_SysTab_Off.png","IO_SysTab_On.png","IO_SysTab_On.png",NULL,GObjectTypeTab_Switcher,NULL);
+	
+	button(860,698,"closeInsertobject.png","closeInsertobject_on.png","closeInsertobject.png",NULL,GInsertObjectHide,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
@@ -736,13 +750,13 @@ PANEL *IO_ObjectTab = {
 	
 	// 1->8
 	button_toggle(0,0,"IO_ObjectTab_anms_on.png","IO_ObjectTab_anms.png","IO_ObjectTab_anms_on.png","IO_ObjectTab_anms_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,30,"IO_ObjectTab_archs_on.png","IO_ObjectTab_archs.png","IO_ObjectTab_archs_on.png",,"IO_ObjectTab_archs_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,60,"IO_ObjectTab_chars_on.png","IO_ObjectTab_chars.png","IO_ObjectTab_chars_on.png","IO_ObjectTab_chars_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,90,"IO_ObjectTab_etc_on.png","IO_ObjectTab_etc.png","IO_ObjectTab_etc_on.png","IO_ObjectTab_etc_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,120,"IO_ObjectTab_food_on.png","IO_ObjectTab_food.png","IO_ObjectTab_food_on.png","IO_ObjectTab_food_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,150,"IO_ObjectTab_machs_on.png","IO_ObjectTab_machs.png","IO_ObjectTab_machs_on.png","IO_ObjectTab_machs_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,180,"IO_ObjectTab_plants_on.png","IO_ObjectTab_plants.png","IO_ObjectTab_plants_on.png","IO_ObjectTab_plants_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
-	button_toggle(0,210,"IO_ObjectTab_tportts_on.png","IO_ObjectTab_tportts.png","IO_ObjectTab_tportts_on.png","IO_ObjectTab_tportts_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,40,"IO_ObjectTab_archs_on.png","IO_ObjectTab_archs.png","IO_ObjectTab_archs_on.png",,"IO_ObjectTab_archs_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,80,"IO_ObjectTab_chars_on.png","IO_ObjectTab_chars.png","IO_ObjectTab_chars_on.png","IO_ObjectTab_chars_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,120,"IO_ObjectTab_etc_on.png","IO_ObjectTab_etc.png","IO_ObjectTab_etc_on.png","IO_ObjectTab_etc_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,160,"IO_ObjectTab_food_on.png","IO_ObjectTab_food.png","IO_ObjectTab_food_on.png","IO_ObjectTab_food_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,200,"IO_ObjectTab_machs_on.png","IO_ObjectTab_machs.png","IO_ObjectTab_machs_on.png","IO_ObjectTab_machs_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,240,"IO_ObjectTab_plants_on.png","IO_ObjectTab_plants.png","IO_ObjectTab_plants_on.png","IO_ObjectTab_plants_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
+	button_toggle(0,280,"IO_ObjectTab_tportts_on.png","IO_ObjectTab_tportts.png","IO_ObjectTab_tportts_on.png","IO_ObjectTab_tportts_on.png",NULL,GIO_ObjectTab_SwitchTab,NULL);
 	
 }
 
@@ -750,20 +764,20 @@ PANEL *LightPresets = {
 	
 	layer = 6;
 	
-	button(0,0,"LightPreset1.bmp","LightPreset1.bmp","LightPreset1.bmp",NULL,GSelectLight,NULL);
-	button(80,0,"LightPreset2.bmp","LightPreset2.bmp","LightPreset2.bmp",NULL,GSelectLight,NULL);
-	button(160,0,"LightPreset3.bmp","LightPreset3.bmp","LightPreset3.bmp",NULL,GSelectLight,NULL);
-	button(240,0,"LightPreset4.bmp","LightPreset4.bmp","LightPreset4.bmp",NULL,GSelectLight,NULL);
+	button(0,0,"LightPreset1.png","LightPreset1.png","LightPreset1.png",NULL,GSelectLight,NULL);
+	button(128,0,"LightPreset2.png","LightPreset2.png","LightPreset2.png",NULL,GSelectLight,NULL);
+	button(256,0,"LightPreset3.png","LightPreset3.png","LightPreset3.png",NULL,GSelectLight,NULL);
+	button(384,0,"LightPreset4.png","LightPreset4.png","LightPreset4.png",NULL,GSelectLight,NULL);
 	
-	button(0,40,"LightPreset5.bmp","LightPreset5.bmp","LightPreset5.bmp",NULL,GSelectLight,NULL);
-	button(80,40,"LightPreset6.bmp","LightPreset6.bmp","LightPreset6.bmp",NULL,GSelectLight,NULL);
-	button(160,40,"LightPreset7.bmp","LightPreset7.bmp","LightPreset7.bmp",NULL,GSelectLight,NULL);
-	button(240,40,"LightPreset8.bmp","LightPreset8.bmp","LightPreset8.bmp",NULL,GSelectLight,NULL);
+	button(0,128,"LightPreset5.png","LightPreset5.png","LightPreset5.png",NULL,GSelectLight,NULL);
+	button(128,128,"LightPreset6.png","LightPreset6.png","LightPreset6.png",NULL,GSelectLight,NULL);
+	button(256,128,"LightPreset7.png","LightPreset7.png","LightPreset7.png",NULL,GSelectLight,NULL);
+	button(384,128,"LightPreset8.png","LightPreset8.png","LightPreset8.png",NULL,GSelectLight,NULL);
 	
-	button(0,80,"LightPreset9.bmp","LightPreset9.bmp","LightPreset9.bmp",NULL,GSelectLight,NULL);
-	button(80,80,"LightPreset10.bmp","LightPreset10.bmp","LightPreset10.bmp",NULL,GSelectLight,NULL);
-	button(160,80,"LightPreset11.bmp","LightPreset11.bmp","LightPreset11.bmp",NULL,GSelectLight,NULL);
-	button(240,80,"LightPreset12.bmp","LightPreset12.bmp","LightPreset12.bmp",NULL,GSelectLight,NULL);
+	button(0,256,"LightPreset9.png","LightPreset9.png","LightPreset9.png",NULL,GSelectLight,NULL);
+	button(128,256,"LightPreset10.png","LightPreset10.png","LightPreset10.png",NULL,GSelectLight,NULL);
+	button(256,256,"LightPreset11.png","LightPreset11.png","LightPreset11.png",NULL,GSelectLight,NULL);
+	button(384,256,"LightPreset12.png","LightPreset12.png","LightPreset12.png",NULL,GSelectLight,NULL);
 	
 }
 
@@ -1097,7 +1111,9 @@ PANEL *panCAMRecorder = {
 	layer = 3;
 	bmap = "panCAMRecorder.bmp";
 	
-	flags = OVERLAY;
+	flags = OVERLAY | TRANSLUCENT;
+	
+	alpha = 100;
 	
 }
 
@@ -1112,10 +1128,15 @@ PANEL *panCAMRecorder_digits = {
 
 PANEL *panCAMRecorderREC = {
 	
+	pos_x = 10;
+	pos_y = 10;
+	
 	layer = 4;
 	bmap = "panCAMRecorderREC.bmp";
 	
-	flags = OVERLAY;
+	flags = OVERLAY | TRANSLUCENT;
+	
+	alpha = 100;
 	
 }
 
@@ -1415,6 +1436,12 @@ void New_Base_Effect_base(PARTICLE* p) {
 }
 
 void emit_spiral() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var eff_frac; eff_frac = 0;
 	wait(1);
 	while(my) {
@@ -1513,6 +1540,12 @@ void Base_Effect1_base(PARTICLE* p) {
 }
 
 void emit_colorfulspark() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var eff_frac; eff_frac = 0;
 	wait(1);
 	while(my) {
@@ -1587,6 +1620,12 @@ void Base_Effect2_base(PARTICLE* p) {
 }
 
 void emit_spacehole() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var eff_frac; eff_frac = 0;
 	wait(1);
 	while(my) {
@@ -1759,6 +1798,12 @@ void Base_Effect11_base(PARTICLE* p) {
 }
 
 void emit_fountain2() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var eff_frac; eff_frac = 0;
 	wait(1);
 	while(my) {
@@ -1893,6 +1938,12 @@ void Base_Effect3_base(PARTICLE* p) {
 
 
 void emit_fountain1() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var my_time;my_time = 0;
 	var timetable_num;timetable_num = 0;
 	var eff_frac; eff_frac = 0;
@@ -2061,6 +2112,12 @@ void New_effect1_base(PARTICLE* p) {
 }
 
 void emit_fire2() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var my_time;my_time = 0;
 	var timetable_num;timetable_num = 0;
 	var eff_frac; eff_frac = 0;
@@ -2181,6 +2238,12 @@ void Base_Effect_base2(PARTICLE* p) {
 }
 
 void emit_fire1() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var my_time;my_time = 0;
 	var timetable_num;timetable_num = 0;
 	var eff_frac; eff_frac = 0;
@@ -2292,6 +2355,12 @@ void Base_Effect1_base3(PARTICLE* p) {
 }
 
 void emit_doublehelix() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var my_time;my_time = 0;
 	var timetable_num;timetable_num = 0;
 	var eff_frac; eff_frac = 0;
@@ -2469,6 +2538,12 @@ void sparkleblue_base(PARTICLE* p) {
 }
 
 void emit_composition() {
+	
+	my._BEING_MANIPULATED = 0;
+	
+	my.emask |= ENABLE_CLICK;
+	my.event = ObjectManipulationCore;
+	
 	var my_time;my_time = 0;
 	var timetable_num;timetable_num = 0;
 	var eff_frac; eff_frac = 0;
@@ -3145,6 +3220,7 @@ void GGUIInit() {
 	wait(2);
 	
 	layer_sort(PreviewBox,InsertObject->layer+1);
+	layer_sort(Gun,panCAMRecorder->layer-1);
 	
 	GPanelResize(CreateWorld,RESIZE_XY);
 	GPanelCenter(InsertObject);
@@ -3156,11 +3232,12 @@ void GGUIInit() {
 	ReleaseInfo.pos_y = screen_size.y - BORDER * 4;
 	
 	GPanelCenter(QuitDialog);
-	GPanelResize(panCAMRecorder,RESIZE_XY); // x+y-scale
+	GPanelCenter(panCAMRecorder); // x+y-scale
 	GPanelResize(panScreenshot,RESIZE_XY);
 	GPanelResize(BackMenu_Background,RESIZE_XY);
 	GPanelCenter(FPCrosshair);
 	GPanelCenter(InDev);
+	GPanelCenter(panCAMRecorder);
 	
 	GPanelAlignMainMenu(NewGame_Screen1);
 	GPanelAlignMainMenu(NewGame_ScreenDyn_Step1);
@@ -3192,7 +3269,6 @@ void GGUIInit() {
 
 	panScaleHelp.pos_x = screen_size.x - bmap_width(panScaleHelp.bmap) - BORDER * 2;
 	panScaleHelp.pos_y = panRotateHelp.pos_y;
-
 	int i = 1;
 	while(i < 7) {
 		pan_setpos(panMain_Top,3,i,vector((i - 1) * (BORDER + 64),0,0));
@@ -3326,7 +3402,6 @@ void GPanelSelect(PANEL *p)
 		last_pan.alpha = DEFAULT_ALPHA;
 		layer_sort(last_pan,2);
 		
-		// Idk why I inserted the fix here but it worked.
 		if(last_pan == panProp) {
 			
 			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
@@ -3377,8 +3452,11 @@ void GTerrainSubmenuShow() {
 	
 	reset(buttonlst_submenu_object,SHOW);
 	reset(buttonlst_submenu_path,SHOW);
-
-	set(buttonlst_submenu_terrain,SHOW);
+	reset(buttonlst_submenu_terrain,SHOW);
+	
+	GToggleTerrainEditor();
+	
+	// set(buttonlst_submenu_terrain,SHOW);
 	
 }
 
@@ -3534,34 +3612,6 @@ void GToggleObjectSeeder( ) {
 
 		coords_x = mouse_cursor.x - canvas_pan.pos_x;
 		coords_y = mouse_cursor.y - canvas_pan.pos_y;
-		
-		while ( key_space ) {
-			
-			canvas_pan.pos_x = mouse_cursor.x - canvas_pan.pos_x;
-			canvas_pan.pos_y = mouse_cursor.y - canvas_pan.pos_y;
-			
-		}
-		
-		if(key_esc) {
-			
-			while(key_esc) wait(1);
-			
-			if (canvas_modified) {
-				
-				from_test_play = 1; // fake this var
-				
-				str_cpy(TERRAINSEEDBMAP,TerrainEnt->type );
-				str_cat(TERRAINSEEDBMAP,SEEDMASKDATA);
-				str_cat(TERRAINSEEDBMAP,".tga"); // bmap_savetga
-				
-				bmap_savetga(canvas, TERRAINSEEDBMAP );
-				while(proc_status ( bmap_savetga ) ) wait(1);
-				
-			}			
-			
-			break;
-
-		}
 		
 		wait(1);
 		
@@ -3788,7 +3838,7 @@ void GSwitchToMoveMode() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
+	//	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
 
 	// Check its state first.
 	if(button_state(panMain_Top,1,-1)) {
@@ -3799,8 +3849,8 @@ void GSwitchToMoveMode() {
 		// Switch to ' object move ' state.
 		manip_type = move;
 		
-		reset(panRotateHelp,SHOW);
-		reset(panScaleHelp,SHOW);
+		//		reset(panRotateHelp,SHOW);
+		//		reset(panScaleHelp,SHOW);
 		
 	}
 
@@ -3810,7 +3860,7 @@ void GSwitchToMoveMode() {
 		// to manip_type.
 		manip_type = scale+1;
 		
-		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
+		//		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
 		
 	}
 }
@@ -3828,7 +3878,7 @@ void GSwitchToRotateMode() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
+	//	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
 
 	if(button_state(panMain_Top,2,-1)) {
 		
@@ -3837,17 +3887,17 @@ void GSwitchToRotateMode() {
 		
 		manip_type = rotate;
 		
-		set(panRotateHelp,SHOW);
-		reset(panScaleHelp,SHOW);
+		//		set(panRotateHelp,SHOW);
+		//		reset(panScaleHelp,SHOW);
 		
 	}
 
 	else {
 		
 		manip_type = scale+1;
-		reset(panRotateHelp,SHOW);
 		
-		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
+		//		reset(panRotateHelp,SHOW);
+		//		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
 		
 	}
 }
@@ -3865,7 +3915,7 @@ void GSwitchToScaleMode() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
+	//	if(!is(ZTool,SHOW)) set(ZTool,SHOW);
 
 	if(button_state(panMain_Top,3,-1)) {
 		
@@ -3874,17 +3924,17 @@ void GSwitchToScaleMode() {
 		
 		manip_type = scale;
 		
-		reset(panRotateHelp,SHOW);
-		set(panScaleHelp,SHOW);
+		//		reset(panRotateHelp,SHOW);
+		//		set(panScaleHelp,SHOW);
 		
 	}
 
 	else {
 		
 		manip_type=scale+1;
-		reset(panScaleHelp,SHOW);
 		
-		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
+		//		reset(panScaleHelp,SHOW);
+		//		if(is(ZTool,SHOW)) reset(ZTool,SHOW);
 		
 	}
 
@@ -3938,11 +3988,12 @@ void GCreditsShow() {
 	
 	if( ! file_exists(FILE_CREDITS_TEXT) ) ExitEvent();
 	
-	var rollspeed = 1.5;
+	var rollspeed = 3.5;
 	
 	GSEMenuMouseClick();
 	
 	//	reset(panNewGame,SHOW);
+	GMainMenuHide();
 	GWorldNewHide();
 	GLoadGameHide();
 	GOptionsHide();
@@ -3953,11 +4004,11 @@ void GCreditsShow() {
 	
 	TEXT *import = txt_create(CREDITS_ROLL_MAXSTR,1);
 	
-	import.font = font_create("Arial #25b");
+	import.font = font_create("Arial#25b");
 	
 	txt_loadw(import,FILE_CREDITS_TEXT);
 	
-	import.pos_x = screen_size.x / 4;
+	import.pos_x = 15;
 	import.pos_y = screen_size.y + BORDER;
 	import.flags |= (SHADOW | FILTER/* | CENTER_X*/ );
 	
@@ -3979,7 +4030,8 @@ void GCreditsShow() {
 	int i = 0;
 	for(;i<CREDITS_ROLL_MAXSTR;i++) str_remove((import.pstring)[i]); txt_remove(import);
 	
-	GLoadMainMenu();
+	GMainMenuShow();	
+	//	GLoadMainMenu();
 	
 }
 
@@ -4057,10 +4109,11 @@ void GQuitDialogToggle() {
 	
 	while( !IN_GAME ) {
 		
-		if(key_esc) {
+		if(key_esc)  {
 			
 			while(key_esc) wait(1);
 			
+			/*
 			if( !is(QuitDialog,SHOW) ) {
 				
 				GMainMenuHide();
@@ -4078,6 +4131,7 @@ void GQuitDialogToggle() {
 				guiCurrentViewPreset = temp_campos;
 				
 			}
+			*/
 			
 		}
 		
@@ -4782,7 +4836,7 @@ void GObjectTypeTab_Switcher(var ID) {
 	
 	switch( (int)ID ) {
 		
-		case 2: // Object
+		case 1: // Object
 		
 		if(!is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
 		if(!is(files_list_TEMPSTR,SHOW)) set(files_list_TEMPSTR,SHOW);
@@ -4790,12 +4844,13 @@ void GObjectTypeTab_Switcher(var ID) {
 		if(!is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
 		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
 		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
+		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
 		
 		FolderScan(files_list_TEMPSTR_Pool,PATH_OBJECTS_ANMS,EXT_OBJECT);
 		
 		break;
 		
-		case 3: // Sound
+		case 2: // Sound
 		
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(!is(files_list_TEMPSTR,SHOW)) set(files_list_TEMPSTR,SHOW);
@@ -4803,23 +4858,25 @@ void GObjectTypeTab_Switcher(var ID) {
 		if(is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
 		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
 		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
+		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
 		
 		FolderScan(files_list_TEMPSTR_Pool,PATH_SOUNDS,EXT_SOUND);
 		
 		break;
 		
-		case 4: // Particle
+		case 3: // Particle
 		
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(is(files_list_TEMPSTR,SHOW)) reset(files_list_TEMPSTR,SHOW);
 		if(is(InsertObject_Inputter,SHOW)) reset(InsertObject_Inputter,SHOW);
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
+		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
 		if(!is(InsertParticle,SHOW)) set(InsertParticle,SHOW);
 		
 		break;
 		
-		case 5: // Light
+		case 4: // Light
 		
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(is(files_list_TEMPSTR,SHOW)) reset(files_list_TEMPSTR,SHOW);
@@ -4827,10 +4884,11 @@ void GObjectTypeTab_Switcher(var ID) {
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(!is(LightPresets,SHOW)) set(LightPresets,SHOW);
 		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
+		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
 		
 		break;
 		
-		case 6: // Sprite
+		case 5: // Sprite
 		
 		if(!is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
 		if(!is(files_list_TEMPSTR,SHOW)) set(files_list_TEMPSTR,SHOW);
@@ -4838,27 +4896,37 @@ void GObjectTypeTab_Switcher(var ID) {
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
 		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
+		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
 		
 		FolderScan(files_list_TEMPSTR_Pool,PATH_SPRITES,EXT_SPRITE);
 		
 		break;
 		
-		case 7: // Terrain
+		//		case 6: // Terrain
+		//		
+		//		if(!is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
+		//		if(!is(files_list_TEMPSTR,SHOW)) set(files_list_TEMPSTR,SHOW);
+		//		if(!is(InsertObject_Inputter,SHOW)) set(InsertObject_Inputter,SHOW);
+		//		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
+		//		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
+		//		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
+		//		if(is(InsertSystemObjects,SHOW)) reset(InsertSystemObjects,SHOW);
+		//		
+		//		FolderScan(files_list_TEMPSTR_Pool,PATH_TERRAINS,EXT_TERRAIN);
 		
-		if(!is(IO_ObjectTab,SHOW)) set(IO_ObjectTab,SHOW);
-		if(!is(files_list_TEMPSTR,SHOW)) set(files_list_TEMPSTR,SHOW);
-		if(!is(InsertObject_Inputter,SHOW)) set(InsertObject_Inputter,SHOW);
+		case 6: // Event triggers
+		
+		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
+		if(is(files_list_TEMPSTR,SHOW)) reset(files_list_TEMPSTR,SHOW);
+		if(is(InsertObject_Inputter,SHOW)) reset(InsertObject_Inputter,SHOW);
 		if(is(IO_ObjectTab,SHOW)) reset(IO_ObjectTab,SHOW);
 		if(is(LightPresets,SHOW)) reset(LightPresets,SHOW);
 		if(is(InsertParticle,SHOW)) reset(InsertParticle,SHOW);
-		
-		FolderScan(files_list_TEMPSTR_Pool,PATH_TERRAINS,EXT_TERRAIN);
-		
-		case 8: // Node
+		if(!is(InsertSystemObjects,SHOW)) set(InsertSystemObjects,SHOW);
 		
 		break;
 		
-		case 9: // Event Trigger + trigger
+		case 8: // world blocks (minecraft style)
 		
 		break;
 	}
@@ -4880,6 +4948,8 @@ Returns: -
 void GInsertObjectShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
+	
+	if(is(InsertObject,SHOW)) GInsertObjectHide();
 	
 	GTerrainSubmenuHide();
 	if( is(TerrainToolbar,SHOW) ) GToggleTerrainEditor();
@@ -4913,7 +4983,7 @@ void GInsertObjectShow() {
 	FolderScan(files_list_TEMPSTR_Pool,PATH_OBJECTS_ANMS,EXT_OBJECT);
 	FillFromPool(files_list_TEMPSTR, files_list_TEMPSTR_Pool, 20, TEMPSTR_Scaler);
 	
-	while(is(InsertObject,SHOW)) {
+	//	while(is(InsertObject,SHOW)) {
 		
 		IO_ObjectTab.pos_x = InsertObject.pos_x + 25;
 		IO_ObjectTab.pos_y = InsertObject.pos_y + 250;
@@ -4930,9 +5000,13 @@ void GInsertObjectShow() {
 		InsertParticle.pos_x = InsertObject.pos_x + 100;
 		InsertParticle.pos_y = InsertObject.pos_y + 100;
 		
-		wait(1);
+		InsertSystemObjects.pos_x = InsertObject.pos_x + 100;
+		InsertSystemObjects.pos_y = InsertObject.pos_y + 100;
 		
-	}
+		
+		//		wait(1);
+		//		
+	//	}
 	
 	//	if(mark) GToggleTerrainEditor(); // flip the switch again
 	
@@ -4949,29 +5023,70 @@ Returns: -
 */
 void GInsertObjectHide() {
 	
+	if(event_type == EVENT_RELEASE) return;
+	
 	reset(InsertObject,SHOW);
 	reset(InsertObject,SHOW);
 	reset(IO_ObjectTab,SHOW);
 	reset(InsertObject_Inputter,SHOW);
 	reset(LightPresets,SHOW);
 	reset(InsertParticle,SHOW);
+	reset(InsertSystemObjects,SHOW);
 	
 	reset(files_list_TEMPSTR,SHOW);
 	
 }
 
+STRING *previewFile = "#1000";
+TEXT *aaa = {
+	string(previewFile);
+	pos_x = 100;pos_y=100;
+	font="Arial#25b";
+	flags=SHOW;
+
+}
+
 void LoadPreview() {
 	
-	STRING *previewFile = str_cat(TEMPSTR,"0.bmp");
+	str_cpy(previewFile, TEMPSTR);
+	str_trunc(previewFile, 4);
+	str_cat(previewFile, ".bmp");
 	
 	//   if(  file_exists(str_create(str_cat(TEMPSTR,"0.bmp")))) 
 	
 	if(file_exists(previewFile))
 	{
+		previewImg = bmap_create(previewFile);
 		
-		PreviewBox->bmap = bmap_create(previewFile);
+		PreviewBox.bmap = previewImg;
 		
 	}
+	
+}
+
+ENTITY *blank;
+
+void lol() {
+	
+	set(blank, TRANSLUCENT | PASSABLE);
+	blank.alpha = 100;
+	
+	while(blank) {
+		
+		blank.x = marker.x;
+		blank.y = marker.y;
+		blank.z = marker.z;
+		
+		wait(1);
+		
+	}
+	
+}
+
+void create() {
+	
+	if(blank) ptr_remove(blank);   
+	blank = ent_create(TEMPSTR,temp_pos,lol);
 	
 }
 
@@ -5067,9 +5182,10 @@ void GSelectObject(var ID) {
 			
 			str_cat(TEMPSTR,(files_list_TEMPSTR.pstring)[_ID]);
 			
-			LoadPreview();			
+			//			LoadPreview			();			
 			
 			GInsertObjectHide();
+			create();
 			
 			mark_seedEntstr = 1;
 			

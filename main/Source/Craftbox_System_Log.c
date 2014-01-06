@@ -229,8 +229,8 @@ int WriteLog(STRING *str, OBJECTSTRUCT *objectstruct) {
 			
 		}
 		
-		WriteLog(objectstruct->mass); NewLine();
-		WriteLog(objectstruct->friction); NewLine();
+		//		WriteLog(objectstruct->mass); NewLine();
+		//		WriteLog(objectstruct->friction); NewLine();
 		WriteLog(objectstruct->_red); NewLine();
 		WriteLog(objectstruct->_green); NewLine();
 		WriteLog(objectstruct->_blue); NewLine();

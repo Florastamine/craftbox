@@ -728,6 +728,6 @@ void updateSsaoChain ();
 void fireSsaoEvent (EVENT ev);
 
 
-#include "ppSsao.c"
+#include "./Source/Rendering/ppSsao.c"
 
 #endif /* ppSsao_h */

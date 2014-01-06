@@ -21,20 +21,22 @@ int GenerateWaypoint()
 	
 	WriteLog( temp_ );
 	NewLine();
-
-	my = me;
+	`
 	my._BEING_MANIPULATED = 0;
 	my._NODE_HEARTBEAT = 0;
+	//	
+	my.emask |= (ENABLE_SCAN /*| ENABLE_CLICK*/);
+	//	my.event = ObjectManipulationCore;
+	//	my.skin = random(5);
+	//	
 	
-	my.emask |= (ENABLE_SCAN | ENABLE_CLICK);
-	my.event = ObjectManipulationCore;
-	my.skin = random(5);
-	
+	/*
 	while(my) {
 		
 		wait(1);
 		
 	}
+	*/
 	
 	WriteLog("[X] Task completed for GenerateWaypoint() at");
 	WriteLog( temp_ );
@@ -102,6 +104,9 @@ int GenerateSound() {
 	
 	WriteLog( temp_ );
 	NewLine();
+	
+	my->SoundFileName = str_create("#300"); // resurrect this string
+	str_cpy(my->SoundFileName,TEMPSTR); // at this moment TEMPSTR is still valid for this session
 	
 	ent_playloop(my,snd_create(TEMPSTR),VOL_EFFECTS);
 	

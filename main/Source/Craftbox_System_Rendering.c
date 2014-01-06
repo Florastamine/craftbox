@@ -113,11 +113,11 @@ void mtl_vegetation_init();
 //#include "eRender.c" //render bitmap for projection texture
 
 // BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
-#include "sc_core.c"
+#include "./Source/Rendering/sc_core.c"
 
 // SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
-#include "ppSsao.h"
-#include "dof.c"
+#include "./Source/Rendering/ppSsao.h"
+#include "./Source/Rendering/dof.c"
 
 /*
 --------------------------------------------------
@@ -144,11 +144,11 @@ int SetupShader() {
 	
 	// Shade-C
 	sc_bHDR = 1;
-	sc_bDOF = 1;
-	sc_bRefract = 1;
-	sc_bWater = 1;
-	sc_bReflect = 1;
-	sc_bVolParts = 1;
+	sc_bDOF = 0;
+	sc_bRefract = 0;
+	sc_bWater = 0;
+	sc_bReflect = 0;
+	sc_bVolParts = 0;
 	sc_setup();	
 	
 	/*

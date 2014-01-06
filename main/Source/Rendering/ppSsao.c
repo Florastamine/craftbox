@@ -23,8 +23,7 @@
 #ifndef ppSsao_c
 #define ppSsao_c
 
-#include "ppSsao.h"
-#include <stdio.h>
+#include "./Source/Rendering/ppSsao.h"
 
 
 // integration into game
