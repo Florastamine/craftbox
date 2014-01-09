@@ -109,110 +109,66 @@ Returns: -
 */
 void LoadKernel() {
 	
-	while( !PreKernelDone ) wait(1);
-
-	WriteLog("[SYS] Loading kernel");
+	while( ! PreKernelDone ) wait(1);
+	
+	WriteLog("[SYS] Loading kernel ");
 	NewLine();
 	
-	// Let's precache some contents first
-	//	PrecacheContent();
-	//	while(proc_status(PrecacheContent)) wait(1);
-
-	STRING *_s = "#64";
-
-	// If you want, you can call GetSystemMetrics (windows.h) instead of Gamestudio's sys_metrics.	
-	str_cpy((PreMainMenuLoading.pstring)[0],"Testing various settings...");
-	
-	WriteLog("[ ] Testing various settings.");
-	NewLine();
-
-	/* Resolution Test */
-	
-	/*
-	float WIDTH = sys_metrics(0), HEIGHT = sys_metrics(1);
-
-	str_for_num(_s,WIDTH);
-	str_cat((PreMainMenuLoading.pstring)[0],_s);
-	str_cat((PreMainMenuLoading.pstring)[0]," ");
-
-	str_for_num(_s,HEIGHT);
-	str_cat((PreMainMenuLoading.pstring)[0],_s);
-	str_cat((PreMainMenuLoading.pstring)[0]," ");
-
-	if(WIDTH < MINIMUM_RESOLUTION_X ||
-	HEIGHT < MINIMUM_RESOLUTION_Y ) {
+	if ( DEBUG_MODE ) {
 		
-		UnloadKernel(); // switch off the kernel and enter console mode.
-		while(proc_status(UnloadKernel)) wait(1);  // or else some kind of stupid error would pop up.
+		reset(LoadKernelScreen,SHOW);
+		vec_set( screen_color, vector(0,0,0) ); // black screen
 		
-		str_cpy((ConsoleText.pstring)[1],"craftbox requires at least a 1024x768 resolution screen to run properly.");
-		str_cpy((ConsoleText.pstring)[2],"Please switch to the resolution that is larger or equal to 1024x768 and start craftbox again.");
+		WriteLog("[ ] Testing various settings...");
+		NewLine();
 		
-		return;
+		//////////////////////////////////////////////////////////////
+		switch( sys_metrics(67) ) { // Value that specifies how the system was started
+			
+			case 0: // Normal boot
+			WriteLog("Normal boot");
+			break;
+			
+			case 1: // Safe boot
+			WriteLog("Safe boot");
+			break;
+			
+			case 2: // Safe boot + network
+			WriteLog("Safe boot with networking");
+			break;
+			
+			default: break;
+			
+		}
+		NewLine();
+		
+		if( sys_metrics(19) ) { // detect for the installation of mouse
+			
+			WriteLog("Mouse installed");
+			NewLine();
+			
+		}
+		
+		if( sys_metrics(73) ) { // detect for a weak processor (rarely happen)
+			
+			WriteLog("Weak processor");
+			NewLine();
+			
+		}
+		//////////////////////////////////////////////////////////////
 		
 	}
 	
-	*/
-
-	/* Boot Mode Test */
-	str_for_num(_s,sys_metrics(67));
-	str_cat((PreMainMenuLoading.pstring)[0],_s);
-	str_cat((PreMainMenuLoading.pstring)[0]," ");
-
-	/* Mouse Test */
-	str_for_num(_s,sys_metrics(19));
-	str_cat((PreMainMenuLoading.pstring)[0],_s);
-	str_cat((PreMainMenuLoading.pstring)[0]," ");
-
-	if(!sys_metrics(19)) {
+	else {
 		
-		UnloadKernel(); // switch off the kernel and enter console mode.
-		while(proc_status(UnloadKernel)) wait(1);  // or else some kind of stupid error would pop up.
-		
-		str_cpy((ConsoleText.pstring)[1],"Plug in a mouse and restart craftbox.");
-		
-		return;
+		set(LoadKernelScreen,SHOW);
 		
 	}
 
-	/* Processor Test */
-	str_for_num(_s,sys_metrics(73));
-	str_cat((PreMainMenuLoading.pstring)[0],_s);
-	str_cat((PreMainMenuLoading.pstring)[0]," ");
-
-	str_remove(_s);
-	
-	WriteLog("[ ] Setting up events, calling main modules.");
+	WriteLog("[ ] Initializing...");
 	NewLine();
 	
-	dtimer();
-	
-	double timer_;
-	STRING *timer__ = "#100";
-	
-	//	GPreMainMenu();
-
-	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_1);
-
-	on_bksp = TakeScreenshot;
-	on_exit = ExitEvent;
-	on_close = ExitEvent;
-	on_level = on_level_event;
-	on_esc = Event_key_esc;
-
-	// Initialization for loopix-project.com's MystyMood_Lite-C
-	sky_curve = 2;
-	sky_clip = -10;
-	
-	// This allows custom cursors to be created (by copying strings to STRING *mouse)
-	BMAP *mouseimg;
-	if(str_len(mouse_str) && !str_cmp(mouse_str,undef)) mouseimg = bmap_create(mouse_str);
-	else mouseimg = bmap_create("mouse_pointer.png"); // default cursor
-	mouse_map = mouseimg;
-
-	vec_zero(parted_temp_vec);
-	vec_zero(parted_temp2_vec);
-	
+	// Init strings
 	str_cpy(seedEnt,undef);
 	str_cpy(TEMPSTR,undef);
 	str_cpy(FILE_GAME_INTRO_VIDEO,undef);
@@ -220,29 +176,30 @@ void LoadKernel() {
 	str_cpy(GROUNDSTR,undef);
 	str_cpy(SKYSTR,undef);
 	str_cpy(PLAYTEST_LOADSCREENSTR,undef);
-
-	//	MaterialCopyColor(pTexColor, mtl_pTex1);
+	clipboard.name = str_create("#300");
 	
-	panProp.alpha = DEFAULT_ALPHA;
-
-	timer_ = dtimer()/pow(10,3);
-	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
-	str_cat((PreMainMenuLoading.pstring)[1],"s");
-
-	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_2);
-	dtimer();
-
-	// Initialize the databases and load them.
-	//	LoadSavedBMAPs();
-
-	// Initialize shaders
+	// Init custom mouse cursor
+	// This allows custom cursors to be created (by copying strings to STRING *mouse)
+	BMAP *mouseimg;
+	if(str_len(mouse_str) && !str_cmp(mouse_str,undef)) mouseimg = bmap_create(mouse_str);
+	else mouseimg = bmap_create("mouse_pointer.png"); // default cursor
+	mouse_map = mouseimg;
+	
+	// Init events
+	on_bksp = TakeScreenshot;
+	on_exit = ExitEvent;
+	on_close = ExitEvent;
+	on_level = on_level_event;
+	on_esc = Event_key_esc;
+	
+	// Init shaders
 	SetupShader();
 	
-	// Load ogg music from PATH_MUSIC
+	// Init music player
 	mpLoad(PATH_MUSIC,EXT_MUSIC);
 	while(proc_status(mpLoad)) wait(1);
-
-	// Intialize and read custom materials' properties.
+	
+	// Init materials
 	int i;
 	for(i = 0;i < 4;i++) mat_custom[i] = mtl_create();
 
@@ -250,7 +207,8 @@ void LoadKernel() {
 	ReadMaterialDataFromFile(mat_custom[1],FILE_CUSTOM_MAT_2);
 	ReadMaterialDataFromFile(mat_custom[2],FILE_CUSTOM_MAT_3);
 	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
-
+	
+	// Copy vars
 	original_moon_scale_fac = moon_scale_fac;
 	original_time_speed_night = time_speed_night;
 	original_night_sky_scale_x = night_sky_scale_x;
@@ -262,42 +220,8 @@ void LoadKernel() {
 	original_d3d_fogcolor1r = d3d_fogcolor1.red;
 	original_d3d_fogcolor1g = d3d_fogcolor1.green;
 	original_d3d_fogcolor1b = d3d_fogcolor1.blue;
-
-	clipboard.name = str_create("#300");
-
-	timer_ = dtimer()/pow(10,3);
-	str_cat((PreMainMenuLoading.pstring)[1],str_for_num(timer__,timer_));
-	str_cat((PreMainMenuLoading.pstring)[1],"s");
-
-	// If we want a video to be played... 
-
-	// Intialize and load the GUI system.
-	str_cpy((PreMainMenuLoading.pstring)[2],LOADCRAFTBOX_3);
-	dtimer();
-
-	GGUIInit();
-	while(proc_status(GGUIInit)) wait(1);
-
-	/*
-	// Load a blank level.
-	LoadNewLevel();
-
-	//	LoadMystymood(1,1);
-
-	//	def_move();
-	*/
-
-	timer_ = dtimer()/pow(10,6);
-	str_cat((PreMainMenuLoading.pstring)[2],str_for_num(timer__,timer_));
-	str_cat((PreMainMenuLoading.pstring)[2],"s");
-
-	//	reset(BackgroundScreen,SHOW);
-	reset(PreMainMenuLoading,SHOW);
 	
-	WriteLog("[ ] Executing miscellaneous stuff.");
-	NewLine();
-	
-	// Fill the large pools
+	// Fetch pools
 	FolderScan(files_list_SKYSTR_Pool, PATH_SKIES , str_create("tga") );
 	while(proc_status(FolderScan)) wait(1);
 	
@@ -306,23 +230,47 @@ void LoadKernel() {
 	
 	FolderScan(files_list_LOADGAMESTR_Pool, PATH_SAVEDGAMES, EXT_SAVEDGAMES);
 	while(proc_status(FolderScan)) wait(1);
-
-	KERNEL_IS_RUNNING = 1;
 	
-	WriteLog("[ ] Loading main menu...");
-	NewLine();
+	// at this time the kernel has finished its job
+	// gui calculation/initialization are on their own
+	KERNEL_IS_RUNNING = 1;
+	if( is(LoadKernelScreen,SHOW) ) reset(LoadKernelScreen,SHOW);
+	
+	WriteLog("[X] Finished initializing the kernel.");
+	
+	// Things happened after the kernel has been loaded.
+	PostLoadKernel();
+	
+}
+
+// things happen after loaded the kernel
+// setup GUI, show splashscreens, etc
+// why separate function? you may ask
+// well the kernel is supposed to load a bunch of fixed things and should 
+// not be combined together with GUI stuff, especially we always change the GUI
+// plus, the kernel is supposed to load things that it's supposed to load,
+// the most important thing.
+// sorry for this commenting style, well, but my time is limited :P
+void PostLoadKernel() {
+	
+	// Init (calculate) gui
+	GGUIInit();
+	while(proc_status(GGUIInit)) wait(1);
 	
 	GLoadMainMenu();
 	while(proc_status(GLoadMainMenu)) wait(1);
 	
-	// This isn't supposed to be in the kernel code...
-	// mpPlay("Funny_Death_-_She_Never_Existed.ogg");
+	//	PANEL *black_cover = pan_create("pos_x = 0; pos_y = 0;",0);
+	//	layer_sort(black_cover,SplashScreen->layer-1 );
+	//	black_cover.bmap = bmap_create("./Cooked2D/black_.bmp");
+	//	GPanelResize(black_cover,RESIZE_XY);
+	//	
+	//	set(black_cover,SHOW);
+	//	
+	//	pan_remove(black_cover);
 	
 	mouse_mode = 4;
-
-	WriteLog("[X] Finished loading the kernel.");
-	NewLine();
-
+	
 }
 
 /*
@@ -529,6 +477,10 @@ void CBox_startup() {
 	tex_share = 1;
 	camera.clip_far = 5000000;
 	camera.arc = 75;
+	
+	// Initialization for loopix-project.com's MystyMood_Lite-C
+	sky_curve = 2;
+	sky_clip = -10;
 	
 	if( sys_metrics(0) < MINIMUM_RESOLUTION_X || sys_metrics(1) < MINIMUM_RESOLUTION_Y ) {
 		

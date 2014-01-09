@@ -23,6 +23,29 @@ NOTES:
 >+++
 --------------------------------------------------
 */
+PANEL *LoadKernelScreen = {
+	
+	layer = 999;
+	
+	pos_x = 0;
+	pos_y = 0;
+	bmap = "LoadKernelScreen.jpg";
+	
+}
+
+PANEL *SplashScreen = {
+	
+	pos_x = 0;
+	pos_y = 0;
+	
+	//	layer = 1;
+	
+	flags = TRANSLUCENT;
+	
+	alpha = 0;
+	
+}
+
 BMAP *previewImg;
 
 PANEL *PreviewBox = {
@@ -880,6 +903,8 @@ PANEL *panProp = {
 	on_click = GPanelDrag;
 	
 	flags = TRANSLUCENT;
+	
+	alpha = 50;
 }
 
 PANEL *panMat_Sub1 = {
@@ -3215,6 +3240,7 @@ void GGUIInit() {
 	layer_sort(PreviewBox,InsertObject->layer+1);
 	layer_sort(Gun,panCAMRecorder->layer-1);
 	
+	GPanelResize(LoadKernelScreen,RESIZE_XY);
 	GPanelResize(CreateWorld,RESIZE_XY);
 	GPanelCenter(InsertObject);
 	//	GPanelResize(seedPanelCover,RESIZE_XY);
@@ -3319,15 +3345,6 @@ void GGUIInit() {
 	MainMenu_Item4.pos_x = MainMenu_Item3.pos_x + bmap_width(MainMenu_Item3.bmap) + BORDER;
 	MainMenu_Item5.pos_x = MainMenu_Item4.pos_x + bmap_width(MainMenu_Item4.bmap) + BORDER;
 	MainMenu_Item6.pos_x = MainMenu_Item5.pos_x + bmap_width(MainMenu_Item5.bmap) + BORDER;
-	
-	/*
-
-	setup for submenus
-	* buttonlst_submenu_terrain
-	* buttonlst_submenu_object
-	* buttonlst_submenu_path
-
-	*/
 
 	panMain_Play.pos_x = screen_size.x - BORDER - bmap_width(panMain_Play.bmap);
 	panMain_Play.pos_y = screen_size.y - BORDER - bmap_height(panMain_Play.bmap);
@@ -6942,4 +6959,54 @@ void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
 		
 		wait(1);
 	}
+}
+
+void _GShowSplashScreen_Common(var fadespeed) {
+	
+	fadespeed = abs(fadespeed);
+	
+	GPanelResize(SplashScreen,RESIZE_XY);
+	//	GPanelCenter(SplashScreen);
+	SplashScreen->alpha = 0;
+	
+	set(SplashScreen,SHOW);
+	
+	while(SplashScreen->alpha <= 100) {
+		
+		SplashScreen->alpha += fadespeed * time_step;
+		wait(1);
+		
+	}
+	
+	while( !key_enter ) wait(1);
+	
+	while(SplashScreen->alpha > 0 ) {
+		
+		SplashScreen->alpha -= fadespeed * time_step;
+		wait(1);
+		
+	}
+	
+	SplashScreen->alpha = 0;
+	//	ptr_remove(SplashScreen->bmap);
+	reset(SplashScreen,SHOW);
+	
+}
+
+void GShowSplashScreen(STRING *input, var fadespeed) {
+	
+	if( proc_status(GShowSplashScreen) ) return;
+	SplashScreen->bmap = bmap_create ( input );
+	
+	_GShowSplashScreen_Common(fadespeed);
+	
+}
+
+void GShowSplashScreen(BMAP *input, var fadespeed) {
+	
+	if( proc_status(GShowSplashScreen)) return;
+	SplashScreen->bmap = input;
+	
+	_GShowSplashScreen_Common(fadespeed);
+	
 }

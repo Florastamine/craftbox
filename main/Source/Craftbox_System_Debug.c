@@ -394,6 +394,8 @@ void OpenDebug() {
 	
 	//		if (!on_close) on_close = def_exit;
 	
+	DEBUG_MODE = 1;
+	
 	while(1) {
 		
 		//	   draw_text(")

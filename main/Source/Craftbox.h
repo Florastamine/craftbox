@@ -66,6 +66,8 @@ var def_oldmouse = 0;
 
 BOOL PLAYTESTING = 0;
 BOOL UNDER_MAC_OR_LINUX = 0; // Running craftbox under Mac or Linux-based OS.
+BOOL DEBUG_MODE = 0;
+BOOL UseFlatMenu = 0;
 var LoadWorldBreak;
 var PreKernelDone;
 var sResX, sResY, sResMode;
@@ -411,10 +413,6 @@ STRING *TERRAINSEEDBMAP = "#400";
 
 int TEMP_OBJECT_TYPE;
 
-STRING *LOADCRAFTBOX_1 = "Initializing events and variables...";
-STRING *LOADCRAFTBOX_2 = "Initializing saved bitmaps and custom materials...";
-STRING *LOADCRAFTBOX_3 = "Initializing GUI...";
-
 STRING *PLAYTEST_LOADSCREENSTR = "#400"; // Something will modify this...and we got user-defined loadscreens.
 
 TEXT *OptionsGraphicsTxt;
@@ -675,23 +673,6 @@ TEXT* ConsoleText = { font = "Arial#15b"; string("
 
 ","#255","#255","#255","#255","#255"); layer = 999; }
 
-TEXT *PreMainMenuLoading = {
-	
-	layer = 20;
-	
-	string("#500","#200","#200");
-	
-	pos_x = 20;
-	pos_y = 20;
-	
-	font = "Arial#27b";
-	
-	red = 54;
-	green = 117;
-	blue = 136;
-	
-}
-
 TEXT *files_list_SKYSTR_Pool = { strings( 100 ); }
 TEXT *files_list_GROUNDSTR_Pool = { strings( 100 ); }
 TEXT *files_list_LOADGAMESTR_Pool = { strings( 100 ); }
@@ -895,7 +876,9 @@ PANEL *Statistics,
 *BackMenu_Items,
 *QuitDialog,
 *RightClickMenu,
-*PreviewBox;
+*PreviewBox,
+*SplashScreen,
+*LoadKernelScreen;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
@@ -1052,6 +1035,7 @@ void OpenDebug();
 void CloseDebug();
 void ExitEvent();
 void LoadKernel();
+void PostLoadKernel();
 void LoopKernel();
 void LoadPlayground();
 void PrecacheContent();
@@ -1180,6 +1164,9 @@ void GGUIHide();
 void GGUIShow();
 void GGUIUpdate(PANEL *);
 
+void _GShowSplashScreen_Common(var);
+void GShowSplashScreen(STRING *, var);
+void GShowSplashScreen(BMAP *, var);
 void guiViewPreset (int *, int, VECTOR *, VECTOR *);
 void GPanelAlignMainMenu(PANEL *);
 void GPanelCenterInside(PANEL *, PANEL *);
@@ -1442,4 +1429,5 @@ void p_composition_create(VECTOR *);
 void rain_event(PARTICLE *);
 void rain_base(PARTICLE *);
 void rain(VECTOR *);
+
 #endif HEADER_H
