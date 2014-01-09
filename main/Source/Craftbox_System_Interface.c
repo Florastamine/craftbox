@@ -1,8 +1,8 @@
 /*
 --------------------------------------------------
-shell.c
+Craftbox_System_Interface.c
 
-Contains GUI/HUD code.
+High-level layer for communicating with the user through GUI.
 
 Written by Nguyen Ngoc Huy
 https://github.com/ngochuy2101
@@ -351,6 +351,7 @@ PANEL *NewGame_ScreenDyn_Step1 = {
 	flags =  TRANSLUCENT;
 	
 	alpha = 75;
+	
 }
 
 PANEL *NewGame_ScreenStatic_Step1 = {
@@ -536,14 +537,6 @@ PANEL *Options_Maintenance = {
 	
 }
 
-PANEL *BackgroundScreen = {
-	
-	layer = 10;
-	
-	bmap = BackgroundScreen1;
-	
-}
-
 PANEL *InputBox_GROUNDSTR = {
 	
 	/*
@@ -557,7 +550,7 @@ PANEL *InputBox_GROUNDSTR = {
 	
 	bmap = "InputPalette_4.bmp";
 	
-	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
 	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
 	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
 	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
@@ -3242,6 +3235,12 @@ void GGUIInit() {
 	GPanelAlignMainMenu(NewGame_Screen1);
 	GPanelAlignMainMenu(NewGame_ScreenDyn_Step1);
 	GPanelAlignMainMenu(NewGame_ScreenStatic_Step1);
+	
+	//	GPanelCenter(NewGame_Screen1);
+	//	NewGame_Screen1->pos_y += 5 * BORDER;
+	//	NewGame_ScreenDyn_Step1->pos_y = NewGame_Screen1->pos_y;
+	//	NewGame_ScreenStatic_Step1->pos_y = NewGame_ScreenDyn_Step1->pos_y;
+	
 	GPanelAlignMainMenu(NewGame_Screen3);
 	GPanelAlignMainMenu(Options_Graphics);
 	GPanelAlignMainMenu(Options_Sound);
@@ -5064,6 +5063,7 @@ void LoadPreview() {
 	
 }
 
+/*
 ENTITY *blank;
 
 void lol() {
@@ -5089,6 +5089,7 @@ void create() {
 	blank = ent_create(TEMPSTR,temp_pos,lol);
 	
 }
+*/
 
 /*
 --------------------------------------------------
@@ -5185,7 +5186,7 @@ void GSelectObject(var ID) {
 			//			LoadPreview			();			
 			
 			GInsertObjectHide();
-			create();
+			//			create();
 			
 			mark_seedEntstr = 1;
 			
@@ -5193,7 +5194,7 @@ void GSelectObject(var ID) {
 			
 		} 
 		
-		if(button_state(InsertObject,3,-1)) { // Sound
+		if(button_state(InsertObject,2,-1)) { // Sound
 			
 			str_cpy(TEMPSTR,PATH_SOUNDS);
 			str_cat(TEMPSTR,(files_list_TEMPSTR.pstring)[_ID]);
@@ -5205,7 +5206,7 @@ void GSelectObject(var ID) {
 			
 		}
 		
-		if(button_state(InsertObject,6,-1)) { // Sprite
+		if(button_state(InsertObject,5,-1)) { // Sprite
 			
 			str_cpy(TEMPSTR,PATH_SPRITES);
 			str_cat(TEMPSTR,(files_list_TEMPSTR.pstring)[_ID]);
@@ -5216,6 +5217,8 @@ void GSelectObject(var ID) {
 			return;
 			
 		}
+		
+		/*
 		
 		if(button_state(InsertObject,7,-1)) { // Terrain
 			
@@ -5228,6 +5231,8 @@ void GSelectObject(var ID) {
 			return;
 			
 		}
+		
+		*/
 		
 	}
 	
@@ -5432,6 +5437,9 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void GPreMainMenu() {
 	
 	randomize();
@@ -5456,6 +5464,8 @@ void GPreMainMenu() {
 	set(PreMainMenuLoading,SHOW);
 	
 }
+
+*/
 
 // Sorry for the terrible-lookin' code. I don't have much time.
 /*

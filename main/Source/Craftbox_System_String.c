@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_String.c
+
+String functions for passing user requests (normally from the GUI).
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -46,6 +70,7 @@ void PassToGROUNDSTR(var position) {
 	if(event_type == EVENT_RELEASE) return;
 	
 	WriteLog("[ ] Passing information from the input box to GROUNDSTR");
+	NewLine();
 	
 	int absposition = position - 1;
 	if( !str_cmp((files_list_GROUNDSTR.pstring) [absposition], undef) ) {

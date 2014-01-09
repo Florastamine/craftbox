@@ -1,6 +1,9 @@
 /*
 --------------------------------------------------
-graphics.c
+Craftbox_System_Rendering.c
+
+Extra rendering stuff for the purpose of boosting craftbox's graphics, 
+which cost performace.
 
 Contains shaders/shader packages and postprocessing effects/
 postprocessing effect packages from various sources, for example 
@@ -17,9 +20,6 @@ the ability of what craftbox can do, and help boosting its graphics a lot!
 
 See here for license features comparison: 
 http://www.conitec.net/english/gstudio/order8.php
-
-Shader code, in general is independent so I put the inclusion right 
-after CBox.h.
 
 Written by Nguyen Ngoc Huy, contains many shaders from various sources.
 https://github.com/ngochuy2101
@@ -113,11 +113,11 @@ void mtl_vegetation_init();
 //#include "eRender.c" //render bitmap for projection texture
 
 // BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
-#include "./Source/Rendering/sc_core.c"
+//#include "./Source/Rendering/sc_core.c"
 
 // SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
-#include "./Source/Rendering/ppSsao.h"
-#include "./Source/Rendering/dof.c"
+//#include "./Source/Rendering/ppSsao.h"
+//#include "./Source/Rendering/dof.c"
 
 /*
 --------------------------------------------------
@@ -142,6 +142,8 @@ int SetupShader() {
 		
 	}
 	
+	/*
+	
 	// Shade-C
 	sc_bHDR = 1;
 	sc_bDOF = 0;
@@ -150,6 +152,8 @@ int SetupShader() {
 	sc_bReflect = 0;
 	sc_bVolParts = 0;
 	sc_setup();	
+	
+	*/
 	
 	/*
 	// SSAO

@@ -1,3 +1,29 @@
+/*
+--------------------------------------------------
+Craftbox_System_Clipboard.c
+
+Functions for working with the clipboard, for example 
+passing to/from object/clipboard.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
+
 
 /*
 --------------------------------------------------
@@ -79,16 +105,16 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		of.pPhysics = o.ObjectPhysics;
 		
 		switch ( o.ObjectType ) {
-		   
-		   case ObjectAnimal: str_cpy( of.name, PATH_OBJECTS_ANMS ); break;
-		   case ObjectArchitecture: str_cpy( of.name, PATH_OBJECTS_ARCHS ); break;
-		   case ObjectCharacter: str_cpy( of.name, PATH_OBJECTS_CHARS ); break;
-		   case ObjectEveryday: str_cpy( of.name, PATH_OBJECTS_ETC ); break;
-		   case ObjectFood: str_cpy( of.name, PATH_OBJECTS_FOOD ); break;
-		   case ObjectMachine: str_cpy( of.name, PATH_OBJECTS_MACHS); break;
-		   case ObjectPlant: str_cpy(of.name,PATH_OBJECTS_PLANTS); break;
-		   case ObjectTransport: str_cpy(of.name, PATH_OBJECTS_TPORTTS); break;
-		   
+			
+			case ObjectAnimal: str_cpy( of.name, PATH_OBJECTS_ANMS ); break;
+			case ObjectArchitecture: str_cpy( of.name, PATH_OBJECTS_ARCHS ); break;
+			case ObjectCharacter: str_cpy( of.name, PATH_OBJECTS_CHARS ); break;
+			case ObjectEveryday: str_cpy( of.name, PATH_OBJECTS_ETC ); break;
+			case ObjectFood: str_cpy( of.name, PATH_OBJECTS_FOOD ); break;
+			case ObjectMachine: str_cpy( of.name, PATH_OBJECTS_MACHS); break;
+			case ObjectPlant: str_cpy(of.name,PATH_OBJECTS_PLANTS); break;
+			case ObjectTransport: str_cpy(of.name, PATH_OBJECTS_TPORTTS); break;
+			
 		}
 		
 		str_cat( of.name, o->type );		
@@ -136,7 +162,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		//		str_cpy(of.name,o.filename);
 		
 		of.of_objtype = o.ObjectType;
-		str_cpy(of.name, o.SoundFileName );
+		//		str_cpy(of.name, o.SoundFileName );
 		
 		of.dp = 1;
 		

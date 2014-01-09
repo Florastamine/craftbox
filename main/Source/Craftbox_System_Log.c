@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Log.c
+
+Functions work with log files.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -42,7 +66,11 @@ void WriteLogHeaders() {
 		case 4: WriteLog("Windows 2003 detected."); break;
 		case 5: WriteLog("Windows XP detected."); break;
 		case 6: WriteLog("Windows Vista/7/8 detected."); break;
-		default: WriteLog("Linux or another operating system detected."); break;
+		default: 
+		
+		WriteLog("Linux or another operating system detected.");
+		UNDER_MAC_OR_LINUX = 1; // mark
+		break;
 		
 	}
 	

@@ -1406,12 +1406,16 @@ action camLoc() {
 	// took total control)
 	while( !CameraLoc ) wait(1);
 	
+	// custom pan, tilt, and roll (negative value is ok)
+	// no need to define special names for these skills - it's not important
+	camera->pan = CameraLoc->skill1;
+	camera->tilt = CameraLoc->skill2;
+	camera->roll = CameraLoc->skill3;
+	
 	if(cam) ptr_remove(cam);
 	cam = ent_create("marker.mdl", vector(CameraLoc.x,CameraLoc.y,CameraLoc.z) ,free_camera);
 	
 	while( proc_status(ent_create) ) wait(1);
-	camera.tilt = -25;
-	camera.pan = 120;
 	
 	//	ent_remove(CameraLoc);
 	

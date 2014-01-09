@@ -2,7 +2,7 @@
 #define HEADER_H
 
 /*
-head.h
+Craftbox.h
 
 Base declarations.
 For example if you want to make fried eggs you need eggs. That's all.
@@ -31,16 +31,11 @@ terrible so I made a .c and put all the definitions and declarations
 there. Just like I did with craftbox.
 
 I changed some variables that require only 1 or 0 as acceptable
-values to BOOL (not bool you fool) instead of int/var.
+values to BOOL (not bool) instead of int/var.
 
 readme.txt
 MystyMoods C-Script to Lite-C conversion by Alex Rozhkov (Shadow969)
 http://www.coniserver.net/ubbthreads/showprofile.php?Cat=0&User=20725
-
-Known issues:
--fps slow down within the particle effects (snow, rain)
-
-Everybody is welcome to help fixing those bugs...THANKS!!!
 
 >+++
 --------------------------------------------------
@@ -57,7 +52,6 @@ Everybody is welcome to help fixing those bugs...THANKS!!!
 #include <acknex.h> // standard engine objects
 #include <stdio.h> // Screen space ambient occlusion
 #include <d3d9.h> // Shade-C
-//	#include <strio.c> // for the scripting language (nevermind, commented out, using Lua)
 #include <particles.c> // effects such as snow()
 #include <level.c>
 //////////////////////////////////////////////////////////////
@@ -71,6 +65,10 @@ var def_shot_num = 0;
 var def_oldmouse = 0;
 
 BOOL PLAYTESTING = 0;
+BOOL UNDER_MAC_OR_LINUX = 0; // Running craftbox under Mac or Linux-based OS.
+var LoadWorldBreak;
+var PreKernelDone;
+var sResX, sResY, sResMode;
 
 //script to capture a skycube by pressing x in 3dgs
 var fh_n;
@@ -87,6 +85,7 @@ STRING *tempstring1 = "#200";
 STRING *tempstring2 = "#200";
 STRING *_ts_ = "#200";
 int CameraPosID_temp;
+
 void write8(var);
 void write16(var);
 void str_padding(STRING *, var, var);
@@ -102,209 +101,6 @@ void def_video();
 void def_screen();
 void def_console();
 void draw_rotated_bbox(ENTITY *);
-
-//----------------------------------------------------------------------------- write_cubemap
-void write8(var bte) // write char
-{
-	file_asc_write(fh_n, bte);
-}
-
-void write16(var shrt) // write unsigned short
-{
-	file_asc_write(fh_n, shrt&255);
-	file_asc_write(fh_n, (shrt>>8)&255);
-}
-
-void str_padding(STRING *str, var number, var padding)
-{
-	str_for_num(_ts_, number);
-	var i = 0;
-	i = padding - str_len(_ts_);
-	while(i > 0)
-	{
-		str_cat(str, "0");
-		i-=1;
-	}
-	str_cat(str, _ts_);
-}
-
-void write_cubemap()
-{
-	var i;
-	var xx;
-	var yy;
-	var format;
-	var pixel;
-	var pixelalpha;
-	VECTOR canvas_size;
-	VECTOR temp;
-
-	canvas_size.x = bmap_width(b_render1);
-	canvas_size.y = bmap_height(b_render1);
-	format = bmap_lock(b_render1, 0);
-	bmap_lock(b_render2, 0);
-	bmap_lock(b_render3, 0);
-	bmap_lock(b_render4, 0);
-	bmap_lock(b_render5, 0);
-	bmap_lock(b_render6, 0);
-
-	str_cpy(tempstring1,"cubemap");
-	str_padding(tempstring1, cubenumber, 4);
-	str_cat(tempstring1, "+6.tga");
-	fh_n = file_open_write(tempstring1);
-	
-	cubenumber+=1;
-	//--------------------------------------------------------write header
-	write8(0);
-	write8(0);
-	write8(2); // image type
-	write16(0);
-	write16(0);
-	write8(0);
-	write16(0);
-	write16(0);
-	write16(canvas_size.x * 6); // width
-	write16(canvas_size.y); // height
-	write8(24); // color depth
-	write8(0);
-	//--------------------------------------------------------write image data
-	yy = canvas_size.y - 1;
-	while(yy >= 0)
-	{
-		i = 0;
-		while(i < 6)
-		{
-			if(i==0) canvas=b_render1;
-			if(i==1) canvas=b_render2;
-			if(i==2) canvas=b_render3;
-			if(i==3) canvas=b_render4; 
-			if(i==4) canvas=b_render5; 
-			if(i==5) canvas=b_render6; 
-			xx = 0;
-			while(xx < canvas_size.x)
-			{
-				pixel = pixel_for_bmap(canvas, xx, yy);
-				pixel_to_vec(temp, pixelalpha, format, pixel);
-				write8(temp.x); // b
-				write8(temp.y); // g
-				write8(temp.z); // r
-				xx+=1;
-			}
-			i+=1;
-		}
-		yy-=1;
-	}
-	file_close(fh_n);
-	bmap_unlock(b_render1);
-	bmap_unlock(b_render2);
-	bmap_unlock(b_render3);
-	bmap_unlock(b_render4);
-	bmap_unlock(b_render5);
-	bmap_unlock(b_render6);
-}
-
-//----------------------------------------------------------------------------- capture_cubemap
-void capture_cubemap()
-{
-	var old_arc;
-	var old_x;
-	var old_y;
-	var old_screen;
-
-	b_render1 = bmap_create("render.tga"); // use a 256x256 tga for example -> determines cube map size
-	b_render2 = bmap_create("render.tga");
-	b_render3 = bmap_create("render.tga");
-	b_render4 = bmap_create("render.tga");
-	b_render5 = bmap_create("render.tga");
-	b_render6 = bmap_create("render.tga");
-
-	old_arc = camera.arc;
-	old_x = screen_size.x;
-	old_y = screen_size.y;
-	old_screen = video_screen;
-
-	camera.arc = 90;
-	video_set(256, 256, 0, 2); // should be same resolution as render.tga
-
-	freeze_mode = 1;
-	
-	vec_set(camera.pan, directions[0]); wait(1); bmap_for_screen(b_render1,0,0);
-	vec_set(camera.pan, directions[3]); wait(1); bmap_for_screen(b_render2,0,0);
-	vec_set(camera.pan, directions[6]); wait(1); bmap_for_screen(b_render3,0,0);
-	vec_set(camera.pan, directions[9]); wait(1); bmap_for_screen(b_render4,0,0);
-	vec_set(camera.pan, directions[12]); wait(1); bmap_for_screen(b_render5,0,0);
-	vec_set(camera.pan, directions[15]); wait(1); bmap_for_screen(b_render6,0,0);
-	
-	freeze_mode = 0;
-
-	wait(1);
-	write_cubemap();
-
-	wait(1);
-	camera.arc = old_arc;
-	video_set(old_x, old_y, 0, old_screen);
-}
-
-void draw_rotated_bbox(ENTITY* ent)
-{
-	VECTOR c1,c2,c3,c4,c5,c6,c7,c8;  
-		
-	vec_set(c1,vector(ent.min_x,ent.min_y,ent.min_z));    
-	vec_rotate(c1,ent.pan);
-	vec_add(c1,ent.x);
-		
-	vec_set(c2,vector(ent.max_x,ent.min_y,ent.min_z));    
-	vec_rotate(c2,ent.pan);
-	vec_add(c2,ent.x);
-		
-	vec_set(c3,vector(ent.max_x,ent.max_y,ent.min_z));    
-	vec_rotate(c3,ent.pan);
-	vec_add(c3,ent.x);
-		
-	vec_set(c4,vector(ent.min_x,ent.max_y,ent.min_z));    
-	vec_rotate(c4,ent.pan);
-	vec_add(c4,ent.x);
-		
-	vec_set(c5,vector(ent.min_x,ent.min_y,ent.max_z));    
-	vec_rotate(c5,ent.pan);
-	vec_add(c5,ent.x);
-		
-	vec_set(c6,vector(ent.max_x,ent.min_y,ent.max_z));    
-	vec_rotate(c6,ent.pan);
-	vec_add(c6,ent.x);
-		
-	vec_set(c7,vector(ent.max_x,ent.max_y,ent.max_z));    
-	vec_rotate(c7,ent.pan);
-	vec_add(c7,ent.x);
-		
-	vec_set(c8,vector(ent.min_x,ent.max_y,ent.max_z));    
-	vec_rotate(c8,ent.pan);
-	vec_add(c8,ent.x);	
-		
-	draw_line3d(c1,NULL,100); 
-	draw_line3d(c2,vector(0,255,0),100);
-	draw_line3d(c3,vector(0,255,0),100);
-	draw_line3d(c4,vector(0,255,0),100);
-	draw_line3d(c1,vector(0,255,0),100);
-		
-	draw_line3d(c5,NULL,100);
-	draw_line3d(c6,vector(0,255,0),100);
-	draw_line3d(c7,vector(0,255,0),100);
-	draw_line3d(c8,vector(0,255,0),100);
-	draw_line3d(c5,vector(0,255,0),100);
-
-	draw_line3d(c1,NULL,100);
-	draw_line3d(c5,vector(0,255,0),100);
-		
-	draw_line3d(c2,NULL,100);
-	draw_line3d(c6,vector(0,255,0),100);
-		
-	draw_line3d(c3,NULL,100);
-	draw_line3d(c7,vector(0,255,0),100);
-		
-	draw_line3d(c4,NULL,100);
-	draw_line3d(c8,vector(0,255,0),100);
-}
 
 /*
 
@@ -429,9 +225,6 @@ ANGLE *MENU_CAMERA_TROPHIES_ang = { pan = 64; tilt = 1; roll = 0; }
 ANGLE *MENU_CAMERA_LAUNCH_GAME_ang = { pan = 304; tilt = -9; roll = 0; }
 ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 
-#define ACTIVE 1
-#define INACTIVE 0
-
 #define CINPUT_TAB 9
 #define CINPUT_ENTER 13
 #define CINPUT_ESC 27
@@ -479,7 +272,6 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define MAX_SPRITES 1000
 #define MAX_TOTAL MAX_OBJECTS+MAX_PARTICLES+MAX_LIGHTS+MAX_SOUNDS+MAX_SPRITES
 
-//#define B_SIBGLE 1		  //Brush SIngle Vertex
 #define B_MULT 2			  //Brush Multiple Vertex
 #define B_MULT_SMOOT 3	  //Brush Multiple Vertex with Smoot
 #define DEF_UPPER	1		  //Deform terrain Height UPPER
@@ -551,7 +343,7 @@ STRING *_mpCount = "#5";
 STRING *_mpSongTemp = "#100";
 
 SOUND *__beep = "./CookedSounds/beep.wav";
-SOUND *footstep = "./CookedSounds/tap.wav";
+//SOUND *footstep = "./CookedSounds/tap.wav";
 STRING *SE_MM_hover = "./CookedSounds/button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
 STRING *SE_MM_click = "./CookedSounds/button-30_CMMclickon.wav";
 
@@ -566,7 +358,7 @@ STRING *VAREXPLORER_REPORTSTR = "report";
 STRING *VAREXPLORER_FACTORYSTR = "default";
 
 STRING *FILE_SCREENSHOT = "craftbox";
-STRING *FILE_CONFIG = "./Source/settings.cfg";
+STRING *FILE_CONFIG = "./Source/Config.cfg";
 STRING *FILE_CUSTOM_MAT_1 = "./Source/mat_custom_1.cfg";
 STRING *FILE_CUSTOM_MAT_2 = "./Source/mat_custom_2.cfg";
 STRING *FILE_CUSTOM_MAT_3 = "./Source/mat_custom_3.cfg";
@@ -583,6 +375,7 @@ STRING *TEMPSTR = "#300"; // Store object location
 STRING *LOADGAMESTR = "#300";
 STRING *mpSongTemp = "#400";
 
+STRING *EXT_SCREENSHOT = "jpg"; // Change the extension here: jpg, dds (uncompressed), png, bmp
 STRING *EXT_OBJECT = "mdl";
 STRING *EXT_SOUND = "wav";
 STRING *EXT_TERRAIN = "hmp";
@@ -692,8 +485,6 @@ var _fog_color = 0, _sun_light = 100, _d3d_fogcolor1_red = 128, _d3d_fogcolor1_b
 #define NO_RAIN_SNOW 3
 
 //night sky
-// lim(night_sky_scale_x) = 4
-// lim(moon_scale_fac) = 5;
 var night_sky_scale_x = .5;//affects size of the stars at night
 var night_sky_scale_y = .5;
 var night_sky_speed_x = 1;//movement speed of the stars
@@ -742,42 +533,6 @@ var moon_scale_fac = 1.5;
 #define weather_fog_near	  100//bad weather fog
 #define weather_fog_far	  	  1000
 
-//define here the xyz size of the weatherbox around the camera
-//#define cx 100000//lenght
-//#define cy 100000//width
-//#define cz 60000//height
-
-//#define rain_part_num 2//defines rain density
-//#define snow_part_num 1//defines snow density
-
-//#define trigg_rain FLAG1
-//#define trigg_snow FLAG2
-//#define trigg_disable_lightning_thunder FLAG3//1=disables lightning-thunder
-//#define trigg_range skill1
-//
-//#define trigg_rain_wind_x skill2
-//#define trigg_rain_wind_y skill3
-//#define trigg_rain_fallspeed skill4
-//
-//#define trigg_snow_wind_x skill5
-//#define trigg_snow_wind_y skill6
-//#define trigg_snow_fallspeed skill7
-//
-//#define trigg_rain_random_move_on FLAG4//1=let the wind-strenght change randomly, 0=no wind-strenght changes
-//#define trigg_snow_random_move_on FLAG5
-//#define trigg_rain_random_move skill8//strength of randomness on the particles x/y movement direction
-//#define trigg_snow_random_move skill9
-//
-//#define trigg_weather_fade_speed skill10//fade-speed of weather change
-//
-//#define trigg_fog_col_dist FLAG6//these are clear...
-//#define trigg_fog_near skill11
-//#define trigg_fog_far skill12
-//#define trigg_fog_red skill13
-//#define trigg_fog_green skill14
-//#define trigg_fog_blue skill15
-//#define trigg_ID skill100
-
 //(screen center where pivot_dist = 0) and the sun (pivot_dist = 1).
 #define pivot_dist skill99
 ////////////////////////////////////////////////////////////
@@ -793,8 +548,6 @@ var moon_scale_fac = 1.5;
 #define ParticleID skill4 // Only particle effects use this.
 #define LightMode skill5
 #define FlickSpeed skill6
-//#define CameraFP skill7
-//#define CameraBike skill8
 //#define ProjectionID skill9
 
 // Object type
@@ -1033,48 +786,6 @@ var part_size, part_alpha, part_num;
 var fog_weather_day[3] = {50,50,50};//r, g, b
 var fog_weather_night[3] = {15,15,15};
 
-/*
-
-var random_weather_change_frequency = 100;//frequency of weather change...the higher the value the less it changes
-var random_weather_state_time = 40;//the higher the value the longer a weather state remains
-
-var rain_wind_x = 2, rain_wind_y = 1;
-var rain_fallspeed = 25;
-
-var snow_wind_x = 4, snow_wind_y = 2;
-var snow_fallspeed = 4;
-var snow_altitude = 160;//world-coord-z that enables snowfall (in quants)
-
-var rain_random_move = 1;//strength of randomness on the particles x/y movement direction
-var snow_random_move = 8;
-
-var weather_soundfade_speed = 0.6;//fade-speed of weather-sound on weather changes
-
-var disable_lightning_thunder = 0;//1=disables lightning-thunder
-var lightning_frequency = 1.5;//random of 4000/lightning_frequency (wait)time
-var lightning = 1;//x200...value to enlighten objects on ligtning strikes...use values 0.1-1
-
-var trigg_num_off = 0;
-var trigg_active_id = -1;
-
-var weather_fader = 1;//just an additional fader var
-var fog_col_trigg[3];
-var fog_dist_near_trigg;
-var fog_dist_far_trigg;
-var vel_wind_rain_x;
-var vel_wind_rain_y;
-var vel_wind_snow_x;
-var vel_wind_snow_y;
-
-var stroke_area;//area of lightning stroke
-var temporary;
-var segment_length; // temporary length of the segment line
-var stroke_length; // temporary length of the particle line
-var lightning_on;
-
-*/
-
-//var weather_state = 0;//start with good weather...1=rain, 2=snow
 var weather_fade_speed = 10;//fade-speed of weather change
 var current_color[3];
 
@@ -1084,12 +795,6 @@ var flare_fadespeed = 25;
 var lens_active = 0, mystymood_active = 0;
 
 BOOL dynamic_day_night = 1;
-//use_moon = 1,
-//use_bg_sounds = 1, //if 1, daytime ambiente background sounds are activated
-//use_random_weather = 1, //1= weather changes randomly
-//rain_random_move_on = 1, //1=on,0=off...sets randomness on the particles x/y movement direction
-//snow_random_move_on = 1,
-//rain_to_snow_on_altitude = 1;//1=rain morphes to snow when snow_altitude is reached
 
 var original_moon_scale_fac,
 original_time_speed_night,
@@ -1156,7 +861,6 @@ PANEL *Statistics,
 *LightPresets,
 *InsertParticle,
 *InsertSystemObjects,
-*BackgroundScreen,
 *Options_Graphics,
 *Options_Sound,
 *Options_Themes,
@@ -1196,14 +900,16 @@ PANEL *Statistics,
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
 ////////////////////////////////////////////////////////////
-ENTITY *select, *marker, *cam, *flashlight, *skycube,
+ENTITY *select, // points to the being selected entity
+*marker, // points to the marker
+*cam, // points to the actual camera (not CameraLoc - it's the camera creator)
+*flashlight, // points to the flashlight (1st/3rd person mode)
+*skycube, // points to the skycube in dynamic menu background
 *TerrainEnt, // points to the deformed terrain
 *CameraLoc, // points to the camera creator
 *GlassLoc, // points to the glass walls
 *WaterPlaneLoc, // points to the water plane
 *Gun; // 1st person gun
-
-ENTITY *my_target_node;
 
 ENTITY *sky_horizon,
 *sky_cloud1,
@@ -1240,11 +946,7 @@ ENTITY *sky_horizon,
 // Vectors will be declared here.
 ////////////////////////////////////////////////////////////
 VECTOR cpos1,cpos2,temp_pos;
-VECTOR segment_start, segment_end;
-VECTOR stroke_start, stroke_end;
-VECTOR particle_seedbox;
 VECTOR temp2, ctemp;
-VECTOR TARGET;
 
 // Vectors for dragging entities & camera movement
 VECTOR v1, v2;
@@ -1285,24 +987,10 @@ MATERIAL *mat_custom[4];
 
 SOUND *snowstorm_ambient = "snowstorm.ogg";
 SOUND *rain_wav = "rain.wav";
-//SOUND *wind_wav = "wind.wav";
-//SOUND *day_wav = "ambiente_day.wav";
-//SOUND *night_wav = "ambiente_night.wav";
-//SOUND *thunder1_wav = "thunder1.wav";
-//SOUND *thunder2_wav = "thunder2.wav";
-//SOUND *thunder3_wav = "thunder3.wav";
-//SOUND *thunder4_wav = "thunder4.wav";
-//SOUND *thunder5_wav = "thunder5.wav";
 
 ////////////////////////////////////////////////////////////
 // Bitmap declarations
 ////////////////////////////////////////////////////////////
-BMAP *BackgroundScreen1 = "BackgroundScreen1.jpg";
-BMAP *BackgroundScreen2 = "BackgroundScreen2.jpg";
-BMAP *BackgroundScreen3 = "BackgroundScreen1.jpg";
-BMAP *BackgroundScreen4 = "BackgroundScreen2.jpg";
-BMAP *BackgroundScreen5 = "BackgroundScreen1.jpg";
-BMAP *BackgroundScreen6 = "BackgroundScreen2.jpg";
 
 BMAP *flag_BIRGHT = "flag_BIRGHT.bmp";
 BMAP *flag_BIRGHT_on = "flag_BIRGHT_on.bmp";
@@ -1357,12 +1045,6 @@ BMAP *blitz1_map = "blitz1.tga";
 BMAP *star1_map = "star1.tga";
 BMAP* drop1_map = "rain.tga";
 
-/*** For Mystymood ***/
-BMAP *part_bmp_weather;
-BMAP *bmp_rain = "rain.tga";
-BMAP *bmp_snow = "snow.tga";
-BMAP *bmp_lightning = "lightning.tga";    // change
-
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
@@ -1389,8 +1071,6 @@ void Scale(ENTITY *, var);
 //int range(var, var, var);
 //void place_mesh_on_ground(ENTITY *, int);
 var ent_seed_c(char *, ENTITY *, BMAP *, COLOR *, var, EVENT);
-void SyncPos(VECTOR *, VECTOR *);
-void SyncAng(ANGLE *, ANGLE *);
 
 void DialogueInitialize(STRING *);
 void StartDialogue(BMAP *, BMAP *, STRING *);
@@ -1530,7 +1210,7 @@ void GSwitchToMoveMode();
 void GSwitchToRotateMode();
 void GSwitchToScaleMode();
 void GLoadMainMenu();
-void GPreMainMenu();
+//void GPreMainMenu();
 void GOptionsShow();
 void GOptionsAdjustSettings(var);
 void GOptions_SaveSettings();

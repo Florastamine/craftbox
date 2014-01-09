@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Playtest.c
+
+Sets up and manages the playground.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------

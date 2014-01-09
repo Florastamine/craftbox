@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Object.c
+
+Provides functions for object placement and manipulation, in general.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -1134,4 +1158,77 @@ void Gun_startup() {
 		
 	}
 	
+}
+
+void LineConnect(ENTITY *connector, ENTITY *connected)
+{
+	while(connector && connected)
+	{
+		draw_line3d(vector(connector.x, connector.y, connector.z), NULL, 100);
+		draw_line3d(vector(connected.x, connected.y, connected.z), LineConnectColor, 100);
+		
+		wait (1);
+	}
+
+}
+
+void draw_rotated_bbox(ENTITY* ent)
+{
+	VECTOR c1,c2,c3,c4,c5,c6,c7,c8;  
+		
+	vec_set(c1,vector(ent.min_x,ent.min_y,ent.min_z));    
+	vec_rotate(c1,ent.pan);
+	vec_add(c1,ent.x);
+		
+	vec_set(c2,vector(ent.max_x,ent.min_y,ent.min_z));    
+	vec_rotate(c2,ent.pan);
+	vec_add(c2,ent.x);
+		
+	vec_set(c3,vector(ent.max_x,ent.max_y,ent.min_z));    
+	vec_rotate(c3,ent.pan);
+	vec_add(c3,ent.x);
+		
+	vec_set(c4,vector(ent.min_x,ent.max_y,ent.min_z));    
+	vec_rotate(c4,ent.pan);
+	vec_add(c4,ent.x);
+		
+	vec_set(c5,vector(ent.min_x,ent.min_y,ent.max_z));    
+	vec_rotate(c5,ent.pan);
+	vec_add(c5,ent.x);
+		
+	vec_set(c6,vector(ent.max_x,ent.min_y,ent.max_z));    
+	vec_rotate(c6,ent.pan);
+	vec_add(c6,ent.x);
+		
+	vec_set(c7,vector(ent.max_x,ent.max_y,ent.max_z));    
+	vec_rotate(c7,ent.pan);
+	vec_add(c7,ent.x);
+		
+	vec_set(c8,vector(ent.min_x,ent.max_y,ent.max_z));    
+	vec_rotate(c8,ent.pan);
+	vec_add(c8,ent.x);	
+		
+	draw_line3d(c1,NULL,100); 
+	draw_line3d(c2,vector(0,255,0),100);
+	draw_line3d(c3,vector(0,255,0),100);
+	draw_line3d(c4,vector(0,255,0),100);
+	draw_line3d(c1,vector(0,255,0),100);
+		
+	draw_line3d(c5,NULL,100);
+	draw_line3d(c6,vector(0,255,0),100);
+	draw_line3d(c7,vector(0,255,0),100);
+	draw_line3d(c8,vector(0,255,0),100);
+	draw_line3d(c5,vector(0,255,0),100);
+
+	draw_line3d(c1,NULL,100);
+	draw_line3d(c5,vector(0,255,0),100);
+		
+	draw_line3d(c2,NULL,100);
+	draw_line3d(c6,vector(0,255,0),100);
+		
+	draw_line3d(c3,NULL,100);
+	draw_line3d(c7,vector(0,255,0),100);
+		
+	draw_line3d(c4,NULL,100);
+	draw_line3d(c8,vector(0,255,0),100);
 }

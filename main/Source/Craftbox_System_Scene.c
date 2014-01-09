@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Scene.c
+
+Provides basic scene optimization methods.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------

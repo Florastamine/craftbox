@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Material.c
+
+Handles material setup for entities.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------

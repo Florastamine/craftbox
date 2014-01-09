@@ -1,9 +1,9 @@
 /*
 --------------------------------------------------
-debug.c
+Craftbox_System_Debug.c
 
-Contains debug & statistics code, which can be toggled using the -dev 
-parameter.
+Provides all the necessary stuff when working with 
+craftbox under development mode.
 
 Written by Nguyen Ngoc Huy
 https://github.com/ngochuy2101
@@ -13,16 +13,15 @@ TODO:
 <+++
 
 
-
 >+++
 
 NOTES:
 <+++
 
--
 
 >+++
 --------------------------------------------------
+
 */
 
 FONT *TFont = "Arial#25b";
@@ -35,13 +34,6 @@ PANEL *Statistics = {
 	digits(0,0,99,TFont,1,manip_type); // v_objectz
 	digits(0,20,99,TFont,1,TEMP_OBJECT_TYPE);
 	
-}
-
-PANEL *Framerate = {
-
-	layer = 999;
-	digits(0,0,99,"Arial#25b",1,FPS);
-
 }
 
 VIEW* viewMap = 
@@ -237,17 +229,144 @@ void def_console() /* ~ */
 	}
 }
 
-/*
+void write8(var bte) // write char
+{ file_asc_write(fh_n, bte); }
 
-void toggle_weather()//just for testing
+void write16(var shrt) // write unsigned short
 {
-	weather_state += 1;
-	if(weather_state > 2) weather_state = 0;
+	file_asc_write(fh_n, shrt&255);
+	file_asc_write(fh_n, (shrt>>8)&255);
 }
 
-void good_weather()  { weather_state = 0; }
+void str_padding(STRING *str, var number, var padding)
+{
+	str_for_num(_ts_, number);
+	var i = 0;
+	i = padding - str_len(_ts_);
+	while(i > 0)
+	{
+		str_cat(str, "0");
+		i-=1;
+	}
+	str_cat(str, _ts_);
+}
 
-*/
+void write_cubemap()
+{
+	var i;
+	var xx;
+	var yy;
+	var format;
+	var pixel;
+	var pixelalpha;
+	VECTOR canvas_size;
+	VECTOR temp;
+
+	canvas_size.x = bmap_width(b_render1);
+	canvas_size.y = bmap_height(b_render1);
+	format = bmap_lock(b_render1, 0);
+	bmap_lock(b_render2, 0);
+	bmap_lock(b_render3, 0);
+	bmap_lock(b_render4, 0);
+	bmap_lock(b_render5, 0);
+	bmap_lock(b_render6, 0);
+
+	str_cpy(tempstring1,"cubemap");
+	str_padding(tempstring1, cubenumber, 4);
+	str_cat(tempstring1, "+6.tga");
+	fh_n = file_open_write(tempstring1);
+	
+	cubenumber+=1;
+	//--------------------------------------------------------write header
+	write8(0);
+	write8(0);
+	write8(2); // image type
+	write16(0);
+	write16(0);
+	write8(0);
+	write16(0);
+	write16(0);
+	write16(canvas_size.x * 6); // width
+	write16(canvas_size.y); // height
+	write8(24); // color depth
+	write8(0);
+	//--------------------------------------------------------write image data
+	yy = canvas_size.y - 1;
+	while(yy >= 0)
+	{
+		i = 0;
+		while(i < 6)
+		{
+			if(i==0) canvas=b_render1;
+			if(i==1) canvas=b_render2;
+			if(i==2) canvas=b_render3;
+			if(i==3) canvas=b_render4; 
+			if(i==4) canvas=b_render5; 
+			if(i==5) canvas=b_render6; 
+			xx = 0;
+			while(xx < canvas_size.x)
+			{
+				pixel = pixel_for_bmap(canvas, xx, yy);
+				pixel_to_vec(temp, pixelalpha, format, pixel);
+				write8(temp.x); // b
+				write8(temp.y); // g
+				write8(temp.z); // r
+				xx+=1;
+			}
+			i+=1;
+		}
+		yy-=1;
+	}
+	file_close(fh_n);
+	bmap_unlock(b_render1);
+	bmap_unlock(b_render2);
+	bmap_unlock(b_render3);
+	bmap_unlock(b_render4);
+	bmap_unlock(b_render5);
+	bmap_unlock(b_render6);
+}
+
+//----------------------------------------------------------------------------- capture_cubemap
+void capture_cubemap()
+{
+	var old_arc;
+	var old_x;
+	var old_y;
+	var old_screen;
+
+	b_render1 = bmap_create("render.tga"); // use a 256x256 tga for example -> determines cube map size
+	b_render2 = bmap_create("render.tga");
+	b_render3 = bmap_create("render.tga");
+	b_render4 = bmap_create("render.tga");
+	b_render5 = bmap_create("render.tga");
+	b_render6 = bmap_create("render.tga");
+
+	old_arc = camera.arc;
+	old_x = screen_size.x;
+	old_y = screen_size.y;
+	old_screen = video_screen;
+
+	camera.arc = 90;
+	video_set(256, 256, 0, 2); // should be same resolution as render.tga
+
+	freeze_mode = 1;
+	
+	vec_set(camera.pan, directions[0]); wait(1); bmap_for_screen(b_render1,0,0);
+	vec_set(camera.pan, directions[3]); wait(1); bmap_for_screen(b_render2,0,0);
+	vec_set(camera.pan, directions[6]); wait(1); bmap_for_screen(b_render3,0,0);
+	vec_set(camera.pan, directions[9]); wait(1); bmap_for_screen(b_render4,0,0);
+	vec_set(camera.pan, directions[12]); wait(1); bmap_for_screen(b_render5,0,0);
+	vec_set(camera.pan, directions[15]); wait(1); bmap_for_screen(b_render6,0,0);
+	
+	freeze_mode = 0;
+
+	wait(1);
+	write_cubemap();
+
+	wait(1);
+	camera.arc = old_arc;
+	video_set(old_x, old_y, 0, old_screen);
+}
 
 /*
 --------------------------------------------------
@@ -259,11 +378,6 @@ void OpenDebug()
 void OpenDebug() {
 	
 	if(!is(Statistics,SHOW)) set(Statistics,SHOW);
-	
-	Framerate.pos_x = screen_size.x - 50;
-	Framerate.pos_y = BORDER;
-	
-	if(!is(Framerate,SHOW)) set(Framerate,SHOW);
 	
 	//	if(run_mode < 8) warn_level = 6;
 	
@@ -292,11 +406,11 @@ void OpenDebug() {
 		//		DEBUG_VAR(sun_grow_z,110);
 		//		DEBUG_VAR(TerrainEditMode,50);
 		//		
-		//		first = total_frames;
-		//		wait(-1);
-		//		FPS = total_frames - first;
+		first = total_frames;
+		wait(-1);
+		FPS = total_frames - first;
 		
-		//		DEBUG_VAR(total_vertices,20);
+		DEBUG_VAR(FPS,20);
 		
 		wait(1);
 		

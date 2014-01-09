@@ -1,3 +1,28 @@
+/*
+--------------------------------------------------
+Craftbox_System_ExternalIO.c
+
+Provides functions for communicating with external data sources
+( config. file, load/save structs from/to file for example. )
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -243,9 +268,13 @@ int ConfigFileRead(STRING *cf) {
 
 	video_aspect = file_var_read(file);
 	video_gamma = file_var_read(file);
+	
+	sResX = file_var_read(file);
+	sResY = file_var_read(file);
+	sResMode = file_var_read(file);
 
-	video_set( file_var_read(file), file_var_read(file),
-	0 , file_var_read(file));
+	//	video_set( file_var_read(file), file_var_read(file),
+	//	0 , file_var_read(file)); // <- cause bug
 
 	video_depth = file_var_read(file);
 

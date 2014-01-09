@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Environment.c
+
+Handles environment effects like rain, snow, day/night...
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -309,6 +333,8 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
 void func_particle_seed_infinity(PARTICLE *p)
 {
 
@@ -319,6 +345,7 @@ void func_particle_seed_infinity(PARTICLE *p)
 	if(p.z<camera.z-100) p.lifespan = 0;
 
 }
+*/
 
 /*
 --------------------------------------------------
@@ -329,6 +356,8 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
 void func_effect_particle_seed(PARTICLE *p) {
 
 	vec_set(p.x,vector(camera.x+random(particle_seedbox.x*2)-particle_seedbox.x,
@@ -349,6 +378,7 @@ void func_effect_particle_seed(PARTICLE *p) {
 		p.event  = func_particle_seed_infinity;	
 	}	
 }
+*/
 
 /*
 --------------------------------------------------
@@ -359,7 +389,7 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
-void func_fade_lightning(PARTICLE *p)  { p.lifespan = 0; }
+//void func_fade_lightning(PARTICLE *p)  { p.lifespan = 0; }
 
 /*
 --------------------------------------------------
@@ -370,6 +400,8 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
 void func_particle_lightning(PARTICLE *p)
 {
 	VECTOR temp;
@@ -383,6 +415,7 @@ void func_particle_lightning(PARTICLE *p)
 	p.lifespan = 1;
 	p.event  = func_fade_lightning;
 }
+*/
 
 /*
 --------------------------------------------------

@@ -1,3 +1,28 @@
+/*
+--------------------------------------------------
+Craftbox_System_BootPoint.c
+
+Provides loops and core functions for powering up craftbox, 
+linking modules, setting up events.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -83,6 +108,8 @@ Returns: -
 --------------------------------------------------
 */
 void LoadKernel() {
+	
+	while( !PreKernelDone ) wait(1);
 
 	WriteLog("[SYS] Loading kernel");
 	NewLine();
@@ -100,6 +127,8 @@ void LoadKernel() {
 	NewLine();
 
 	/* Resolution Test */
+	
+	/*
 	float WIDTH = sys_metrics(0), HEIGHT = sys_metrics(1);
 
 	str_for_num(_s,WIDTH);
@@ -122,6 +151,8 @@ void LoadKernel() {
 		return;
 		
 	}
+	
+	*/
 
 	/* Boot Mode Test */
 	str_for_num(_s,sys_metrics(67));
@@ -159,7 +190,7 @@ void LoadKernel() {
 	double timer_;
 	STRING *timer__ = "#100";
 	
-	GPreMainMenu();
+	//	GPreMainMenu();
 
 	str_cpy((PreMainMenuLoading.pstring)[1],LOADCRAFTBOX_1);
 
@@ -188,6 +219,7 @@ void LoadKernel() {
 	str_cpy(FILE_GAME_OUTRO_VIDEO,undef);
 	str_cpy(GROUNDSTR,undef);
 	str_cpy(SKYSTR,undef);
+	str_cpy(PLAYTEST_LOADSCREENSTR,undef);
 
 	//	MaterialCopyColor(pTexColor, mtl_pTex1);
 	
@@ -209,9 +241,6 @@ void LoadKernel() {
 	// Load ogg music from PATH_MUSIC
 	mpLoad(PATH_MUSIC,EXT_MUSIC);
 	while(proc_status(mpLoad)) wait(1);
-	
-	str_cpy(PLAYTEST_LOADSCREENSTR,undef);
-	camera.fog_start = 0;
 
 	// Intialize and read custom materials' properties.
 	int i;
@@ -262,7 +291,7 @@ void LoadKernel() {
 	str_cat((PreMainMenuLoading.pstring)[2],str_for_num(timer__,timer_));
 	str_cat((PreMainMenuLoading.pstring)[2],"s");
 
-	reset(BackgroundScreen,SHOW);
+	//	reset(BackgroundScreen,SHOW);
 	reset(PreMainMenuLoading,SHOW);
 	
 	WriteLog("[ ] Executing miscellaneous stuff.");
@@ -481,10 +510,11 @@ void CBox_startup() {
 	WriteLog("[SYS] Loading CBox_startup()...");
 	NewLine();
 
-	// Read and setup video settings prior to executing other functions.
-	ConfigFileRead(FILE_CONFIG);
-
 	video_window(NULL,NULL,0,"craftbox Pre-alpha");
+	
+	// Read and setup settings prior to executing other functions.
+	ConfigFileRead(FILE_CONFIG);
+	while(proc_status(ConfigFileRead)) wait(1);
 
 	// These are fixed variables 
 	max_entities = max_particles = 20000;
@@ -498,7 +528,34 @@ void CBox_startup() {
 	//	max_paths = max_entities = max_particles = pow(10,5);
 	tex_share = 1;
 	camera.clip_far = 5000000;
-	camera.arc=75;
+	camera.arc = 75;
+	
+	if( sys_metrics(0) < MINIMUM_RESOLUTION_X || sys_metrics(1) < MINIMUM_RESOLUTION_Y ) {
+		
+		// user really has a low-end monitor (i have one, too)
+		// actually this is the main monitor I use to develop craftbox.
+		
+		WriteLog("!! [ERROR] Screen resolution isn't supported (too low).");
+		NewLine();
+		
+		ExitEvent();
+		
+	}
+	
+	// good monitor
+	
+	// execution is a bit slow, will optimize later
+	/*
+	
+	if( !sResX ) video_set( sys_metrics(0), 0, 0, 0 ); else video_set( sResX, 0, 0, 0);
+	if( !sResY ) video_set( 0, sys_metrics(1), 0, 0 ); else video_set( 0, sResY, 0, 0);
+	video_set( 0, 0, 0, sResMode );
+	
+	*/
+	
+	video_set( sResX, sResY, 0, sResMode);
+	
+	PreKernelDone = 1; // The pre-kernel stage is done, at this time LoadKernel() will also be triggered to load the kernel.
 
 	while(1) {
 		

@@ -1,3 +1,28 @@
+/*
+--------------------------------------------------
+Craftbox_System_Default_Actor.c
+
+Worker code for created entities, partly.
+Only for basic entities like light, particles, sprites, and such.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -105,8 +130,8 @@ int GenerateSound() {
 	WriteLog( temp_ );
 	NewLine();
 	
-	my->SoundFileName = str_create("#300"); // resurrect this string
-	str_cpy(my->SoundFileName,TEMPSTR); // at this moment TEMPSTR is still valid for this session
+	//	my->SoundFileName = str_create("#300"); // resurrect this string
+	//	str_cpy(my->SoundFileName,TEMPSTR); // at this moment TEMPSTR is still valid for this session
 	
 	ent_playloop(my,snd_create(TEMPSTR),VOL_EFFECTS);
 	

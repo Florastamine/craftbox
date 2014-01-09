@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_GameIO.c
+
+Provides functions for communicating with internal data.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -111,6 +135,7 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+var olmouse;
 void LaunchGameSession() {
 
 	if(event_type == EVENT_RELEASE) return;
@@ -118,7 +143,7 @@ void LaunchGameSession() {
 	WriteLog("[ ] Creating a game session, please wait.");
 	NewLine();
 	
-	var olmouse = mouse_mode;
+	olmouse = mouse_mode;
 	mouse_mode = 0;
 	
 	dtimer();
@@ -149,9 +174,6 @@ void LaunchGameSession() {
 	// Begin loading the level
 	LoadNewLevel();
 	while(proc_status(LoadNewLevel)) wait(1);
-
-	GGUIShow();
-	while(proc_status(GGUIShow)) wait(1);
 	
 	mouse_mode = olmouse;
 	
@@ -165,24 +187,51 @@ void LaunchGameSession() {
 	}	
 	reset(CreateWorld,SHOW);
 	
-	time = dtimer();
+	if( ! LoadWorldBreak ) {
+		
+		GGUIShow();
+		while(proc_status(GGUIShow)) wait(1);
+		
+		time = dtimer();
+		
+		SessionsCount += 1;
+		
+		WriteLog("[X] Task completed, launched game session #",SessionsCount);
+		WriteLog(" , cost ",time ); // convert to sec: multiply it by pow(10,6) (microsecs)
+		WriteLog(" ms");
+		NewLine();
+		
+		WriteLog("Ground loaded: ");
+		WriteLog( GROUNDSTR );
+		NewLine();
+		
+	}
 	
-	SessionsCount += 1;
-	
-	WriteLog("[X] Task completed, launched game session #",SessionsCount);
-	WriteLog(" , cost ",time ); // convert to sec: multiply it by pow(10,6) (microsecs)
-	WriteLog(" ms");
-	NewLine();
+	else {
+		
+		_beep();
+		WriteLog("!! [ERROR] Could not load a new world (probably missing ground files), aborting...");
+		NewLine();
+		
+		reset(CreateWorldCoffee,SHOW);
+		
+		while(CreateWorld->alpha > 0) {
+			
+			CreateWorld->alpha -= 5 * time_step;
+			wait(1);
+			
+		}	
+		reset(CreateWorld,SHOW);
+		
+		WriteLog("[X] Task failed for LaunchGameSession().");
+		NewLine();
+		
+		mouse_mode = olmouse;
+		
+		GMainMenuShow();
+		
+	}
 
-}
-
-void SyncPos(VECTOR *v1, VECTOR *v2) {
-	
-	// Modifies v1
-	v1->x = v2->x;
-	v1->y = v2->y;
-	v1->z = v2->z;
-	
 }
 
 /*
@@ -198,8 +247,27 @@ void LoadNewLevel() {
 	
 	WriteLog("[ ] Loading ground...");
 	NewLine();
-
-	level_load("./CookedWorlds/dry_original_weak.wmb");
+	
+	if( !str_cmp(GROUNDSTR, undef) ) // If a ground was specified.
+	level_load( GROUNDSTR );
+	
+	else { // else
+		
+		if( !str_cmp( (files_list_GROUNDSTR_Pool.pstring) [0], undef) ) { // if the pool isn't empty
+			
+			str_cpy( GROUNDSTR, (files_list_GROUNDSTR_Pool.pstring) [0] ); // the load the first slot
+			level_load( GROUNDSTR );
+			
+		}
+		else { // pool is empty! nothing was found in the ground folder, abort
+			
+			LoadWorldBreak = 1;
+			
+			return;
+			
+		}
+		
+	}
 
 	WriteLog("[ ] Creating sky cube...");
 	NewLine();

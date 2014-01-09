@@ -1,3 +1,28 @@
+/*
+--------------------------------------------------
+Craftbox_System_Console.c
+
+Handles the console for working with craftbox when the  
+kernel is switched off.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -32,6 +57,7 @@ int Console() {
 	}
 	
 	WriteLog("[SYS] Setup console...");
+	NewLine();
 
 	ConsoleText->pos_x = 2;
 	ConsoleText->pos_y = screen_size.y/4;

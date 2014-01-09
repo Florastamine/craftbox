@@ -1,3 +1,27 @@
+/*
+--------------------------------------------------
+Craftbox_System_Event.c
+
+Implementations for any triggered events.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+
+>+++
+--------------------------------------------------
+
+*/
 
 /*
 --------------------------------------------------
@@ -16,11 +40,10 @@ void TakeScreenshot() {
 	WriteLog("[ ] Trying to take a screenshot...");
 	NewLine();
 	
-	STRING *extension = ".jpg"; // Change the extension here: jpg, dds (uncompressed), png, bmp
 	STRING *temp_ = "#100";
 	
 	str_cpy(temp_,FILE_SCREENSHOT);
-	str_cat(temp_,extension);
+	str_cat(temp_,EXT_SCREENSHOT);
 	
 	file_for_screen(temp_,shot);
 	shot++;
@@ -277,12 +300,14 @@ void Event_MouseRight() {
 --------------------------------------------------
 void Event_key_esc()
 
-Desc:
+Desc: poor implementation
 
 Returns: -
 --------------------------------------------------
 */
 void Event_key_esc() {
+	
+	if( proc_status ( Event_key_esc ) ) return;
 	
 	while(key_esc) wait(1);
 	
@@ -299,8 +324,6 @@ void Event_key_esc() {
 			
 		}
 		
-		return;
-		
 	}
 	
 	//////////////////////////////////////////////////////////////
@@ -316,35 +339,24 @@ void Event_key_esc() {
 		bmap_savetga(canvas, TERRAINSEEDBMAP );
 		while(proc_status ( bmap_savetga ) ) wait(1);
 		
-		return;
-		
 	}
 	
 	//////////////////////////////////////////////////////////////
 	
-	if( !IN_GAME ) {
-		
-		if( !is(QuitDialog,SHOW) ) {
-			
-			GMainMenuHide();
-			set(QuitDialog,SHOW);
-			
-			CameraPosID_temp = guiCurrentViewPreset;
-			guiCurrentViewPreset = MENU_CAMERA_EXIT;
-			
-			
-			} else {
-			
-			reset(QuitDialog,SHOW);
-			GMainMenuShow(); 
-			
-			guiCurrentViewPreset = CameraPosID_temp;
-			
-		}
-		
-		return;
-		
-	}
+	// var check is only available for multiple panels
+	// so to close a single panel just check and disable them with set() and is().
+	
+	if(InMenu_NewGame) // New game panel is being shown
+	GWorldNewHide();
+	
+	if(InMenu_Options) // the same with options menu
+	GOptionsHide();
+	
+	if( is(LoadGame,SHOW) ) GLoadGameHide();
+	
+	// (...)?
+	if( 1 ) GTrophiesHide();
+	if( proc_status(GCreditsShow) ) proc_kill2(GCreditsShow,NULL);
 	
 	//////////////////////////////////////////////////////////////	
 	
@@ -353,18 +365,30 @@ void Event_key_esc() {
 		PLAYTESTING = 0;
 		from_test_play = 0; // reset
 		
-		return;
-		
 	}
 	
 	//////////////////////////////////////////////////////////////
 	
-	if(is(InsertObject,SHOW)) {
-	   
-	   GInsertObjectHide();
-	   
-	   return;
-	   
+	if(is(InsertObject,SHOW)) GInsertObjectHide();
+	
+	//////////////////////////////////////////////////////////////
+	
+	if( !is(QuitDialog,SHOW) ) {
+		
+		GMainMenuHide();
+		set(QuitDialog,SHOW);
+		
+		CameraPosID_temp = guiCurrentViewPreset;
+		guiCurrentViewPreset = MENU_CAMERA_EXIT;
+		
+		
+		} else {
+		
+		reset(QuitDialog,SHOW);
+		GMainMenuShow(); 
+		
+		guiCurrentViewPreset = CameraPosID_temp;
+		
 	}
 	
 }

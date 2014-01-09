@@ -1,5 +1,28 @@
+/*
+--------------------------------------------------
+Craftbox_System_Crypto.c
 
-// This is experimental
+Provides simple cryptography functions for files and strings.
+
+Written by Nguyen Ngoc Huy
+https://github.com/ngochuy2101
+http://craftboxdev.blogspot.com/
+
+TODO:
+<+++
+
+
+>+++
+
+NOTES:
+<+++
+
+This is experimental.
+
+>+++
+--------------------------------------------------
+
+*/
 
 //////////////////////////////////////////////////////////////
 #define ASCII_SHIFT 100
