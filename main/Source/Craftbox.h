@@ -361,10 +361,10 @@ STRING *VAREXPLORER_FACTORYSTR = "default";
 
 STRING *FILE_SCREENSHOT = "craftbox";
 STRING *FILE_CONFIG = "./Source/Config.cfg";
-STRING *FILE_CUSTOM_MAT_1 = "./Source/mat_custom_1.cfg";
-STRING *FILE_CUSTOM_MAT_2 = "./Source/mat_custom_2.cfg";
-STRING *FILE_CUSTOM_MAT_3 = "./Source/mat_custom_3.cfg";
-STRING *FILE_CUSTOM_MAT_4 = "./Source/mat_custom_4.cfg";
+//STRING *FILE_CUSTOM_MAT_1 = "./Source/mat_custom_1.cfg";
+//STRING *FILE_CUSTOM_MAT_2 = "./Source/mat_custom_2.cfg";
+//STRING *FILE_CUSTOM_MAT_3 = "./Source/mat_custom_3.cfg";
+//STRING *FILE_CUSTOM_MAT_4 = "./Source/mat_custom_4.cfg";
 STRING *FILE_CREDITS_TEXT = "./Source/Huy.cbt";
 STRING *FILE_LOG = "./CBox.log";
 
@@ -707,8 +707,11 @@ int shot = 0;
 var files_already;
 
 var olrange; // Old light range
+var old_ambient;
 
 var v_alpha, v_ambient,
+
+/*
 
 v_ambient_r, v_ambient_g, v_ambient_b,
 v_diffuse_r, v_diffuse_g, v_diffuse_b,
@@ -716,6 +719,8 @@ v_specular_r, v_specular_g, v_specular_b,
 v_emissive_r, v_emissive_g, v_emissive_b,
 v_power, 
 v_alpha_m, // Alpha for materials
+
+*/
 
 v_lred, v_lgreen, v_lblue, v_lrange,
 
@@ -733,8 +738,6 @@ COLOR *temp_light = {
 
 var ParticleIDNumber;
 var _ObjectType;
-
-var page = 1;
 
 BOOL from_test_play = 0;
 
@@ -771,9 +774,9 @@ var weather_fade_speed = 10;//fade-speed of weather change
 var current_color[3];
 
 // lens_flare.c
-var flare_alpha = 70;
-var flare_fadespeed = 25;
-var lens_active = 0, mystymood_active = 0;
+//var flare_alpha = 70;
+//var flare_fadespeed = 25;
+/* var lens_active = 0, */ var mystymood_active = 0;
 
 BOOL dynamic_day_night = 1;
 
@@ -812,12 +815,7 @@ PANEL *Statistics,
 *panMain_Bottom,
 *panMain_Play,
 *buttonlst_submenu_terrain,
-*buttonlst_submenu_object,
-*buttonlst_submenu_path,
 *panProp,
-*panProp_1,
-*panProp_2,
-*panMat_Sub1,
 *panSnd,
 *panParticle,
 *panLight,
@@ -903,7 +901,10 @@ ENTITY *sky_horizon,
 *sky_suncorona,
 *sky_sunshine,
 *sky_night,
-*sky_moon,
+*sky_moon;
+
+/*
+
 *flare1_ent,
 *flare2_ent,
 *flare4_ent,
@@ -923,6 +924,9 @@ ENTITY *sky_horizon,
 *flare18_ent,
 *flare19_ent,
 *flare20_ent;
+
+*/
+
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
@@ -954,15 +958,15 @@ FONT *f = "Arial#27b";
 ////////////////////////////////////////////////////////////
 // Material declarations
 ////////////////////////////////////////////////////////////
-MATERIAL *mat_select, *mat_temp, *pTexColor;
+//MATERIAL *mat_select, *mat_temp, *pTexColor;
 
 // Predefined materials
-MATERIAL *mat_lava, *mat_smaragd, *mat_marble,
-*mat_lavenderrose, *mat_bitterlemon, *mat_peachorange,
-*mat_purewhite, *mat_black, *mat_palelilac;
+//MATERIAL *mat_lava, *mat_smaragd, *mat_marble,
+//*mat_lavenderrose, *mat_bitterlemon, *mat_peachorange,
+//*mat_purewhite, *mat_black, *mat_palelilac;
 
 // Custom materials
-MATERIAL *mat_custom[4];
+//MATERIAL *mat_custom[4];
 
 ////////////////////////////////////////////////////////////
 // Sounds will be declared here.
@@ -1181,7 +1185,7 @@ void GPanelMoveAlpha(PANEL *, var, var, var, var, var, var);
 void GPanelMoveAlphaX(PANEL *, var, var, var);
 void GPanelMoveAlphaY(PANEL *, var, var, var);
 //void GNotificationCreate(FONT *, STRING *);
-void GWindowClose(var, PANEL *);
+//void GWindowClose(var, PANEL *);
 
 void GBlackboardAlphaFade();
 void GBlackboardAlphaRestore();
@@ -1189,10 +1193,8 @@ void GToggleStatistics();
 void GInsertObjectShow();
 void GInsertObjectHide();
 void GMaterialEditorShow();
-void GObjectSubmenuShow();
 void GToggleTerrainEditor();
 void GToggleObjectSeeder();
-void GPathSubmenuShow();
 void GSwitchToMoveMode();
 void GSwitchToRotateMode();
 void GSwitchToScaleMode();
@@ -1215,7 +1217,6 @@ void GParticleWindowShow();
 void GParticleWindowHide();
 void GWorldNewShow();
 void GWorldNewHide();
-void GpanPropSwitchPage(var);
 void GLoadGameShow();
 void GLoadGameHide();
 void GHelpHide();
@@ -1295,8 +1296,8 @@ void MaterialCopyColor(MATERIAL *, MATERIAL *);
 int PassObjectDataToClipboard(ENTITY *, OBJECTSTRUCT *);
 int PassClipboardDataToObject(ENTITY *);
 
-int MaterialSelect(var);
-void MaterialSave();
+//int MaterialSelect(var);
+//void MaterialSave();
 
 void WriteToBlackboard(STRING *, STRING *, var);
 
@@ -1330,10 +1331,10 @@ void sky_day_state();
 void sky_night_fade_in();
 void sky_night_state();
 //void act_mystymood_trigg_label1();
-void lensflare_create();
-void lensflare_start();
-void flare_init(ENTITY *);
-void flare_place(ENTITY *);
+//void lensflare_create();
+//void lensflare_start();
+//void flare_init(ENTITY *);
+//void flare_place(ENTITY *);
 
 void LoadNewLevel();
 void LoadNewLevelFromWindow();
@@ -1343,16 +1344,17 @@ void LoadNewLevelFromMenuWindow();
 void TakeScreenshot();
 void OptimizeFramerate(var);
 
-void LoadMystymood(BOOL, BOOL); // This will load the Mystymood engine.
-void UnloadMystymood();
-void LoadMystymoodLensflare();
+//void LoadMystymood(BOOL, BOOL); // This will load the Mystymood engine.
+void LoadMystymood( BOOL );
+//void UnloadMystymood();
+//void LoadMystymoodLensflare();
 void func_fade_colors(var *, var *, var *);
-void func_particle_seed_infinity(PARTICLE *);
-void func_effect_particle_seed(PARTICLE *);
-void func_fade_lightning(PARTICLE *);
-void func_particle_lightning(PARTICLE *);
-void func_particle_segment();
-void func_increase_brightness();
+//void func_particle_seed_infinity(PARTICLE *);
+//void func_effect_particle_seed(PARTICLE *);
+//void func_fade_lightning(PARTICLE *);
+//void func_particle_lightning(PARTICLE *);
+//void func_particle_segment();
+//void func_increase_brightness();
 void weather_change();
 void snow(var, var, VECTOR *);
 void rain(var, var);

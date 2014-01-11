@@ -73,14 +73,14 @@ void LoadPlayground() {
 	set(Playtest_Loadscreen,SHOW);
 	
 	if( PlayerPresent <= 0 ) { // There was no player!
-	   
-	   error("Insert AT LEAST one player into the scene!");
-	   
-	   reset(Playtest_Loadscreen,SHOW);
-	   mouse_mode = olmouse;
-	   
-	   return;
-	   
+		
+		error("Insert AT LEAST one player into the scene!");
+		
+		reset(Playtest_Loadscreen,SHOW);
+		mouse_mode = olmouse;
+		
+		return;
+		
 	}
 	
 	
@@ -95,7 +95,7 @@ void LoadPlayground() {
 		if(select.ObjectType == Sound) GSoundWindowHide();
 		if(select.ObjectType == Particle) GParticleWindowHide();
 		
-		select.material = mat_temp;
+		//		select.material = mat_temp;
 		select = NULL;
 		
 	}
@@ -130,7 +130,8 @@ void LoadPlayground() {
 	}
 	else {  // WORLD_DYNAMIC
 		
-		LoadMystymood(1,_load_lensflare);		
+		//		LoadMystymood(1,_load_lensflare);
+		LoadMystymood(1);
 		
 	}
 	
@@ -236,8 +237,8 @@ void LoadPlayground() {
 	if(snowhndl != -1) snd_stop(snowhndl);
 	
 	if(mystymood_active) {
-		
-		UnloadMystymood();
+	   
+	   LoadMystymood(0);
 		
 		fog_color = 0;
 
@@ -283,14 +284,14 @@ void LoadPlayground() {
 	cam.roll = _oldcampos.roll;
 	
 	if( is(panCAMRecorder,SHOW) ) {
-	   
-	   reset(panCAMRecorder,SHOW);
-	   reset(panCAMRecorder_digits,SHOW);
-	   reset(panCAMRecorderREC,SHOW);
-	   reset(FPCrosshair,SHOW);
-	   
-	   Gun.flags2 &= ~SHOW;
-	   
+		
+		reset(panCAMRecorder,SHOW);
+		reset(panCAMRecorder_digits,SHOW);
+		reset(panCAMRecorderREC,SHOW);
+		reset(FPCrosshair,SHOW);
+		
+		Gun.flags2 &= ~SHOW;
+		
 	}
 
 	GGUIShow();

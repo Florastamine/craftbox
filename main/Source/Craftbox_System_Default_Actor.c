@@ -235,3 +235,8 @@ int GenerateLight() {
 	NewLine();
 	
 }
+
+int GenerateWaterPlane() {
+	
+	
+}

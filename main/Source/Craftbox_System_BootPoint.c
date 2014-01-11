@@ -200,13 +200,13 @@ void LoadKernel() {
 	while(proc_status(mpLoad)) wait(1);
 	
 	// Init materials
-	int i;
-	for(i = 0;i < 4;i++) mat_custom[i] = mtl_create();
-
-	ReadMaterialDataFromFile(mat_custom[0],FILE_CUSTOM_MAT_1);
-	ReadMaterialDataFromFile(mat_custom[1],FILE_CUSTOM_MAT_2);
-	ReadMaterialDataFromFile(mat_custom[2],FILE_CUSTOM_MAT_3);
-	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
+	//	int i;
+	//	for(i = 0;i < 4;i++) mat_custom[i] = mtl_create();
+	//
+	//	ReadMaterialDataFromFile(mat_custom[0],FILE_CUSTOM_MAT_1);
+	//	ReadMaterialDataFromFile(mat_custom[1],FILE_CUSTOM_MAT_2);
+	//	ReadMaterialDataFromFile(mat_custom[2],FILE_CUSTOM_MAT_3);
+	//	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
 	
 	// Copy vars
 	original_moon_scale_fac = moon_scale_fac;
@@ -550,28 +550,29 @@ void CBox_startup() {
 				select.alpha = 100 - v_alpha;
 				select.ambient = v_ambient;
 				
-				if(button_state(panProp_1,1,-1)) set(select,BRIGHT);
+				
+				if(button_state(panProp,2,-1)) set(select,BRIGHT);
 				else reset(select,BRIGHT);
 				
-				if(button_state(panProp_1,2,-1)) set(select,INVISIBLE);
+				if(button_state(panProp,3,-1)) set(select,INVISIBLE);
 				else reset(select,INVISIBLE);
 				
-				if(button_state(panProp_1,3,-1)) set(select,NOFOG);
+				if(button_state(panProp,4,-1)) set(select,NOFOG);
 				else reset(select,NOFOG);
 				
-				if(button_state(panProp_1,4,-1)) set(select,OVERLAY);
+				if(button_state(panProp,5,-1)) set(select,OVERLAY);
 				else reset(select,OVERLAY);
 				
-				if(button_state(panProp_1,5,-1)) set(select,PASSABLE);
+				if(button_state(panProp,6,-1)) set(select,PASSABLE);
 				else reset(select,PASSABLE);
 				
-				if(button_state(panProp_1,6,-1)) set(select,POLYGON);
+				if(button_state(panProp,7,-1)) set(select,POLYGON);
 				else reset(select,POLYGON);
 				
-				if(button_state(panProp_1,7,-1)) set(select,SHADOW);
+				if(button_state(panProp,8,-1)) set(select,SHADOW);
 				else reset(select,SHADOW);
 				
-				if(button_state(panProp_1,8,-1)) set(select,TRANSLUCENT);
+				if(button_state(panProp,9,-1)) set(select,TRANSLUCENT);
 				else reset(select,TRANSLUCENT);
 				//////////////////////////////////////////////////////////////
 				

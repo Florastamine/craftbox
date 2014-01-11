@@ -542,7 +542,7 @@ void place_grass()
 	my.pan = random(360);
 	my.ObjectType = DynamicContent; // Dynamically created contents, will be cleaned up
 	vec_set (temp, my.x); 
-	Scale(my, random(3) );
+	Scale(my, random(1.5) );
 	temp.z -= 3000;
 	my.z -= c_trace (my.x, temp, IGNORE_ME | IGNORE_SPRITES | IGNORE_MODELS | USE_BOX ); // place the grass model on the ground
 	

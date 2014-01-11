@@ -72,6 +72,9 @@ gone out of scope.
 Returns: -1 if id is out of range.
 --------------------------------------------------
 */
+
+/*
+
 int MaterialSelect(var id) {
 
 	if(event_type == EVENT_RELEASE) return -1;
@@ -169,18 +172,17 @@ int MaterialSelect(var id) {
 			mat_type = select_custom_mat1;
 			mat_temp = mat_custom[0];
 			
-			/*
-			a quick terrible ugly hack
-			normally panMat_Sub1 will only be updated
-			if you click 1 "Edit Material",
-			but this hack allows you to update panMat_Sub1 directly
-			without pressing that button.
+			//			a quick terrible ugly hack
+			//			normally panMat_Sub1 will only be updated
+			//			if you click 1 "Edit Material",
+			//			but this hack allows you to update panMat_Sub1 directly
+			//			without pressing that button.
+			//			
+			//			this can be useful if you've already opened panMat_Sub1
+			//			and select another customizable material, the panel
+			//			will be updated immediately without having to click
+			//			the "Edit Material" button again.
 			
-			this can be useful if you've already opened panMat_Sub1
-			and select another customizable material, the panel
-			will be updated immediately without having to click
-			the "Edit Material" button again.
-			*/
 			if(is(panMat_Sub1,SHOW))
 			PassMaterialDataToWindow(mat_custom[0]);
 			
@@ -240,6 +242,7 @@ int MaterialSelect(var id) {
 
 }
 
+*/
 
 /*
 --------------------------------------------------
@@ -320,6 +323,9 @@ properties window.
 Returns: - 
 --------------------------------------------------
 */
+
+/*
+
 void PassMaterialDataToWindow(MATERIAL *m) {
 	
 	WriteLog("[ ] Passing material data to the appropriate panel...");
@@ -352,6 +358,8 @@ void PassMaterialDataToWindow(MATERIAL *m) {
 
 }
 
+*/
+
 /*
 --------------------------------------------------
 void WriteMaterialDataToFile(STRING *file, MATERIAL *m)
@@ -364,6 +372,9 @@ custom materials.
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
 	
 	WriteLog("[ ] Writing material data to ");
@@ -429,11 +440,13 @@ void WriteMaterialDataToFile(STRING *file, MATERIAL *m) {
 	file_close(vpass);
 
 	// close the panel.
-	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+	//	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 	
 	WriteLog("[X] Task completed.");
 	NewLine();
 }
+
+*/
 
 /*
 --------------------------------------------------
@@ -446,6 +459,9 @@ wrapper which will be assigned to the GUI buttons.
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void MaterialSave() {
 
 	if(event_type == EVENT_RELEASE) return;
@@ -487,3 +503,5 @@ void MaterialSave() {
 	}
 	
 }
+
+*/

@@ -456,21 +456,23 @@ void ObjectCut() {
 		
 		PassObjectDataToClipboard(select,clipboard);
 		
+		/*
+		
 		if(select.ObjectType > Object && select.ObjectType <= ObjectNode) 
 		{
 			
-			// Perform manual access to clipboard to copy material
+			// Perform manual access to clipboard to copy material	
+			//			select is selected.
+			//			so something must have been copied into mat_temp.
+			//			so I directly take mat_temp and copy it into the clipboard.
+			//			
+			//			otherwise if we pass select.material to clipboard.m,
+			//			mat_select is passed but not select's material.
 			
-			/*
-			select is selected.
-			so something must have been copied into mat_temp.
-			so I directly take mat_temp and copy it into the clipboard.
-			
-			otherwise if we pass select.material to clipboard.m,
-			mat_select is passed but not select's material.
-			*/
 			clipboard.m = mat_temp;
 		}
+		
+		*/
 		
 		ptr_remove(select);
 		select = NULL;
@@ -502,11 +504,16 @@ void ObjectCopy() {
 		
 		PassObjectDataToClipboard(select,clipboard);
 		
+		/*
+		
 		if(select.ObjectType > Object && select.ObjectType <= ObjectNode) 
 		{
 			//		// Perform manual access to clipboard to copy material
 			clipboard.m = mat_temp;
 		}
+		
+		*/
+		
 	}
 	
 	WriteLog("[X] Task completed for ObjectCopy().");
@@ -634,8 +641,8 @@ void ObjectManipulationCore()
 				case scale:
 				
 				if( button_state(panMain_Top,3,-1) ) {
-				   
-				   /*if(my->scale_x >= MINIMUM_SCALE_CONSTANT) */Scale(my, my->scale_z + mickey.z*SCALE_SPEED*.1); // a typical attempt to reduce the scrolling speed
+					
+					/*if(my->scale_x >= MINIMUM_SCALE_CONSTANT) */Scale(my, my->scale_z + mickey.z*SCALE_SPEED*.1); // a typical attempt to reduce the scrolling speed
 					
 					/*
 					
@@ -1175,45 +1182,45 @@ void LineConnect(ENTITY *connector, ENTITY *connected)
 void draw_rotated_bbox(ENTITY* ent)
 {
 	VECTOR c1,c2,c3,c4,c5,c6,c7,c8;  
-		
+	
 	vec_set(c1,vector(ent.min_x,ent.min_y,ent.min_z));    
 	vec_rotate(c1,ent.pan);
 	vec_add(c1,ent.x);
-		
+	
 	vec_set(c2,vector(ent.max_x,ent.min_y,ent.min_z));    
 	vec_rotate(c2,ent.pan);
 	vec_add(c2,ent.x);
-		
+	
 	vec_set(c3,vector(ent.max_x,ent.max_y,ent.min_z));    
 	vec_rotate(c3,ent.pan);
 	vec_add(c3,ent.x);
-		
+	
 	vec_set(c4,vector(ent.min_x,ent.max_y,ent.min_z));    
 	vec_rotate(c4,ent.pan);
 	vec_add(c4,ent.x);
-		
+	
 	vec_set(c5,vector(ent.min_x,ent.min_y,ent.max_z));    
 	vec_rotate(c5,ent.pan);
 	vec_add(c5,ent.x);
-		
+	
 	vec_set(c6,vector(ent.max_x,ent.min_y,ent.max_z));    
 	vec_rotate(c6,ent.pan);
 	vec_add(c6,ent.x);
-		
+	
 	vec_set(c7,vector(ent.max_x,ent.max_y,ent.max_z));    
 	vec_rotate(c7,ent.pan);
 	vec_add(c7,ent.x);
-		
+	
 	vec_set(c8,vector(ent.min_x,ent.max_y,ent.max_z));    
 	vec_rotate(c8,ent.pan);
 	vec_add(c8,ent.x);	
-		
+	
 	draw_line3d(c1,NULL,100); 
 	draw_line3d(c2,vector(0,255,0),100);
 	draw_line3d(c3,vector(0,255,0),100);
 	draw_line3d(c4,vector(0,255,0),100);
 	draw_line3d(c1,vector(0,255,0),100);
-		
+	
 	draw_line3d(c5,NULL,100);
 	draw_line3d(c6,vector(0,255,0),100);
 	draw_line3d(c7,vector(0,255,0),100);
@@ -1222,13 +1229,13 @@ void draw_rotated_bbox(ENTITY* ent)
 
 	draw_line3d(c1,NULL,100);
 	draw_line3d(c5,vector(0,255,0),100);
-		
+	
 	draw_line3d(c2,NULL,100);
 	draw_line3d(c6,vector(0,255,0),100);
-		
+	
 	draw_line3d(c3,NULL,100);
 	draw_line3d(c7,vector(0,255,0),100);
-		
+	
 	draw_line3d(c4,NULL,100);
 	draw_line3d(c8,vector(0,255,0),100);
 }

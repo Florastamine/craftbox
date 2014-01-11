@@ -808,97 +808,36 @@ PANEL *buttonlst_submenu_terrain = {
 	//	button(0,0,menu1_submenu4,menu1_submenu4_off,menu1_submenu4_over,NULL,NULL,NULL);
 	
 	// The final button will be the back button.
-	button(0,0,"button_back.png","button_back.png","button_back.png",NULL,GWindowClose,NULL);
+	button(0,0,"button_back.png","button_back.png","button_back.png",NULL,GTerrainSubmenuHide,NULL);
 	
 	flags = OVERLAY;
-}
-
-PANEL *buttonlst_submenu_object = {
-	layer = 1;
-	
-	bmap = "button_submenu_black.bmp";
-	
-	button(0,0,"button_back.png","button_back.png","button_back.png",NULL,GWindowClose,NULL);
-	
-	flags = OVERLAY;
-}
-
-PANEL *buttonlst_submenu_path = {
-	layer = 1;
-	
-	bmap = "button_submenu_black.bmp";
-	
-	//	button(0,0,menu3_submenu1,menu3_submenu1_off,menu3_submenu1_over,NULL,NULL,NULL);
-	//	button(0,0,menu3_submenu2,menu3_submenu2_off,menu3_submenu2_over,NULL,NULL,NULL);
-	//	button(0,0,menu3_submenu3,menu3_submenu3,menu3_submenu3,NULL,NULL,NULL);
-	//	button(0,0,menu3_submenu4,menu3_submenu4,menu3_submenu4,NULL,NULL,NULL);
-	
-	button(0,0,"button_back.png","button_back.png","button_back.png",NULL,GWindowClose,NULL);
-	
-	flags = OVERLAY;
-	
-}
-
-PANEL *panProp_1 = { // Properties
-	
-	layer = 5;
-	
-	button_toggle(0,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
-	button_toggle(0,20,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
-	button_toggle(0,40,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
-	button_toggle(0,60,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
-	button_toggle(0,80,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
-	button_toggle(0,100,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
-	button_toggle(0,120,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
-	button_toggle(0,140,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
-	
-	button(2,170,"button_default_on.bmp","button_default_off.bmp","button_default_on.bmp",NULL,ObjectRestoreDefault,NULL);
-	button(90,170,"button_randomrotate_on.bmp","button_randomrotate_off.bmp","button_randomrotate_on.bmp",NULL,ObjectRandomPan,NULL);
-	
-	hslider(0,221,100,slider,0,100,v_alpha);	
-	hslider(0,268,100,slider,0,100,v_ambient);
-	
-	flags = OVERLAY;	
-	
-}
-
-PANEL *panProp_2 = { // Materials
-	
-	layer = 5;
-	
-	button_toggle(0,0,"button_Mat1_on.bmp","button_Mat1.bmp","button_Mat1_on.bmp","button_Mat1_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,30,"button_Mat2_on.bmp","button_Mat2.bmp","button_Mat2_on.bmp","button_Mat2_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,60,"button_Mat3_on.bmp","button_Mat3.bmp","button_Mat3_on.bmp","button_Mat3_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,90,"button_Mat4_on.bmp","button_Mat4.bmp","button_Mat4_on.bmp","button_Mat4_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,120,"button_Mat5_on.bmp","button_Mat5.bmp","button_Mat5_on.bmp","button_Mat5_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,150,"button_Mat6_on.bmp","button_Mat6.bmp","button_Mat6_on.bmp","button_Mat6_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,180,"button_Mat7_on.bmp","button_Mat7.bmp","button_Mat7_on.bmp","button_Mat7_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,210,"button_Mat8_on.bmp","button_Mat8.bmp","button_Mat8_on.bmp","button_Mat8_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,240,"button_Mat9_on.bmp","button_Mat9.bmp","button_Mat9_on.bmp","button_Mat9_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,270,"button_Mat10_on.bmp","button_Mat10.bmp","button_Mat10_on.bmp","button_Mat10_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,300,"button_Mat11_on.bmp","button_Mat11.bmp","button_Mat11_on.bmp","button_Mat11_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,330,"button_Mat12_on.bmp","button_Mat12.bmp","button_Mat12_on.bmp","button_Mat12_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,360,"button_Mat13_on.bmp","button_Mat13.bmp","button_Mat13_on.bmp","button_Mat13_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,390,"button_Mat14_on.bmp","button_Mat14.bmp","button_Mat14_on.bmp","button_Mat14_on.bmp",NULL,MaterialSelect,NULL);
-	button_toggle(0,420,"button_Mat15_on.bmp","button_Mat15.bmp","button_Mat15_on.bmp","button_Mat15_on.bmp",NULL,MaterialSelect,NULL);
-	
-	button(160,0,"box_icons_on.png","box_icons.png","box_icons_on.png",NULL,GMaterialEditorShow,NULL);
-	
-	flags = OVERLAY;
-	
 }
 
 PANEL *panProp = {
+	
 	layer = 2;
 	
 	bmap = "panProp.png";
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GPropertiesWindowHide,NULL);
 	
-	button_toggle(0,0,"button_generalattrib_on.bmp","button_generalattrib.bmp","button_generalattrib_on.bmp","button_generalattrib_on.bmp",NULL,GpanPropSwitchPage,NULL);
-	button_toggle(0,0,"button_material_on.bmp","button_material.bmp","button_material_on.bmp","button_material_on.bmp",NULL,GpanPropSwitchPage,NULL);
-	//	button_toggle(0,0,"button_physics_on.bmp","button_physics.bmp","button_physics_on.bmp","button_physics_on.bmp",NULL,GpanPropSwitchPage,NULL);	
 	//	button(0,0,"button_apply_on.bmp","button_apply.bmp","button_apply_on.bmp",NULL,NULL,NULL);
+	
+	button_toggle(110,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
+	button_toggle(110,20,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
+	button_toggle(110,40,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
+	button_toggle(110,60,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
+	button_toggle(110,80,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
+	button_toggle(110,100,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
+	button_toggle(110,120,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
+	button_toggle(110,140,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
+	
+	button(2,170,"button_default_on.bmp","button_default_off.bmp","button_default_on.bmp",NULL,ObjectRestoreDefault,NULL);
+	button(90,170,"button_randomrotate_on.bmp","button_randomrotate_off.bmp","button_randomrotate_on.bmp",NULL,ObjectRandomPan,NULL);
+	
+	hslider(110,221,100,slider,0,100,v_alpha);	
+	hslider(110,268,100,slider,0,100,v_ambient);
+	
 	
 	on_click = GPanelDrag;
 	
@@ -906,6 +845,8 @@ PANEL *panProp = {
 	
 	alpha = 50;
 }
+
+/*
 
 PANEL *panMat_Sub1 = {
 	layer = 2;
@@ -941,11 +882,13 @@ PANEL *panMat_Sub1 = {
 	flags = OVERLAY | TRANSLUCENT;
 }
 
+*/
+
 PANEL *panSnd = {
 	
 	layer = 3;
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GSoundWindowHide,NULL);
 	
 	bmap = "panSnd.bmp";
 	
@@ -959,7 +902,7 @@ PANEL *panParticle = {
 	
 	layer = 3;
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GParticleWindowHide,NULL);
 	
 	bmap = "panParticle.bmp";
 	
@@ -1012,7 +955,7 @@ PANEL *panLight = {
 	
 	bmap = "panLight.bmp";
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GWindowClose,NULL);
+	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GLightWindowHide,NULL);
 	
 	hslider(153,65,65,"slider.bmp",0,255,v_lred);
 	hslider(153,87,65,"slider.bmp",0,255,v_lgreen);
@@ -2950,29 +2893,6 @@ Returns: -
 --------------------------------------------------
 */
 void GGUIUpdate(PANEL *wg) {
-	
-	if(wg == panProp) 
-	{
-		
-		int i;
-		for(i = 2;i < 6;i++) pan_setpos(panProp,3,i,vector(4, 20 + 35*(i-2),0));
-
-		pan_setpos(panProp,3,1,vector(bmap_width(panProp.bmap) - 38 - 15,0,0));
-		
-		//////////////////////////////////////////////////////////////
-		panProp_1.pos_x = panProp.pos_x + 121;
-		panProp_1.pos_y = panProp.pos_y + 75;
-		
-		panProp_2.pos_x = panProp.pos_x + 121;
-		panProp_2.pos_y = panProp.pos_y + 43;
-		//////////////////////////////////////////////////////////////
-		
-	}
-
-	if(wg == panMat_Sub1) { 
-		
-		pan_setpos(panMat_Sub1,3,1,vector(bmap_width(panMat_Sub1.bmap) - 38 - 15,0,0));
-	}
 
 	if(wg == panLight) {
 		
@@ -2991,43 +2911,6 @@ void GGUIUpdate(PANEL *wg) {
 		pan_setpos(panParticle,3,1,vector(bmap_width(panParticle.bmap) - 38 - 15,0,0));
 		
 	}
-}
-
-/* 
---------------------------------------------------
-void GWindowClose(var id, PANEL *p)
-
-Desc: id always = 1 cuz we don't have two closebuttons at the same time. 
-only one PANEL * parameter isn't enough (and it won't work too) so 
-this simple ugly hack should do the trick.
-
-Returns: -
---------------------------------------------------
-*/
-void GWindowClose(var id, PANEL *p) {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-	id = 1;
-
-	if(p == panMat_Sub1) {
-		reset(panMat_Sub1,SHOW);
-		
-		/* code to save changes */
-		MaterialSave(); // So that I don't have to rewrite the saving code.
-		
-	}
-
-	if(p == buttonlst_submenu_terrain) reset(buttonlst_submenu_terrain,SHOW);
-	if(p == buttonlst_submenu_object) reset(buttonlst_submenu_object,SHOW);
-	if(p == buttonlst_submenu_path) reset(buttonlst_submenu_path,SHOW);
-	if(p == panLight) GLightWindowHide();
-	if(p == panSnd) GSoundWindowHide();
-	if(p == panParticle) GParticleWindowHide();
-	if(p == panProp) GPropertiesWindowHide();
-	if(p == InsertObject) GInsertObjectHide();
-	if(p == Options_Graphics) GOptionsHide();
-	
 }
 
 /* 
@@ -3090,14 +2973,8 @@ void GPanelDrag(PANEL *p)
 		p.pos_x = mouse_pos.x+click_offset[0];
 		p.pos_y = mouse_pos.y+click_offset[1];
 		
-		//hack hack hack!!!!
-		if(p == panProp) GGUIUpdate(panProp);
-		
 		wait(1);
 	}
-
-	//hack to prevent something happens. f.e. after dragged the guis' elements didn't retain their original location.
-	if(p == panProp) GGUIUpdate(panProp);
 	
 	if(p == Stats) {
 		
@@ -3349,28 +3226,19 @@ void GGUIInit() {
 	panMain_Play.pos_x = screen_size.x - BORDER - bmap_width(panMain_Play.bmap);
 	panMain_Play.pos_y = screen_size.y - BORDER - bmap_height(panMain_Play.bmap);
 
-	buttonlst_submenu_terrain.pos_x = 
-	buttonlst_submenu_object.pos_x = 
-	buttonlst_submenu_path.pos_x = BORDER;
-
-	buttonlst_submenu_terrain.pos_y = 
-	buttonlst_submenu_object.pos_y =
-	buttonlst_submenu_path.pos_y = screen_size.y - 2 * BORDER - 64;
+	buttonlst_submenu_terrain.pos_x = BORDER;
+	buttonlst_submenu_terrain.pos_y = screen_size.y - 2 * BORDER - 64;
 
 	int i = 1;
 	while(i < 5) {
 		
 		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
-		pan_setpos(buttonlst_submenu_object,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
-		pan_setpos(buttonlst_submenu_path,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
 		
 		i++;
 	}
 
 	var cache = BORDER * 4 + 32 * 4; // the above formula, i = 5
 	pan_setpos(buttonlst_submenu_terrain,3,5,vector(cache,NULL,NULL));
-	pan_setpos(buttonlst_submenu_object,3,5,vector(cache,NULL,NULL));
-	pan_setpos(buttonlst_submenu_path,3,5,vector(cache,NULL,NULL));
 	
 	OptionsGraphicsTxt = txt_create(10,500);
 	OptionsSoundTxt = txt_create(10,500);
@@ -3415,40 +3283,21 @@ void GPanelSelect(PANEL *p)
 {
 	
 	if(last_pan) {
+		
 		last_pan.alpha = DEFAULT_ALPHA;
 		layer_sort(last_pan,2);
-		
-		if(last_pan == panProp) {
-			
-			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
-			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
-			
-		}
 		
 		last_pan = p;
 		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
-		
-		if(p == panProp) {
-			
-			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
-			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
-			
-		}
 		
 	}
 	
 	else {
+		
 		last_pan = p;
 		layer_sort(last_pan,4);
 		last_pan.alpha = 100;
-		
-		if(p == panProp) {
-			
-			if(is(panProp_1,SHOW)) layer_sort(panProp_1,panProp.layer+1);
-			if(is(panProp_2,SHOW)) layer_sort(panProp_2,panProp.layer+1);
-			
-		}
 		
 	}
 }
@@ -3466,8 +3315,6 @@ void GTerrainSubmenuShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	reset(buttonlst_submenu_object,SHOW);
-	reset(buttonlst_submenu_path,SHOW);
 	reset(buttonlst_submenu_terrain,SHOW);
 	
 	GToggleTerrainEditor();
@@ -3676,44 +3523,6 @@ void GTerrainSaveGeoWrapper() {
 	
 }
 
-/* 
---------------------------------------------------
-void GObjectSubmenuShow()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GObjectSubmenuShow() {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-	reset(buttonlst_submenu_terrain,SHOW);
-	reset(buttonlst_submenu_path,SHOW);
-
-	set(buttonlst_submenu_object,SHOW);
-}
-
-/* 
---------------------------------------------------
-void GPathSubmenuShow()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GPathSubmenuShow() {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-	reset(buttonlst_submenu_object,SHOW);
-	reset(buttonlst_submenu_terrain,SHOW);
-
-	set(buttonlst_submenu_path,SHOW);
-}
-
 /*
 --------------------------------------------------
 void GGUIHide()
@@ -3733,7 +3542,7 @@ void GGUIHide() {
 		if(select.ObjectType == Sound) GSoundWindowHide();
 		if(select.ObjectType == Particle) GParticleWindowHide();
 		
-		select.material = mat_temp;
+		//		select.material = mat_temp;
 		select = NULL;
 		
 	}
@@ -3743,8 +3552,6 @@ void GGUIHide() {
 	reset(panMain_Play,SHOW);
 
 	// Also disables any remaining active content.
-	reset(buttonlst_submenu_object,SHOW);
-	reset(buttonlst_submenu_path,SHOW);
 	reset(buttonlst_submenu_terrain,SHOW);
 	reset(panRotateHelp,SHOW);
 	reset(panScaleHelp,SHOW);
@@ -3782,6 +3589,9 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void GMaterialEditorShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
@@ -3837,6 +3647,8 @@ void GMaterialEditorShow() {
 		break;
 	}	
 }
+
+*/
 
 // stupid switchers
 // lite-C compiler: stupid programmer
@@ -4293,42 +4105,9 @@ void GPropertiesWindowShow() {
 		select.ObjectType != Particle) {
 			
 			set(panProp,SHOW);
-			GPanelSelect(panProp);
+			GPanelSelect(panProp);	
 			
-			////////////////////////////////////////////////////////////
-			// Set rules for opening and closing panProp.
-			////////////////////////////////////////////////////////////
-			if(page == 1) { // Properties panel
-				
-				int i = 3;
-				while(i<5) {
-					
-					button_state(panProp,i,0);
-					i++;
-					
-				}
-				
-				panProp.bmap = panProp1_IMG;
-				
-				set(panProp_1,SHOW);		
-				reset(panProp_2,SHOW);
-				
-			}
-
-			if(page == 2) { // Materials panel
-				
-				button_state(panProp,2,0);
-				button_state(panProp,4,0);
-				
-				panProp.bmap = panProp2_IMG;
-				
-				reset(panProp_1,SHOW);
-				set(panProp_2,SHOW);
-				
-			}
-			////////////////////////////////////////////////////////////
-			
-			GGUIUpdate(panProp);
+			//			GGUIUpdate(panProp);
 			
 		}
 		
@@ -4349,25 +4128,7 @@ void GPropertiesWindowHide() {
 	
 	// Object is deactivated/other object has been selected.
 	
-	// Disable subpanels.
-	// Actually we have only one subpanel opened at a time,
-	// so only one value is passed to page.
-	if(is(panProp_1,SHOW)) { // If something has been opened before.
-		
-		// save it to page.
-		page = 1;
-		// close the panel.
-		reset(panProp_1,SHOW);
-		
-	}
-	if(is(panProp_2,SHOW)) {
-		
-		page = 2;
-		reset(panProp_2,SHOW);
-		
-	}
-	
-	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
+	//	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
 	reset(panProp,SHOW);
 	
 }
@@ -4686,30 +4447,12 @@ void GWorldNewHide() {
 	
 	InMenu_NewGame = 0;
 	
-	LoadMystymood(0,0);
+	//	LoadMystymood(0,0);
+	LoadMystymood(0);
 	
 	if(WorldType == WORLD_DYNAMIC) GNewGameResetDynamicSettings();
 	else GNewGameResetStaticSettings();
 	
-}
-
-
-/*
---------------------------------------------------
-void GpanPropSwitchPage(var mode)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GpanPropSwitchPage(var mode) {
-	
-	if(event_type == EVENT_RELEASE) return;
-
-	page=mode--;
-	GPropertiesWindowShow();
-
 }
 
 /*
@@ -6394,7 +6137,8 @@ void GSwitchNewGameScreen ( var ID ) {
 				reset(NewGame_ScreenStatic_Step1,SHOW);
 				set(NewGame_ScreenDyn_Step1,SHOW);
 				
-				if(!mystymood_active) LoadMystymood(1,1);
+				//				if(!mystymood_active) LoadMystymood(1,1);
+				if( !mystymood_active ) LoadMystymood(1);
 				
 			}
 			else { // Static world
@@ -6402,7 +6146,8 @@ void GSwitchNewGameScreen ( var ID ) {
 				reset(NewGame_ScreenDyn_Step1,SHOW);  
 				set(NewGame_ScreenStatic_Step1,SHOW);
 				
-				LoadMystymood(0,0);
+				//				LoadMystymood(0,0);
+				LoadMystymood(0);
 				mystymood_active = 0;
 				
 			}
@@ -6432,7 +6177,8 @@ void GSwitchNewGameScreen ( var ID ) {
 			reset(NewGame_ScreenLeft,SHOW);
 			
 			mystymood_active = 0;
-			LoadMystymood(0,0);
+			//			LoadMystymood(0,0);
+			LoadMystymood(0);
 			
 			GNewGameResetDynamicSettings();
 			
@@ -6452,7 +6198,8 @@ void GSwitchNewGameScreen ( var ID ) {
 				reset(NewGame_ScreenStatic_Step1,SHOW);
 				set(NewGame_ScreenDyn_Step1,SHOW);
 				
-				if(!mystymood_active) LoadMystymood(1,1);
+				//				if(!mystymood_active) LoadMystymood(1,1);
+				if( !mystymood_active ) LoadMystymood(1);
 				
 			}
 			else { // Static world
@@ -6460,7 +6207,9 @@ void GSwitchNewGameScreen ( var ID ) {
 				reset(NewGame_ScreenDyn_Step1,SHOW);  
 				set(NewGame_ScreenStatic_Step1,SHOW);
 				
-				LoadMystymood(0,0);
+				//				LoadMystymood(0,0);
+				LoadMystymood(0);
+
 				mystymood_active = 0;
 				
 			}
@@ -6484,7 +6233,8 @@ void GSwitchNewGameScreen ( var ID ) {
 			set(NewGame_Screen3,SHOW);
 			reset(NewGame_ScreenRight,SHOW);
 			
-			if(!mystymood_active && WorldType == WORLD_DYNAMIC) LoadMystymood(1,1);
+			//			if(!mystymood_active && WorldType == WORLD_DYNAMIC) LoadMystymood(1,1);
+			if( !mystymood_active && WorldType == WORLD_DYNAMIC ) LoadMystymood(1);
 			
 			set(InputBox_GROUNDSTR,SHOW);
 			set(InputBox_SKYSTR,SHOW);
@@ -6905,29 +6655,29 @@ int PassObjectPropertiesToGUI(ENTITY *e) {
 	v_ambient = e.ambient;
 	v_alpha = 100 - e.alpha;
 
-	if(is(e,BRIGHT)) button_state(panProp_1,1,1);
-	else button_state(panProp_1,1,0);
+	if(is(e,BRIGHT)) button_state(panProp,2,1);
+	else button_state(panProp,2,0);
 
-	if(is(e,INVISIBLE)) button_state(panProp_1,2,1);
-	else button_state(panProp_1,2,0);
+	if(is(e,INVISIBLE)) button_state(panProp,3,1);
+	else button_state(panProp,3,0);
 
-	if(is(e,NOFOG)) button_state(panProp_1,3,1);
-	else button_state(panProp_1,3,0);
+	if(is(e,NOFOG)) button_state(panProp,4,1);
+	else button_state(panProp,4,0);
 
-	if(is(e,OVERLAY)) button_state(panProp_1,4,1);
-	else button_state(panProp_1,4,0);
+	if(is(e,OVERLAY)) button_state(panProp,5,1);
+	else button_state(panProp,5,0);
 
-	if(is(e,PASSABLE)) button_state(panProp_1,5,1);
-	else button_state(panProp_1,5,0);
+	if(is(e,PASSABLE)) button_state(panProp,6,1);
+	else button_state(panProp,6,0);
 
-	if(is(e,POLYGON)) button_state(panProp_1,6,1);
-	else button_state(panProp_1,6,0);
+	if(is(e,POLYGON)) button_state(panProp,7,1);
+	else button_state(panProp,7,0);
 
-	if(is(e,SHADOW)) button_state(panProp_1,7,1);
-	else button_state(panProp_1,7,0);
+	if(is(e,SHADOW)) button_state(panProp,8,1);
+	else button_state(panProp,8,0);
 
-	if(is(e,TRANSLUCENT)) button_state(panProp_1,8,1);
-	else button_state(panProp_1,8,0);
+	if(is(e,TRANSLUCENT)) button_state(panProp,9,1);
+	else button_state(panProp,9,0);
 	
 	WriteLog("[X] Task completed.");
 	NewLine();

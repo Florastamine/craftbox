@@ -166,7 +166,7 @@ void SaveWorld_system(var hndl) {
 	
 	if(WorldType == WORLD_DYNAMIC) {
 		
-		file_var_write(hndl,lens_active);
+		//		file_var_write(hndl,lens_active);
 		file_var_write(hndl,mystymood_active);
 		file_var_write(hndl,dynamic_day_night);
 		

@@ -103,6 +103,8 @@ Desc:
 Returns: - 
 --------------------------------------------------
 */
+
+/*
 void flare_init(ENTITY *flare_ent)
 {
 	
@@ -120,6 +122,7 @@ void flare_init(ENTITY *flare_ent)
 	NewLine();
 	
 }
+*/
 
 /*
 --------------------------------------------------
@@ -130,6 +133,8 @@ Desc: Places a flare at temp.x/temp.y deviations from screen center
 Returns: -
 --------------------------------------------------
 */
+
+/*
 void flare_place(ENTITY *flare_ent)
 {
 
@@ -193,6 +198,7 @@ void flare_place(ENTITY *flare_ent)
 	}
 	rel_for_screen(my.x,camera);
 }
+*/
 
 /*
 --------------------------------------------------
@@ -203,6 +209,8 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
 void LoadMystymoodLensflare()
 {
 
@@ -292,6 +300,7 @@ void LoadMystymoodLensflare()
 	NewLine();
 
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////MystyMood sky/sun/weather template...works without shader, uses 3dgs sky entitys!
@@ -426,9 +435,11 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void func_particle_segment()
 {
-	/*
 	
 	vec_set(temporary, segment_end);
 	vec_sub(segment_end, segment_start);
@@ -445,10 +456,10 @@ void func_particle_segment()
 		
 	}
 	
-	*/
-	
 	wait(1);
 }
+
+*/
 
 /*
 --------------------------------------------------
@@ -459,10 +470,11 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void func_particle_segment()
 {
-	
-	/*
 	
 	vec_set(temporary, stroke_start);
 	vec_sub(stroke_end, stroke_start);
@@ -482,10 +494,10 @@ void func_particle_segment()
 		stroke_length -= 100; // keep the same value here
 	}
 	
-	*/
-	
 	wait(1);
 }
+
+*/
 
 /*
 --------------------------------------------------
@@ -496,9 +508,11 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
+
+/*
+
 void func_increase_brightness()
 {
-	/*
 	
 	lightning_on = 1;
 
@@ -517,10 +531,10 @@ void func_increase_brightness()
 	wait(random(50));	
 	lightning_on = 0;
 	
-	*/
-	
 	wait(1);
 }
+
+*/
 
 /*
 --------------------------------------------------
@@ -854,32 +868,6 @@ void weather_change() {
 
 /*
 --------------------------------------------------
-void UnloadMystymood()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void UnloadMystymood() {
-	
-	LoadMystymood(0,0);
-	
-	sky_horizon.flags2 &= ~SHOW;
-	sky_cloud1.flags2 &= ~SHOW;
-	sky_cloud2.flags2 &= ~SHOW;
-	sky_cloud3.flags2 &= ~SHOW;
-	sky_day.flags2 &= ~SHOW;
-	sky_sun.flags2 &= ~SHOW;
-	sky_suncorona.flags2 &= ~SHOW;
-	sky_sunshine.flags2 &= ~SHOW;
-	sky_night.flags2 &= ~SHOW;
-	sky_moon.flags2 &= ~SHOW;
-	
-}
-
-/*
---------------------------------------------------
 void LoadMystymood(BOOL _on, BOOL load_lens)
 
 Desc:
@@ -887,14 +875,41 @@ Desc:
 Returns: -
 --------------------------------------------------
 */
-void LoadMystymood(BOOL _on, BOOL load_lens)
+
+void LoadMystymood(BOOL _on /* , BOOL load_lens */ )
 {
 	
 	WriteLog("[ ] Loading Mystymood");
 	NewLine();
 
+	if( !_on ) { // Unload mystymood & lensflare effect
+		
+		// macros work only with flag1? :-? (idk)
+		// so we use the inverse flag to control flags2.
+		sky_horizon.flags2 &= ~SHOW;
+		sky_cloud1.flags2 &= ~SHOW;
+		sky_cloud2.flags2 &= ~SHOW;
+		sky_cloud3.flags2 &= ~SHOW;
+		sky_day.flags2 &= ~SHOW;
+		sky_sun.flags2 &= ~SHOW;
+		sky_suncorona.flags2 &= ~SHOW;
+		sky_sunshine.flags2 &= ~SHOW;
+		sky_night.flags2 &= ~SHOW;
+		sky_moon.flags2 &= ~SHOW;
+		
+		mystymood_active = 0;
+		
+		WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
+		NewLine();
+		
+		return;
+		
+	}
+	
+	/*
+	
 	int step = 0;
-
+	
 	if(!load_lens) {
 		
 		flare1_ent.flags2 &= ~SHOW;
@@ -954,10 +969,13 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 	}
 	
+	*/
 
 	////////////////////////////////////////////////////////////
 	// Setup for lensflare
 	////////////////////////////////////////////////////////////
+	
+	/*
 	flare1_ent.pivot_dist = 1.278;
 	flare2_ent.pivot_dist = 1.200;
 	flare4_ent.pivot_dist = 0.522;
@@ -977,6 +995,8 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	flare18_ent.pivot_dist = -0.432;
 	flare19_ent.pivot_dist = -0.654;
 	flare20_ent.pivot_dist = -1.000;
+	*/
+	
 	////////////////////////////////////////////////////////////
 
 	sky_horizon.flags2 |= SHOW;
@@ -985,17 +1005,8 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	sky_cloud3.flags2 |= SHOW;
 	sky_day.flags2 |= SHOW;	
 	
-	if(_use_nightstars) {
-		
-		sky_night.flags2 |= SHOW;
-		
-	}
-	
-	if(_use_moon) {
-		
-		sky_moon.flags2 |= SHOW;
-		
-	}
+	if(_use_nightstars) sky_night.flags2 |= SHOW;
+	if(_use_moon) sky_moon.flags2 |= SHOW;
 	
 	if(_use_sun) {
 		
@@ -1006,17 +1017,6 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	}
 
 	VECTOR temp;
-	
-	/*
-	
-	if( str_stri(command_str,PARAM_DEV) ) {
-		
-		on_space = toggle_weather;
-		on_alt = good_weather;
-		
-	}
-	
-	*/
 
 	sky_sun.scale_x = sun_scale_x;
 	sky_sun.scale_y = sun_scale_y;
@@ -1086,13 +1086,6 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 					
 					sky_sun.scale_x = sky_sun.scale_y += .01 * (time_speed/10) * time_step;
 					
-					/*
-					
-					sky_sun.scale_x += 0.01*time_step*time_speed/10;
-					sky_sun.scale_y += 0.01*time_step*time_speed/10;
-					
-					*/
-					
 				}	
 				
 			}
@@ -1102,13 +1095,6 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 				if(sky_sun.scale_x>sun_scale_x && sky_sun.scale_y>sun_scale_y) {
 					
 					sky_sun.scale_x = sky_sun.scale_y -= .01 * (time_speed/10) * time_step;
-					
-					/*
-					
-					sky_sun.scale_x -= 0.01*time_step*time_speed/10;
-					sky_sun.scale_y -= 0.01*time_step*time_speed/10;
-					
-					*/
 					
 				}
 			}
@@ -1168,13 +1154,13 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 		
 		if(sun_angle.pan > 190 && sun_angle.pan < 350) {
 			
-			/* if(weather_state>0) */ func_fade_colors(d3d_fogcolor1,current_color,fog_weather_night);
+			func_fade_colors(d3d_fogcolor1,current_color,fog_weather_night);
 			
 		}
 		
 		else {
 			
-			/* if(weather_state>0) */ func_fade_colors(d3d_fogcolor1,current_color,fog_weather_day);
+			func_fade_colors(d3d_fogcolor1,current_color,fog_weather_day);
 			
 		}
 		
@@ -1205,7 +1191,6 @@ void LoadMystymood(BOOL _on, BOOL load_lens)
 	NewLine();
 	
 }
-
 
 
 /*
