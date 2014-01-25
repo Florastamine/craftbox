@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Terrain_Seed
+
+#define Craftbox_Plugin_Terrain_Seed
+
 /*
 --------------------------------------------------
 var ent_seed_c(
@@ -245,3 +249,5 @@ void paint_canvas()
 }
 
 #define PRAGMA_PRINT " [Loaded plugin terrain seeding] "
+
+#endif

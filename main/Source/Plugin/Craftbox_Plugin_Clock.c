@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Clock
+
+#define Craftbox_Plugin_Clock
+
 void ClockStart() {
 	
 	set(ClockText,SHOW);
@@ -98,3 +102,5 @@ void ClockStop() {
 }
 
 #define PRAGMA_PRINT " [Loaded plugin clock] "
+
+#endif

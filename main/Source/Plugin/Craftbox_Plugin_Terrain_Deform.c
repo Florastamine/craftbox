@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Terrain_Deform
+
+#define Craftbox_Plugin_Terrain_Deform
+
 /******************************
 
 - [ 15.1.2014 ] rewrote saving/loading functions (support for custom, external deformation data)
@@ -464,3 +468,5 @@ void TDeform_LoadHeightFrom(ENTITY *terrain) {
 }
 
 #define PRAGMA_PRINT " [Loaded plugin terrain deformation] "
+
+#endif

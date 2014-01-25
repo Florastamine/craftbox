@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Music_Player
+
+#define Craftbox_Plugin_Music_Player
+
 
 /*
 --------------------------------------------------
@@ -52,8 +56,8 @@ void mpLoad(STRING *scan_path, STRING *scan_ext) {
 	
 	str_remove(_scan_path);
 	
-	WriteLog(", found %d tracks" , (var) mpSongs ); // 
-//	WriteLog(" tracks.");
+	WriteLog(", found " , (var) mpSongs ); // 
+	WriteLog(" tracks.");
 	NewLine();
 	
 	WriteLog("[X] Task completed.");
@@ -181,3 +185,5 @@ void mpResume() {
 }
 
 #define PRAGMA_PRINT " [Loaded plugin music player] "
+
+#endif

@@ -208,12 +208,6 @@ char DialogueFileEnd = '_';
 
 var DialogueSentencesCount = 0;
 
-// Graphics
-int allowSSAO = 0;
-int allowRTShadows = 0;
-int allowOBShaders = 0;
-int allowPPE = 0;
-
 STRING *PARAM_NOLOGFILE = " -dwl";
 //STRING *PARAM_DEV = " -dev";
 //STRING *PARAM_SUSPENDKERNEL = " -dlk";

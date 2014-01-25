@@ -1,4 +1,8 @@
-``/*
+#ifndef Craftbox_System_BootPoint
+
+#define Craftbox_System_BootPoint
+
+/*
 --------------------------------------------------
 Craftbox_System_BootPoint.c
 
@@ -627,3 +631,5 @@ void PrecacheContent() {
 	NewLine();
 
 }
+
+#endif

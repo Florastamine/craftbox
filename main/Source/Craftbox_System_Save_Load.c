@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Save_Load
+
+#define Craftbox_System_Save_Load
+
 /*
 --------------------------------------------------
 Craftbox_System_Save_Load.c
@@ -507,3 +511,5 @@ int LoadGameFromSlot(var slot) {
 	*/
 	
 }
+
+#endif

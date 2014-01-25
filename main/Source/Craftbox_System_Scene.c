@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Scene
+
+#define Craftbox_System_Scene
+
 /*
 --------------------------------------------------
 Craftbox_System_Scene.c
@@ -45,3 +49,5 @@ void OptimizeFramerate(var dfr) {
 	NewLine();
 
 }
+
+#endif

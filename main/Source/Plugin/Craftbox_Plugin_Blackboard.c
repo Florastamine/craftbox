@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Blackboard
+
+#define Craftbox_Plugin_Blackboard
+
 
 /*
 --------------------------------------------------
@@ -80,3 +84,5 @@ void WriteToBlackboard(STRING *str, STRING *str2, var duration) {
 }
 
 #define PRAGMA_PRINT " [Loaded plugin blackboard] "
+
+#endif

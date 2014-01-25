@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Behaviors
+
+#define Craftbox_Plugin_Behaviors
+
 /*
 --------------------------------------------------
 Craftbox_Plugin_Behaviors.c
@@ -1513,3 +1517,5 @@ action random_guy()
 }
 
 #define PRAGMA_PRINT " [Loaded plugin behaviors] "
+
+#endif

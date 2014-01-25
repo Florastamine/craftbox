@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Clipboard
+
+#define Craftbox_System_Clipboard
+
 /*
 --------------------------------------------------
 Craftbox_System_Clipboard.c
@@ -416,3 +420,5 @@ int PassClipboardDataToObject(ENTITY *e) {
 	return -1;
 
 }
+
+#endif

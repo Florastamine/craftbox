@@ -1,3 +1,7 @@
+#ifndef Craftbox_Plugin_Dialogues
+
+#define Craftbox_Plugin_Dialogues
+
 #include <default.c>
 
 PANEL *diaryPage = {
@@ -192,3 +196,5 @@ void StartDiaryPage(STRING *text) {
 }
 
 #define PRAGMA_PRINT " [Loaded plugin dialogue system] "
+
+#endif

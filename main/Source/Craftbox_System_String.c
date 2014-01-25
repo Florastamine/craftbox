@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_String
+
+#define Craftbox_System_String
+
 /*
 --------------------------------------------------
 Craftbox_System_String.c
@@ -119,3 +123,5 @@ void PassToLOADGAMESTR(var position) {
 	NewLine();
 	
 }
+
+#endif
