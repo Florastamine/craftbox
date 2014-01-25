@@ -8,7 +8,7 @@ VARIABLES
 var sc_refractRT = 2;
 
 //turn refraction on/off
-var sc_bRefract = 1;
+// 
 
 // DON'T CHANGE ANYTHING BELOW THIS LINE ---------------------------------------------------------------------------
 
@@ -22,4 +22,4 @@ BMAP* sc_map_refract;
 VIEWS
 *******************************************************************************************************************/
 
-VIEW* sc_view_refract = { size_x = screen_size.x/sc_refractRT; size_y = screen_size.y/sc_refractRT; layer = -10; clip_near = 0; clip_far = camera.clip_far/10;}
+VIEW* sc_view_refract = { size_x = sys_metrics(0)/sc_refractRT; size_y = sys_metrics(1)/sc_refractRT; layer = -10; clip_near = 0; clip_far = camera.clip_far/10;}

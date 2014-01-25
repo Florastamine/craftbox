@@ -50,10 +50,15 @@ http://www.coniserver.net/ubbthreads/showprofile.php?Cat=0&User=20725
 #define PRAGMA_PATH "./CookedSounds/Music"
 
 #include <acknex.h> // standard engine objects
-#include <stdio.h> // Screen space ambient occlusion
+//#include <stdio.h> // Screen space ambient occlusion
+#include <strio.c>
 #include <d3d9.h> // Shade-C
 #include <particles.c> // effects such as snow()
 #include <level.c>
+
+#define CBOX_DEVELOPMENT
+#define USE_TXT_LOG
+
 //////////////////////////////////////////////////////////////
 
 TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
@@ -66,7 +71,6 @@ var def_oldmouse = 0;
 
 BOOL PLAYTESTING = 0;
 BOOL UNDER_MAC_OR_LINUX = 0; // Running craftbox under Mac or Linux-based OS.
-BOOL DEBUG_MODE = 0;
 BOOL UseFlatMenu = 0;
 var LoadWorldBreak;
 var PreKernelDone;
@@ -160,7 +164,31 @@ typedef struct {
 	
 } OBJECTSTRUCT;
 
+///////////////////////////////////////////////////////////
+// One solid struct is better than thousands of scattered
+// variables
+////////////////////////////////////////////////////////////
+typedef struct {
+   
+   // Basic graphics settings
+   int Brightness;
+   int BitDepth;
+   int AFLevel;
+   int AALevel;
+   
+   // Shaders and screenspace effects
+   int HDR;
+   int DOF;
+   int _SSAO;
+   int Shadows;
+   int ObjShaders;
+   int PPE;
+   
+   
+} GRAPHICSKONFIG;
+
 OBJECTSTRUCT clipboard;
+GRAPHICSKONFIG defaultConfig, tempConfig; /* tempConfig is used for temporary saving configuration for later comparison */
 //////////////////////////////////////////////////////////////
 
 // System
@@ -180,9 +208,15 @@ char DialogueFileEnd = '_';
 
 var DialogueSentencesCount = 0;
 
+// Graphics
+int allowSSAO = 0;
+int allowRTShadows = 0;
+int allowOBShaders = 0;
+int allowPPE = 0;
+
 STRING *PARAM_NOLOGFILE = " -dwl";
-STRING *PARAM_DEV = " -dev";
-STRING *PARAM_SUSPENDKERNEL = " -dlk";
+//STRING *PARAM_DEV = " -dev";
+//STRING *PARAM_SUSPENDKERNEL = " -dlk";
 STRING *PARAM_USECTRACE = " -com";
 
 STRING *tag_header = "craftbox World Data File";
@@ -354,6 +388,7 @@ STRING *RELEASE_STR_INFO = "pre-alpha";
 
 // Background level
 STRING *LEVEL_MENU = "./CookedWorlds/background.wmb";
+STRING *CAMERA_MODEL = "real_cam.mdl";
 
 STRING *VAREXPLORER_EXITSTR = "exit";
 STRING *VAREXPLORER_REPORTSTR = "report";
@@ -365,8 +400,8 @@ STRING *FILE_CONFIG = "./Source/Config.cfg";
 //STRING *FILE_CUSTOM_MAT_2 = "./Source/mat_custom_2.cfg";
 //STRING *FILE_CUSTOM_MAT_3 = "./Source/mat_custom_3.cfg";
 //STRING *FILE_CUSTOM_MAT_4 = "./Source/mat_custom_4.cfg";
-STRING *FILE_CREDITS_TEXT = "./Source/Huy.cbt";
-STRING *FILE_LOG = "./CBox.log";
+STRING *FILE_CREDITS_TEXT = "./Source/_credits.cbt";
+STRING *FILE_LOG = "./CBox.html";
 
 STRING *FILE_GAME_INTRO_VIDEO = "#300";
 STRING *FILE_GAME_OUTRO_VIDEO = "#300";
@@ -385,6 +420,7 @@ STRING *EXT_SPRITE = "tga";
 STRING *EXT_SAVEDGAMES = "s";
 STRING *EXT_MUSIC = "*.ogg";
 STRING *EXT_CBOIF = ".cboif";
+STRING *EXT_GEO = "*.ctdd";
 
 STRING *PATH_SOUNDS = "./CookedSounds/";
 STRING *PATH_SOUNDS_ = "CookedSounds\\";
@@ -807,8 +843,7 @@ _weather_mode = NO_RAIN_SNOW; // RAIN_ONLY, SNOW_ONLY, RAIN_SNOW, NO_RAIN_SNOW
 ////////////////////////////////////////////////////////////
 // Panels will be declared here.
 ////////////////////////////////////////////////////////////
-PANEL *Statistics,
-*InDev,
+PANEL *InDev,
 *buttonlst,
 *last_pan,
 *panMain_Top,
@@ -1035,7 +1070,10 @@ BMAP* drop1_map = "rain.tga";
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
-void OpenDebug();
+GRAPHICSKONFIG *CreateGraphicsStruct(int, int, int, int, int, int, int ,int ,int, int);
+int CompareGraphicsStruct(GRAPHICSKONFIG *, GRAPHICSKONFIG *);
+
+void OpenDebug_startup();
 void CloseDebug();
 void ExitEvent();
 void LoadKernel();
@@ -1044,6 +1082,7 @@ void LoopKernel();
 void LoadPlayground();
 void PrecacheContent();
 void _beep();
+void ApplyGraphicsSettings( GRAPHICSKONFIG * );
 int UnloadKernel();
 int ReloadKernel();
 int Console();
@@ -1084,23 +1123,34 @@ void ConvertToCTFormat(STRING *, var, var);
 
 void bmap_savetga(BMAP *, char *);
 
-// Implementations for writing different types of variables for WriteLog
-// With somethin like int WriteLog(int); implement them yourself.
-// or use somethin like WriteLog follow an empty string and var.
-// Mother of function overloading.\
-// 14.11.2013: Edited. No, it's nothing compared to that "mother of function overloading".
-int WriteLog(STRING *);
-int WriteLog(STRING *, int);
-int WriteLog(STRING *, var);
-int WriteLog(STRING *, double);
-int WriteLog(STRING *, BOOL);
-int WriteLog(STRING *, OBJECTSTRUCT *);
-int WriteLog(STRING *);
-void NewLine(); // This is specifically for LOGFILEHNDL
-void NewLineGeneric(var); // This is for generic file handle, or NewLineGeneric(LOGFILEHNDL); for the same effect as NewLine().
+var LOGFILEHNDL;
+char compose_target[300];
+STRING *holder = "#500";
+STRING *holder_num = "#10";
 
-void WriteLogHeaders();
+// Logging functions
+void NewLine() { return; } // HTML
+char *GenerateDateTime();
+void OpenLog( STRING * );
+void CloseLog();
 STRING *StringForBool(var);
+
+void WriteLog(STRING *);
+void WriteLog(VECTOR *);
+void WriteLog(ANGLE *);
+void WriteLog(int);
+void WriteLog(var);
+void WriteLog(double);
+void WriteLog(float);
+void WriteLog(STRING *, VECTOR *);
+void WriteLog(STRING *, ANGLE *);
+void WriteLog(STRING *, var);
+void WriteLog(STRING *, int);
+void WriteLog(STRING *, double);
+void WriteLog(STRING *, float);
+
+void WriteLogHeaders(); // txt
+void hVar(STRING *, int); // txt
 
 void free_camera();
 //void toggle_weather();

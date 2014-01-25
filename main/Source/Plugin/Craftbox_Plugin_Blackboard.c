@@ -78,3 +78,5 @@ void WriteToBlackboard(STRING *str, STRING *str2, var duration) {
 	WriteLog("[X] Task completed.");
 	
 }
+
+#define PRAGMA_PRINT " [Loaded plugin blackboard] "

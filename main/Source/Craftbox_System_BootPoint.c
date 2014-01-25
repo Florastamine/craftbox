@@ -1,4 +1,4 @@
-/*
+``/*
 --------------------------------------------------
 Craftbox_System_BootPoint.c
 
@@ -107,66 +107,19 @@ Sets KERNEL_IS_RUNNING to 1 if it had been fully loaded.
 Returns: -
 --------------------------------------------------
 */
+
 void LoadKernel() {
 	
 	while( ! PreKernelDone ) wait(1);
 	
 	WriteLog("[SYS] Loading kernel ");
 	NewLine();
-	
-	if ( DEBUG_MODE ) {
-		
-		reset(LoadKernelScreen,SHOW);
-		vec_set( screen_color, vector(0,0,0) ); // black screen
-		
-		WriteLog("[ ] Testing various settings...");
-		NewLine();
-		
-		//////////////////////////////////////////////////////////////
-		switch( sys_metrics(67) ) { // Value that specifies how the system was started
-			
-			case 0: // Normal boot
-			WriteLog("Normal boot");
-			break;
-			
-			case 1: // Safe boot
-			WriteLog("Safe boot");
-			break;
-			
-			case 2: // Safe boot + network
-			WriteLog("Safe boot with networking");
-			break;
-			
-			default: break;
-			
-		}
-		NewLine();
-		
-		if( sys_metrics(19) ) { // detect for the installation of mouse
-			
-			WriteLog("Mouse installed");
-			NewLine();
-			
-		}
-		
-		if( sys_metrics(73) ) { // detect for a weak processor (rarely happen)
-			
-			WriteLog("Weak processor");
-			NewLine();
-			
-		}
-		//////////////////////////////////////////////////////////////
-		
-	}
-	
-	else {
-		
-		set(LoadKernelScreen,SHOW);
-		
-	}
 
 	WriteLog("[ ] Initializing...");
 	NewLine();
+	
+	C_TRACE_OPTIMIZATION = (BOOL)str_stri(command_str,PARAM_USECTRACE);
+	if(C_TRACE_OPTIMIZATION) DISTANCE_OPTIMIZATION = false;
 	
 	// Init strings
 	str_cpy(seedEnt,undef);
@@ -237,6 +190,7 @@ void LoadKernel() {
 	if( is(LoadKernelScreen,SHOW) ) reset(LoadKernelScreen,SHOW);
 	
 	WriteLog("[X] Finished initializing the kernel.");
+	NewLine();
 	
 	// Things happened after the kernel has been loaded.
 	PostLoadKernel();
@@ -393,23 +347,27 @@ void LoopKernel() {
 		
 		// These keys are pressed solely.
 		
-		if(key_r && str_stri(command_str,PARAM_DEV) ) { // This is only allowed in developer mode
+		#ifdef CBOX_DEVELOPMENT
 			
-			while(key_r) wait(1);
-			you = ent_next(NULL); // Point to the first entity in the list
-			while(you != NULL) {
+			if(key_r) { 
 				
-				ptr_remove(you);
-				you = ent_next(you);
+				while(key_r) wait(1);
+				you = ent_next(NULL); // Point to the first entity in the list
+				while(you != NULL) {
+					
+					ptr_remove(you);
+					you = ent_next(you);
+					
+				}
+				
+				marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
+				cam = ent_create(CAMERA_MODEL,vector(0,0,0),free_camera);
+				
+				marker.ObjectType = Neutral;
 				
 			}
 			
-			marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
-			cam = ent_create("marker.mdl",vector(0,0,0),free_camera);
-			
-			marker.ObjectType = Neutral;
-			
-		}
+		#endif
 		
 		if(key_i) { // Quickly opens the Insert object panel
 			
@@ -506,6 +464,7 @@ void CBox_startup() {
 	*/
 	
 	video_set( sResX, sResY, 0, sResMode);
+	SetupShader();
 	
 	PreKernelDone = 1; // The pre-kernel stage is done, at this time LoadKernel() will also be triggered to load the kernel.
 

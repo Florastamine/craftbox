@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Default_Actor
+
+#define Craftbox_System_Default_Actor
+
 /*
 --------------------------------------------------
 Craftbox_System_Default_Actor.c
@@ -80,7 +84,8 @@ Returns: -
 */
 int GenerateTerrain() {
 	
-	TerrainEnt = my;	
+	TerrainEnt = my;
+		
 	total_vertices = ent_status(my,1);
 	my.emask |= (ENABLE_TOUCH | ENABLE_CLICK | DYNAMIC);	
 	
@@ -236,7 +241,4 @@ int GenerateLight() {
 	
 }
 
-int GenerateWaterPlane() {
-	
-	
-}
+#endif

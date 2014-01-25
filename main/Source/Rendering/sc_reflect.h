@@ -8,7 +8,7 @@ VARIABLES
 var sc_reflectRT[2] = {512,384};
 
 //turn reflection on/off
-var sc_bReflect = 1;
+// 
 
 // DON'T CHANGE ANYTHING BELOW THIS LINE ---------------------------------------------------------------------------
 

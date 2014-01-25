@@ -1,6 +1,6 @@
 void sc_refract()
 {
- 	sc_map_refract = bmap_createblack(screen_size.x/sc_refractRT,screen_size.y/sc_refractRT,32);
+ 	sc_map_refract = bmap_createblack(sys_metrics(0)/sc_refractRT,sys_metrics(1)/sc_refractRT,32);
  
  	sc_view_refract.bmap = sc_map_refract;
  	sc_view_refract.clip_near = 1;

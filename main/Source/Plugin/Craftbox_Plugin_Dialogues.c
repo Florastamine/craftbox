@@ -16,7 +16,7 @@ PANEL *diaryPage = {
 	
 }
 
-// this isn't protected from the NULL textfile - StartDialogue will handle that
+// this isn't protected from the NULL textfile - actual dialogue wrappers will handle that
 void DialogueInitialize(STRING *textfile) {
 	
 	var dialoguehndl = file_open_read(textfile);
@@ -190,3 +190,5 @@ void StartDiaryPage(STRING *text) {
 	mouse_mode = olmouse;
 	
 }
+
+#define PRAGMA_PRINT " [Loaded plugin dialogue system] "

@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Event
+
+#define Craftbox_System_Event
+
 /*
 --------------------------------------------------
 Craftbox_System_Event.c
@@ -116,14 +120,14 @@ void ExitEvent() {
 	WriteLog("!! [SYS] ExitEvent() was triggered.");
 	NewLine();
 
-	if( str_stri(command_str,PARAM_DEV) ) {
+	#ifdef CBOX_DEVELOPMENT
 		
 		WriteLog("!! [SYS] Closing debuggers...");
 		NewLine();
 		
 		CloseDebug();
 		
-	}
+	#endif
 
 	WriteLog("!! [SYS] Saving configuration...");
 	NewLine();
@@ -329,30 +333,30 @@ void Event_key_esc() {
 		}
 		
 		if(InMenu_Options) { // the same with options menu
-		   
-		   GOptionsHide();
-		   
-		   return;
-		   
+			
+			GOptionsHide();
+			
+			return;
+			
 		}
 		
 		if( is(LoadGame,SHOW) ) {
-		   
-		   GLoadGameHide();
-		   
-		   return;
-		   
+			
+			GLoadGameHide();
+			
+			return;
+			
 		}
 		
 		// (...)?
 		if( 1 ) GTrophiesHide();
 		
 		if( proc_status(GCreditsShow) ) {
-		   
-		    proc_kill2(GCreditsShow,NULL);
-		    
-		    return;
-		   
+			
+			proc_kill2(GCreditsShow,NULL);
+			
+			return;
+			
 		}
 		
 		if( !is(QuitDialog,SHOW) ) {
@@ -424,11 +428,11 @@ void Event_key_esc() {
 		//////////////////////////////////////////////////////////////
 		
 		if(is(InsertObject,SHOW)) {
-		   
-		   GInsertObjectHide();
-		   
-		   return;
-		   
+			
+			GInsertObjectHide();
+			
+			return;
+			
 		}
 		
 		//////////////////////////////////////////////////////////////
@@ -436,3 +440,5 @@ void Event_key_esc() {
 	}
 	
 }
+
+#endif

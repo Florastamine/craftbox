@@ -1,12 +1,11 @@
 void sc_hdr()
 {
 	#ifdef SC_DOF
-	if(sc_bDOF == 1)
-	{
-		sc_view_dof.stage = sc_view_hdrDownsample;
-	}
+	if( defaultConfig.DOF ) sc_view_dof.stage = sc_view_hdrDownsample;
+	
 	else camera.stage = sc_view_hdrDownsample;
 	#endif
+	
 	#ifndef SC_DOF
 		camera.stage = sc_view_hdrDownsample;
 	#endif
@@ -20,7 +19,7 @@ void sc_hdr()
 
 void sc_setupHDR()
 {
-	set(sc_view_hdrGamma,VISIBLE);
+	set(sc_view_hdrGamma,SHOW);
 	
 	//SET s_rtScale
 	sc_mtl_hdr.skill4 = floatv(sc_hdrRT);
@@ -41,28 +40,28 @@ void sc_setupHDR()
 	
 	//SET VIEW DIMENSIONS AND RTs
 	sc_view_hdrDownsample.arc = camera.arc;
-	sc_view_hdrDownsample.size_x = screen_size.x/sc_hdrRT;
-	sc_view_hdrDownsample.size_y = screen_size.y/sc_hdrRT;
-	sc_view_hdrDownsample.bmap = bmap_createblack(screen_size.x/sc_hdrRT,screen_size.y/sc_hdrRT,sc_hdrBits);
+	sc_view_hdrDownsample.size_x = sys_metrics(0)/sc_hdrRT;
+	sc_view_hdrDownsample.size_y = sys_metrics(1)/sc_hdrRT;
+	sc_view_hdrDownsample.bmap = bmap_createblack(sys_metrics(0)/sc_hdrRT,sys_metrics(1)/sc_hdrRT,sc_hdrBits);
 	sc_view_hdrHighpass.arc = camera.arc;
-	sc_view_hdrHighpass.size_x = screen_size.x/sc_hdrRT;
-	sc_view_hdrHighpass.size_y = screen_size.y/sc_hdrRT;
-	sc_view_hdrHighpass.bmap = bmap_createblack(screen_size.x/sc_hdrRT,screen_size.y/sc_hdrRT,sc_hdrBits);
+	sc_view_hdrHighpass.size_x = sys_metrics(0)/sc_hdrRT;
+	sc_view_hdrHighpass.size_y = sys_metrics(1)/sc_hdrRT;
+	sc_view_hdrHighpass.bmap = bmap_createblack(sys_metrics(0)/sc_hdrRT,sys_metrics(1)/sc_hdrRT,sc_hdrBits);
 	sc_view_hdrBlur.arc = camera.arc;
-	sc_view_hdrBlur.size_x = screen_size.x/sc_hdrRT;
-	sc_view_hdrBlur.size_y = screen_size.y/sc_hdrRT;
-	sc_view_hdrBlur.bmap = bmap_createblack(screen_size.x/sc_hdrRT,screen_size.y/sc_hdrRT,sc_hdrBits);
+	sc_view_hdrBlur.size_x = sys_metrics(0)/sc_hdrRT;
+	sc_view_hdrBlur.size_y = sys_metrics(1)/sc_hdrRT;
+	sc_view_hdrBlur.bmap = bmap_createblack(sys_metrics(0)/sc_hdrRT,sys_metrics(1)/sc_hdrRT,sc_hdrBits);
 	sc_view_hdrHBlur.arc = camera.arc;
-	sc_view_hdrHBlur.size_x = screen_size.x/sc_hdrRT;
-	sc_view_hdrHBlur.size_y = screen_size.y/sc_hdrRT;
-	sc_view_hdrHBlur.bmap = bmap_createblack(screen_size.x/sc_hdrRT,screen_size.y/sc_hdrRT,sc_hdrBits);
+	sc_view_hdrHBlur.size_x = sys_metrics(0)/sc_hdrRT;
+	sc_view_hdrHBlur.size_y = sys_metrics(1)/sc_hdrRT;
+	sc_view_hdrHBlur.bmap = bmap_createblack(sys_metrics(0)/sc_hdrRT,sys_metrics(1)/sc_hdrRT,sc_hdrBits);
 	sc_view_hdrVBlur.arc = camera.arc;
-	sc_view_hdrVBlur.size_x = screen_size.x/sc_hdrRT;
-	sc_view_hdrVBlur.size_y = screen_size.y/sc_hdrRT;
-	sc_view_hdrVBlur.bmap = bmap_createblack(screen_size.x/sc_hdrRT,screen_size.y/sc_hdrRT,sc_hdrBits);
+	sc_view_hdrVBlur.size_x = sys_metrics(0)/sc_hdrRT;
+	sc_view_hdrVBlur.size_y = sys_metrics(1)/sc_hdrRT;
+	sc_view_hdrVBlur.bmap = bmap_createblack(sys_metrics(0)/sc_hdrRT,sys_metrics(1)/sc_hdrRT,sc_hdrBits);
 	sc_view_hdr.arc = camera.arc;
-	sc_view_hdr.size_x = screen_size.x;
-	sc_view_hdr.size_y = screen_size.y;
+	sc_view_hdr.size_x = sys_metrics(0);
+	sc_view_hdr.size_y = sys_metrics(1);
 	
 	//SET DYNAMIC EXPOSURE CONTROL STAGES
 	sc_view_hdrGamma.stage = sc_view_hdrGamma2;
@@ -73,7 +72,7 @@ void sc_setupHDR()
 	//SET MATERIAL SKINS
 	sc_mtl_hdr.skin1 = sc_map_scene;
 	#ifdef SC_DOF
-	if(sc_bDOF == 1)
+	if( defaultConfig.DOF )
 	{
 		sc_mtl_hdr.skin1 = sc_bmap_dof;
 	}

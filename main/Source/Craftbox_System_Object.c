@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Object
+
+#define Craftbox_System_Object
+
 /*
 --------------------------------------------------
 Craftbox_System_Object.c
@@ -377,18 +381,6 @@ void FollowPointer() {
 		temp_pos.y = hit.y;
 		temp_pos.z = hit.z;
 		
-		/*
-		
-		DEBUG_VAR(temp_pos.x,20);
-		DEBUG_VAR(temp_pos.y,40);
-		DEBUG_VAR(temp_pos.z,60);
-		
-		DEBUG_VAR(marker.x,80);
-		DEBUG_VAR(marker.y,100);
-		DEBUG_VAR(marker.z,120);
-		
-		*/
-		
 		//		
 		
 		//		if( !PLAYTESTING ) { // <- Uncomment this to lock the realtime terrain editing while in Playtest mode
@@ -412,13 +404,17 @@ void FollowPointer() {
 				vec_for_vertex(vv3,TerrainEnt,v3);
 				vec_for_vertex(vv4,TerrainEnt,v4);		
 				
-				draw_point3d(_vec(vv0.x,vv0.y,vv0.z-10), _vec(0,0,255), 100,10);
-				draw_point3d(_vec(vv1.x,vv1.y,vv1.z-10), _vec(0,255,255), 100,8);
-				draw_point3d(_vec(vv2.x,vv2.y,vv2.z-10), _vec(0,255,255), 100,8);
-				draw_point3d(_vec(vv3.x,vv3.y,vv3.z-10), _vec(0,255,255), 100,8);
-				draw_point3d(_vec(vv4.x,vv4.y,vv4.z-10), _vec(0,255,255), 100,8);	
-				draw_line3d(_vec(vv0.x,vv0.y,0), _vec(255,255,255), 100);
-				//			draw_line3d(_vec(vv0.x,vv0.y,tMaxHeight), _vec(255,255,255), 100);
+				#ifdef CBOX_DEVELOPMENT
+					
+					draw_point3d(_vec(vv0.x,vv0.y,vv0.z-10), _vec(0,0,255), 100,10);
+					draw_point3d(_vec(vv1.x,vv1.y,vv1.z-10), _vec(0,255,255), 100,8);
+					draw_point3d(_vec(vv2.x,vv2.y,vv2.z-10), _vec(0,255,255), 100,8);
+					draw_point3d(_vec(vv3.x,vv3.y,vv3.z-10), _vec(0,255,255), 100,8);
+					draw_point3d(_vec(vv4.x,vv4.y,vv4.z-10), _vec(0,255,255), 100,8);	
+					draw_line3d(_vec(vv0.x,vv0.y,0), _vec(255,255,255), 100);
+					//			draw_line3d(_vec(vv0.x,vv0.y,tMaxHeight), _vec(255,255,255), 100);
+					
+				#endif
 				
 			}
 			
@@ -1133,11 +1129,15 @@ void Gun_startup() {
 	
 	while(1) {
 		
-		Gun.x += 5 * (key_y-key_u)*time_step;
-		Gun.y += 5 * (key_h-key_j)*time_step;
-		Gun.z += 5 * (key_b-key_n)*time_step;
+		#ifdef CBOX_DEVELOPMENT
+			
+			Gun.x += 5 * (key_y-key_u)*time_step;
+			Gun.y += 5 * (key_h-key_j)*time_step;
+			Gun.z += 5 * (key_b-key_n)*time_step;
+			
+		#endif
 		
-		if(IN_GAME) {
+		if( PLAYTESTING ) {
 			
 			vec_set(trace_coords.x,vector(100000,0,0));
 			//			vec_rotate(trace_coords.x,Gun.pan);
@@ -1239,3 +1239,5 @@ void draw_rotated_bbox(ENTITY* ent)
 	draw_line3d(c4,NULL,100);
 	draw_line3d(c8,vector(0,255,0),100);
 }
+
+#endif

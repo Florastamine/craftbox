@@ -8,10 +8,10 @@ void sc_dof()
 
 void sc_setupDepth()
 {
-	sc_map_depth = bmap_createblack(screen_size.x, screen_size.y,sc_dofBits);
+	sc_map_depth = bmap_createblack(sys_metrics(0), sys_metrics(1),sc_dofBits);
 	sc_view_depth.bmap = sc_map_depth;
 	//RENDER DEPTHMAP
-	set(sc_view_depth,VISIBLE);
+	set(sc_view_depth,SHOW);
 	
 	proc_mode = PROC_LATE;
 	
@@ -30,10 +30,6 @@ void sc_setupDOF()
 {
 	//SET DOWNSAMPLER SHADER ACCORDING TO VOLUMETRIC PARTICLES
 	sc_mtl_dofDownsample.effect = "sc_dofDownsample.fx";
-	#ifdef SC_VOLPARTS
-		if(sc_bVolParts == 1) sc_mtl_dofDownsample.effect = "sc_dofDownsampleVP.fx";
-		//else sc_mtl_dofDownsample.effect = "sc_dofDownsample.fx";
-	#endif
 	
 	//SET s_rtScale
 	sc_mtl_dof.skill4 = floatv(sc_dofRT);
@@ -42,24 +38,24 @@ void sc_setupDOF()
 	sc_mtl_dofDownsample.skill1 = floatv(sc_dofRT);
 		
 	//SET VIEW DIMENSIONS AND RTs
-	sc_view_dofDownsample.size_x = screen_size.x/sc_dofRT;
-	sc_view_dofDownsample.size_y = screen_size.y/sc_dofRT;
-	sc_view_dofDownsample.bmap = bmap_createblack(screen_size.x/sc_dofRT,screen_size.y/sc_dofRT,sc_dofBits);
-	sc_view_dofHBlur.size_x = screen_size.x/sc_dofRT;
-	sc_view_dofHBlur.size_y = screen_size.y/sc_dofRT;
-	sc_view_dofHBlur.bmap = bmap_createblack(screen_size.x/sc_dofRT,screen_size.y/sc_dofRT,sc_dofBits);
-	sc_view_dofVBlur.size_x = screen_size.x/sc_dofRT;
-	sc_view_dofVBlur.size_y = screen_size.y/sc_dofRT;
-	sc_view_dofVBlur.bmap = bmap_createblack(screen_size.x/sc_dofRT,screen_size.y/sc_dofRT,sc_dofBits);
+	sc_view_dofDownsample.size_x = sys_metrics(0)/sc_dofRT;
+	sc_view_dofDownsample.size_y = sys_metrics(1)/sc_dofRT;
+	sc_view_dofDownsample.bmap = bmap_createblack(sys_metrics(0)/sc_dofRT,sys_metrics(1)/sc_dofRT,sc_dofBits);
+	sc_view_dofHBlur.size_x = sys_metrics(0)/sc_dofRT;
+	sc_view_dofHBlur.size_y = sys_metrics(1)/sc_dofRT;
+	sc_view_dofHBlur.bmap = bmap_createblack(sys_metrics(0)/sc_dofRT,sys_metrics(1)/sc_dofRT,sc_dofBits);
+	sc_view_dofVBlur.size_x = sys_metrics(0)/sc_dofRT;
+	sc_view_dofVBlur.size_y = sys_metrics(1)/sc_dofRT;
+	sc_view_dofVBlur.bmap = bmap_createblack(sys_metrics(0)/sc_dofRT,sys_metrics(1)/sc_dofRT,sc_dofBits);
 	
 	//CREATE RENDER TARGETS
-	//sc_map_depth = bmap_createblack(screen_size.x, screen_size.y,sc_dofBits);
+	//sc_map_depth = bmap_createblack(sys_metrics(0), sys_metrics(1),sc_dofBits);
 	//sc_view_depth.bmap = sc_map_depth;
 	//sc_setupDepth();
 	#ifdef SC_HDR
-	if(sc_bHDR == 1)
+	if( defaultConfig.HDR )
 	{
-		sc_bmap_dof = bmap_createblack(screen_size.x, screen_size.y,sc_dofBits);
+		sc_bmap_dof = bmap_createblack(sys_metrics(0), sys_metrics(1),sc_dofBits);
 		sc_view_dof.bmap = sc_bmap_dof;
 	}
 	#endif
@@ -86,8 +82,8 @@ void sc_dofDynFocus(focusSpeed,maxDepth,bOn){
 	s_dofDynFocusParams[2] = bOn;
 	
 	while(s_dofDynFocusParams[2]){
-		camTrace[0] = screen_size.x/2;
-  		camTrace[1] = screen_size.y/2;
+		camTrace[0] = sys_metrics(0)/2;
+  		camTrace[1] = sys_metrics(1)/2;
   		camTrace[2] = s_dofDynFocusParams[1];
   		vec_for_screen(camTrace,camera);
   		hitDist = c_trace(camera.x,camTrace[0],USE_POLYGON + IGNORE_ME + IGNORE_PASSABLE);

@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Crypto
+
+#define Craftbox_System_Crypto
+
 /*
 --------------------------------------------------
 Craftbox_System_Crypto.c
@@ -229,3 +233,5 @@ void Crypto_Decrypt_File(STRING *string, int _Unicode) {
    Crypto_Decrypt_File(string, NULL, _Unicode);
    
 }
+
+#endif

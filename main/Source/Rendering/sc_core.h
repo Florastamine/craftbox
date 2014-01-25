@@ -10,6 +10,7 @@ var sc_myLuminance = 3;
 var sc_myVolPart = 4;
 var sc_myTexMov = 5;
 var sc_myRefrCol = 6;
+var scLoaded = 0;
 
 var sc_scSetup = 0;
 

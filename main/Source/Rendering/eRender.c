@@ -1,3 +1,7 @@
+#ifndef eRender
+
+#define eRender
+
 /////////////////////////////////////////
 //eRender - entities rendering for shadow
 //render bitmap for projection texture
@@ -60,7 +64,7 @@ function screen_to_1024 (var blur)// this function create 1024x1024 projection t
 	var pixel,x1,y1;
 	var sy;
 	BMAP* dest = bmap_createblack(1024,1024,24);
-	BMAP* sor = bmap_createblack(screen_size.x,screen_size.y,24);
+	BMAP* sor = bmap_createblack(sys_metrics(0),sys_metrics(1),24);
 	bmap_for_screen(sor,0,1);
 	bmap_lock(dest,888);bmap_lock(sor,888);
 	sy = bmap_height(sor);
@@ -112,7 +116,7 @@ function screen_render_entities (VECTOR* lPos,VECTOR* aang,var* fov,var cent)
 	vec_to_angle(tmp,eMin);tmp.z=0;
 	
 	set(rView,VISIBLE);vec_set(rView.pan,tmp);//now rView look at entity (rEnt[]) 
-	rView.size_x = screen_size.y;rView.size_y = screen_size.y; // set symmetrical borders for rView
+	rView.size_x = sys_metrics(1);rView.size_y = sys_metrics(1); // set symmetrical borders for rView
 	rView.arc = 60;wait(1);//render rView
 	
 	if (is_points_visible(cent)) //find Fov there all entities visible
@@ -137,3 +141,5 @@ function screen_render_entities (VECTOR* lPos,VECTOR* aang,var* fov,var cent)
 	
 	vec_set(aang,tmp);*fov=rView.arc;//return fov and angle 
 }
+
+#endif

@@ -28,23 +28,7 @@
 //- DETERMINE ENGINE VERSION -------------------------------------------------------------
 // This is used to automatically disable unavailable or unnecessary features by design.
 
-	#define A7
-	
-	#ifdef VERSION_830
-		#define A8
-	#endif
-
-	#ifdef VERSION_820
-		#define A8
-	#endif
-
-	#ifdef VERSION_810
-		#define A8
-	#endif
-
-	#ifdef A8
-		#undef A7
-	#endif
+#define A8
 	
 	
 //- CONFIGURATION ------------------------------------------------------------------------
@@ -59,6 +43,8 @@
 // value between 0 and 1, surface dependent occlusion will be removed
 
 	float ssaoRatioNearDistantOccluders = 0.5;
+	
+	int ssaoLoaded = 0;
 
 
 // Contrast
@@ -326,22 +312,6 @@
 	
 	// returns the registered surface type of an entity
 	int getSsaoSurface (ENTITY* e);
-	
-
-// Fog	
-// If you use A7, you *have* to use these functions for fog.
-#ifdef A7
-
-	// replacement for "fog_color = 3;" -> activateSsaoFog(3);
-	void activateSsaoFog (var colorNr);
-	
-	// replacement for "fog_color = 0;"
-	void disableSsaoFog ();
-	
-	// replacement for "var c = fog_color;"
-	var getSsaoFogColor ();
-
-#endif
 
 
 
@@ -353,10 +323,6 @@
 
 
 // derived compiler defines
-
-	#ifdef A7
-		#undef SSAO_GPU_BONES
-	#endif
 	
 	#ifdef SSAO_FULL_MAPS
 		#define SSAO_FULL_DEPTH
@@ -496,12 +462,6 @@ void activateSsao ();
 	#endif
 
 
-// fog
-#ifdef A7
-	var ssaoFogNr; // active fog nr (A7 only)
-#endif
-
-
 // utility functions
 
 	void copySsaoClippingParams (MATERIAL* m, VIEW* v);
@@ -599,21 +559,6 @@ void activateSsao ();
 			flags = ENABLE_RENDER;
 			event = objMtlDeferredSwitch_ev;
 		}
-			
-	// particle view
-	#ifdef A7
-	#ifndef SSAO_NO_PARTICLES
-		function mtlSsaoParticle_ev ();
-		MATERIAL* mtlSsaoParticle = // only for A7
-		{
-			// dummy shader
-			effect = "float4 PS () : COLOR {return(0);} technique t {pass p {pixelShader = compile ps_2_0 PS();}}";
-			
-			flags = ENABLE_TREE;
-			event = mtlSsaoParticle_ev; // clip event
-		}
-	#endif
-	#endif
 		
 	// postprocessing
 		
@@ -651,11 +596,6 @@ void activateSsao ();
 	
 	// particle view
 	#ifndef SSAO_NO_PARTICLES
-		
-		#ifdef A7
-			#define SSAO_VIEW_PARTICLE_FLAGS (PROCESS_SCREEN | NOFOG | NOSKY | NOSHADOW | UNTOUCHABLE)
-			#define SSAO_VIEW_PARTICLE_USE_DUMMY_MTL
-		#endif
 		
 		#ifdef A8
 			#define SSAO_VIEW_PARTICLE_FLAGS (PROCESS_SCREEN | NOFOG | NOSKY | NOWORLD | NOENT | NOSHADOW | UNTOUCHABLE)

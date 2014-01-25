@@ -19,7 +19,7 @@
 // OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 //----------------------------------------------------------------------------------------
-
+// 23.1.2014 - [Nguyen Ngoc Huy] removed Gamestudio A7 support
 #ifndef ppSsao_c
 #define ppSsao_c
 
@@ -80,12 +80,6 @@
 		ssaoActive = true;
 			
 		setSsaoContext(pre, post);
-
-		#ifdef A7
-			// store fog information
-			ssaoFogNr = fog_color;
-			fog_color = 0;
-		#endif
 		
 		// fire activation event
 		fireSsaoEvent(on_ssaoActivated);
@@ -343,10 +337,6 @@ void updateSsaoChain ()
 
 			#ifndef SSAO_NO_PARTICLES
 				reset(ssaoViewPre, NOPARTICLE);
-			#endif
-
-			#ifdef A7
-				fog_color = ssaoFogNr;
 			#endif
 
 			fireSsaoEvent(on_ssaoDeactivated); // fire external event			
@@ -664,8 +654,8 @@ void removeSsao ()
 		// check recreation only when a filled bmap is passed and lodRatio is valid
 		if ((bmap != NULL) && (lodRatio > 0))
 		{
-			BOOL bWidthDiff = (bmap->width != screen_size.x / lodRatio);
-			BOOL bHeightDiff = (bmap->height != screen_size.y / lodRatio);
+			BOOL bWidthDiff = (bmap->width != sys_metrics(0) / lodRatio);
+			BOOL bHeightDiff = (bmap->height != sys_metrics(1) / lodRatio);
 			
 			// must be recreated, when either the width or the height is different
 			bRecreate = (bWidthDiff || bHeightDiff);
@@ -682,7 +672,7 @@ void removeSsao ()
 		if (*bmap != NULL)
 			ptr_remove(*bmap);
 
-		*bmap = bmap_createblack(screen_size.x / lodRatio, screen_size.y / lodRatio, format);
+		*bmap = bmap_createblack(sys_metrics(0) / lodRatio, sys_metrics(1) / lodRatio, format);
 
 		return(*bmap);
 	}
@@ -817,10 +807,6 @@ void removeSsao ()
 				{
 					#ifdef A8
 						str_cat(ssaoShaderPreamble, "#define A8\n");
-					#endif
-					
-					#ifdef A7
-						str_cat(ssaoShaderPreamble, "#define A7\n");
 					#endif
 					
 					#ifdef SSAO_SHADER_DEBUG
@@ -1139,10 +1125,6 @@ void removeSsao ()
 			recreateSsaoChain();
 				
 			//updateSsaoChain();
-
-			#ifdef A7
-				fog_color = 0; // reset A7 fog, if overwritten
-			#endif
 		}
 	}
 
@@ -1152,13 +1134,7 @@ void removeSsao ()
 		// update shader parameters
 
 			// Fog usage
-			var fogColor;
-
-			#ifdef A7
-				fogColor = ssaoFogNr;
-			#else
-				fogColor = fog_color;
-			#endif
+			var fogColor = fog_color;
 
 			#ifndef SSAO_NO_FOG
 				mtl->skill3 = floatv(fogColor != 0); // is fog in use?
@@ -1178,29 +1154,6 @@ void removeSsao ()
 
 	function mtlSsaoCombine_ev ()
 	{
-		#ifdef A7
-		if (ssaoFogNr != 0)
-		{
-			mtl->skill1 = floatv(ssaoViewPre->clip_far);
-
-			COLOR* color = NULL;
-			
-			switch ((int)ssaoFogNr)
-			{
-				case 1: color = &d3d_fogcolor1; break;
-				case 2: color = &d3d_fogcolor2; break;
-				case 3: color = &d3d_fogcolor3; break;
-				case 4: color = &d3d_fogcolor4; break;
-			}
-			
-			if (color)
-			{
-				mtl->skill2 = floatv(color->red   / 255.0);
-				mtl->skill3 = floatv(color->green / 255.0);
-				mtl->skill4 = floatv(color->blue  / 255.0);
-			}
-		}
-		#endif
 		
 		// concatenate first post-SSAO view after last SSAO view
 
@@ -1242,13 +1195,11 @@ void removeSsao ()
 
 
 // particles
-#ifdef A7
 #ifndef SSAO_NO_PARTICLES
 	function mtlSsaoParticle_ev ()
 	{
 		return(1);
 	}
-#endif
 #endif
 
 
@@ -1274,43 +1225,27 @@ void fireSsaoEvent (EVENT ev)
 
 	// activates -safely- a fog color
 	void activateSsaoFog (var colorNr)
-	{
-		#ifdef A7
-			if (getSsaoState())
-			{
-				ssaoFogNr = colorNr;
-				fog_color = 0;
-			}
-			else
-		#endif
-				fog_color = colorNr; // A8
+	{ 
+	
+	fog_color = colorNr; // A8 
+	
 	}
 
 	// disables -safely- the fog
 	void disableSsaoFog ()
 	{
-		#ifdef A7
-			if (getSsaoState())
-				ssaoFogNr = 0;
-			else
-		#endif
-				fog_color = 0; // A8
+	fog_color = 0; // A8
 	}
 
 	// returns -safely- the fog color
 	var getSsaoFogColor ()
 	{
-		#ifdef A7
-			if (getSsaoState())
-				return ssaoFogNr;
-			else
-		#endif
-				return fog_color; // A8
+	return fog_color; // A8
 	}
 	
 	
 // startup
-void _SSAO() {
+void LoadSSAO() {
    
    while( !KERNEL_IS_RUNNING ) wait(1);
    
@@ -1339,6 +1274,8 @@ void _SSAO() {
 	while(proc_status(loadSsaoShaders)) wait(1);
 	
 	runSsao(SSAO_MODE_SOURCE);
+	
+	ssaoLoaded = 1;
 	
 }
 

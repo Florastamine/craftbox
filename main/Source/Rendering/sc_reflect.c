@@ -5,7 +5,7 @@ void sc_reflect()
  
  	sc_view_reflect.bmap = sc_map_reflect;
  	sc_view_reflect.clip_near = 1;
- 	set(sc_view_reflect,VISIBLE);
+ 	set(sc_view_reflect,SHOW);
  	//set(sc_view_reflect,NOSHADOW);
  	//set(sc_view_reflect,NOPARTICLE);
  	set(sc_view_reflect,NOCULL);

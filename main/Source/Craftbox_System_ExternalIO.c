@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_ExternalIO
+
+#define Craftbox_System_ExternalIO
+
 /*
 --------------------------------------------------
 Craftbox_System_ExternalIO.c
@@ -23,57 +27,6 @@ NOTES:
 --------------------------------------------------
 
 */
-
-/*
---------------------------------------------------
-void NewLine()
-
-Desc: Writes a new line to LOGFILEHNDL.
-
-Returns: -
---------------------------------------------------
-*/
-void NewLine() {
-
-	// Windows uses CR/LF
-	file_asc_write(LOGFILEHNDL,13); // CR
-	file_asc_write(LOGFILEHNDL,10); // LF
-
-}
-
-/*
---------------------------------------------------
-void NewLineGeneric(var hndl)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void NewLineGeneric(var hndl) {
-	
-	if(!hndl) return;
-	file_asc_write(hndl,13);
-	file_asc_write(hndl,10);
-	
-}
-
-
-/*
---------------------------------------------------
-STRING *StringForBool(var in)
-
-Desc: This was created specifically for WriteLogHeaders()...
-
-Returns: Converted input.
---------------------------------------------------
-*/
-STRING *StringForBool(var in) {
-	
-	if(in) return str_create("Yes");
-	else return str_create("No");
-	
-}
 
 
 /*
@@ -192,21 +145,23 @@ int ConfigFileWrite(STRING *cf) {
 	*/
 
 	// -> Graphics + system
-	file_var_write(file,d3d_anisotropy);
-	file_var_write(file,d3d_antialias);
+	file_var_write(file,defaultConfig.AFLevel);
+	file_var_write(file,defaultConfig.AALevel);
 	file_var_write(file,d3d_mipmapping);
 	file_var_write(file,d3d_triplebuffer);
 	file_var_write(file,d3d_lightres);
 	file_var_write(file,video_aspect);
-	file_var_write(file,video_gamma);
+	file_var_write(file,defaultConfig.Brightness);
 
 	//	file_var_write(file,video_mode);
-	file_var_write(file,sys_metrics(0));
-	file_var_write(file,sys_metrics(1));
+	//	file_var_write(file,sys_metrics(0));
+	//	file_var_write(file,sys_metrics(1));
+	file_var_write(file,sResX);
+	file_var_write(file,sResY);
 
 	file_var_write(file,video_screen);
 
-	file_var_write(file,video_depth);
+	file_var_write(file,defaultConfig.BitDepth);
 
 	file_var_write(file,shot);
 
@@ -215,6 +170,12 @@ int ConfigFileWrite(STRING *cf) {
 	file_var_write(file,VOL_MUSIC);
 
 	// -> Shaders + PPs parameters
+	file_var_write(file,defaultConfig.HDR);
+	file_var_write(file,defaultConfig.DOF);
+	file_var_write(file,defaultConfig._SSAO);
+	file_var_write(file,defaultConfig.ObjShaders);
+	file_var_write(file,defaultConfig.Shadows);
+	file_var_write(file,defaultConfig.PPE);
 
 	file_close(file);
 	
@@ -260,23 +221,20 @@ int ConfigFileRead(STRING *cf) {
 	}
 
 	// -> Graphics + system
-	d3d_anisotropy = file_var_read(file);
-	d3d_antialias = file_var_read(file);
+	defaultConfig.AFLevel = file_var_read(file);
+	defaultConfig.AALevel = file_var_read(file);
 	d3d_mipmapping = file_var_read(file);
 	d3d_triplebuffer = file_var_read(file);
 	d3d_lightres = file_var_read(file);
-
 	video_aspect = file_var_read(file);
-	video_gamma = file_var_read(file);
+	defaultConfig.Brightness = file_var_read(file);
 	
 	sResX = file_var_read(file);
 	sResY = file_var_read(file);
 	sResMode = file_var_read(file);
+	defaultConfig.BitDepth = file_var_read(file);
 
 	//	video_set( file_var_read(file), file_var_read(file),
-	//	0 , file_var_read(file)); // <- cause bug
-
-	video_depth = file_var_read(file);
 
 	shot = file_var_read(file);
 
@@ -285,6 +243,12 @@ int ConfigFileRead(STRING *cf) {
 	VOL_MUSIC = file_var_read(file);
 
 	// -> Shaders + PPs parameters
+	defaultConfig.HDR = /*(int)*/file_var_read(file);
+	defaultConfig.DOF = /*(int)*/file_var_read(file);
+	defaultConfig._SSAO = /*(int)*/file_var_read(file);
+	defaultConfig.ObjShaders = /*(int)*/file_var_read(file);
+	defaultConfig.Shadows = /*(int)*/file_var_read(file);
+	defaultConfig.PPE = /*(int)*/file_var_read(file);
 
 	file_close(file);
 	
@@ -389,3 +353,6 @@ BOOL bmap_savetga (BMAP* b, char* filename)
 
 	return(bSuccess);
 }
+
+
+#endif

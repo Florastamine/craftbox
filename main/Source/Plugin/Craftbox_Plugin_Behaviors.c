@@ -1,6 +1,6 @@
 /*
 --------------------------------------------------
-world.c
+Craftbox_Plugin_Behaviors.c
 
 This is the place where magic happens. Walking people,
 flying birds,...anything that will be assigned to non-static
@@ -525,11 +525,31 @@ void act_glass(ENTITY *entity ) {
 	cubemap->event = transenv_event;
 	cubemap->flags |= ENABLE_VIEW;
 	
-	effect_load(cubemap,"./src/fx/Envmapping.fx");
+	effect_load(cubemap,"./Source/Rendering/Envmapping.fx");
 	
 	bmap_to_cubemap(bmap_to_mipmap(cubemap.skin1));
 	
 	entity.material = cubemap;
+	
+}
+
+void GenerateWaterPlane( ) {
+	
+	set(my,TRANSLUCENT);
+	my->alpha = 50;
+	
+	MATERIAL *waterplaneMat = mtl_create();
+	while(proc_status( mtl_create ) ) wait(1);
+	
+	waterplaneMat->skin1 = bmap_create(SKYSTR);
+	waterplaneMat->event = transenv_event;
+	waterplaneMat->flags |= ENABLE_VIEW;
+	
+	effect_load(waterplaneMat,"./Source/Rendering/Envmapping.fx");
+	
+	bmap_to_cubemap(bmap_to_mipmap(waterplaneMat.skin1));
+	
+	my.material = waterplaneMat;
 	
 }
 
@@ -754,6 +774,9 @@ void health_indicator()
 
 action NeutralEnt() {
 	
+	my.ObjectType = Terrain;
+	my.material = mat_model;
+	
 	GenerateTerrain();
 	
 }
@@ -936,7 +959,6 @@ var camera_type=0;
 
 ////////////////////////////////////////////////////////////////////////////
 
-//SOUND* impact_wav = "impact.wav";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -1166,6 +1188,7 @@ action Player_Normal()
 	my.gravity = 6; // needed for
 	my.zoffset = 2; // gravity handling
 	c_setminmax(me);
+	my.material = mat_model;
 	
 	my.emask |= (ENABLE_ENTITY | ENABLE_IMPACT);
 	my.event = damage_player;
@@ -1231,7 +1254,7 @@ action Player_Normal()
 				if (my.state == run) 
 				{
 					ent_animate(my,"run",my.animate,ANM_CYCLE);
-					my.animate += run_animation_speed * 1 * 3 * time_step;
+					my.animate += run_animation_speed * 3 * time_step;
 					my.animate %= 100;
 					my.currentframe = run;
 				}
@@ -1239,7 +1262,7 @@ action Player_Normal()
 				if (my.state == walk) 
 				{
 					ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-					my.animate += 7 * 1 * time_step;
+					my.animate += (run_animation_speed/2) * time_step;
 					my.animate %= 100;
 					my.currentframe = walk;
 
@@ -1248,7 +1271,7 @@ action Player_Normal()
 				if (my.state == walkSlow) 
 				{
 					ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-					my.animate += 5 * 1 * time_step;
+					my.animate += (run_animation_speed/2) * time_step;
 					my.animate %= 100;
 					my.currentframe = walkSlow;
 				}
@@ -1256,7 +1279,7 @@ action Player_Normal()
 				if (my.state == walkBack) 
 				{
 					ent_animate(my,"patrol_stree",my.animate,ANM_CYCLE);
-					my.animate -= 5 * 1 * time_step;
+					my.animate -= (run_animation_speed/2) * time_step;
 					if(my.animate <= 0){my.animate += 100;}
 					my.currentframe = walkBack;
 				}
@@ -1417,7 +1440,7 @@ action camLoc() {
 	
 	while( proc_status(ent_create) ) wait(1);
 	
-	//	ent_remove(CameraLoc);
+	ent_remove(CameraLoc);
 	
 }
 
@@ -1431,8 +1454,9 @@ action GlassWall() {
 // Behaviors for default, fixed entities in the level (for example grass that cover level boundaries)
 action DefaultLevelObject() {
 	
+	my.tilt = .1;
 	my.ObjectType = Neutral;
-	
+	my.ambient=100;
 }
 
 action waypoint() {
@@ -1488,3 +1512,4 @@ action random_guy()
 
 }
 
+#define PRAGMA_PRINT " [Loaded plugin behaviors] "

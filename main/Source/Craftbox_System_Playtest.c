@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Playtest
+
+#define Craftbox_System_Playtest
+
 /*
 --------------------------------------------------
 Craftbox_System_Playtest.c
@@ -277,7 +281,7 @@ void LoadPlayground() {
 	
 	marker = ent_create("target.mdl",nullvector,FollowPointer); // Create a mouse pointer.
 	//	marker = ent_create(CUBE_MDL,nullvector,FollowPointer);
-	cam = ent_create("marker.mdl",oldcampos,free_camera);
+	cam = ent_create(CAMERA_MODEL,oldcampos,free_camera);
 	
 	cam.pan = _oldcampos.pan;
 	cam.tilt = _oldcampos.tilt;
@@ -304,3 +308,5 @@ void LoadPlayground() {
 	NewLine();
 
 }
+
+#endif

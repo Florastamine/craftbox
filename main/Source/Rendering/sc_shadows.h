@@ -29,10 +29,14 @@ void sc_mtl_shadowDepthSunEvent()
 		mat_multiply(sc_sunLightView,matView);
 		mat_effect3 = sc_sunLightView;
 		
+		/*
+				
 		#ifdef SC_VOLPARTS
 			mat_set(sc_mtl_volParts2.matrix,matWorld);
 			mat_multiply(sc_mtl_volParts2.matrix,matView);
 		#endif
+		
+		*/
 		
 		//SKY ?
 		mtl.skill3 = floatv(0);

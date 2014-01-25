@@ -52,8 +52,8 @@ void mpLoad(STRING *scan_path, STRING *scan_ext) {
 	
 	str_remove(_scan_path);
 	
-	WriteLog(", found " , (var) mpSongs ); // 
-	WriteLog(" tracks.");
+	WriteLog(", found %d tracks" , (var) mpSongs ); // 
+//	WriteLog(" tracks.");
 	NewLine();
 	
 	WriteLog("[X] Task completed.");
@@ -179,3 +179,5 @@ void mpResume() {
 	if(mpPauseMark) media_start(mpHandle);
 	
 }
+
+#define PRAGMA_PRINT " [Loaded plugin music player] "

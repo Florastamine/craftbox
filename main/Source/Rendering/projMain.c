@@ -1,3 +1,7 @@
+#ifndef projMain
+
+#define projMain
+
 typedef struct 
 {
 	// useful struct for storing position and angle of projection texture
@@ -113,3 +117,5 @@ function proj_fromFile (STRING* name,VECTOR* pos,VECTOR* aang,var* fov,BMAP** pS
 	
 	file_close (file_handle);
 }
+
+#endif

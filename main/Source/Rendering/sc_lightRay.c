@@ -26,16 +26,16 @@ var sc_lightRayLength = 2.0;
 PANEL* sc_pan_sunDummy =
 {
 	bmap = "imSun.tga";
- 	//flags = SHOW;
- 	scale_y = 0.5;
- 	scale_x = 0.5;
+	//flags = SHOW;
+	scale_y = 0.5;
+	scale_x = 0.5;
 }
 
 
 void sc_lightRays()
 {
 	wait(5);
-	if(sc_bDOF == 0) sc_setupDepth();
+	if( ! defaultConfig.DOF  ) sc_setupDepth();
 	
 	MATERIAL* sc_mtl_lightRayCut;
 	sc_mtl_lightRayCut = mtl_create();
@@ -46,16 +46,16 @@ void sc_lightRays()
 	MATERIAL* sc_mtl_lightRayBlur;
 	sc_mtl_lightRayBlur = mtl_create();
 	sc_mtl_lightRayBlur.effect = "sc_lightRayBlur.fx";
-/*
+	/*
 	MATERIAL* sc_mtl_lightRayShow;
 	sc_mtl_lightRayShow = mtl_create();
 	sc_mtl_lightRayShow.effect = "sc_lightRayShow.fx";
-*/	
+	*/	
 	VIEW* view_lightRayCut;
 	view_lightRayCut = malloc(sizeof(VIEW*));
 	view_lightRayCut = view_create(2);
-	view_lightRayCut.size_x = screen_size.x/2;
-	view_lightRayCut.size_y = screen_size.y/2;
+	view_lightRayCut.size_x = sys_metrics(0)/2;
+	view_lightRayCut.size_y = sys_metrics(1)/2;
 	set(view_lightRayCut,PROCESS_TARGET);
 	set(view_lightRayCut,VISIBLE);
 	sc_mtl_lightRayCut.skin1 = sc_map_depth;
@@ -64,14 +64,14 @@ void sc_lightRays()
 	view_lightRayCut.arc = camera.arc;
 	
 	BMAP* map_lightRayCut;
-	map_lightRayCut = bmap_createblack(screen_size.x/2,screen_size.y/2,32);
+	map_lightRayCut = bmap_createblack(sys_metrics(0)/2,sys_metrics(1)/2,32);
 	view_lightRayCut.bmap = map_lightRayCut;
 	
 	VIEW* view_lightRay;
 	view_lightRay = malloc(sizeof(VIEW*));
 	view_lightRay = view_create(2);
-	view_lightRay.size_x = screen_size.x/2;
-	view_lightRay.size_y = screen_size.y/2;
+	view_lightRay.size_x = sys_metrics(0)/2;
+	view_lightRay.size_y = sys_metrics(1)/2;
 	set(view_lightRay,PROCESS_TARGET);
 	sc_mtl_lightRay.skill1 = floatv(0.5);
 	sc_mtl_lightRay.skill2 = floatv(0.5);
@@ -82,14 +82,14 @@ void sc_lightRays()
 	view_lightRayCut.stage = view_lightRay;
 	
 	BMAP* map_lightRay;
-	map_lightRay = bmap_createblack(screen_size.x/2,screen_size.y/2,32);
+	map_lightRay = bmap_createblack(sys_metrics(0)/2,sys_metrics(1)/2,32);
 	view_lightRay.bmap = map_lightRay;
 	
 	VIEW* view_lightRayBlur;
 	view_lightRayBlur = malloc(sizeof(VIEW*));
 	view_lightRayBlur = view_create(2);
-	view_lightRayBlur.size_x = screen_size.x/2;
-	view_lightRayBlur.size_y = screen_size.y/2;
+	view_lightRayBlur.size_x = sys_metrics(0)/2;
+	view_lightRayBlur.size_y = sys_metrics(1)/2;
 	set(view_lightRayBlur,PROCESS_TARGET);
 	sc_mtl_lightRayBlur.skill1 = floatv(0.005);
 	view_lightRayBlur.arc = camera.arc;
@@ -97,7 +97,7 @@ void sc_lightRays()
 	view_lightRay.stage = view_lightRayBlur;
 	
 	BMAP* map_lightRayBlur;
-	map_lightRayBlur = bmap_createblack(screen_size.x/2,screen_size.y/2,32);
+	map_lightRayBlur = bmap_createblack(sys_metrics(0)/2,sys_metrics(1)/2,32);
 	view_lightRayBlur.bmap = map_lightRayBlur;
 	
 	sc_ppAdd(sc_mtl_lightRayShow,camera,0);
@@ -125,8 +125,8 @@ void sc_lightRays()
 			sc_pan_sunDummy.pos_x = vTest.x;
 			sc_pan_sunDummy.pos_y = vTest.y;
 			
-			vTest.x /= screen_size.x;
-			vTest.y /= screen_size.y;
+			vTest.x /= sys_metrics(0);
+			vTest.y /= sys_metrics(1);
 			sc_mtl_lightRay.skill1 = floatv(vTest.x);
 			sc_mtl_lightRay.skill2 = floatv(vTest.y);
 			
@@ -161,8 +161,8 @@ void sc_lightRays()
 			vec_to_screen(blargh1,camera);
 			blargh1.z = 200;
 			vec_set(testEnt,blargh1);
-			sc_mtl_lightRay.skill1 = floatv(blargh1.x/screen_size.x);
-			sc_mtl_lightRay.skill2 = floatv(blargh1.y/screen_size.y);
+			sc_mtl_lightRay.skill1 = floatv(blargh1.x/sys_metrics(0));
+			sc_mtl_lightRay.skill2 = floatv(blargh1.y/sys_metrics(1));
 			sc_mtl_lightRay.skill3 = floatv(4.5);
 		}
 		wait(1);

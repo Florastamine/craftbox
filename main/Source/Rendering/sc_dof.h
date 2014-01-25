@@ -22,7 +22,7 @@ var sc_dofBits = 32;
 var sc_maxDepth = 50000;
 
 //turn Depth of Field on/off
-var sc_bDOF = 1;
+//
 
 // DON'T CHANGE ANYTHING BELOW THIS LINE ---------------------------------------------------------------------------
 var s_dofDynFocusParams[3] = {0,0,0};

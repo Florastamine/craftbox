@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_GameIO
+
+#define Craftbox_System_GameIO
+
 /*
 --------------------------------------------------
 Craftbox_System_GameIO.c
@@ -63,6 +67,7 @@ void on_level_event(percent)
 {
 	
 	set(pLoadBar,SHOW | LIGHT);   // switch load bar on
+	pLoadBar->layer = 1000;
 	//pLoadBar.pos_y = screen_size.y - 40;
 	pLoadBar.size_x = GetPercent( percent,100 ) * screen_size.x/100; // because max percent = 100
 	pLoadBar.size_y = 30;
@@ -302,3 +307,5 @@ void LoadNewLevel() {
 	IN_GAME = 1;
 	
 }
+
+#endif

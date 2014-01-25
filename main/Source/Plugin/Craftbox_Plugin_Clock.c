@@ -96,3 +96,5 @@ void ClockStop() {
 	
 	reset(ClockText,SHOW);
 }
+
+#define PRAGMA_PRINT " [Loaded plugin clock] "

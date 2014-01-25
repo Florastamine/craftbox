@@ -1,9 +1,12 @@
+#ifndef Craftbox_System_Rendering
+
+#define Craftbox_System_Rendering
+
 /*
 --------------------------------------------------
 Craftbox_System_Rendering.c
 
-Extra rendering stuff for the purpose of boosting craftbox's graphics, 
-which cost performace.
+Extra rendering stuff for the purpose of boosting craftbox's graphics.
 
 Contains shaders/shader packages and postprocessing effects/
 postprocessing effect packages from various sources, for example 
@@ -104,8 +107,8 @@ void mtl_ffpwater_event();
 void transenv_event();
 void mtl_vegetation_init();
 
-//#include <mtlFX.c>
-//#include <mtlView.c>
+//#include "./Source/Craftbox_System_mtlFX.c"
+//#include "./Source/Craftbox_System_mtlView.c"
 
 // Xd1Vo's Projection texture
 //#include "pMat.c" // projection materials
@@ -113,11 +116,144 @@ void mtl_vegetation_init();
 //#include "eRender.c" //render bitmap for projection texture
 
 // BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
-//#include "./Source/Rendering/sc_core.c"
+#include "./Source/Rendering/sc_core.c"
 
 // SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
-//#include "./Source/Rendering/ppSsao.h"
+#include "./Source/Rendering/ppSsao.h"
 //#include "./Source/Rendering/dof.c"
+
+/*
+--------------------------------------------------
+GRAPHICSKONFIG *CreateGraphicsStruct(int..)
+
+Desc: Creates a new GRAPHICSKONFIG struct.
+ -1 gives default value based on guessing. (planned)
+
+Returns: A GRAPHICSKONFIG struct
+--------------------------------------------------
+*/
+GRAPHICSKONFIG *CreateGraphicsStruct(
+
+int brightness,
+int bitdepth,
+int af,
+int aa,
+
+int ssao,
+int dof,
+int hdr,
+int shadows,
+int objshaders,
+int ppe
+
+) {
+   
+   GRAPHICSKONFIG *newStruct;
+
+   newStruct->Brightness = abs(brightness);
+   newStruct->BitDepth = abs(bitdepth);
+   newStruct->AFLevel = abs(af);
+   newStruct->AALevel = abs(aa);
+   newStruct->_SSAO = abs(ssao);
+   newStruct->DOF = abs(dof);
+   newStruct->HDR = abs(hdr);
+   newStruct->Shadows = abs(shadows);
+   newStruct->ObjShaders = abs(objshaders);
+   newStruct->PPE = abs(ppe);
+   
+   return newStruct;
+   
+}
+
+
+/*
+--------------------------------------------------
+int CompareGraphicsStruct(GRAPHICSKONFIG *struct1, GRAPHICSKONFIG *struct2)
+
+Desc: Compare two GRAPHICSKONFIG struct.
+
+Returns: > 0 if struct1 differs from struct2.
+--------------------------------------------------
+*/
+int CompareGraphicsStruct(GRAPHICSKONFIG *struct1, GRAPHICSKONFIG *struct2) {
+   
+   while( !struct1 || !struct2 ) wait(1);
+   
+   return (
+   
+   (struct1->Brightness != struct2->Brightness) ||
+   (struct1->BitDepth != struct2->BitDepth) ||
+   (struct1->AFLevel != struct2->AFLevel) || 
+   (struct1->AALevel != struct2->AALevel) ||
+   (struct1->_SSAO != struct2->_SSAO) ||
+   (struct1->DOF != struct2->DOF) ||
+   (struct1->Shadows != struct2->Shadows) ||
+   (struct1->ObjShaders != struct2->ObjShaders) ||
+   (struct1->PPE != struct2->PPE) ||
+   (struct1->HDR != struct2->HDR)
+   
+   );
+   
+}
+
+/*
+--------------------------------------------------
+void ApplyGraphicsSettings( GRAPHICSKONFIG *dConfig )
+
+Desc: Apply advanced graphics settings such as 
+SSAO, HDR, Depth of Field, shadows and such
+Rendering device will be restarted whenever necessary.
+
+Returns: -
+--------------------------------------------------
+*/
+void ApplyGraphicsSettings( GRAPHICSKONFIG *dConfig ) {
+	
+	while(!dConfig) wait(1);
+	
+	video_gamma = dConfig->Brightness;
+	video_depth = dConfig->BitDepth;
+	d3d_antialias = dConfig->AALevel;
+	d3d_anisotropy = dConfig->AFLevel;
+	
+	/*
+	
+	if( !dConfig->HDR && !dConfig->DOF && !dConfig->Shadows) {
+		
+		// switches off HDR views
+		reset(sc_view_hdrDownsample,SHOW);
+		reset(sc_view_hdrHighpass,SHOW);
+		reset(sc_view_hdrBlur,SHOW);
+		reset(sc_view_hdrHBlur,SHOW);
+		reset(sc_view_hdrVBlur,SHOW);
+		
+		reset(sc_view_depth,SHOW);
+		reset(sc_view_hdrGamma,SHOW);
+		reset(sc_view_reflect,SHOW);
+		//		reset(shadowView,SHOW); // local
+		//		reset(shadowDepthView,SHOW);
+		
+		wait(1);
+		video_set(sys_metrics(0)-1,0,0,0);
+		sc_scSetup = 0;
+		
+		wait(2);
+
+	}
+	
+	*/
+	
+	if( dConfig->HDR || dConfig->DOF || dConfig->Shadows ) sc_setup();
+	
+	// SSAO
+	if (dConfig->_SSAO) {
+		
+		if( !ssaoLoaded ) LoadSSAO(); // If SSAO hasn't yet initialized, initializes and loads SSAO
+		else toggleSsaoState();
+		
+	}
+	
+}
 
 /*
 --------------------------------------------------
@@ -131,8 +267,6 @@ int SetupShader() {
 	WriteLog("[ ] Setting up shaders");
 	NewLine();
 	
-	return;
-	
 	if(edition < 3) {
 		
 		WriteLog("!! [ERROR] Still don't have enough money to afford a Commercial license.. :(");
@@ -142,16 +276,36 @@ int SetupShader() {
 		
 	}
 	
+	ApplyGraphicsSettings( defaultConfig );
+	
 	/*
 	
 	// Shade-C
-	sc_bHDR = 1;
-	sc_bDOF = 0;
-	sc_bRefract = 0;
-	sc_bWater = 0;
-	sc_bReflect = 0;
-	sc_bVolParts = 0;
+	
+	allowHDR = 1;
+	allowDOF = 0;
+	sc_bRefract = 1;
+	sc_bWater = 1;
+	sc_bReflect = 1;
+	sc_bVolParts = 1;
+	
 	sc_setup();	
+	
+	sc_smSunSetup(screen_size.x, 2000, 1500, 0.002, 0);
+	
+	sc_lightRayStr =5.4;
+	sc_lightRayLength = 3.5; //set light ray length
+	
+	//activate light rays
+	sc_lightRays();
+	
+	//set mat_model to shadow material. Now all models without any material will receive shadows
+	mat_model.effect = "sc_obj_doShadow.fx";
+	//set mat_flat to shadow material. Now all level blocks with flat shading and without any material will receive shadows
+	mat_flat.effect = "sc_level_doShadow.fx";
+	mat_shaded.effect = "sc_level_doShadow.fx";
+	
+	set(sc_pan_sunDummy,SHOW);
 	
 	*/
 	
@@ -529,3 +683,5 @@ void RemoveFromTextureProjectionArray(ENTITY *Ent) {
 	wait(1);
 	
 }
+
+#endif

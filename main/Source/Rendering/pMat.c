@@ -1,3 +1,7 @@
+#ifndef pMat
+
+#define pMat
+
 D3DXMATRIX mMatrices[8];// 8 matrices for FFP
 function set_mat_pointer (float** mMat,float** pointer) {*pointer = mMat;}
 function set_material_matrices ()
@@ -18,3 +22,4 @@ MATERIAL* mtl_pTex3 = {effect = "projT3.fx";}
 MATERIAL* mtl_black = {effect = "blackTex.fx";}
 
 
+#endif

@@ -15,7 +15,7 @@ VIEW* blurDepthView =
 
 
 // void sc_smSunSetup(var SMMapRes, var SMRes, var SMdepth, float SMblur, var sType)
-// SMMapRes = Shadowmap Resolution (must be smaller or equal to screen_size.x)
+// SMMapRes = Shadowmap Resolution (must be smaller or equal to sys_metrics(0))
 // SMRes = ShadowView Resolution | Area of Shadow (how many quants should be shadowed at once? keep this as low as possible for nice shadows)
 // SMdepth = max depthmap depth (distance after which shadows are clipped. Keep this as low as possible for nice shadows)
 // SMblur = shadow blur amount
@@ -36,9 +36,9 @@ void sc_smSunSetup(var SMMapRes, var SMRes, var SMdepth, float SMblur, var sType
 		shadowView = malloc(sizeof(VIEW*));
 		shadowView = view_create(-2);
 		shadowView.material = sc_mtl_shadowSun;
-		set(shadowView,VISIBLE);
+		set(shadowView,SHOW);
 		
-		sc_map_shadow = bmap_createblack(screen_size.x,screen_size.y,32);
+		sc_map_shadow = bmap_createblack(sys_metrics(0),sys_metrics(1),32);
 		shadowView.bmap = sc_map_shadow;
 		sc_mtl_shadowSunAdd.skin1 = sc_map_shadow;
 		sc_ppAdd(sc_mtl_shadowSunAdd,camera,0);
@@ -67,10 +67,7 @@ void sc_smSunSetup(var SMMapRes, var SMRes, var SMdepth, float SMblur, var sType
 	shadowDepthView.material = sc_mtl_shadowDepthSun;
 	shadowDepthView.pan = 302;
 	shadowDepthView.tilt = -38;
-	set(shadowDepthView,VISIBLE);
-	set(shadowDepthView,UNTOUCHABLE);
-	set(shadowDepthView,NOSHADOW);
-	set(shadowDepthView,NOPARTICLE);
+	set(shadowDepthView,SHOW | UNTOUCHABLE | NOSHADOW | NOPARTICLE);
 	shadowDepthView.size_x = SMMapRes;
 	shadowDepthView.size_y = SMMapRes;
 	//shadowDepthView.clip_far = SMdepth;

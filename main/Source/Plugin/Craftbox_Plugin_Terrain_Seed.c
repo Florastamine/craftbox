@@ -243,3 +243,5 @@ void paint_canvas()
 	}     
 	
 }
+
+#define PRAGMA_PRINT " [Loaded plugin terrain seeding] "

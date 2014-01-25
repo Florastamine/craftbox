@@ -1,3 +1,9 @@
+/******************************
+
+- [ 15.1.2014 ] rewrote saving/loading functions (support for custom, external deformation data)
+
+******************************/
+
 
 /*
 --------------------------------------------------
@@ -255,6 +261,7 @@ Returns: -
 */
 void TDeform_saveterrain(ENTITY *terrain)
 {
+	/*
 	
 	proc_kill(4);
 	
@@ -302,6 +309,57 @@ void TDeform_saveterrain(ENTITY *terrain)
 	WriteLog(_size);
 	NewLine();
 	
+	*/
+	
+	proc_kill(4);
+	
+	WriteLog("[ ] Saving terrain data to ");
+	
+	while(!terrain) wait(1);
+	
+	char *c = file_dialog_save(" ",EXT_GEO);
+	
+	if( !c ) return;
+	
+	STRING *_c = "#400";
+	str_cpy( _c, _str(c) );
+	str_cat(_c, ".ctdd" );
+	
+	WriteLog(_c);
+	WriteLog(", please wait.");
+	NewLine();
+	
+	var terrainHandle = file_open_write(_c);
+	if(!terrainHandle) {
+		
+		WriteLog("!! [ERROR] Cannot open ");
+		WriteLog(_c);
+		WriteLog(" for writing terrain geometry data. Operation aborted.");
+		NewLine();
+		
+		return;
+		
+	}
+	
+	VECTOR mesh_coords;
+	var index = 0;
+	while(index <= total_vertices) // go through all the vertices
+	{
+		vec_for_mesh(mesh_coords.x, terrain, index); // and get their z coordinates		
+		file_var_write(terrainHandle,mesh_coords.z);
+		
+		index++;
+	}
+	
+	var _size = file_length(terrainHandle)*1024; // original in bytes, convert to KBs
+	
+	file_close(terrainHandle);
+	
+	WriteLog("[X] Task completed, file size: ");
+	WriteLog(_size);
+	NewLine();
+	
+	
 }
 
 /*
@@ -314,6 +372,8 @@ Returns: -
 --------------------------------------------------
 */
 void TDeform_LoadHeightFrom(ENTITY *terrain) {
+	
+	/*
 	
 	proc_kill(4);
 	
@@ -358,4 +418,49 @@ void TDeform_LoadHeightFrom(ENTITY *terrain) {
 	WriteLog("[X] Task completed.");
 	NewLine();
 	
+	*/
+	
+	proc_kill(4);
+	
+	WriteLog("[ ] Attempting to load terrain data from ");
+	
+	while(!terrain) wait(1);
+	
+	char *c = file_dialog_open(" ",EXT_GEO);
+	if( !c ) return;
+	
+	WriteLog(c);
+	WriteLog(", please wait.");
+	NewLine();
+
+	if(file_exists(c))  // previously saved data exists?
+	{
+		
+		var terrainHandle = file_open_read(c);
+		
+		var index = 0;
+		while(index <= total_vertices) // then load the previously stored height values and apply them to the terrain
+		{
+			// no need to load the x and y coordinates of the terrain - they can't be changed
+			vec_to_mesh(vector (0, 0, file_var_read(terrainHandle) ), terrain, index);
+			index += 1;
+			
+		}
+		
+		file_close(terrainHandle);
+		
+		} else {
+		
+		WriteLog("Failed to open ");
+		WriteLog(c);
+		WriteLog(" for passing geometry data to terrain. Operation aborted.");
+		NewLine();
+		
+	}
+	
+	WriteLog("[X] Task completed.");
+	NewLine();
+	
 }
+
+#define PRAGMA_PRINT " [Loaded plugin terrain deformation] "

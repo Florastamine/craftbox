@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Environment
+
+#define Craftbox_System_Environment
+
 /*
 --------------------------------------------------
 Craftbox_System_Environment.c
@@ -1245,3 +1249,5 @@ ENTITY *SkyCube = {
 	flags2 = SKY | CUBE | SHOW;
 	
 }
+
+#endif

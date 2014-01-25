@@ -1,3 +1,7 @@
+#ifndef Craftbox_System_Console
+
+#define Craftbox_System_Console
+
 /*
 --------------------------------------------------
 Craftbox_System_Console.c
@@ -128,3 +132,6 @@ int Console() {
 	NewLine();
 
 }
+
+
+#endif 

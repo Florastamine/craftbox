@@ -69,13 +69,13 @@ void LoadWorld(STRING *level, int id) {
 	file_str_write(filehndl,strseparate_start);
 	file_str_write(filehndl,tag_header_warn);
 	file_str_write(filehndl,strseparate_end);
-	NewLineGeneric(filehndl);
-	NewLineGeneric(filehndl);
+	NewLine(filehndl);
+	NewLine(filehndl);
 	
 	file_str_write(filehndl,strseparate_start);
 	file_str_write(filehndl,tag_system_header);
 	file_str_write(filehndl,strseparate_end);
-	NewLineGeneric(filehndl);
+	NewLine(filehndl);
 	
 	file_str_write(filehndl,wdstart); // Mark the start point
 	file_var_write(filehndl,BBTranslucency); // <- Get last transparency
@@ -232,8 +232,8 @@ void SaveWorld_system(var hndl) {
 	}
 	
 	file_str_write(hndl,wdend); // Mark the end point
-	NewLineGeneric(hndl);
-	NewLineGeneric(hndl);
+	NewLine(hndl);
+	NewLine(hndl);
 	
 }
 
@@ -258,7 +258,7 @@ void SaveWorld_geodata(var hndl) {
 	file_str_write(hndl,strseparate_start);
 	file_str_write(hndl,tag_geodata);
 	file_str_write(hndl,strseparate_end);
-	NewLineGeneric(hndl);
+	NewLine(hndl);
 	
 	file_str_write(hndl,wdstart); // Mark the start point
 	
@@ -266,8 +266,8 @@ void SaveWorld_geodata(var hndl) {
 	else file_str_write(hndl,gdundef); // Indicating that there's no terrain entity available
 	
 	file_str_write(hndl,wdend);
-	NewLineGeneric(hndl);
-	NewLineGeneric(hndl);
+	NewLine(hndl);
+	NewLine(hndl);
 	
 }
 
@@ -291,7 +291,7 @@ void SaveWorld_objectdata(var hndl) {
 	file_str_write(hndl,strseparate_start);
 	file_str_write(hndl,tag_objectdata);
 	file_str_write(hndl,strseparate_end);
-	NewLineGeneric(hndl);
+	NewLine(hndl);
 	
 	file_str_write(hndl,wdstart); // Mark start
 	
@@ -386,19 +386,19 @@ void SaveWorld(STRING *name, int slot) {
 	file_str_write(filehndl,strseparate_start);
 	file_str_write(filehndl,tag_header);
 	file_str_write(filehndl,strseparate_end);
-	NewLineGeneric(filehndl); /* write a new line */
-	NewLineGeneric(filehndl);
+	NewLine(filehndl); /* write a new line */
+	NewLine(filehndl);
 	
 	file_str_write(filehndl,strseparate_start);
 	file_str_write(filehndl,tag_header_warn);
 	file_str_write(filehndl,strseparate_end);
-	NewLineGeneric(filehndl);
-	NewLineGeneric(filehndl);
+	NewLine(filehndl);
+	NewLine(filehndl);
 	
 	file_str_write(filehndl,strseparate_start);
 	file_str_write(filehndl,tag_system_header);
 	file_str_write(filehndl,strseparate_end);
-	NewLineGeneric(filehndl);
+	NewLine(filehndl);
 	
 	file_str_write(filehndl,wdstart); // Mark the start point
 	file_var_write(filehndl,BBTranslucency); // <- Get last transparency
