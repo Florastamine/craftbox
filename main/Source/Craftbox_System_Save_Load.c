@@ -88,12 +88,11 @@ void LoadWorld(STRING *level, int id) {
 	file_var_write(filehndl,tMaxHeight);
 	file_var_write(filehndl,sizeh);
 	file_var_write(filehndl,brush_speed);
-	file_var_write(filehndl,TerrainEditMode);
+	file_var_write(filehndl,cbTerrainEditing);
 	file_var_write(filehndl,bType);
 	file_var_write(filehndl,bHeight);
 	file_var_write(filehndl,bHlimit);
 	
-	file_var_write(filehndl,StatsIsRunning); // <- Stats panel
 	file_var_write(filehndl,CountObjects);
 	file_var_write(filehndl,CountParticles);
 	file_var_write(filehndl,CountLights);
@@ -361,7 +360,7 @@ void SaveWorld(STRING *name, int slot) {
 		
 	}
 	
-	if( !IN_GAME || slot<0 ) {
+	if( !cbInBuildment || slot<0 ) {
 		
 		return;
 		
@@ -411,12 +410,11 @@ void SaveWorld(STRING *name, int slot) {
 	file_var_write(filehndl,tMaxHeight);
 	file_var_write(filehndl,sizeh);
 	file_var_write(filehndl,brush_speed);
-	file_var_write(filehndl,TerrainEditMode);
+	file_var_write(filehndl,cbTerrainEditing);
 	file_var_write(filehndl,bType);
 	file_var_write(filehndl,bHeight);
 	file_var_write(filehndl,bHlimit);
 	
-	file_var_write(filehndl,StatsIsRunning); // <- Stats panel
 	file_var_write(filehndl,CountObjects);
 	file_var_write(filehndl,CountParticles);
 	file_var_write(filehndl,CountLights);

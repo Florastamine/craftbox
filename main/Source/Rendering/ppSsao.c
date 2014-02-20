@@ -88,7 +88,7 @@
 
 // building the renderchain
 
-	BOOL hasSsaoChainToBeRecreated ()
+	bool hasSsaoChainToBeRecreated ()
 	{
 		if (bmapSsaoDepthHires == NULL)
 			return(true);
@@ -98,7 +98,7 @@
 
 	void recreateSsaoChain ()
 	{
-		BOOL bRecreate = hasSsaoChainToBeRecreated();
+		bool bRecreate = hasSsaoChainToBeRecreated();
 	
 		if (bRecreate)
 		{
@@ -288,19 +288,19 @@ void updateSsaoChain ()
 // switching SSAO on / off
 
 	// enables/disables SSAO
-	BOOL toggleSsaoState ()
+	bool toggleSsaoState ()
 	{
 		// no base defined or sources not established
 		if ((!ssaoViewPre) || ((!viewSsaoSrcDepth) || (!viewSsaoSrcNormalsAlpha)))
 			return(false);
 			
 		// activate if it was off and vice versa
-		BOOL bSet = setSsaoState(!ssaoActive);
+		bool bSet = setSsaoState(!ssaoActive);
 		return(bSet);
 	}
 
 	// enables / disables SSAO basing upon a boolean
-	BOOL setSsaoState (BOOL active)
+	bool setSsaoState (bool active)
 	{
 		// no base defined or sources aren't established
 		if ((!ssaoViewPre) || ((!viewSsaoSrcDepth) || (!viewSsaoSrcNormalsAlpha)))
@@ -349,7 +349,7 @@ void updateSsaoChain ()
 // queries
 
 	// returns if SSAO ís currently active or not
-	BOOL getSsaoState ()
+	bool getSsaoState ()
 	{
 		return(ssaoActive);
 	}
@@ -570,7 +570,7 @@ void removeSsao ()
 	}
 
 	// returns if an entity has a specific surface type
-	BOOL hasSsaoSurface (ENTITY* e, int type)
+	bool hasSsaoSurface (ENTITY* e, int type)
 	{
 		if (e)
 			return(e->SURFACE & type);
@@ -646,16 +646,16 @@ void removeSsao ()
 	// is 1280x1024, true is returned, because the BMAP* should have (640,512). Returns
 	// always true, if BMAP* is NULL or lodRatio is invalid (<0)
 	
-	BOOL hasSsaoBmapToBeRecreated (BMAP* bmap, int lodRatio)
+	bool hasSsaoBmapToBeRecreated (BMAP* bmap, int lodRatio)
 	{
 		// always recreate, e.g. on invalid parameters
-		BOOL bRecreate = true;
+		bool bRecreate = true;
 		
 		// check recreation only when a filled bmap is passed and lodRatio is valid
 		if ((bmap != NULL) && (lodRatio > 0))
 		{
-			BOOL bWidthDiff = (bmap->width != sys_metrics(0) / lodRatio);
-			BOOL bHeightDiff = (bmap->height != sys_metrics(1) / lodRatio);
+			bool bWidthDiff = (bmap->width != sys_metrics(0) / lodRatio);
+			bool bHeightDiff = (bmap->height != sys_metrics(1) / lodRatio);
 			
 			// must be recreated, when either the width or the height is different
 			bRecreate = (bWidthDiff || bHeightDiff);
@@ -705,7 +705,7 @@ void removeSsao ()
 		}
 	}
 
-	BOOL compileSsaoShader (MATERIAL** mtlRef, char* customPreamble, char* filename)
+	bool compileSsaoShader (MATERIAL** mtlRef, char* customPreamble, char* filename)
 	{
 		if ((mtlRef == NULL) || (filename == NULL)) return(false);
 		if (strlen(filename) < 5) return(false);
@@ -1025,12 +1025,12 @@ void removeSsao ()
 	// activated CPU/GPU-bone animation. If entity shall not be rendered, false is
 	// returned, otherwise true.
 	//
-	BOOL getSsaoObjShader (ENTITY* e, MATERIAL** mat, int src)
+	bool getSsaoObjShader (ENTITY* e, MATERIAL** mat, int src)
 	{
 		if ((e == NULL) || (mat == NULL))
 			return(false);
 
-		BOOL render = true; // always render if not stated otherwise
+		bool render = true; // always render if not stated otherwise
 		SsaoObjMtl* mtlSurface = ssaoObjMtlSolid; // solid = default
 		
 		// select surface material
@@ -1091,7 +1091,7 @@ void removeSsao ()
 
 		// get object shader and rendering flag
 		MATERIAL* objMtl = NULL;
-		BOOL render = getSsaoObjShader(my, &objMtl, src);
+		bool render = getSsaoObjShader(my, &objMtl, src);
 
 		if ((render == true) && (objMtl != NULL))
 		{
@@ -1247,7 +1247,7 @@ void fireSsaoEvent (EVENT ev)
 // startup
 void LoadSSAO() {
    
-   while( !KERNEL_IS_RUNNING ) wait(1);
+   while( !cbKernelRunning ) wait(1);
    
 	// strings
 

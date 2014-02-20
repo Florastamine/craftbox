@@ -21,7 +21,7 @@ TODO:
 NOTES:
 <+++
 
-This is experimental.
+This is experimental. Crash with Unicode stuff.
 
 >+++
 --------------------------------------------------

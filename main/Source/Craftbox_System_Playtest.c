@@ -50,6 +50,7 @@ void LoadPlayground() {
 	mouse_mode = 0;
 	
 	var tempvol = 0, rainhndl = -1, snowhndl = -1, windhndl = -1;
+	var temp_cam;
 	
 	BMAP *b_load;
 	
@@ -123,21 +124,25 @@ void LoadPlayground() {
 	}
 	
 	if( (int) WorldType == WORLD_STATIC) {
+	   
+	   wait(1);
 		
-		sun_light = _sun_light;
-		fog_color = _fog_color;
-		d3d_fogcolor1.red = _d3d_fogcolor1_red;
-		d3d_fogcolor1.green = _d3d_fogcolor1_green;
-		d3d_fogcolor1.blue = _d3d_fogcolor1_blue;
-		camera.fog_end = _camera_fog_end;
+//		sun_light = _sun_light;
+//		fog_color = _fog_color;
+//		d3d_fogcolor1.red = _d3d_fogcolor1_red;
+//		d3d_fogcolor1.green = _d3d_fogcolor1_green;
+//		d3d_fogcolor1.blue = _d3d_fogcolor1_blue;
+//		camera.fog_end = _camera_fog_end;
 		
 	}
 	else {  // WORLD_DYNAMIC
 		
 		//		LoadMystymood(1,_load_lensflare);
-		LoadMystymood(1);
+		LoadMystymood( true );
 		
 	}
+	
+	/*
 	
 	switch( (int) _weather_mode ) {
 		
@@ -169,6 +174,8 @@ void LoadPlayground() {
 		
 	}
 	
+	*/
+	
 
 	GGUIHide();
 	
@@ -179,7 +186,7 @@ void LoadPlayground() {
 	_oldcampos.tilt = camera.tilt;
 	_oldcampos.roll = camera.roll;
 
-	PLAYTESTING = 1;
+	cbPlaytesting = 1;
 
 	/*
 	// Test if there is any entity in the projection array
@@ -211,7 +218,7 @@ void LoadPlayground() {
 	
 	from_test_play = 1;
 
-	while(PLAYTESTING) {
+	while(cbPlaytesting) {
 		
 		// Need a little optimization here....
 		//		if(rEnt[0]) create_dxmat(mat_effect1,pSys[0].Pos,pSys[0].Ang,pSys[0].Fov,mtl_pTex1.skin1);
@@ -234,15 +241,15 @@ void LoadPlayground() {
 	}
 	
 	// Destroy weather effects and its sounds
-	rain(0,0);
-	snow(0,0,NULL);
+	//rain(0,0);
+	//snow(0,0,NULL);
 	
 	if(rainhndl != -1) snd_stop(rainhndl);
 	if(snowhndl != -1) snd_stop(snowhndl);
 	
-	if(mystymood_active) {
+	if( mystymoodActive ) {
 	   
-	   LoadMystymood(0);
+	   LoadMystymood( false );
 		
 		fog_color = 0;
 

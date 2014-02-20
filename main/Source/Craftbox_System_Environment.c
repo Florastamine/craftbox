@@ -27,6 +27,39 @@ NOTES:
 
 */
 
+void InitMystymood() {
+	
+	sky_curve = 2;
+	sky_clip = -10;
+	
+	bmapRain				= bmap_create("rain.tga");
+	bmapSnow				= bmap_create("snow.tga");
+	bmapLightning		= bmap_create("lightning.tga");
+
+	sndRain				= snd_create("rain.wav");
+	sndWind				= snd_create("wind.wav");
+	sndDay				= snd_create("ambiente_day.wav");
+	sndNight				= snd_create("ambiente_night.wav");
+	sndThunder1			= snd_create("thunder1.wav");
+	sndThunder2			= snd_create("thunder2.wav");
+	sndThunder3			= snd_create("thunder3.wav");
+	sndThunder4			= snd_create("thunder4.wav");
+	sndThunder5			= snd_create("thunder5.wav");
+	sndUnderwater		= snd_create("underwater.wav");
+	
+	entHorizon			= ent_createlayer("horizon.tga", SKY | SCENE | SHOW, 5); entHorizon.scale_x = 0.25; entHorizon.scale_y = 0.25; entHorizon.tilt = -60; entHorizon.alpha = 100; set(entHorizon, TRANSLUCENT);
+	entCloud1			= ent_createlayer("clouds.tga", SKY | DOME | SHOW, 2); entCloud1.scale_x = 1.5; entCloud1.scale_y = 1.5; entCloud1.tilt = -12; entCloud1.alpha = 80; set(entCloud1, TRANSLUCENT);
+	entCloud2			= ent_createlayer("clouds.tga", SKY | DOME | SHOW, 3); entCloud2.u = 1; entCloud2.v = 5; entCloud2.scale_x = 2.5; entCloud2.scale_y = 2.5; entCloud2.tilt = -10; entCloud2.alpha = 60; set(entCloud2, TRANSLUCENT);
+	entCloud3			= ent_createlayer("clouds_bad.tga", SKY | DOME | SHOW, 4); entCloud3.u = 1; entCloud3.v = 5; entCloud3.scale_x = 2; entCloud3.scale_y = 2; entCloud3.tilt = -10; entCloud3.alpha = 0; set(entCloud3, TRANSLUCENT);
+	entSkyDay			= ent_createlayer("sky_day.tga", SKY | SCENE | SHOW, 1); entSkyDay.scale_x = 0.25; entSkyDay.tilt = -20; vec_set(entSkyDay.blue, vector(255,255,255)); entSkyDay.alpha = 60; set(entSkyDay, TRANSLUCENT);
+	entSkySun			= ent_createlayer("sky_sun.tga", SKY | SHOW, 6); entSkySun.alpha = 65; set(entSkySun, TRANSLUCENT | BRIGHT);
+	entSkySunCorona	= ent_createlayer("sky_suncorona.tga", SKY | SHOW, 3); entSkySunCorona.alpha = 40; set(entSkySunCorona, TRANSLUCENT | BRIGHT);
+	entSkySunshine		= ent_createlayer("sky_sunshine.tga", SKY | SHOW, 7); entSkySunshine.alpha = 50; set(entSkySunshine, TRANSLUCENT | BRIGHT);
+	entSkyNight			= ent_createlayer("sky_night.tga", SKY | DOME | SHOW, 1); entSkyNight.alpha = 0; set(entSkyNight, TRANSLUCENT);
+	entSkyMoon			= ent_createlayer("sky_moon.tga", SKY | SHOW, 2); entSkyMoon.alpha = 100; set(entSkyMoon, TRANSLUCENT);
+	
+}
+
 /*
 --------------------------------------------------
 void free_camera()
@@ -34,9 +67,9 @@ void free_camera()
 Desc: This is the camera controller I found when I was tweaking Mystymood.
 + 5.7.2013 : This camera is good, but I have to partly rewrite it
 because...well, I won't explain, find out for yourself.
-This code won't be checked against PLAYTESTING because
-it will be killed prior to set PLAYTESTING to 1.
-and restored later when PLAYTESTING has been set to 0.
+This code won't be checked against cbPlaytesting because
+it will be killed prior to set cbPlaytesting to 1.
+and restored later when cbPlaytesting has been set to 0.
 + 13.10.2013, 22.10.2013 : Modified.
 
 Returns: -
@@ -63,7 +96,7 @@ void free_camera()
 		
 		// 60 = speed
 		
-		if(! PLAYTESTING ) {
+		if(! cbPlaytesting ) {
 			
 			camera_force.x = ( (key_w || key_cuu) - (key_s || key_cud) )*60*doublefactor*time_step;
 			camera_force.y = ( (key_a || key_cul) - (key_d || key_cur) )*60*doublefactor*time_step;
@@ -85,794 +118,681 @@ void free_camera()
 	
 }
 
-////////////////////////////////////////////////////////////
-// Mystymood
-// Template file v5.202 (02/20/02)
-////////////////////////////////////////////////////////////////////////
-// File: lflare.wdl
-//	WDL code for lens flare and lighting effects
-//
-// 2007 Modified by David Lancaster and Loopix, based on ideas of HeelX
-// Lite-C conversion by Alexis Rozhkov aka Shadow
-//
-// www.loopix-project.com
-////////////////////////////////////////////////////////////////////////
-
-/*
---------------------------------------------------
-void flare_init(ENTITY *flare_ent)
-
-Desc:
-
-Returns: - 
---------------------------------------------------
-*/
-
-/*
-void flare_init(ENTITY *flare_ent)
-{
-	
-	while(!flare_ent) wait(1);
-
-	WriteLog("[ ] Intializing lens flare for ");
-	WriteLog( (STRING *) flare_ent->type );
-	NewLine();
-
-	my = flare_ent;
-	my.flags2 &= ~SHOW;
-	my.flags |= (BRIGHT|PASSABLE|TRANSLUCENT);
-	
-	WriteLog("[X] Task completed.");
-	NewLine();
-	
-}
-*/
-
-/*
---------------------------------------------------
-void flare_place(ENTITY *flare_ent)
-
-Desc: Places a flare at temp.x/temp.y deviations from screen center
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-void flare_place(ENTITY *flare_ent)
-{
-
-	// Do not flood the log file
-
-	my = flare_ent;
-	my.flags2 |= SHOW;
-
-	camera.pan%=360;//needed to keep the correct sun_angle for lensflare visibility
-
-	// multiply the pixel deviation with the pivot factor,
-	// and add the screen center
-	my.x = ctemp.x*my.pivot_dist + 0.5*screen_size.x;
-	my.y = ctemp.y*my.pivot_dist + 0.5*screen_size.y;
-	my.z = 1000;	// screen distance, determines the size of the flare
-
-	if(my == flare1_ent)
-	{
-		vec_set(temp2,sun_pos);
-		you = player;	
-		
-		c_trace(camera.x,temp2.x,IGNORE_ME | IGNORE_YOU | IGNORE_PASSABLE | IGNORE_SPRITES | SCAN_TEXTURE);
-		if(trace_hit)
-		{
-			
-			if(flare1_ent.alpha > 0) flare1_ent.alpha -= flare_fadespeed * time_step;
-			else flare1_ent.alpha = 0;
-			
-		}
-		else
-		{
-			if((camera.pan > sun_angle.pan + 25) || (camera.pan < sun_angle.pan - 25) || (camera.tilt < sun_angle.tilt - 20) || (camera.tilt > sun_angle.tilt + 20))
-			{
-				
-				if(flare1_ent.alpha > 0) flare1_ent.alpha -= flare_fadespeed * time_step;
-				else flare1_ent.alpha = 0;
-				
-			}
-			else
-			{	
-				temp2.x = sqrt(abs(((my.x - (0.5*screen_size.x))*(my.x - (0.5*screen_size.x)))+((my.y - (0.5*screen_size.y))*(my.y - (0.5*screen_size.y)))));
-				if(abs(temp2.x) > (0.5*screen_size.x))
-				{
-					
-					flare1_ent.alpha = flare_alpha - (abs(temp2.x) - (0.5*screen_size.x));
-					if(flare1_ent.alpha < 0) flare1_ent.alpha = 0;
-					
-				}
-				else
-				{
-					
-					if(flare1_ent.alpha < flare_alpha) flare1_ent.alpha += flare_fadespeed * time_step;
-					else flare1_ent.alpha = flare_alpha;
-					
-				}
-			}
-		}
-		
-		if (flare1_ent.alpha < 0) flare1_ent.alpha = 0;
-		if (flare1_ent.alpha > flare_alpha) flare1_ent.alpha = flare_alpha;
-	}
-	rel_for_screen(my.x,camera);
-}
-*/
-
-/*
---------------------------------------------------
-void LoadMystymoodLensflare()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-void LoadMystymoodLensflare()
-{
-
-	WriteLog("[ ] Activating lens flare");
-	NewLine();
-
-	flare_init(flare1_ent);
-	flare_init(flare2_ent);
-	flare_init(flare4_ent);
-	flare_init(flare5_ent);
-	flare_init(flare6_ent);
-	flare_init(flare7_ent);
-	flare_init(flare8_ent);
-	flare_init(flare9_ent);
-	flare_init(flare10_ent);
-	flare_init(flare11_ent);
-	flare_init(flare12_ent);
-	flare_init(flare13_ent);
-	flare_init(flare14_ent);
-	flare_init(flare15_ent);
-	flare_init(flare16_ent);
-	flare_init(flare17_ent);
-	flare_init(flare18_ent);
-	flare_init(flare19_ent);
-	flare_init(flare20_ent);
-
-	wait(1);
-
-	lens_active = 1;
-	
-	WriteLog("[X] Task completed for LoadMystymoodLensflare().");
-	NewLine();
-
-	while(lens_active)
-	{
-		vec_set(ctemp,sun_pos);
-		vec_to_screen(ctemp,camera);
-		
-		ctemp.x -= 0.5 * screen_size.x;
-		ctemp.y -= 0.5 * screen_size.y;
-		
-		flare_place(flare1_ent);
-		flare_place(flare2_ent);	
-		flare_place(flare4_ent);
-		flare_place(flare5_ent);
-		flare_place(flare6_ent);
-		flare_place(flare7_ent);
-		flare_place(flare8_ent);
-		flare_place(flare9_ent);
-		flare_place(flare10_ent);
-		flare_place(flare11_ent);
-		flare_place(flare12_ent);
-		flare_place(flare13_ent);
-		flare_place(flare14_ent);
-		flare_place(flare15_ent);
-		flare_place(flare16_ent);
-		flare_place(flare17_ent);
-		flare_place(flare18_ent);
-		flare_place(flare19_ent);
-		flare_place(flare20_ent);
-		
-		flare1_ent.alpha = flare1_ent.alpha - (sky_cloud3.alpha/10);
-		flare2_ent.alpha = flare1_ent.alpha;		
-		flare4_ent.alpha = flare1_ent.alpha;
-		flare5_ent.alpha = flare1_ent.alpha;
-		flare6_ent.alpha = flare1_ent.alpha;
-		flare7_ent.alpha = flare1_ent.alpha;
-		flare8_ent.alpha = flare1_ent.alpha;
-		flare9_ent.alpha = flare1_ent.alpha;
-		flare10_ent.alpha = flare1_ent.alpha;
-		flare11_ent.alpha = flare1_ent.alpha;
-		flare12_ent.alpha = flare1_ent.alpha;
-		flare13_ent.alpha = flare1_ent.alpha;
-		flare14_ent.alpha = flare1_ent.alpha;
-		flare15_ent.alpha = flare1_ent.alpha;
-		flare16_ent.alpha = flare1_ent.alpha;
-		flare17_ent.alpha = flare1_ent.alpha;
-		flare18_ent.alpha = flare1_ent.alpha;
-		flare19_ent.alpha = flare1_ent.alpha;
-		flare20_ent.alpha = flare1_ent.alpha;
-		wait(1);
-	}
-
-	lens_active = 0;
-
-	WriteLog("[X] Deactivated lens flare.");
-	NewLine();
-
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-////MystyMood sky/sun/weather template...works without shader, uses 3dgs sky entitys!
-////
-////Note: All sky/weather values must be adjusted in this script...exept from the mysty_mood trigger values 
-////that can be adjusted for each trigger dummy via the behaviour panel in WED.
-////
-////Jun 07 by www.loopix-project.com
-////Nov 07 Lite-C conversion by Alexis Rozhkov aka Shadow
-//// 22.10.2013: U just tested this with Shade-C 0.91, worked just fine. Shade-C EVO? Maybe later.
-/////////////////////////////////////////////////////////////
-
-/*
---------------------------------------------------
-void func_fade_colors(var *col_target, var *col1, var *col2)
-
-Desc: 
-
-Returns: -
---------------------------------------------------
-*/
-void func_fade_colors(var *col_target, var *col1, var *col2)
-{
+void fade_colors(VECTOR* _vecColorTarget, VECTOR* _vecColor1, VECTOR* _vecColor2) {
 	var i = 0;
-	if(i < 100)
-	{
-		i = minv(i + fog_fade_speed*time_step, 100);
-		vec_lerp(col_target, col1, col2, i/100);
+	if(i < 100) {
+		i = minv(i + 2*time_step, 100);
+		vec_lerp(_vecColorTarget, _vecColor1, _vecColor2, i/100);
 	}
 }
 
-
-/*
---------------------------------------------------
-void func_particle_seed_infinity(PARTICLE *p)
-
-Desc: 
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-void func_particle_seed_infinity(PARTICLE *p)
-{
-
-	vec_set(p.x,vector(cycle(p.x,camera.x-particle_seedbox.x,camera.x+particle_seedbox.x),
-	cycle(p.y,camera.y-particle_seedbox.y,camera.y+particle_seedbox.y),
-	cycle(p.z,camera.z-particle_seedbox.z,camera.z+particle_seedbox.z)));
-
-	if(p.z<camera.z-100) p.lifespan = 0;
-
+void weather_set_particles() {
+	while(1){
+		
+		if(nWeatherState == 1) {
+			bmapWeatherParticle = bmapRain;
+			vParticleVelocityX = vecRainDirection.x + ((vRainRandomMove/2)-random(vRainRandomMove));
+			vParticleVelocityY = vecRainDirection.y + ((vRainRandomMove/2)-random(vRainRandomMove));	
+			vParticleVelocityZ = -vecRainDirection.z;
+			vParticleSize=random(2)+8;
+			vParticleAlpha=random(10)+60;	
+		}
+		
+		if(nWeatherState == 2) {
+			bmapWeatherParticle = bmapSnow;
+			vParticleVelocityX = vecSnowDirection.x + ((vSnowRandomMove/2)-random(vSnowRandomMove));
+			vParticleVelocityY = vecSnowDirection.y + ((vSnowRandomMove/2)-random(vSnowRandomMove));	
+			vParticleVelocityZ = -vecSnowDirection.z;
+			vParticleSize=random(1)+2;
+			vParticleAlpha=random(50)+40;	
+		}
+		wait(1);	
+	}			
 }
-*/
 
-/*
---------------------------------------------------
-void func_effect_particle_seed(PARTICLE *p)
+void weather_seed_particles(PARTICLE *p) {
+	vec_set(p.x,vector(cycle(p.x,camera.x-vecParticleSeedBox.x,camera.x+vecParticleSeedBox.x),
+	cycle(p.y,camera.y-vecParticleSeedBox.y,camera.y+vecParticleSeedBox.y),
+	cycle(p.z,camera.z-vecParticleSeedBox.z,camera.z+vecParticleSeedBox.z)));
+	if(p.z<camera.z-100 || p.z<nWaterLevel){p.lifespan=0;}
+}
 
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-void func_effect_particle_seed(PARTICLE *p) {
-
-	vec_set(p.x,vector(camera.x+random(particle_seedbox.x*2)-particle_seedbox.x,
-	camera.y+random(particle_seedbox.y*2)-particle_seedbox.y,
-	camera.z+random(particle_seedbox.z*2)-particle_seedbox.z));
-
+void weather_effect_seed(PARTICLE *p) {
+	vec_set(p.x,vector(camera.x+random(vecParticleSeedBox.x*2)-vecParticleSeedBox.x,
+	camera.y+random(vecParticleSeedBox.y*2)-vecParticleSeedBox.y,
+	camera.z+random(vecParticleSeedBox.z*2)-vecParticleSeedBox.z));
+	
 	p.flags |= MOVE;
-
-	if(sky_cloud3.alpha > 0) {
-		
-		p.bmap = part_bmp_weather;	
-		p.vel_x = part_vel_x;
-		p.vel_y = part_vel_y;
-		p.vel_z = part_vel_z;
-		p.size = part_size;
-		p.alpha = part_alpha;
-		
-		p.event  = func_particle_seed_infinity;	
+	
+	if(entCloud3.alpha > 0) {
+		p.bmap = bmapWeatherParticle;
+		p.vel_x = vParticleVelocityX;
+		p.vel_y = vParticleVelocityY;
+		p.vel_z = vParticleVelocityZ;
+		p.size = vParticleSize;
+		p.alpha = vParticleAlpha;
+		p.event  = weather_seed_particles;	
 	}	
 }
-*/
 
-/*
---------------------------------------------------
-void func_fade_lightning(PARTICLE *p)
+void weather_fade_lightning(PARTICLE *p) {
+	p.lifespan = 0;
+}
 
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-//void func_fade_lightning(PARTICLE *p)  { p.lifespan = 0; }
-
-/*
---------------------------------------------------
-void func_particle_lightning(PARTICLE *p)
-
-Desc: 
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-void func_particle_lightning(PARTICLE *p)
-{
+void weather_particle_lightning(PARTICLE *p) {
 	VECTOR temp;
 	temp.x = random(2) - 1;
 	temp.y = random(2) - 1;
 	temp.z = random(2) - 1;
 	vec_set(p.vel_x, temp);
-	p.bmap = bmp_lightning;
+	p.bmap = bmapLightning;
 	p.size = 3;
 	p.flags |= (MOVE|BRIGHT|TRANSLUCENT);
 	p.lifespan = 1;
-	p.event  = func_fade_lightning;
+	p.event  = weather_fade_lightning;
 }
-*/
 
-/*
---------------------------------------------------
-void func_particle_segment()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-
-void func_particle_segment()
-{
-	
-	vec_set(temporary, segment_end);
-	vec_sub(segment_end, segment_start);
-	segment_length = vec_length(segment_end);
-	segment_end.x = (segment_end.x * 2) / segment_length; // create particles every 2. quant
-	segment_end.y = (segment_end.y * 2) / segment_length;
-	segment_end.z = (segment_end.z * 2) / segment_length;
-	while(segment_length > 0)
-	{
-		
-		effect(func_particle_lightning, 2, segment_start.x, nullvector);	
-		vec_add(segment_start, segment_end);
-		segment_length -= 2;
-		
+void weather_particle_segment() {
+	vec_set(vLightningTemp, vecLightningSegmentEnd);
+	vec_sub(vecLightningSegmentEnd, vecLightningSegmentStart);
+	vLightningSegmentLength = vec_length(vecLightningSegmentEnd);
+	vecLightningSegmentEnd.x = (vecLightningSegmentEnd.x * 2) / vLightningSegmentLength;
+	vecLightningSegmentEnd.y = (vecLightningSegmentEnd.y * 2) / vLightningSegmentLength;
+	vecLightningSegmentEnd.z = (vecLightningSegmentEnd.z * 2) / vLightningSegmentLength;
+	while(vLightningSegmentLength > 0) {
+		effect(weather_particle_lightning, 2, vecLightningSegmentStart.x, nullvector);	
+		vec_add(vecLightningSegmentStart, vecLightningSegmentEnd);
+		vLightningSegmentLength -= 2;
 	}
-	
-	wait(1);
 }
 
-*/
-
-/*
---------------------------------------------------
-void func_particle_segment()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-
-void func_particle_segment()
-{
-	
-	vec_set(temporary, stroke_start);
-	vec_sub(stroke_end, stroke_start);
-	stroke_length = vec_length(stroke_end);
-	stroke_end.x = (stroke_end.x * 100) / stroke_length; // create segments every 200 quants
-	stroke_end.y = (stroke_end.y * 100) / stroke_length;
-	stroke_end.z = (stroke_end.z * 100) / stroke_length;
-	while(stroke_length > 0)
-	{
-		vec_add(stroke_start, stroke_end);
-		vec_set(segment_start, temporary);
-		vec_set(segment_end, stroke_start);
-		segment_end.x += random(60) - 30; // displace the lightning segments (don't make the lightning look like a straight stroke)
-		segment_end.y += random(60) - 30;
-		segment_end.z += random(60) - 30;
-		func_particle_segment();
-		stroke_length -= 100; // keep the same value here
+void weather_lightning_effect() {
+	vec_set(vLightningTemp, vecLightningStrokeStart);
+	vec_sub(vecLightningStrokeEnd, vecLightningStrokeStart);
+	vLightningStrokeLength = vec_length(vecLightningStrokeEnd);
+	vecLightningStrokeEnd.x = (vecLightningStrokeEnd.x * 100) / vLightningStrokeLength;
+	vecLightningStrokeEnd.y = (vecLightningStrokeEnd.y * 100) / vLightningStrokeLength;
+	vecLightningStrokeEnd.z = (vecLightningStrokeEnd.z * 100) / vLightningStrokeLength;
+	while(vLightningStrokeLength > 0) {
+		vec_add(vecLightningStrokeStart, vecLightningStrokeEnd);
+		vec_set(vecLightningSegmentStart, vLightningTemp);
+		vec_set(vecLightningSegmentEnd, vecLightningStrokeStart);
+		vecLightningSegmentEnd.x += random(60) - 30;
+		vecLightningSegmentEnd.y += random(60) - 30;
+		vecLightningSegmentEnd.z += random(60) - 30;
+		weather_particle_segment();
+		vLightningStrokeLength -= 100;
 	}
-	
-	wait(1);
 }
 
-*/
-
-/*
---------------------------------------------------
-void func_increase_brightness()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-
-/*
-
-void func_increase_brightness()
-{
+void weather_increase_brightness() {
 	
-	lightning_on = 1;
-
-	lightning = 255;
+	nLightningIsOn = 1;
+	nLightning = 255;
 	wait(2+random(3));
-	lightning = 1;
+	nLightning = 1;
 	wait(2+random(2));
-	lightning = 255;
+	nLightning = 255;
 	wait(1+random(2));
-	lightning = 1;
+	nLightning = 1;
 	wait(2+random(2));
-	lightning = 255;
+	nLightning = 255;
 	wait(2+random(5));
-	lightning = 1;
-
+	nLightning = 1;
 	wait(random(50));	
-	lightning_on = 0;
-	
-	wait(1);
+	nLightningIsOn = 0;
 }
 
-*/
-
-/*
---------------------------------------------------
-void weather_change()
-
-Desc:Can't be replaced with VOL_EFFECTS (at the momment).
-
-Returns: -
---------------------------------------------------
-*/
-void weather_change() {
-	
-	//   Uncomment the following lines to unlock the old effects that was packed with Mystymood.
-	//	Replace 'em with newer and Mystymood-independent code.
-
-	/*
-	if(!mystymood_active) return; // Activates weather ONLY IF Mystymood is active.
-
-	VECTOR temp;
-
-	// Sound handlers.
-	var snd_handle_thunder, snd_handle_rain, snd_handle_wind, snd_handle_bg_day, snd_handle_bg_night;
-	var snd_vol_rain = 2, snd_vol_wind = 2, snd_vol_bg_day = 2, snd_vol_bg_night = 2;
-
-	var rand_count, rand_count_state;
-	var outer_radius, inner_radius;
-
-	var eff_density = 1;
-
-	snd_handle_wind = snd_loop(wind_wav,snd_vol_wind,0);
-	snd_handle_rain = snd_loop(rain_wav,snd_vol_rain,0);
-
-	outer_radius = weather_fog_far;
-	inner_radius = weather_fog_far-(weather_fog_far/8);
-
-	if(use_bg_sounds) {
+void weather_thunder_strike() {
+	var vSoundHandleThunder;
+	var vRandomCount;
+	var vRandomCountState;
+	var vOuterRadius;
+	var vInnerRadius;
+	VECTOR vecLocalTemp;
+	vOuterRadius = WEATHER_FOG_FAR;
+	vInnerRadius = WEATHER_FOG_FAR-(WEATHER_FOG_FAR/8);
+	while(1) {
 		
-		snd_handle_bg_day = snd_loop(day_wav,snd_vol_bg_day,0);
-		snd_handle_bg_night = snd_loop(night_wav,snd_vol_bg_night,0);
+		randomize();
+		vRandomCount = integer(random(6));
 		
-	}
-
-	weather_state = 0;
-
-	while(mystymood_active)
-	{
 		
-		//		random_seed(0);
-		rand_count = integer(random(6));//creates a integer random number 0-4		
-		
-		//////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
-		
-		if(use_random_weather) {
+		if(nWeatherState == 1 && vDisableThunder == 0) {	
+			weather_increase_brightness();
 			
-			var i = random(random_weather_change_frequency);
+			vec_set(vecLocalTemp,vector(vInnerRadius+random(vOuterRadius-vInnerRadius),0,0));
+			vec_rotate(vecLocalTemp,vector(random(360),0,0));
+			vec_add(vecLocalTemp,camera.x);
+			vec_set(vecLightningStrokeStart,vecLocalTemp);
+			vecLightningStrokeStart.z += 600;
+			vec_set(vecLightningStrokeEnd,vector(vecLocalTemp.x+random(100)-200,vecLocalTemp.y+random(100)-200,vecLocalTemp.z));
+			vecLightningStrokeEnd.z -= 200;
 			
-			if(i>(random_weather_change_frequency/1.3)) {
-				
-				weather_state = 1;
-				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));	
-				
-			}
-			if(i>(random_weather_change_frequency/1.3)) {
-				
-				weather_state = 2;
-				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));
-				
-			}	
-			
-			if(i>(random_weather_change_frequency/6)) {
-				
-				weather_state = 0;
-				wait(-(random(random_weather_state_time/2)+random_weather_state_time/2));
-				
-			}
-		}	
-		
-		//////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
-		
-		if(weather_state == 1) {
-			
-			part_bmp_weather = bmp_rain;
-			
-			if(rain_random_move_on) {	
-				
-				part_vel_x = rain_wind_x + ((rain_random_move/2)-random(rain_random_move));
-				part_vel_y = rain_wind_y + ((rain_random_move/2)-random(rain_random_move));	
-				
+			weather_lightning_effect();
+			while(nLightningIsOn>0) {
+				wait(1);
 			}
 			
-			else {
-				
-				part_vel_x = rain_wind_x;
-				part_vel_y = rain_wind_y;
-				
-			}	
-			
-			part_vel_z = -rain_fallspeed;
-			part_size=random(2)+8;
-			part_alpha=random(10)+60;	
-			
-		}
-		
-		if(weather_state == 2) {
-			
-			part_bmp_weather = bmp_snow;
-			
-			if(snow_random_move_on == 1) {
-				
-				part_vel_x = snow_wind_x + ((snow_random_move/2)-random(snow_random_move));
-				part_vel_y = snow_wind_y + ((snow_random_move/2)-random(snow_random_move));	
-				
+			if(vRandomCount == 1 && vRandomCountState != 1){
+				vSoundHandleThunder = snd_play(sndThunder1, 100, 0);
+				vRandomCountState = 1;
 			}
-			
-			else {
-				
-				part_vel_x = snow_wind_x;
-				part_vel_y = snow_wind_y;
-				
-			}	
-			
-			part_vel_z = -snow_fallspeed;
-			part_size=random(1)+2;
-			part_alpha=random(50)+40;	
-		}
-		
-		//////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
-		
-		if(weather_state == 1 && disable_lightning_thunder == 0)
-		{	
-			func_increase_brightness();
-			
-			vec_set(temp,vector(inner_radius+random(outer_radius-inner_radius),0,0));
-			vec_rotate(temp,vector(random(360),0,0));
-			vec_add(temp,camera.x); //Camera.x is center now. Maybe you want "player.x" here or something different altogether, depending on your game
-			//Temp now is a random position somewhere on your "ring"
-			//In your case:
-			vec_set(stroke_start,temp);
-			stroke_start.z += 600;
-			vec_set(stroke_end,vector(temp.x+random(100)-200,temp.y+random(100)-200,temp.z));
-			stroke_end.z -= 200;
-			
-			func_lightning_effect();
-			while(lightning_on>0) wait(1); //thunder comes after lightning...
-			
-			if(rand_count == 1 && rand_count_state != 1)
-			{
-				snd_handle_thunder = snd_play(thunder1_wav, VOL_EFFECTS, 0);
-				rand_count_state = 1;
+			if(vRandomCount == 2 && vRandomCountState != 2) {
+				vSoundHandleThunder = snd_play(sndThunder2, 100, 0);
+				vRandomCountState = 2;
 			}
-			if(rand_count == 2 && rand_count_state != 2)
-			{
-				snd_handle_thunder = snd_play(thunder2_wav, VOL_EFFECTS, 0);
-				rand_count_state = 2;
+			if(vRandomCount == 3 && vRandomCountState != 3) {
+				vSoundHandleThunder = snd_play(sndThunder3, 100, 0);
+				vRandomCountState = 3;	
 			}
-			if(rand_count == 3 && rand_count_state != 3)
-			{
-				snd_handle_thunder = snd_play(thunder3_wav, VOL_EFFECTS, 0);
-				rand_count_state = 3;	
+			if(vRandomCount == 4 && vRandomCountState != 4) {
+				vSoundHandleThunder = snd_play(sndThunder4, 100, 0);
+				vRandomCountState = 4;	
 			}
-			if(rand_count == 4 && rand_count_state != 4)
-			{
-				snd_handle_thunder = snd_play(thunder4_wav, VOL_EFFECTS, 0);
-				rand_count_state = 4;	
-			}
-			if(rand_count == 5 && rand_count_state != 5)
-			{
-				snd_handle_thunder = snd_play(thunder5_wav, VOL_EFFECTS, 0);
-				rand_count_state = 5;	
+			if(vRandomCount == 5 && vRandomCountState != 5) {
+				vSoundHandleThunder = snd_play(sndThunder5, 100, 0);
+				vRandomCountState = 5;	
 			}	
 		}
 		
 		wait(-random(5));
-		
-		//////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////
-		
-		particle_seedbox.x=cx/2;
-		particle_seedbox.y=cy/2;
-		particle_seedbox.z=cz/2;
-		
-		if(weather_state>0) {
+	}
+	
+}
+
+
+void weather_random() {
+	randomize();
+	while(1) {
+		if(nRandomWeather == 1) {
+			var i;
+			i = random(nRandomWeatherChangeFrequency);
 			
-			reset(sky_cloud3,SHOW);
-			if (sky_cloud3.alpha < 90) sky_cloud3.alpha += weather_fade_speed/20*time_step;
+			if(i>(nRandomWeatherChangeFrequency/1.3)) {
+				nWeatherState = 1;
+				wait(-(random(nRandomWeatherStateDuration/2)+nRandomWeatherStateDuration/2));	
+			}
+			if(i>(nRandomWeatherChangeFrequency/1.3)) {
+				nWeatherState = 2;
+				wait(-(random(nRandomWeatherStateDuration/2)+nRandomWeatherStateDuration/2));
+			}	
+			if(i>(nRandomWeatherChangeFrequency/6)) {
+				nWeatherState = 0;
+				wait(-(random(nRandomWeatherStateDuration/2)+nRandomWeatherStateDuration/2));
+			}
+		}	
+		wait(1);
+	}	
+}
+
+void weather_toggle() {
+	nWeatherState += 1;
+
+	if(nWeatherState > 2){
+		nWeatherState = 0;
+	}
+}
+
+void weather_change() {
+
+	weather_set_particles();
+	weather_thunder_strike();
+	weather_random();
+
+	var vSndHandleRain			= 0;
+	var vSndHandleWind			= 0;
+	var vSndHandleBgDay			= 0;
+	var vSndHandleBgNight		= 0;
+	var vSndHandleUnderwater	= 0;
+
+	var vVolumeRain				= 2;
+	var vVolumeWind				= 2;
+	var vVolumeBgDay				= 2;
+	var vVolumeBgNight			= 2;
+	var vVolumeUnderwater		= 0;
+	var vEffectDensity = 1;
+	
+	vSndHandleWind = snd_loop(sndWind,vVolumeWind,0);
+	vSndHandleRain = snd_loop(sndRain,vVolumeRain,0);
+
+	if(nAmbientSounds == 1) {
+		vSndHandleBgDay = snd_loop(sndDay,vVolumeBgDay,0);
+		vSndHandleBgNight = snd_loop(sndNight,vVolumeBgNight,0);
+	}
+	if(nUnderwaterSounds == 1) {
+		vSndHandleUnderwater = snd_loop(sndUnderwater,vVolumeUnderwater,0);
+	}
+	
+	nWeatherState = 0;
+	
+	
+	while(1) {
+		
+		vecParticleSeedBox.x=WEATHER_BOX_X/2;
+		vecParticleSeedBox.y=WEATHER_BOX_Y/2;
+		vecParticleSeedBox.z=WEATHER_BOX_Z/2;
+		
+		if(nUnderwaterSounds == 1){
+			if(camera.z > nWaterLevel) { // > 0
+				vVolumeUnderwater = 2;	
+				} else {
+				vVolumeWind = 2;
+				vVolumeRain = 2;
+				vVolumeBgDay = 2;
+				vVolumeBgNight = 2;
+				vVolumeUnderwater = 100;
+			}
+			} else {
+			snd_stop(vVolumeUnderwater);
+		}	
+		
+		if(nWeatherState>0) {
 			
-			if(sky_cloud3.alpha>40) {
-				
-				if(weather_fader<100 && weather_state>0)  weather_fader += weather_fade_speed/20*time_step;
-				
-				if(weather_state == 0) {
-					
-					if(weather_fader>1) weather_fader -= weather_fade_speed/20*time_step;
-					
-				}
-				
-				eff_density = (weather_fader*part_num);
+			entCloud3.flags2 &=~SHOW;
+			if (entCloud3.alpha < 90){
+				entCloud3.alpha += 0.2*time_step;
 			}
 			
-			if(weather_state == 1) {
+			if(entCloud3.alpha>40){
+				if(vWeatherFader<100 && nWeatherState>0) {
+					vWeatherFader += 10/20*time_step;
+				}
+				if(nWeatherState == 0) {
+					if(vWeatherFader>1) {
+						vWeatherFader -= 10/20*time_step;
+					}
+				}
 				
-				if(rain_to_snow_on_altitude && camera.z>snow_altitude && trigg_active_id == -1)
-				weather_state = 2;
+				vEffectDensity = (vWeatherFader*vParticleNumber);
+			}
+			
+			if(nWeatherState == 1) {
 				
-				part_num = rain_part_num;
+				vParticleNumber = RAIN_DENSITY;
 				
-				if(snd_vol_bg_day>2 || snd_vol_bg_night>2) {
-
-					snd_vol_bg_day -= weather_soundfade_speed*time_step;
-					snd_vol_bg_night -= weather_soundfade_speed*time_step;
-					
+				if(vVolumeBgDay>2 || vVolumeBgNight>2) {
+					vVolumeBgDay -= 0.6*time_step;
+					vVolumeBgNight -= 0.6*time_step;
 				}	
 				
-				if(sky_cloud3.alpha>40) {
+				if(entCloud3.alpha>40) {
 					
-					if(snd_vol_rain<snd_vol_rain_max) snd_vol_rain += weather_soundfade_speed*time_step;
-					if(snd_vol_wind<snd_vol_wind_max_when_rainy) snd_vol_wind += weather_soundfade_speed*time_step;
+					if(vVolumeRain<50){vVolumeRain += 0.6*time_step;}
+					if(vVolumeWind<10){vVolumeWind += 0.6*time_step;}
+					else{vVolumeWind -= 0.6*time_step;}
 					
-					else snd_vol_wind -= weather_soundfade_speed*time_step;
-					
-					effect(func_effect_particle_seed,eff_density,nullvector,nullvector);
-					
+					effect(weather_effect_seed,vEffectDensity,nullvector,nullvector);
 				}
 			}	
 			
-			if(weather_state == 2) {
+			if(nWeatherState == 2) {
 				
-				if(rain_to_snow_on_altitude == 1 && camera.z<snow_altitude && trigg_active_id == -1)
-				weather_state = 1;
+				vParticleNumber = SNOW_DENSITY;
 				
-				part_num = snow_part_num;
-				
-				if(sky_cloud3.alpha>40) {
+				if(entCloud3.alpha>40){
 					
-					if(snd_vol_rain>2) snd_vol_rain -= weather_soundfade_speed*time_step*2;
-					if(snd_vol_wind<snd_vol_wind_max) snd_vol_wind += (eff_density/50)*weather_soundfade_speed*time_step;
+					if(vVolumeRain>2){vVolumeRain -= 0.6*time_step*2;}
+					if(vVolumeWind<40){vVolumeWind += (vEffectDensity/50)*0.6*time_step;}
 					
-					if(snd_vol_bg_day>2 || snd_vol_bg_night>2) {
-						
-						snd_vol_bg_day -= weather_soundfade_speed*time_step;
-						snd_vol_bg_night -= weather_soundfade_speed*time_step;
-						
+					if(vVolumeBgDay>2 || vVolumeBgNight>2){
+						vVolumeBgDay -= 0.6*time_step;
+						vVolumeBgNight -= 0.6*time_step;
 					}
 					
-					effect(func_effect_particle_seed,eff_density,nullvector,nullvector);
+					effect(weather_effect_seed,vEffectDensity,nullvector,nullvector);
 				}
 			}
 			
-			if(trigg_active_id < 0) {
+			if(nActiveTriggerId < 0) {
 				
-				if(camera.fog_start>weather_fog_near) camera.fog_start -= weather_fade_speed*time_step;
-				else camera.fog_start += weather_fade_speed*time_step;
-				
-				if(camera.fog_end>weather_fog_far) camera.fog_end -= weather_fade_speed*time_step;
-				else camera.fog_end += weather_fade_speed*time_step;
-				
+				if(camera.fog_start>WEATHER_FOG_NEAR) {
+					camera.fog_start -= 10*time_step;
+					} else {
+					camera.fog_start += 10*time_step;
+				}
+				if(camera.fog_end>WEATHER_FOG_FAR){
+					camera.fog_end -= 10*time_step;
+					} else {
+					camera.fog_end += 10*time_step;
+				}
 			}
-			
-			
 		}
 		
-		if(weather_state == 0) {
+		if(nWeatherState == 0) {
 			
-			if(sky_cloud3.alpha > 1) sky_cloud3.alpha -= weather_fade_speed/60*time_step;
-			if(sky_cloud3.alpha<1) reset(sky_cloud3,SHOW);
 			
-			if(sky_cloud3.alpha > 40) {
+			if(entCloud3.alpha > 1) {
+				entCloud3.alpha -= 0.6*time_step;
+			}
+			if(entCloud3.alpha<1) {
+				entCloud3.flags2 &=~SHOW;
+			}
+			
+			if(entCloud3.alpha > 40) {
 				
-				if(snd_vol_rain>2 || snd_vol_wind>2) {
-					
-					snd_vol_rain -= weather_soundfade_speed*time_step;
-					snd_vol_wind -= weather_soundfade_speed*time_step;
-					
-					effect(func_effect_particle_seed,eff_density/4,nullvector,nullvector);
-					
+				if(vVolumeRain>2 || vVolumeWind>2) {
+					vVolumeRain -= 0.6*time_step;
+					vVolumeWind -= 0.6*time_step;
+					effect(weather_effect_seed,vEffectDensity/4,nullvector,nullvector);
 				}		
 			}
 			
-			if(sky_cloud3.alpha < 60) {
+			if(entCloud3.alpha < 60) {
 				
 				if(sun_angle.pan > 160 && sun_angle.pan < 360) {
-					
-					if(snd_vol_bg_night<snd_vol_bg_night_max) {
-						
-						snd_vol_bg_night += weather_soundfade_speed*time_step;
-						
-						if(snd_vol_bg_day > 2) snd_vol_bg_day -= weather_soundfade_speed*time_step;
-						
+					if(vVolumeBgNight<80){
+						vVolumeBgNight += 0.6*time_step;
+						if(vVolumeBgDay > 2) {
+							vVolumeBgDay -= 0.6*time_step;
+						}
 					}			
 				}
 				
 				if(sun_angle.pan>0 && sun_angle.pan<160) {
 					
-					if(snd_vol_bg_day<snd_vol_bg_day_max) {
-						
-						snd_vol_bg_day += weather_soundfade_speed*time_step;
-						if(snd_vol_bg_night > 2) snd_vol_bg_night -= weather_soundfade_speed*time_step;
-						
+					if(vVolumeBgDay<80) {
+						vVolumeBgDay += 0.6*time_step;
+						if(vVolumeBgNight > 2){
+							vVolumeBgNight -= 0.6*time_step;
+						}
 					}	
 				}
 			}
 			
-			if(trigg_active_id < 0) {
-				
-				if(camera.fog_start>land_fog_near) camera.fog_start -= weather_fade_speed*time_step;
-				else camera.fog_start += weather_fade_speed*time_step;
-				
-				if(camera.fog_end>land_fog_far) camera.fog_end -= weather_fade_speed*time_step;
-				else camera.fog_end += weather_fade_speed*time_step;
-				
+			if(nActiveTriggerId < 0) {
+				if(camera.fog_start>LAND_FOG_NEAR) {
+					camera.fog_start -= 10*time_step;
+					} else {
+					camera.fog_start += 10*time_step;
+				}
+				if(camera.fog_end>LAND_FOG_FAR) {
+					camera.fog_end -= 10*time_step;
+					} else {
+					camera.fog_end += 10*time_step;
+				}
 			}	
 		}
 		
-		sky_sun.alpha = clamp((90-sky_cloud3.alpha),2,100);
-		
-		
-		snd_tune(snd_handle_rain,snd_vol_rain,0,0);
-		snd_tune(snd_handle_wind,snd_vol_wind,0,0);	
-		snd_tune(snd_handle_bg_day,snd_vol_bg_day,0,0);
-		snd_tune(snd_handle_bg_night,snd_vol_bg_night,0,0);
+		entSkySun.alpha = clamp((90-entCloud3.alpha),2,100);
+		snd_tune(vSndHandleRain,vVolumeRain,0,0);
+		snd_tune(vSndHandleWind,vVolumeWind,0,0);	
+		snd_tune(vSndHandleBgDay,vVolumeBgDay,0,0);
+		snd_tune(vSndHandleBgNight,vVolumeBgNight,0,0);
+		snd_tune(vSndHandleUnderwater,vVolumeUnderwater,0,0);
 		
 		wait(1);		
 	}	
+}
+
+
+void fade_in_sky_day() {
+	if (entCloud1.alpha < 80){entCloud1.alpha += 0.03*time_step*vDayTransitionTime;} 
+	if (entCloud2.alpha < 60){entCloud2.alpha += 0.03*time_step*vDayTransitionTime;}
+	if (entSkyDay.alpha < 60){entSkyDay.alpha += 0.03*time_step*vDayTransitionTime;}
+	if (entSkyNight.alpha > 1){entSkyNight.alpha -= 0.03*time_step*vDayTransitionTime;}	
+}
+
+void set_sky_day() {
+	entCloud1.alpha = 80;
+	entCloud2.alpha = 60;
+	entSkyDay.alpha = 60;
+	entSkyNight.alpha = 1;
+	//Todo Sound here
+}
+
+void fade_in_sky_night(){
+	if (entCloud1.alpha > 10){entCloud1.alpha -= 0.03*time_step*vDayTransitionTime;} 
+	if (entCloud2.alpha > 10){entCloud2.alpha -= 0.03*time_step*vDayTransitionTime;} 
+	if (entSkyNight.alpha < 100){entSkyNight.alpha += 0.03*time_step*vDayTransitionTime;}
+	if (entSkyDay.alpha > 1){entSkyDay.alpha -= 0.03*time_step*vDayTransitionTime;}	
+}
+
+void set_sky_night() {
+	entCloud1.alpha = 10;
+	entCloud2.alpha = 10;
+	entSkyDay.alpha = 10;
+	entSkyNight.alpha = 100;
+}
+
+void act_mystymood_trigg_label1();
+
+//title:MystyMood Sky Template
+//image:loopix_logo.pcx
+//action:act_mystymood_trigg  
+//skill1:TRIGGER_RANGE 300.000
+//help: sets  range within the mood-trigger is activated
+//skill2:TRIGGER_RAIN_WIND_X 2.000
+//help: wind strenght on direction x
+//skill3:TRIGGER_RAIN_WIND_Y 0.000
+//help:  wind strenght on direction y
+//skill4:TRIGGER_RAIN_FALLSPEED 20.000
+//help: fallingspeed of the raindrops
+// section:
+//skill5:TRIGGER_SNOW_WIND_X 4.000
+//help: wind strenght on direction x
+//skill6:TRIGGER_SNOW_WIND_Y 0.000
+//help: wind strenght on direction y
+//skill7:TRIGGER_SNOW_FALL_SPEED 5.000
+//help: fallingspeed of the snowflakes
+// section:
+//skill8:T_RAIN_RANDOM_MOVE 2.000
+//help: random-xy movement of the rain particle
+//skill9:T_SNOW_RANDOM_MOVE 4.000
+//help: random-xy movement of the snow particle
+// section:
+//section:
+//skill11:T_FOG_NEAR 0.000
+//help: sets the fog_near distance...use negative values for starting the fog behind the camera
+//skill12:T_FOG_FAR 0.000
+//help: sets the fog_far distance
+//skill13: T_FOG_RED 140.000
+//help: fog color red
+//skill14: T_FOG_GREEN 170.000
+//help: fog color green
+//skill15: T_FOG_BLUE 160.000
+//help: fog color blue
+//section:
+//text: flag to enable rain
+//flag1:TRIGGER_RAIN 0.000
+//text: flag to enable snow
+//flag2:TRIGGER_SNOW 0.000
+//text: flag to disable lightning and thunder
+//flag3:TRIGGER_DISABLE_THUNDER
+// section:
+// section:
+//text: flag to enable fog distance/density change
+//flag6:T_FOG_CHANGE 1.000
+//uses:TRIGGER_RANGE,trigg_rain,trigg_snow,TRIGGER_RAIN_WIND_X,TRIGGER_RAIN_WIND_Y,TRIGGER_RAIN_FALLSPEED
+//uses:TRIGGER_SNOW_WIND_X,TRIGGER_SNOW_WIND_Y,TRIGGER_SNOW_FALL_SPEED
+//uses:T_RAIN_RANDOM_MOVE,T_SNOW_RANDOM_MOVE
+//uses:TRIGGER_DISABLE_THUNDER
+//uses:T_FOG_CHANGE,T_FOG_NEAR,T_FOG_FAR,T_FOG_RED,T_FOG_GREEN,T_FOG_BLUE
+action act_mystymood_trigg()
+{
+	//ent_mystymood_trigg = me;
 	
-	*/
+	//	my.invisible = on;
+	set(my,PASSABLE);
 	
+	//set default skills
+	if(!my.TRIGGER_RANGE){my.TRIGGER_RANGE = 300;}
+	if(!my.TRIGGER_RAIN_FALLSPEED){my.TRIGGER_RAIN_FALLSPEED = 20;}
+	if(!my.TRIGGER_SNOW_FALL_SPEED){my.TRIGGER_SNOW_FALL_SPEED = 5;}
+	
+	
+
+	my.TRIGGER_ID = nTriggerCount;
+	nTriggerCount += 1;
+
+	my.skill70 = nWeatherState;	
+	my.skill72 = vRainRandomMove;
+	my.skill73 = vecRainDirection.x;
+	my.skill74 = vecRainDirection.y;
+	my.skill75 = vecRainDirection.z;
+	my.skill76 = vDisableThunder;
+	my.skill78 = vSnowRandomMove;
+	my.skill79 = vecSnowDirection.x;
+	my.skill80 = vecSnowDirection.y;
+	my.skill81 = vecSnowDirection.z;
+	my.skill82 = 10;	
+
+	while(1)
+	{
+		if(vec_dist(my.x,camera.x) < my.TRIGGER_RANGE)
+		{
+			nActiveTriggerId = my.TRIGGER_ID;
+			
+			if(is(my,TRIGGER_RAIN))
+			{
+				nWeatherState = 1;	
+			}
+			if(is(my,TRIGGER_SNOW))
+			{
+				nWeatherState = 2;	
+			}
+			if(!is(my,TRIGGER_SNOW) && !is(my,TRIGGER_RAIN))
+			{
+				nWeatherState = 0;	
+			}
+			
+			if(nWeatherState > 0)
+			{
+				
+				vRainRandomMove = my.T_RAIN_RANDOM_MOVE;
+				
+				vecRainDirection.x = my.TRIGGER_RAIN_WIND_X;
+				vecRainDirection.y = my.TRIGGER_RAIN_WIND_Y;
+				
+				vecRainDirection.z = my.TRIGGER_RAIN_FALLSPEED;
+				
+				vSnowRandomMove = my.T_SNOW_RANDOM_MOVE;
+				
+				vecSnowDirection.x = my.TRIGGER_SNOW_WIND_X;
+				vecSnowDirection.y = my.TRIGGER_SNOW_WIND_Y;
+				
+				vecSnowDirection.z = my.TRIGGER_SNOW_FALL_SPEED;		
+				
+				vDisableThunder = is(my,TRIGGER_DISABLE_THUNDER);
+			}
+			
+			if(is(my,T_FOG_CHANGE))
+			{
+				fade_colors(d3d_fogcolor1,vecCurrentColor,vecTempColor);
+				
+				vFogDistanceNearTemp = my.T_FOG_NEAR;
+				vFogDistanceFarTemp= my.T_FOG_FAR;
+				
+				if(camera.fog_start>vFogDistanceNearTemp){
+					camera.fog_start -= 10*time_step;
+				}
+				else{
+					camera.fog_start += 10*time_step;
+				}
+				if(camera.fog_end>vFogDistanceFarTemp){
+					camera.fog_end -= 10*time_step;
+				}
+				else{
+					camera.fog_end += 10*time_step;
+				}
+				
+				vecTempColor.z = my.T_FOG_RED;
+				vecTempColor.y = my.T_FOG_GREEN;
+				vecTempColor.x = my.T_FOG_BLUE;
+				
+				
+			}
+		}else
+		{
+			if(nActiveTriggerId == my.TRIGGER_ID)
+			{
+				nActiveTriggerId = -1;
+				
+				act_mystymood_trigg_label1();	
+				break;
+			}
+		}
+		
+		wait(1);	
+	}
+}
+
+void act_mystymood_trigg_label1()
+{
+	vWeatherFader = 1;//reset this var
+
+	nWeatherState = my.skill70;
+	vRainRandomMove = my.skill72;
+	vecRainDirection.x = my.skill73;
+	vecRainDirection.y = my.skill74;
+	vecRainDirection.z = my.skill75;
+	vDisableThunder = my.skill76;
+	vSnowRandomMove = my.skill78;
+	vecSnowDirection.x = my.skill79;
+	vecSnowDirection.y = my.skill80;
+	vecSnowDirection.z = my.skill81;
+	//weather_fade_speed = my.skill82;
+	
+	act_mystymood_trigg();
+}
+
+void weather_sun() {
+	nWeatherState = 0;
+}
+
+void weather_rain() {
+	vDisableThunder = 1;
+	nWeatherState = 1;
+}
+
+void weather_thunder() {
+	vDisableThunder = 0;
+	nWeatherState = 1;
+}
+
+void weather_snow() {
+	nWeatherState = 2;
+}
+
+void weather_daynight_dynamic() {
+	nDynamicDayNight = 1;
+}
+
+void weather_daynight_static() {
+	nDynamicDayNight = 0;
+}
+
+void weather_night() {
+	nDynamicDayNight = 0;
+	vSunAzimuth = 191;
+	vec_set(d3d_fogcolor1, vector(30,20,20));
+	set_sky_night();
+}
+
+void weather_day() {
+	nDynamicDayNight = 0;
+	vSunAzimuth = 100;
+	vec_set(d3d_fogcolor1, vector(140,170,160));
+	set_sky_day();
+}
+
+void weather_evening() {
+	nDynamicDayNight = 0;
+	vSunAzimuth = 161;
+	vec_set(d3d_fogcolor1, vector(72,135,240));
+	set_sky_night();
+}
+
+void weather_morning() {
+	nDynamicDayNight = 0;
+	vSunAzimuth = 341;
+	vec_set(d3d_fogcolor1, vector(111,190,250));
+	set_sky_day();	
 }
 
 /*
 --------------------------------------------------
-void LoadMystymood(BOOL _on, BOOL load_lens)
+void LoadMystymood(bool _switch)
 
 Desc:
 
@@ -880,28 +800,27 @@ Returns: -
 --------------------------------------------------
 */
 
-void LoadMystymood(BOOL _on /* , BOOL load_lens */ )
-{
+void LoadMystymood(bool _switch) {
 	
 	WriteLog("[ ] Loading Mystymood");
 	NewLine();
 
-	if( !_on ) { // Unload mystymood & lensflare effect
+	if( ! _switch ) { // Unload mystymood & lensflare effect
 		
 		// macros work only with flag1? :-? (idk)
 		// so we use the inverse flag to control flags2.
-		sky_horizon.flags2 &= ~SHOW;
-		sky_cloud1.flags2 &= ~SHOW;
-		sky_cloud2.flags2 &= ~SHOW;
-		sky_cloud3.flags2 &= ~SHOW;
-		sky_day.flags2 &= ~SHOW;
-		sky_sun.flags2 &= ~SHOW;
-		sky_suncorona.flags2 &= ~SHOW;
-		sky_sunshine.flags2 &= ~SHOW;
-		sky_night.flags2 &= ~SHOW;
-		sky_moon.flags2 &= ~SHOW;
+		entHorizon.flags2 &= ~SHOW;
+		entCloud1.flags2 &= ~SHOW;
+		entCloud2.flags2 &= ~SHOW;
+		entCloud3.flags2 &= ~SHOW;
+		entSkyDay.flags2 &= ~SHOW;
+		entSkySun.flags2 &= ~SHOW;
+		entSkySunCorona.flags2 &= ~SHOW;
+		entSkySunshine.flags2 &= ~SHOW;
+		entSkyNight.flags2 &= ~SHOW;
+		entSkyMoon.flags2 &= ~SHOW;
 		
-		mystymood_active = 0;
+		mystymoodActive = 0;
 		
 		WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
 		NewLine();
@@ -909,293 +828,188 @@ void LoadMystymood(BOOL _on /* , BOOL load_lens */ )
 		return;
 		
 	}
-	
-	/*
-	
-	int step = 0;
-	
-	if(!load_lens) {
-		
-		flare1_ent.flags2 &= ~SHOW;
-		flare2_ent.flags2 &= ~SHOW;
-		//			flare3_ent.flags2 &= ~SHOW; <-- You suck, Mr. Sun.
-		flare4_ent.flags2 &= ~SHOW;
-		flare5_ent.flags2 &= ~SHOW;
-		flare6_ent.flags2 &= ~SHOW;
-		flare7_ent.flags2 &= ~SHOW;
-		flare8_ent.flags2 &= ~SHOW;
-		flare9_ent.flags2 &= ~SHOW;
-		flare10_ent.flags2 &= ~SHOW;
-		flare11_ent.flags2 &= ~SHOW;
-		flare12_ent.flags2 &= ~SHOW;
-		flare13_ent.flags2 &= ~SHOW;
-		flare14_ent.flags2 &= ~SHOW;
-		flare15_ent.flags2 &= ~SHOW;
-		flare16_ent.flags2 &= ~SHOW;
-		flare17_ent.flags2 &= ~SHOW;
-		flare18_ent.flags2 &= ~SHOW;
-		flare19_ent.flags2 &= ~SHOW;
-		flare20_ent.flags2 &= ~SHOW;
-		
-		lens_active = 0;
-		
-		step++;
-		
-	} else LoadMystymoodLensflare();
 
-	if(!_on) { // Unload mystymood & lensflare effect
-		
-		// macros work only with flag1? :-? (idk)
-		// so we use the inverse flag to control flags2.
-		sky_horizon.flags2 &= ~SHOW;
-		sky_cloud1.flags2 &= ~SHOW;
-		sky_cloud2.flags2 &= ~SHOW;
-		sky_cloud3.flags2 &= ~SHOW;
-		sky_day.flags2 &= ~SHOW;
-		sky_sun.flags2 &= ~SHOW;
-		sky_suncorona.flags2 &= ~SHOW;
-		sky_sunshine.flags2 &= ~SHOW;
-		sky_night.flags2 &= ~SHOW;
-		sky_moon.flags2 &= ~SHOW;
-		
-		mystymood_active = 0;
-		
-		step++;
-		
-	}
-
-	if(step>=2) {
-		
-		WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
-		NewLine();
-		
-		return;
-		
-	}
+	entHorizon.flags2 |= SHOW;
+	entCloud1.flags2 |= SHOW;
+	entCloud2.flags2 |= SHOW;
+	entCloud3.flags2 |= SHOW;
+	entSkyDay.flags2 |= SHOW;	
 	
-	*/
-
-	////////////////////////////////////////////////////////////
-	// Setup for lensflare
-	////////////////////////////////////////////////////////////
-	
-	/*
-	flare1_ent.pivot_dist = 1.278;
-	flare2_ent.pivot_dist = 1.200;
-	flare4_ent.pivot_dist = 0.522;
-	flare5_ent.pivot_dist = 0.434;
-	flare6_ent.pivot_dist = 0.348;
-	flare7_ent.pivot_dist = 0.306;
-	flare8_ent.pivot_dist = 0.262;	
-	flare9_ent.pivot_dist = 0.174;
-	flare10_ent.pivot_dist = 0.114;
-	flare11_ent.pivot_dist = 0.044;
-	flare12_ent.pivot_dist = 0.002;
-	flare13_ent.pivot_dist = -0.128;
-	flare14_ent.pivot_dist = -0.258;
-	flare15_ent.pivot_dist = -0.304;
-	flare16_ent.pivot_dist = -0.372;
-	flare17_ent.pivot_dist = -0.390;
-	flare18_ent.pivot_dist = -0.432;
-	flare19_ent.pivot_dist = -0.654;
-	flare20_ent.pivot_dist = -1.000;
-	*/
-	
-	////////////////////////////////////////////////////////////
-
-	sky_horizon.flags2 |= SHOW;
-	sky_cloud1.flags2 |= SHOW;
-	sky_cloud2.flags2 |= SHOW;
-	sky_cloud3.flags2 |= SHOW;
-	sky_day.flags2 |= SHOW;	
-	
-	if(_use_nightstars) sky_night.flags2 |= SHOW;
-	if(_use_moon) sky_moon.flags2 |= SHOW;
+	if(_use_nightstars) entSkyNight.flags2 |= SHOW;
+	if(_use_moon) entSkyMoon.flags2 |= SHOW;
 	
 	if(_use_sun) {
 		
-		sky_sun.flags2 |= SHOW;
-		sky_suncorona.flags2 |= SHOW;
-		sky_sunshine.flags2 |= SHOW;
+		entSkySun.flags2 |= SHOW;
+		entSkySunCorona.flags2 |= SHOW;
+		entSkySunshine.flags2 |= SHOW;
 		
 	}
+	
+	// Arbitrary size here...
+	entSkySun.scale_x = 3;
+	entSkySun.scale_y = 3;
+	
+	VECTOR vecTemp;
+	wait(10);
+	
+	weather_change();
 
-	VECTOR temp;
+	entSkySun.scale_x = 3;
+	entSkySun.scale_y = 3;
 
-	sky_sun.scale_x = sun_scale_x;
-	sky_sun.scale_y = sun_scale_y;
+	camera.fog_start = LAND_FOG_NEAR;//-50;
+	camera.fog_end = LAND_FOG_FAR;//300;
 
-	fog_color = 1;
-
-	camera.fog_start = land_fog_near;//-50;
-	camera.fog_end = land_fog_far;//300;
-
-	vec_set(d3d_fogcolor1,fog_day);//set the default day fog-color 
-
-	mystymood_active = 1;
+	vec_set(d3d_fogcolor1,vector(140,170,160));
+	vec_set(d3d_fogcolor2,vector(140,120,70)); 
 	
 	WriteLog("[X] Task completed, activated Mystymood.");
 	NewLine();
 	
-	//	weather_change();
+	mystymoodActive = 1;
 
-	while(mystymood_active) {
+	while( mystymoodActive ) {
 		
-		vec_set(sun_color.blue,vector(d3d_fogcolor1.blue*sun_col_fac,d3d_fogcolor1.green*sun_col_fac,d3d_fogcolor1.red*sun_col_fac));
-		vec_set(sky_color.blue,d3d_fogcolor1.blue);	
-		vec_set(sky_horizon.blue,d3d_fogcolor1.blue);
-		
-		//		if( !weather_state && trigg_active_id < 0) {
+		if(camera.z<nWaterLevel) {
+			fog_color = 2;
+			vec_set(sun_color.blue,vector(d3d_fogcolor2.blue*0.5,d3d_fogcolor2.green*0.5,d3d_fogcolor2.red*0.5));
+			vec_set(sky_color.blue,d3d_fogcolor2.blue);	
+			vec_set(entHorizon.blue,d3d_fogcolor2.blue);
+			camera.fog_start = AQUA_FOG_NEAR;
+			camera.fog_end = AQUA_FOG_FAR;
+			nIsUnderWater = 1;
+			} else {
 			
-			if(!dynamic_day_night) func_fade_colors(d3d_fogcolor1,current_color,fog_dynamic_day_night_off);
+			if(nIsUnderWater == 1) {
+				camera.fog_start = LAND_FOG_NEAR;
+				camera.fog_end = LAND_FOG_FAR;
+				nIsUnderWater = 0;
+			}
 			
-			if(camera.fog_start>land_fog_near) camera.fog_start -= weather_fade_speed*time_step;
-			else camera.fog_start += weather_fade_speed*time_step;
+			fog_color = 1;
+			vec_set(sun_color.blue,vector(d3d_fogcolor1.blue*0.5,d3d_fogcolor1.green*0.5,d3d_fogcolor1.red*0.5));
+			vec_set(sky_color.blue,d3d_fogcolor1.blue);	
+			vec_set(entHorizon.blue,d3d_fogcolor1.blue);
 			
-			if(camera.fog_end>land_fog_far) camera.fog_end -= weather_fade_speed*time_step;
-			else camera.fog_end += weather_fade_speed*time_step;
-			
-		//		}
-		
-		vec_set(current_color,d3d_fogcolor1);
-		
-		vec_set(temp,sun_pos); 
-		vec_set(sky_sun.x,temp);  // copy the sun_pos location
-		vec_sub(temp,camera.x); // direction vector from camera to our sun_pos
-		vec_normalize(temp,land_fog_far-sun_dist_minus); // chop our direction vector to a set distance	
-		
-		vec_set(sky_sun.x,temp);
-		
-		if(_use_moon) {
-			
-			vec_set(temp,sky_sun.x); 
-			vec_inverse(temp);
-			vec_set(sky_moon.x,temp);  // copy the sun_pos location
+			if(nWeatherState == 0 && nActiveTriggerId < 0) {
+				
+				/*if(nDynamicDayNight==0) {
+					fade_colors(d3d_fogcolor1,vecCurrentColor,vector(160,170,160)); // Constant fog when there is no day night change
+				}*/
+				
+				if(camera.fog_start>LAND_FOG_NEAR) {
+					camera.fog_start -= 10*time_step;
+					} else {
+					camera.fog_start += 10*time_step;
+				}
+				if(camera.fog_end>LAND_FOG_FAR){
+					camera.fog_end -= 10*time_step;
+					} else {
+					camera.fog_end += 10*time_step;
+				}	
+			}	
 		}
 		
-		if(dynamic_day_night) {
+		vec_set(vecCurrentColor,d3d_fogcolor1);
+		
+		camera.clip_near = 0; 
+		camera.clip_far = LAND_FOG_FAR+10;
+		
+		vec_set(vecTemp,sun_pos); 
+		vec_set(entSkySun.x,vecTemp);
+		vec_sub(vecTemp,camera.x);
+		vec_normalize(vecTemp,LAND_FOG_FAR-1000);
+		
+		vec_set(entSkySun.x,vecTemp);
+		
+		// If no moon desired --> disble
+		// Set moon to sun position
+		vec_set(vecTemp,entSkySun.x); 
+		vec_inverse(vecTemp);
+		vec_set(entSkyMoon.x,vecTemp);
+		
+		if(nDynamicDayNight==1) {
 			
-			if(sun_angle.pan > 230 && sun_angle.pan < 360)
-			
-			sun_angle.pan += .01*time_speed_night*time_step;
-			else sun_angle.pan += .01*time_speed*time_step;
+			if(sun_angle.pan > 230 && sun_angle.pan < 360){sun_angle.pan += 0.01*vNightTransitionTime*time_step;}
+			else{sun_angle.pan += 0.01*vDayTransitionTime*time_step;}
 			
 			sun_angle.pan %= 360;
-			sun_angle.tilt = fsin(sun_angle.pan, max_zenith);
+			sun_angle.tilt = fsin(sun_angle.pan, 50);
 			
-			//sun "grows" at low azimut
-			if(sky_sun.z<sun_grow_z) {
-				
-				if(sky_sun.scale_x<sun_scale_x+1 && sky_sun.scale_y<sun_scale_y+1) {
-					
-					sky_sun.scale_x = sky_sun.scale_y += .01 * (time_speed/10) * time_step;
-					
+			if(entSkySun.z<1500){
+				if(entSkySun.scale_x<3+1 && entSkySun.scale_y<4) {
+					entSkySun.scale_x += 0.01*time_step*vDayTransitionTime/10;
+					entSkySun.scale_y += 0.01*time_step*vDayTransitionTime/10;
 				}	
-				
-			}
-			
-			else {
-				
-				if(sky_sun.scale_x>sun_scale_x && sky_sun.scale_y>sun_scale_y) {
-					
-					sky_sun.scale_x = sky_sun.scale_y -= .01 * (time_speed/10) * time_step;
-					
+				} else {
+				if(entSkySun.scale_x>3 && entSkySun.scale_y>3){
+					entSkySun.scale_x -= 0.01*time_step*vDayTransitionTime/10;
+					entSkySun.scale_y -= 0.01*time_step*vDayTransitionTime/10;
 				}
 			}
+			} else {
+			sun_angle.pan = vSunAzimuth;
+			sun_angle.tilt = vSunElevation;
 		}
 		
-		else {
-			
-			sun_angle.pan = sun_azimuth;
-			sun_angle.tilt = sun_elevation;
-			
+		if(sun_angle.pan > 0 && sun_angle.pan < 40){
+			fade_in_sky_day();
+		}	
+		if(sun_angle.pan > 10 && sun_angle.pan < 160){
+			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(140,170,160)); // Day
+		}
+		if(sun_angle.pan > 40 && sun_angle.pan < 160){	
+			set_sky_day();
+		}	
+		if(sun_angle.pan > 160 && sun_angle.pan < 190){
+			fade_in_sky_night();
+			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(72,135,240)); // Evening
+		}
+		if(sun_angle.pan > 190 && sun_angle.pan < 340){
+			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(30,20,20)); // Night
+		}
+		if(sun_angle.pan > 190 && sun_angle.pan < 340){	
+			set_sky_night();
+		}
+		if(sun_angle.pan > 340 && sun_angle.pan < 360){
+			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(111,190,250)); // Morning
 		}
 		
-		if(sun_angle.pan > 0 && sun_angle.pan < 40) {
-			
-			if (sky_cloud1.alpha < 80) sky_cloud1.alpha += sky_fade_speed*time_step*time_speed;
-			if (sky_cloud2.alpha < 60) sky_cloud2.alpha += sky_fade_speed*time_step*time_speed;
-			if (sky_day.alpha < 60) sky_day.alpha += sky_fade_speed*time_step*time_speed;
-			if (sky_night.alpha > 1) sky_night.alpha -= sky_fade_speed*time_step*time_speed;	
-			
+		if(sun_angle.pan > 190 && sun_angle.pan < 350){
+			if(nWeatherState>0) {
+				fade_colors(d3d_fogcolor1,vecCurrentColor,vector(15,15,15)); // Fog weather night
+			}
+			} else {
+			if(nWeatherState>0) {
+				fade_colors(d3d_fogcolor1,vecCurrentColor,vector(50,50,50)); // Fog weather day
+			}
 		}
 		
-		if(sun_angle.pan > 10 && sun_angle.pan < 160) func_fade_colors(d3d_fogcolor1,current_color,fog_day);
+		vec_set(entSkySunshine.x,entSkySun.x);	
+		vec_set(entSkySunCorona.x,entSkySun.x);
 		
-		if(sun_angle.pan > 40 && sun_angle.pan < 160) {
-			
-			sky_cloud1.alpha = 80;
-			sky_cloud2.alpha = 60;
-			sky_day.alpha = 60;
-			sky_night.alpha = 1;
-			
-		}
+		entSkySunCorona.scale_x = 15;
+		entSkySunCorona.scale_y = 12;
 		
-		// Fade into the night...
-		if(sun_angle.pan > 160 && sun_angle.pan < 190) {
-			
-			if (sky_cloud1.alpha > 10) {sky_cloud1.alpha -= sky_fade_speed*time_step*time_speed;} 
-			if (sky_cloud2.alpha > 10) {sky_cloud2.alpha -= sky_fade_speed*time_step*time_speed;} 
-			if (sky_night.alpha < 100) {sky_night.alpha += sky_fade_speed*time_step*time_speed;}
-			if (sky_day.alpha > 1) {sky_day.alpha -= sky_fade_speed*time_step*time_speed;}		
-			
-			func_fade_colors(d3d_fogcolor1,current_color,fog_eve);
-			
-		}
+		entSkySunshine.scale_x = 30;
+		entSkySunshine.scale_y = 12;
 		
-		if(sun_angle.pan > 190 && sun_angle.pan < 340) func_fade_colors(d3d_fogcolor1,current_color,fog_night);
+		entSkyMoon.scale_x = 4.5;
+		entSkyMoon.scale_y = 4.5;	 
 		
-		if(sun_angle.pan > 190 && sun_angle.pan < 340) {
-			
-			sky_cloud1.alpha = 10;
-			sky_cloud2.alpha = 10;
-			sky_day.alpha = 10;
-			sky_night.alpha = 100;
-			
-		}
-		
-		if(sun_angle.pan > 340 && sun_angle.pan < 360) func_fade_colors(d3d_fogcolor1,current_color,fog_mor);
-		
-		if(sun_angle.pan > 190 && sun_angle.pan < 350) {
-			
-			func_fade_colors(d3d_fogcolor1,current_color,fog_weather_night);
-			
-		}
-		
-		else {
-			
-			func_fade_colors(d3d_fogcolor1,current_color,fog_weather_day);
-			
-		}
-		
-		vec_set(sky_sunshine.x,sky_sun.x);	
-		vec_set(sky_suncorona.x,sky_sun.x);
-		
-		sky_suncorona.scale_x = sun_scale_x*5;//15;
-		sky_suncorona.scale_y = sun_scale_y*4;//7;
-		
-		sky_sunshine.scale_x = sun_scale_x*10;
-		sky_sunshine.scale_y = sun_scale_y*4;
-		
-		sky_moon.scale_x = sun_scale_x*moon_scale_fac;
-		sky_moon.scale_y = sun_scale_y*moon_scale_fac;	 
-		
-		sky_night.scale_x = night_sky_scale_x;
-		sky_night.scale_y = night_sky_scale_x;
-		
-		sky_night.u = night_sky_speed_x; 
-		sky_night.v = night_sky_speed_y;
+		entSkyNight.scale_x = 0.5;
+		entSkyNight.scale_y = 0.5;
 		
 		wait(1);
-	}	
-
-	mystymood_active = 0;
+	}
+	
+	mystymoodActive = 0;
 	
 	WriteLog("[X] Switched off Mystymood.");
 	NewLine();
 	
 }
-
 
 /*
 --------------------------------------------------

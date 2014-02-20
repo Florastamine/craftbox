@@ -245,13 +245,13 @@
 // or toggle it.
 
 	// set SSAO state with true or false, returns true if it was successful
-	BOOL setSsaoState (BOOL active);
+	bool setSsaoState (BOOL active);
 	
 	// if SSAO is enabled, it gets deactivated and vice versa. The new state is returned.
-	BOOL toggleSsaoState ();
+	bool toggleSsaoState ();
 	
 	// returns the current state
-	BOOL getSsaoState ();
+	bool getSsaoState ();
 	
 	
 // Render targets
@@ -308,7 +308,7 @@
 	void setSsaoSurface (ENTITY* e, int type);
 	
 	// returns, if a specific entity has a specific surface type
-	BOOL hasSsaoSurface (ENTITY* e, int type);
+	bool hasSsaoSurface (ENTITY* e, int type);
 	
 	// returns the registered surface type of an entity
 	int getSsaoSurface (ENTITY* e);
@@ -382,7 +382,7 @@
 // precalculations
 
 	void loadSsaoShaders ();
-	BOOL compileSsaoShader (MATERIAL** mtlRef, char* customPreamble, char* filename);
+	bool compileSsaoShader (MATERIAL** mtlRef, char* customPreamble, char* filename);
 	STRING* getSsaoShaderPreamble();
 
 	STRING* ssaoShaderPreamble = NULL;
@@ -390,7 +390,7 @@
 
 // mode of operation
 int ssaoMode = SSAO_MODE_DEF;
-BOOL ssaoActive = false;
+bool ssaoActive = false;
 	
 	
 // state
@@ -466,10 +466,10 @@ void activateSsao ();
 
 	void copySsaoClippingParams (MATERIAL* m, VIEW* v);
 	
-	BOOL hasSsaoChainToBeRecreated ();
+	bool hasSsaoChainToBeRecreated ();
 	
 	// asserts that a target bmap is 1.) allocated and 2.) is as big as the screen
-	BOOL hasSsaoBmapToBeRecreated (BMAP* bmap, int lodRatio);
+	bool hasSsaoBmapToBeRecreated (BMAP* bmap, int lodRatio);
 	BMAP* recreateSsaoRenderTarget (BMAP** bmap, int format, int lodRatio);
 	
 	// asserts a view with flags, a view material and a stage
@@ -498,7 +498,7 @@ void activateSsao ();
 // object surface materials	
 
 	// gets the appropriate shader for an entity
-	BOOL getSsaoObjShader (ENTITY* e, MATERIAL** mat, int src);
+	bool getSsaoObjShader (ENTITY* e, MATERIAL** mat, int src);
 	
 	// SSAO object material struct
 		

@@ -128,6 +128,8 @@ void ExitEvent() {
 		CloseDebug();
 		
 	#endif
+	
+	level_load(NULL);
 
 	WriteLog("!! [SYS] Saving configuration...");
 	NewLine();
@@ -153,7 +155,7 @@ void Event_MouseLeft() {
 	if(is(RightClickMenu,SHOW)) reset(RightClickMenu,SHOW);
 	if(!temp_pos.x && !temp_pos.y && !temp_pos.z)  wait(1); // couldnt return here
 	
-	if(!mouse_panel && !TerrainEditMode)
+	if(!mouse_panel && !cbTerrainEditing)
 	{
 		
 		// Something is on top...
@@ -259,7 +261,7 @@ void Event_MouseRight() {
 			
 			if(!temp_pos.x && !temp_pos.y && !temp_pos.z)  wait(1); // couldnt return here
 			
-			if(!mouse_panel && !TerrainEditMode)
+			if(!mouse_panel && !cbTerrainEditing)
 			{
 				
 				if(mouse_ent.ObjectType != Neutral && mouse_ent.ObjectType != Terrain) {
@@ -319,7 +321,7 @@ void Event_key_esc() {
 	
 	while(key_esc) wait(1);
 	
-	if( ! IN_GAME ) { // for things in the menu
+	if( ! cbInBuildment ) { // for things in the menu
 		
 		// var check is only available for multiple panels
 		// so to close a single panel just check and disable them with set() and is().
@@ -416,9 +418,9 @@ void Event_key_esc() {
 		
 		//////////////////////////////////////////////////////////////	
 		
-		if(PLAYTESTING ) {
+		if(cbPlaytesting ) {
 			
-			PLAYTESTING = 0;
+			cbPlaytesting = 0;
 			from_test_play = 0; // reset
 			
 			return;

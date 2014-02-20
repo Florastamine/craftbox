@@ -1,7 +1,3 @@
-#ifndef Craftbox_System_Log
-
-#define Craftbox_System_Log
-
 /*
 --------------------------------------------------
 Craftbox_System_Log.c
@@ -31,20 +27,10 @@ The original library can be found by unzipping Craftbox_System_Log.zip.
 
 LOGFILEHNDL is now internal. For convenience and safety just use OpenLog() and CloseLog().
 
-+[24/1/2014]: Support for the old logging method, which can be toggled by commenting USE_TXT_LOG in Craftbox.h
-
 >+++
 --------------------------------------------------
 
 */
-
-void hVar(STRING *str, int i) { // This function is used for writing information to txt headers
-
-	// At this time LOGFILEHNDL has already been opened..so no check
-	sprintf(compose_target,"%s %d",str, (long) i );
-	file_str_write(LOGFILEHNDL,compose_target); 
-	
-}
 
 /*
 --------------------------------------------------
@@ -137,7 +123,7 @@ void OpenLog (STRING *LogFile) {
 			default: 
 			
 			file_str_write(LOGFILEHNDL,"Linux or another operating system detected.");
-			//			UNDER_MAC_OR_LINUX = 1; // mark
+			//			cbNonWindows = 1; // mark
 			break;
 			
 		}
@@ -177,8 +163,6 @@ void OpenLog (STRING *LogFile) {
 		#else 
 		
 		LOGFILEHNDL = file_open_append(LogFile);
-		while(proc_status(file_open_append)) wait(1);
-		
 		WriteLogHeaders();
 		
 	#endif
@@ -292,19 +276,6 @@ void WriteLog(ANGLE *angle) {
 ////////////////////////////////////////////////////////////
 // Strings combined with different data types
 ////////////////////////////////////////////////////////////
-void WriteLog(STRING *str, int i) {
-	
-	if(!str) {
-		
-		WriteLog(i);
-		return;
-		
-	}
-
-	str_cat(str_cpy(holder,str),str_for_int(holder_num,i));
-	
-}
-
 void WriteLog(STRING *str, VECTOR *vektor) {
 	
 	if(!str && vektor) {
@@ -418,6 +389,9 @@ void WriteLogHeaders()
 Desc: [24/1/2013]: Black night. Added back to the 
 logging library for maintaining the old logging style.
 
+WriteLog() now act as "var" writers so I use file_* operations,
+directly, here.
+
 Returns: -
 --------------------------------------------------
 */
@@ -427,12 +401,12 @@ void WriteLogHeaders() {
 	NewLine();
 	
 	WriteLog("-- Log file opened at ");
-	hVar("",sys_hours);
-	hVar(": ",sys_minutes);
-	hVar(": ",sys_seconds);
-	hVar(",",sys_day);
-	hVar("/ ",sys_month);
-	hVar("/ ",sys_year);
+	WriteLog("",sys_hours);
+	WriteLog(": ",sys_minutes);
+	WriteLog(": ",sys_seconds);
+	WriteLog(",",sys_day);
+	WriteLog("/ ",sys_month);
+	WriteLog("/ ",sys_year);
 	NewLine();
 	
 	switch(sys_winversion) {
@@ -458,14 +432,14 @@ void WriteLogHeaders() {
 		default: 
 		
 		WriteLog("Linux or another operating system detected.");
-		UNDER_MAC_OR_LINUX = 1; // mark
+		cbNonWindows = true; // mark
 		break;
 		
 	}
 	
 	NewLine();
 	
-	hVar("Allocated memory: ",sys_memory*1024);
+	WriteLog("Allocated memory: ",sys_memory*1024);
 	WriteLog("KB");
 	NewLine();
 	
@@ -496,5 +470,3 @@ void WriteLogHeaders() {
 	#endif
 	
 }
-
-#endif

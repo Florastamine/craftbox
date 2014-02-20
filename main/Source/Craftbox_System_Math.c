@@ -1,22 +1,3 @@
-#include <default.c>
-
-VECTOR *vec_form(VECTOR *, VECTOR *);
-VECTOR *_vec_add(VECTOR *, VECTOR *);
-VECTOR *_vec_scale(VECTOR *, float);
-VECTOR *_vec_sub(VECTOR *, VECTOR *);
-VECTOR *vec_center(VECTOR *, VECTOR *);
-VECTOR *vec_centroid(VECTOR *, VECTOR *, VECTOR *);
-VECTOR *_vec_cross(VECTOR *, VECTOR *, VECTOR *);
-VECTOR *vec_simplify(VECTOR *);
-
-long GCD(long, long);
-int vec_same_plane(VECTOR *, VECTOR *, VECTOR *, VECTOR *);
-float _vec_length(VECTOR *);
-float _vec_dot(VECTOR *, VECTOR *);
-float vec_ang(VECTOR *, VECTOR *);
-
-long sresult = 0;
-
 VECTOR *vec_form(VECTOR *v1, VECTOR *v2) {
 	
 	VECTOR *v3 = nullvector;

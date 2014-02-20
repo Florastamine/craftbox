@@ -49,7 +49,7 @@ int Console() {
 	WriteLog("[SYS] Trying to start the console...");
 	NewLine();
 
-	if(KERNEL_IS_RUNNING) {
+	if(cbKernelRunning) {
 		
 		_beep();
 		
@@ -69,7 +69,7 @@ int Console() {
 
 	// Additional WriteLogs here.
 
-	while(!KERNEL_IS_RUNNING) {
+	while(!cbKernelRunning) {
 		
 		inkey((ConsoleText->pstring)[1]);
 		

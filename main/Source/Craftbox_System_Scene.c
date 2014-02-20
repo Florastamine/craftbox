@@ -41,10 +41,10 @@ Returns: -
 --------------------------------------------------
 */
 void OptimizeFramerate(var dfr) {
-	
+
 	WriteLog("[ ] Optimizing frame rate...");
 	NewLine();
-	
+
 	WriteLog("[X] Task completed.");
 	NewLine();
 

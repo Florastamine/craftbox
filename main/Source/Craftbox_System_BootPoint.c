@@ -45,7 +45,7 @@ int UnloadKernel() {
 	WriteLog("[SYS] Unloading the kernel...");
 	NewLine();
 
-	KERNEL_IS_RUNNING = 0;
+	cbKernelRunning = false;
 
 	// From GCreditsShow().
 	GMainMenuHide();
@@ -67,8 +67,8 @@ int UnloadKernel() {
 int ReloadKernel()
 
 Desc: Basically this is just the same as a combination
-of UnloadKernel() and LoadKernel(). However, it reduces
-a few unnecessary calls (for example)
+of UnloadKernel() and LoadKernel(), but it reduces 
+unnecessary calls.
 
 Returns: -
 --------------------------------------------------
@@ -106,7 +106,7 @@ void LoadKernel()
 
 Desc: Sets up the environment and calls a list of 
 methods that is essential for starting up craftbox.
-Sets KERNEL_IS_RUNNING to 1 if it had been fully loaded.
+Sets cbKernelRunning to 1 if it had been fully loaded.
 
 Returns: -
 --------------------------------------------------
@@ -114,7 +114,7 @@ Returns: -
 
 void LoadKernel() {
 	
-	while( ! PreKernelDone ) wait(1);
+	while( ! cbFinishedLoadKernel ) wait(1);
 	
 	WriteLog("[SYS] Loading kernel ");
 	NewLine();
@@ -122,10 +122,10 @@ void LoadKernel() {
 	WriteLog("[ ] Initializing...");
 	NewLine();
 	
-	C_TRACE_OPTIMIZATION = (BOOL)str_stri(command_str,PARAM_USECTRACE);
-	if(C_TRACE_OPTIMIZATION) DISTANCE_OPTIMIZATION = false;
+	cbUsectraceOptimization = (int)str_stri(command_str,PARAM_USECTRACE);
+	if(cbUsectraceOptimization) cbUseDistanceBasedOptimization = false;
 	
-	// Init strings
+	// Init some strings
 	str_cpy(seedEnt,undef);
 	str_cpy(TEMPSTR,undef);
 	str_cpy(FILE_GAME_INTRO_VIDEO,undef);
@@ -133,6 +133,8 @@ void LoadKernel() {
 	str_cpy(GROUNDSTR,undef);
 	str_cpy(SKYSTR,undef);
 	str_cpy(PLAYTEST_LOADSCREENSTR,undef);
+	
+	// 300 is enough to hold almost any object's name.
 	clipboard.name = str_create("#300");
 	
 	// Init custom mouse cursor
@@ -142,7 +144,7 @@ void LoadKernel() {
 	else mouseimg = bmap_create("mouse_pointer.png"); // default cursor
 	mouse_map = mouseimg;
 	
-	// Init events
+	// Init events - their implementations can be found in Craftbox_System_Event.c
 	on_bksp = TakeScreenshot;
 	on_exit = ExitEvent;
 	on_close = ExitEvent;
@@ -166,6 +168,9 @@ void LoadKernel() {
 	//	ReadMaterialDataFromFile(mat_custom[3],FILE_CUSTOM_MAT_4);
 	
 	// Copy vars
+	
+	/*
+	
 	original_moon_scale_fac = moon_scale_fac;
 	original_time_speed_night = time_speed_night;
 	original_night_sky_scale_x = night_sky_scale_x;
@@ -178,8 +183,10 @@ void LoadKernel() {
 	original_d3d_fogcolor1g = d3d_fogcolor1.green;
 	original_d3d_fogcolor1b = d3d_fogcolor1.blue;
 	
-	// Fetch pools
-	FolderScan(files_list_SKYSTR_Pool, PATH_SKIES , str_create("tga") );
+	*/
+	
+	// Fetch data to pools.
+	FolderScan(files_list_SKYSTR_Pool, PATH_SKIES , str_create("tga") ); // Only TGA skies are allowed.
 	while(proc_status(FolderScan)) wait(1);
 	
 	FolderScan(files_list_GROUNDSTR_Pool, PATH_GROUNDS, str_create("wmb") );
@@ -188,15 +195,16 @@ void LoadKernel() {
 	FolderScan(files_list_LOADGAMESTR_Pool, PATH_SAVEDGAMES, EXT_SAVEDGAMES);
 	while(proc_status(FolderScan)) wait(1);
 	
-	// at this time the kernel has finished its job
-	// gui calculation/initialization are on their own
-	KERNEL_IS_RUNNING = 1;
+	// At this time, kernel initialization function is finished.
+	// GUI calculations/initializations are on their own
+	cbKernelRunning = 1;
+	
 	if( is(LoadKernelScreen,SHOW) ) reset(LoadKernelScreen,SHOW);
 	
 	WriteLog("[X] Finished initializing the kernel.");
 	NewLine();
 	
-	// Things happened after the kernel has been loaded.
+	// For loading miscellaneous stuff post-kernel
 	PostLoadKernel();
 	
 }
@@ -211,10 +219,18 @@ void LoadKernel() {
 // sorry for this commenting style, well, but my time is limited :P
 void PostLoadKernel() {
 	
-	// Init (calculate) gui
+	// Before the show can be started, there are some things left to be done!
+	// Please be patient, and let our workers finalizing under the curtains.
+	
+	// Init (calculate) the GUI stuff
 	GGUIInit();
 	while(proc_status(GGUIInit)) wait(1);
 	
+	// Load the Mystymood engine.
+	InitMystymood();
+	while(proc_status(InitMystymood)) wait(1);
+	
+	// Show-Time!
 	GLoadMainMenu();
 	while(proc_status(GLoadMainMenu)) wait(1);
 	
@@ -235,16 +251,15 @@ void PostLoadKernel() {
 --------------------------------------------------
 void LoopKernel()
 
-Desc: The code inside this function will always be
-executed until craftbox exits. After that, UnloadKernel()
-will take care of the rest.
+LoopKernel() is the implementation of kernel loop.
+UnloadKernel() will clean the mess.
 
 Returns: -
 --------------------------------------------------
 */
 void LoopKernel() {
 
-	if(!KERNEL_IS_RUNNING) {
+	if(!cbKernelRunning) {
 		
 		_beep();
 		
@@ -255,7 +270,7 @@ void LoopKernel() {
 		
 	}
 
-	while( KERNEL_IS_RUNNING ) {
+	while( cbKernelRunning ) {
 		
 		// This is optional, it's for low-end computers. Comment them
 		// all the instructions from '{' to '}' (plus the if) to remove this feature.
@@ -272,8 +287,7 @@ void LoopKernel() {
 			
 		}
 		
-		// These key combinations can be pressed even if game isn't running, as long as the kernel is up and running already.
-		// for example: the music player
+		// These key combinations can be pressed even if the game isn't running, as long as the kernel is up and running already.
 		if(key_m) {
 			
 			while(key_m) wait(1);
@@ -288,15 +302,14 @@ void LoopKernel() {
 			
 		}
 		
-		if(IN_GAME) 
+		if(cbInBuildment) 
 		{
 			
-			//			// Prevent the cursor from going outside the level border
+			// Prevent the cursor from going outside the level border
 			if(!temp_pos.x) temp_pos.x = level_ent.max_x;
 			if(!temp_pos.y) temp_pos.y = level_ent.max_y;
 			if(!temp_pos.z) temp_pos.z = level_ent.max_z;	
-			
-			
+				
 			if(mouse_right) { 
 				
 				while(mouse_right) wait(1);
@@ -316,7 +329,6 @@ void LoopKernel() {
 			
 		}
 		
-		// These keys are combined together with the Ctrl key.
 		if(key_ctrl) {
 			
 			if(key_c) {
@@ -350,7 +362,6 @@ void LoopKernel() {
 		}
 		
 		// These keys are pressed solely.
-		
 		#ifdef CBOX_DEVELOPMENT
 			
 			if(key_r) { 
@@ -373,7 +384,7 @@ void LoopKernel() {
 			
 		#endif
 		
-		if(key_i) { // Quickly opens the Insert object panel
+		if(key_i) {
 			
 			while(key_i) wait(1);
 			
@@ -382,7 +393,7 @@ void LoopKernel() {
 			
 		}
 		
-		if(key_t) { // Quickly opens the terrain toolbar
+		if(key_t) {
 			
 			while(key_t) wait(1);
 			
@@ -400,7 +411,6 @@ void LoopKernel() {
 }
 
 
-
 /*
 --------------------------------------------------
 void CBox_startup()
@@ -408,7 +418,7 @@ void CBox_startup()
 Desc: Unlike LoopKernel() which runs only if the kernel has been 
 successfully loaded, CBox_startup() runs globally, that is, independent 
 from any value tests, and exits only if craftbox exits. This is used
-for setting up variables, controlling/executing functions - things 
+for setting up/controlling specific, special variables/functions.
 
 The _startup prefix is vital.
 
@@ -425,8 +435,8 @@ void CBox_startup() {
 	// Read and setup settings prior to executing other functions.
 	ConfigFileRead(FILE_CONFIG);
 	while(proc_status(ConfigFileRead)) wait(1);
-
-	// These are fixed variables 
+	
+	// Fixed A8 variables
 	max_entities = max_particles = 20000;
 	mouse_range = 500000;
 	random_seed(0); // e.g. random light generators.
@@ -440,14 +450,10 @@ void CBox_startup() {
 	camera.clip_far = 5000000;
 	camera.arc = 75;
 	
-	// Initialization for loopix-project.com's MystyMood_Lite-C
-	sky_curve = 2;
-	sky_clip = -10;
-	
 	if( sys_metrics(0) < MINIMUM_RESOLUTION_X || sys_metrics(1) < MINIMUM_RESOLUTION_Y ) {
 		
 		// user really has a low-end monitor (i have one, too)
-		// actually this is the main monitor I use to develop craftbox.
+		// actually that is the main monitor I use to develop craftbox.
 		
 		WriteLog("!! [ERROR] Screen resolution isn't supported (too low).");
 		NewLine();
@@ -470,11 +476,11 @@ void CBox_startup() {
 	video_set( sResX, sResY, 0, sResMode);
 	SetupShader();
 	
-	PreKernelDone = 1; // The pre-kernel stage is done, at this time LoadKernel() will also be triggered to load the kernel.
-
+	cbFinishedLoadKernel = 1; // The pre-kernel stage is done, at this time LoadKernel() will also be triggered to load the kernel.
+	
+	// This should not be confused with the kernel loop
 	while(1) {
 		
-		// These keys are combined together with the Alt key.
 		if(key_alt) {
 			
 			if(key_f4) {
@@ -486,7 +492,7 @@ void CBox_startup() {
 			
 		}
 		
-		if(KERNEL_IS_RUNNING) {
+		if(cbKernelRunning) {
 			
 			if(select) {
 				
@@ -495,7 +501,6 @@ void CBox_startup() {
 				if(key_del) {
 					
 					//					RemoveFromTextureProjectionArray(select);
-					
 					ptr_remove(select);
 					
 					// After this nothing is selected so we disable the panels.
@@ -512,7 +517,6 @@ void CBox_startup() {
 				// panProp
 				select.alpha = 100 - v_alpha;
 				select.ambient = v_ambient;
-				
 				
 				if(button_state(panProp,2,-1)) set(select,BRIGHT);
 				else reset(select,BRIGHT);

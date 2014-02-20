@@ -91,7 +91,7 @@ int GenerateTerrain() {
 	
 	while(my) { // Live till I die
 		
-		if (mouse_left && TerrainEditMode && !mouse_panel)
+		if (mouse_left && cbTerrainEditing && !mouse_panel)
 		{
 			
 			/*

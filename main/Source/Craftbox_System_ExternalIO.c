@@ -9,6 +9,8 @@ Craftbox_System_ExternalIO.c
 Provides functions for communicating with external data sources
 ( config. file, load/save structs from/to file for example. )
 
+Contains INI functions from the TUST library (ini.h)
+
 Written by Nguyen Ngoc Huy
 https://github.com/ngochuy2101
 http://craftboxdev.blogspot.com/
@@ -257,10 +259,77 @@ int ConfigFileRead(STRING *cf) {
 
 }
 
+/** -> Here goes INI functions **/
+void ini_write(STRING *filename, STRING *section, STRING *entry, STRING *value)
+{	
+	WritePrivateProfileString(_chr(section), _chr(entry), _chr(value), _chr(filename));
+}
+
+void ini_write_int(STRING *filename, STRING *section, STRING *entry, int value)
+{
+	ini_write(filename, section, entry, str_for_int(NULL, value));
+}
+
+void ini_write_var(STRING *filename, STRING *section, STRING *entry, var value)
+{
+	ini_write(filename, section, entry, str_for_num(NULL, value));
+}
+
+void ini_write_float(STRING *filename, STRING *section, STRING *entry, float value)
+{
+	ini_write(filename, section, entry, str_for_float(NULL, value));
+}
+
+int ini_read_sections(TEXT *txt, STRING *filename)
+{	
+	int length = GetPrivateProfileString(NULL, NULL, NULL, iniBuffer, 2047, _chr(filename));
+	int i = 0;
+	char *str = iniBuffer;
+	while(str < (iniBuffer + length))
+	{
+		(txt->pstring)[i] = str_create(str);
+		str = str + strlen(str) + 1;
+		i++;
+	}
+	return i;
+}
+
+int ini_read(STRING *targetValue, STRING *filename, STRING *section, STRING *entry, STRING *defaultValue)
+{	
+	int length = GetPrivateProfileString(_chr(section), _chr(entry), _chr(defaultValue), iniBuffer, 2047, _chr(filename));
+	if(targetValue != NULL)
+		str_cpy(targetValue, iniBuffer);
+	return length;
+}
+
+int ini_read_int(STRING *filename, STRING *section, STRING *entry, int defaultValue)
+{
+	STRING *tmp = "#64";
+	STRING *def = "#64";
+	ini_read(tmp, filename, section, entry, str_for_int(def, defaultValue));
+	return str_to_int(tmp);
+}
+
+var ini_read_var(STRING *filename, STRING *section, STRING *entry, var defaultValue)
+{
+	STRING *tmp = "#64";
+	STRING *def = "#64";
+	ini_read(tmp, filename, section, entry, str_for_num(def, defaultValue));
+	return str_to_num(tmp);
+}
+
+float ini_read_float(STRING *filename, STRING *section, STRING *entry, float defaultValue)
+{
+	STRING *tmp = "#64";
+	STRING *def = "#64";
+	ini_read(tmp, filename, section, entry, str_for_float(def, defaultValue));
+	return str_to_float(tmp);
+}
+/** <- **/
 
 /*
 --------------------------------------------------
-BOOL bmap_savetga (BMAP* b, char* filename)
+bool bmap_savetga (BMAP* b, char* filename)
 
 Desc: By HeelX (http://www.opserver.de/ubb7/ubbthreads.php?ubb=showflat&Number=421231#Post421231)
 
@@ -276,9 +345,9 @@ it also saves the alpha channel in the TGA, if and only if the passed BMAP* has 
 Returns: -
 --------------------------------------------------
 */
-BOOL bmap_savetga (BMAP* b, char* filename)
+bool bmap_savetga (BMAP* b, char* filename)
 {
-	BOOL bSuccess = false;
+	bool bSuccess = false;
 
 	if (b && filename && strlen(filename) > 0)
 	{
@@ -291,7 +360,7 @@ BOOL bmap_savetga (BMAP* b, char* filename)
 			var format = bmap_lock(b, 0);
 
 			// if the bitmap has an alpha channel
-			BOOL bAlpha = (((format == 8888) || (format == 1555) || (format == 4444)) && (b->bytespp == 4));
+			bool bAlpha = (((format == 8888) || (format == 1555) || (format == 4444)) && (b->bytespp == 4));
 
 			// header
 

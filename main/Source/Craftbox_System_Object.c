@@ -96,7 +96,7 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.alpha = 0;
 		tmp.ambient = 50;
-		if(RandomPlacement) tmp.pan = random(360); // Give it a random pan value.
+		if( cbRandomPlacement ) tmp.pan = random(360); // Give it a random pan value.
 		
 		tmp.material = mtl_model;
 		
@@ -310,7 +310,6 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 	
 }
 
-
 /* 
 --------------------------------------------------
 void FollowPointer()
@@ -333,7 +332,7 @@ void FollowPointer() {
 	WriteLog("[ ] Setting up the pointer...");
 	NewLine();
 
-	if(!KERNEL_IS_RUNNING) {
+	if(!cbKernelRunning) {
 		
 		_beep();
 		
@@ -355,10 +354,9 @@ void FollowPointer() {
 	VECTOR vv2; //right
 	VECTOR vv3; //Up
 	VECTOR vv4; //Down
-
 	var v0, v1, v2, v3, v4;
 
-	while( 1  ) {
+	while( cbInBuildment ) {
 		
 		cpos1.x = mouse_pos.x;
 		cpos1.y = mouse_pos.y;
@@ -381,11 +379,9 @@ void FollowPointer() {
 		temp_pos.y = hit.y;
 		temp_pos.z = hit.z;
 		
-		//		
-		
-		//		if( !PLAYTESTING ) { // <- Uncomment this to lock the realtime terrain editing while in Playtest mode
+		//		if( !cbPlaytesting ) { // <- Uncomment this to lock the realtime terrain editing while in Playtest mode
 			
-			if(TerrainEnt && bSize >=10 && TerrainEditMode)
+			if(TerrainEnt && bSize >=10 && cbTerrainEditing )
 			{
 				
 				// put Scale(marker, SCALE_MARKER_TERRAIN); would be rather expensive
@@ -533,7 +529,7 @@ void ObjectPaste() {
 	WriteLog("[ ] Pasting an object from clipboard...");
 	NewLine();
 
-	if(clipboard.dp) {
+	if(clipboard.AnyData) {
 		
 		int TEMP_OBJECT_TYPE_old = clipboard.of_objtype;
 		STRING *TEMPSTR_old = str_create ( TEMPSTR );
@@ -560,12 +556,9 @@ void ObjectPaste() {
 void ObjectManipulationCore()
 
 Desc: The following function will handle how the object is manipulated: move, rotate, or scale.
-While holding mouse_left, press L/R Alt to downscale the object,
-or release it to upscale the object.
-Why do I have to comment the lines above if you've already
-read through the code.
-Actually this is just an extended version of FollowPointer
-because I'm too lazy to code a new one.
+While holding mouse_left, press L/R Alt to downscale the object, or release it to upscale the object.
+Why do I have to comment the lines above if you've already read through the code.
+Actually this is just an extended version of FollowPointer because I'm too lazy to code a new one.
 
 Returns: -
 --------------------------------------------------
@@ -713,7 +706,7 @@ manipulating of that object. Contains general code
 for every newly born entity.
 
 Includes two simple scene optimization methods 
-(C_TRACE_OPTIMIZATION and DISTANCE_OPTIMIZATION).
+(cbUsectraceOptimization and cbUseDistanceBasedOptimization).
 
 Two adjustable constants (CBox.h):
 
@@ -745,9 +738,9 @@ void ObjectManipulationInterface()
 	// for example in the editor
 	while(my) {
 		
-		//		if(PLAYTESTING) {
+		//		if(cbPlaytesting) {
 			//			
-			//			if(DISTANCE_OPTIMIZATION) {
+			//			if(cbUseDistanceBasedOptimization) {
 				//				
 				//				if(!fog_color) Dist = FIXED_CULLING_DISTANCE;
 				//				else { // Fog is active?
@@ -780,7 +773,7 @@ void ObjectManipulationInterface()
 				//				
 			//			}
 			//			
-			//			else { // C_TRACE_OPTIMIZATION
+			//			else { // cbUsectraceOptimization
 				//				
 				//				 Cac entity trong tam nhin khong the cull lan nhau
 				//				if(!is(my,FLAG2)) set(my,FLAG2);
@@ -846,7 +839,6 @@ void LoadObjectCustomSettings(ENTITY *from) {
 	// CreateObject(), it won't work, because either TEMPSTR is left undefined 
 	// or containing wrong data!
 	str_cpy(CBOIF,TEMPSTR);
-	
 	str_cat(CBOIF,EXT_CBOIF);
 	
 	var CBOIFHNDL = file_open_read(CBOIF);
@@ -1137,7 +1129,7 @@ void Gun_startup() {
 			
 		#endif
 		
-		if( PLAYTESTING ) {
+		if( cbPlaytesting ) {
 			
 			vec_set(trace_coords.x,vector(100000,0,0));
 			//			vec_rotate(trace_coords.x,Gun.pan);

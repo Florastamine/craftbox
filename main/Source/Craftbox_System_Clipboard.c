@@ -31,7 +31,7 @@ NOTES:
 
 /*
 --------------------------------------------------
-int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of)
+int PassObjectDataToClipboard(ENTITY *o, ObjectStruct *of)
 
 Desc: Copies both object's general information and
 unique characteristics information to the clipboard struct.
@@ -40,7 +40,7 @@ Returns: -1 if o.ObjectType falls out of range. of.of_objtype will
 then be assigned to -1, which indicates neutral object.
 --------------------------------------------------
 */
-int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
+int PassObjectDataToClipboard(ENTITY *o, ObjectStruct *of) {
 	
 	while(!o || !of) wait(1);
 	
@@ -125,7 +125,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		// Flag indicates that the copy progress has done.
 		// Also, it can be used to determine if the clipboard has any piece of data or not.
-		of.dp = 1;
+		of.AnyData = true;
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -149,7 +149,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		
 		of.of_objtype = o.ObjectType;
 		
-		of.dp = 1;
+		of.AnyData = true;
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -168,7 +168,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		of.of_objtype = o.ObjectType;
 		//		str_cpy(of.name, o.SoundFileName );
 		
-		of.dp = 1;
+		of.AnyData = true;
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -187,7 +187,7 @@ int PassObjectDataToClipboard(ENTITY *o, OBJECTSTRUCT *of) {
 		of.of_objtype = o.ObjectType;
 		of._ParticleID = o.ParticleID;
 		
-		of.dp = 1;
+		of.AnyData = true;
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -251,7 +251,7 @@ struct to ENTITY *e, and continues to copy the remaining
 unique characteristics information based on clipboard.of_objtype.
 
 Returns: -1 if e.ObjectType falls out of range (rare) or 
-the clipboard is empty. (clipboard.dp = 0)
+the clipboard is empty. (clipboard.AnyData = 0)
 --------------------------------------------------
 */
 int PassClipboardDataToObject(ENTITY *e) {
@@ -263,7 +263,7 @@ int PassClipboardDataToObject(ENTITY *e) {
 	NewLine();
 
 	// Double check
-	if(!clipboard.dp) {
+	if(!clipboard.AnyData) {
 		
 		_beep();
 		

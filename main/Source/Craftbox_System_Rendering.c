@@ -124,15 +124,15 @@ void mtl_vegetation_init();
 
 /*
 --------------------------------------------------
-GRAPHICSKONFIG *CreateGraphicsStruct(int..)
+GraphicsSettingsStruct *CreateGraphicsStruct(int..)
 
-Desc: Creates a new GRAPHICSKONFIG struct.
+Desc: Creates a new GraphicsSettingsStruct struct.
  -1 gives default value based on guessing. (planned)
 
-Returns: A GRAPHICSKONFIG struct
+Returns: A GraphicsSettingsStruct struct
 --------------------------------------------------
 */
-GRAPHICSKONFIG *CreateGraphicsStruct(
+GraphicsSettingsStruct *CreateGraphicsStruct(
 
 int brightness,
 int bitdepth,
@@ -148,7 +148,7 @@ int ppe
 
 ) {
    
-   GRAPHICSKONFIG *newStruct;
+   GraphicsSettingsStruct *newStruct;
 
    newStruct->Brightness = abs(brightness);
    newStruct->BitDepth = abs(bitdepth);
@@ -168,14 +168,14 @@ int ppe
 
 /*
 --------------------------------------------------
-int CompareGraphicsStruct(GRAPHICSKONFIG *struct1, GRAPHICSKONFIG *struct2)
+int CompareGraphicsStruct(GraphicsSettingsStruct *struct1, GraphicsSettingsStruct *struct2)
 
-Desc: Compare two GRAPHICSKONFIG struct.
+Desc: Compare two GraphicsSettingsStruct struct.
 
 Returns: > 0 if struct1 differs from struct2.
 --------------------------------------------------
 */
-int CompareGraphicsStruct(GRAPHICSKONFIG *struct1, GRAPHICSKONFIG *struct2) {
+int CompareGraphicsStruct(GraphicsSettingsStruct *struct1, GraphicsSettingsStruct *struct2) {
    
    while( !struct1 || !struct2 ) wait(1);
    
@@ -198,7 +198,7 @@ int CompareGraphicsStruct(GRAPHICSKONFIG *struct1, GRAPHICSKONFIG *struct2) {
 
 /*
 --------------------------------------------------
-void ApplyGraphicsSettings( GRAPHICSKONFIG *dConfig )
+void ApplyGraphicsSettings( GraphicsSettingsStruct *dConfig )
 
 Desc: Apply advanced graphics settings such as 
 SSAO, HDR, Depth of Field, shadows and such
@@ -207,7 +207,7 @@ Rendering device will be restarted whenever necessary.
 Returns: -
 --------------------------------------------------
 */
-void ApplyGraphicsSettings( GRAPHICSKONFIG *dConfig ) {
+void ApplyGraphicsSettings( GraphicsSettingsStruct *dConfig ) {
 	
 	while(!dConfig) wait(1);
 	
@@ -248,7 +248,7 @@ void ApplyGraphicsSettings( GRAPHICSKONFIG *dConfig ) {
 	// SSAO
 	if (dConfig->_SSAO) {
 		
-		if( !ssaoLoaded ) LoadSSAO(); // If SSAO hasn't yet initialized, initializes and loads SSAO
+		if( !ssaoLoaded ) LoadSSAO(); // If SSAO hasn't yet been initialized, initializes and loads SSAO
 		else toggleSsaoState();
 		
 	}

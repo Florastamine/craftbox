@@ -30,66 +30,7 @@ NOTES:
 --------------------------------------------------
 */
 
-////////////////////////////////////////////////////////////////////////////
-
-BMAP* particle_tga = "particle.tga";
-BMAP* particle2_tga = "particle2.tga";
-
-////////////////////////////////////////////////////////////////////////////
-
-void fade_particle(PARTICLE *p)
-{
-	p.alpha -= 5 * time_step;
-	if (p.alpha < 0) 
-	p.lifespan = 0;
-}
-
-void particle_void(PARTICLE *p)
-{
-	vec_add (p.vel_x, vector(1 - random(2), 1 - random(2), 1 + random(1)));
-	set(p, MOVE | BRIGHT);
-	p.alpha = 30 + random(35);
-	p.bmap = particle_tga;
-	p.size = 5;
-	p.lifespan = 130;
-	p.event = fade_particle;
-}
-
-void healer_particles()
-{
-	VECTOR particle_pos[3];
-	vec_set (particle_pos.x, my.x);
-	particle_pos.z += 70; // place the healing particles above the characters' heads		
-	effect(particle_void, 1, particle_pos, nullvector);
-}
-
-void player_particles()
-{
-	VECTOR particle_pos[3];
-	vec_set (particle_pos.x, player.x);
-	particle_pos.z += 70; // place the healing particles above the characters' heads		
-	effect(particle_void, 1, particle_pos, nullvector);
-}
-
-void particle_void2(PARTICLE *p)
-{
-	vec_add (p.vel_x, vector(1 - random(2), 1 - random(2), 0));
-	set(p, MOVE | BRIGHT);
-	p.alpha = 30 + random(35);
-	p.bmap = particle2_tga;
-	p.size = 15;
-	p.lifespan = 500;
-	p.event = fade_particle;
-}
-
-void bullet_particles()
-{
-	VECTOR particle_pos[3];
-	vec_set (particle_pos.x, my.x);
-	effect(particle_void2, 3, particle_pos, nullvector);
-}
-
-var cam_speed = 1; // initial speed
+var _cam_speed = 1; // initial speed - [25/1/2014] fixed, avoid conflict with TUST
 var dist_to_node;
 var current_node = 1;
 var angle_difference = 0;
@@ -221,7 +162,7 @@ void act_AI_follower(ENTITY *follow_what) // this character follows the player u
 		while (vec_dist (follow_what.x, my.x) < DISTANCE_AI_ENTITY)
 		{
 			my.skill22 += 4 * time_step; // 4 gives the "stand" animation speed
-			ent_animate(my, "stand", my.skill22, ANM_CYCLE);
+			ent_animate(my, "stand", my.skill22, ANM_CYCLE); // fixed string, should be standard, no?
 			wait (1);
 		}
 		// use small vertical angles here (30 degrees or so); don't allow the npc to detect crumbs at a top floor (or so)
@@ -260,7 +201,6 @@ void crumb_init()
 	my.emask |= ENABLE_SCAN; // the crumb is sensitive to c_scan instructions
 }
 
-
 void act_nodegenerator(ENTITY *entity) {
 	
 	VECTOR player_pos1, player_pos2;
@@ -269,7 +209,7 @@ void act_nodegenerator(ENTITY *entity) {
 	
 	while ( entity )
 	{
-		if( !PLAYTESTING ) wait(1);
+		if( !cbPlaytesting ) wait(1);
 		
 		if (step == 0)
 		{
@@ -335,11 +275,12 @@ void act_varlight(ENTITY *entity, var max) {
 
 void create_fog(int input, VECTOR *pos) {
 	
-	
 	if(!input) return;
 	
 	switch(input) {
 		
+		// For more fog samples, put more cases here.
+		// will be a bit slow, depends on the number of grass samples
 		case 0: ent_create("Dust_1.tga", pos, autofog);  break;
 		case 1: ent_create("Dust_2.tga",pos,autofog); break;
 
@@ -462,6 +403,9 @@ void create_grass(int input, VECTOR *pos) {
 	
 	switch ( input ) {
 		
+		// the same with fog samples
+		// put more cases here to avoid seamless and repeated grass samples
+		// but it is slow
 		case 0:  ent_create ("lp_des1.tga", pos, place_grass); break;
 		case 1: ent_create ("lp_des2.tga", pos, place_grass); break;
 		
@@ -649,44 +593,6 @@ void act_wgrass(ENTITY *entity) {
 	
 }
 
-void enemy();
-
-action general_action() {
-	
-	while(! PLAYTESTING ) wait(1);
-	
-	/*
-	set(my,POLYGON  | PASSABLE | LIGHT);
-	
-	act_AI_follower(player);
-	act_spotlight(me,127,127,127,3000,0,5);
-	
-	//   act_spotlight(me);
-	//	act_glass(me);
-	//	act_grassgenerator(me);
-	//	act_foggenerator(me);
-	//	act_randscale(me,5,7);
-	
-	while(my) {
-		
-		if(PLAYTESTING) {
-			
-			my.x += 15 * (key_y-key_u);
-			
-			wait(1);
-			//			act_glass(me);
-			
-		}
-		
-		wait(1);
-		
-	}
-	*/
-	
-	enemy();
-	
-}
-
 ////////////////////////////////////////////////////////////
 // A patroller and a node.
 ////////////////////////////////////////////////////////////
@@ -700,7 +606,7 @@ action AI_Patrol()
 
 	while(1)
 	{
-		if(PLAYTESTING) {
+		if(cbPlaytesting) {
 			
 			c_scan(my.x, my.pan, vector(360, 60, 1000), IGNORE_ME | SCAN_ENTS | SCAN_LIMIT);
 			
@@ -799,7 +705,7 @@ action Player_Bike() {
 
 	while(my)
 	{
-		if(PLAYTESTING) {
+		if(cbPlaytesting) {
 			
 			if(key_w || key_s) {
 				
@@ -873,8 +779,8 @@ void move_target()
 
 	{ 
 
-		cam_speed = minv(15, cam_speed + 5 * time_step); // 15 gives the movement speed
-		c_move(my, vector(cam_speed * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE);
+		_cam_speed = minv(15, _cam_speed + 5 * time_step); // 15 gives the movement speed
+		c_move(my, vector(_cam_speed * time_step, 0, 0), nullvector, IGNORE_PASSABLE | GLIDE);
 		vec_to_angle (dummy_ent.pan, vec_diff (temp_angle, pos_node, my.x));
 		
 		if(my.pan != dummy_ent.pan)
@@ -963,9 +869,6 @@ var camera_type=0;
 
 ////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////////
-
 STRING* bullet_mdl = "bullet.mdl";
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1016,7 +919,7 @@ action enemy() // attach this action to your enemies
 	
 	while(1) {
 		
-		if(!PLAYTESTING) wait(1);
+		if(!cbPlaytesting) wait(1);
 		
 		if (my.status != dead) // this loop will run for as long as my.skill1 isn't equal to 3
 		{
@@ -1157,7 +1060,7 @@ void flashpanCAMRecorderREC_startup() {
 	
 	while(1) {
 		
-		if(PLAYTESTING && camera_type) {
+		if(cbPlaytesting && camera_type) {
 			
 			panCAMRecorderREC->alpha = 0;
 			wait(-1);
@@ -1213,7 +1116,7 @@ action Player_Normal()
 		
 		while(my._HEALTH > 0) {
 			
-			if( PLAYTESTING ) {
+			if( cbPlaytesting ) {
 				
 				// Animation
 				if (my.state != blend && my.blendframe != nullframe) 
@@ -1475,45 +1378,70 @@ action waypoint() {
 action random_guy()
 { 
 	var anim_percentage;
-
 	var time_passed = 0;
-
 	var random_interval;
 
 	while (1)
-
 	{
-
-		if (time_passed == 0)
-
-		{
-
-			random_interval = 4 + random(6);
-
-		}
+		if (time_passed == 0) random_interval = 4 + random(6);
 
 		c_move (my, vector(5 * time_step, 0, 0), nullvector, GLIDE); // "5" controls the walking speed
-
 		ent_animate(my, "walk", anim_percentage, ANM_CYCLE);
-
 		anim_percentage += 6 * time_step; // "6" controls the "walk" animation speed
-
 		time_passed += time_step / 16;
-
 		if (time_passed > random_interval)
-
 		{
-
+			
 			time_passed = 0; // reset time_passed
-
 			my.pan += 90 - random(180); // and then add -90...+90 degrees to the pan angle
-
+			
 		}
 
-		wait (1);
-
+		wait(1);
+		
 	}
 
+}
+
+////////////////////////////////////////////////////////////
+// At last, our testbed
+////////////////////////////////////////////////////////////
+void enemy();
+
+action general_action() {
+	
+	while(! cbPlaytesting ) wait(1);
+	
+	/*
+	set(my,POLYGON  | PASSABLE | LIGHT);
+	
+	act_AI_follower(player);
+	act_spotlight(me,127,127,127,3000,0,5);
+	
+	//   act_spotlight(me);
+	//	act_glass(me);
+	//	act_grassgenerator(me);
+	//	act_foggenerator(me);
+	//	act_randscale(me,5,7);
+	
+	while(my) {
+		
+		if(cbPlaytesting) {
+			
+			my.x += 15 * (key_y-key_u);
+			
+			wait(1);
+			//			act_glass(me);
+			
+		}
+		
+		wait(1);
+		
+	}
+	*/
+	
+	enemy();
+	
 }
 
 #define PRAGMA_PRINT " [Loaded plugin behaviors] "
