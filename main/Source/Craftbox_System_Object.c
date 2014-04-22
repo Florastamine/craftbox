@@ -27,6 +27,67 @@ NOTES:
 
 */
 
+void CreateSystemObject () {
+	
+	ENTITY *tmp;
+	
+	switch( SystemObjectID ) {
+		
+		case Trigger_PlayerStandard:
+		
+		if ( !PlayerPresent ) {
+			
+			tmp = ent_create( "./CookedObjects/player.mdl", temp_pos, Player_Normal );
+			tmp->ObjectType = ObjectSystem;
+			Scale( tmp, 2 );
+			
+		}
+		else {
+			
+			WriteToBlackboard( " Chi duoc tao mot nhan vat duy nhat! ", " ", 5 );
+			SystemObjectID = -1;
+			
+			return;
+			
+		}
+		
+		break;
+		
+		case Trigger_PlayerBike:
+		
+		if( !PlayerPresent ) {
+			
+			tmp = ent_create( "./CookedObjects/bike7.mdl", temp_pos, Player_Bike );
+			tmp->ObjectType = ObjectSystem;
+			Scale( tmp, 5 );
+			
+		}
+		
+		else {
+			
+			WriteToBlackboard( " Chi duoc tao mot nhan vat duy nhat! ", " ", 5 );
+			SystemObjectID = -1;
+			
+			return;
+			
+		}
+		
+		break;
+		
+		case Trigger_SpawnNotification:
+		
+		tmp = ent_create( "./Cooked2D/tree.png", temp_pos, Spawn_Warning );
+		tmp->ObjectType = ObjectSystem;
+		tmp->ObjectSystemType = Trigger_SpawnNotification;
+		
+		break;
+		
+		default: break;
+		
+	}
+	
+}
+
 /*
 --------------------------------------------------
 ENTITY *CreateObject()
@@ -37,7 +98,7 @@ normal .mdl/.wmb objects, lights, particle objects,
 waypoint and light objects.
 
 Returns:
-- Success: pointer of the newly created object.
+- Success: pointer to the newly created object.
 - Fail: NULL.
 --------------------------------------------------
 */
@@ -76,6 +137,14 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 	}
 	
+	if( SystemObjectID != -1 ) {
+		
+		CreateSystemObject ();
+		
+		return;
+		
+	}
+	
 	ENTITY *tmp;
 	
 	if(TEMP_OBJECT_TYPE > Object && TEMP_OBJECT_TYPE < ObjectNode) {
@@ -98,12 +167,12 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp.ambient = 50;
 		if( cbRandomPlacement ) tmp.pan = random(360); // Give it a random pan value.
 		
+		#ifndef A7_DEVELOPMENT
 		tmp.material = mtl_model;
+		#endif
 		
 		tmp.ObjectDynamic = 0; // This is a static object
 		tmp.ObjectPhysics = 0; // And physics aren't enabled by default.		
-		
-		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -223,8 +292,6 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
 		
-		LoadObjectCustomSettings(tmp);
-		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
 		NewLine();
@@ -244,8 +311,6 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		set(tmp,OVERLAY | BRIGHT | PASSABLE | POLYGON);
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
-		
-		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -268,8 +333,6 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		set(tmp,POLYGON);
 		
 		tmp.ObjectType = TEMP_OBJECT_TYPE;
-		
-		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -295,8 +358,6 @@ ENTITY *CreateObject() { // This inherits a lot from place_me & the old CreateOb
 		tmp.z += 50;
 		
 		tmp.ObjectType = ObjectNode;
-		
-		//		LoadObjectCustomSettings(tmp);
 		
 		WriteLog("[X] Task completed for CreateObject() at ");
 		WriteLog( (STRING *) tmp->type );
@@ -680,17 +741,6 @@ void ObjectManipulationCore()
 			reset(my,PASSABLE);
 			
 		}
-		
-		// little tweaking
-		switch(my.ObjectType) {
-			
-			case Particle: my.z += 125; break;
-			case Sound: my.z += 125; break;
-			case Light: my->z += 125; break;
-			
-			default: break;
-			
-		}
 
 	}
 	
@@ -816,226 +866,6 @@ void ObjectManipulationInterface()
 
 }
 
-
-/*
---------------------------------------------------
-void LoadObjectCustomSettings(ENTITY *from)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void LoadObjectCustomSettings(ENTITY *from) {
-	
-	//	return;
-	
-	var temp;
-	STRING *CBOIF = "#1000"; // this is the limit
-	//   str_cpy(CBOIF, (STRING *) from->type );
-	
-	// LoadObjectCustomSettings uses TEMPSTR to evaluate the exact path without having to
-	// do it again. Because of this: If you use LoadObjectCustomSettings in other places than 
-	// CreateObject(), it won't work, because either TEMPSTR is left undefined 
-	// or containing wrong data!
-	str_cpy(CBOIF,TEMPSTR);
-	str_cat(CBOIF,EXT_CBOIF);
-	
-	var CBOIFHNDL = file_open_read(CBOIF);
-	
-	if(!file_length(CBOIFHNDL) || !CBOIFHNDL) {
-		
-		// File is empty, no need to pass anything/can't open file
-		//		file_close(CBOIFHNDL);
-		
-		return;
-		
-	}
-	
-	// Dirty, ugly code.
-	// Don't have time to optimize them though.
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.scale_x = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.scale_y = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.scale_z = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.alpha = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.albedo = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.ambient = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.red = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.green = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.blue = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.pan = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.tilt = temp;
-	
-	temp = file_var_read(CBOIFHNDL);
-	if(temp != -1) from.roll = temp;
-	
-	// flags after
-	// NARROW, FAT, CLIPPED, CAST, SPOTLIGHT
-	// OVERLAY, DECAL, NOFILTER, SHOW/INVISIBLE,
-	// ANIMATE, DYNAMIC
-	
-	if(file_var_read(CBOIFHNDL)) set(from,PASSABLE);
-	else reset(from,PASSABLE);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,POLYGON);
-	else reset(from,POLYGON);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,UNTOUCHABLE);
-	else reset(from,UNTOUCHABLE);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,SHADOW);
-	else reset(from,SHADOW);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,TRANSLUCENT);
-	else reset(from,TRANSLUCENT);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,BRIGHT);
-	else reset(from,BRIGHT);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,LIGHT);
-	else reset(from,LIGHT);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,UNLIT);
-	else reset(from,UNLIT);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,NOFOG);
-	else reset(from,NOFOG);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,ZNEAR);
-	else reset(from,ZNEAR);
-	
-	//+flags
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG1);
-	else reset(from,FLAG1);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG2);
-	else reset(from,FLAG2);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG3);
-	else reset(from,FLAG3);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG4);
-	else reset(from,FLAG4);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG5);
-	else reset(from,FLAG5);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG6);
-	else reset(from,FLAG6);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG7);
-	else reset(from,FLAG7);
-	
-	if(file_var_read(CBOIFHNDL)) set(from,FLAG8);
-	else reset(from,FLAG8);
-	
-	//+skills
-	int i = MAX_PUBLIC_SKILLS; // pass from MAX_PUBLIC_SKILLS and up
-	
-	while(i < MAX_PUBLIC_SKILLS + MAX_PRIVATE_SKILLS) {
-		
-		temp = file_var_read(CBOIFHNDL);
-		if(temp != -1) from.skill[i] = temp;
-		
-		i += 1;
-		
-		wait(1);
-		
-	}
-	
-	file_close(CBOIFHNDL);
-	
-}
-
-/*
---------------------------------------------------
-void WriteObjectCustomSettings(ENTITY *ent)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void WriteObjectCustomSettings(ENTITY *ent) {
-	
-	while(!ent) wait(1);
-	
-	STRING *tempstr = "#500";
-	str_cpy(tempstr, ent->type  );
-	str_cat(tempstr, str_create( EXT_CBOIF ) );
-	
-	var hndl = file_open_write(tempstr);
-	
-	file_var_write(hndl,ent.scale_x);
-	file_var_write(hndl,ent.scale_y);
-	file_var_write(hndl,ent.scale_z);
-	
-	file_var_write(hndl,ent.alpha);
-	file_var_write(hndl,ent.albedo);
-	file_var_write(hndl,ent.ambient);
-	
-	file_var_write(hndl,ent.red);
-	file_var_write(hndl,ent.green);
-	file_var_write(hndl,ent.blue);
-	
-	file_var_write(hndl,ent.pan);
-	file_var_write(hndl,ent.tilt);
-	file_var_write(hndl,ent.roll);
-	
-	file_var_write(hndl,is(ent,PASSABLE) );
-	file_var_write(hndl,is(ent,POLYGON) );
-	file_var_write(hndl,is(ent,UNTOUCHABLE) );
-	file_var_write(hndl,is(ent,SHADOW) );
-	file_var_write(hndl,is(ent,TRANSLUCENT) );
-	file_var_write(hndl,is(ent,BRIGHT));
-	file_var_write(hndl,is(ent,LIGHT));
-	file_var_write(hndl,is(ent,UNLIT) );
-	file_var_write(hndl,is(ent,NOFOG) );
-	file_var_write(hndl,is(ent,ZNEAR) );
-	
-	file_var_write(hndl,is(ent,FLAG1) );
-	file_var_write(hndl,is(ent,FLAG2) );
-	file_var_write(hndl,is(ent,FLAG3) );
-	file_var_write(hndl,is(ent,FLAG4) );
-	file_var_write(hndl,is(ent,FLAG5) );
-	file_var_write(hndl,is(ent,FLAG6) );
-	file_var_write(hndl,is(ent,FLAG7) );
-	file_var_write(hndl,is(ent,FLAG8) );
-	
-	int i = MAX_PUBLIC_SKILLS;
-	while(i < MAX_PUBLIC_SKILLS + MAX_PRIVATE_SKILLS) {
-		
-		file_var_write(hndl,ent.skill[i]);
-		i++;	  
-		
-	}
-	
-	file_close(hndl);
-	
-}
-
-
 /*
 --------------------------------------------------
 void ObjectRestoreDefault()
@@ -1101,7 +931,7 @@ ENTITY *Gun = {
 	
 	layer = 1000;
 	
-	type = "./CookedObjects/gun.mdl";
+	type = "gun.mdl";
 	
 	x = 23;
 	y = -2;
@@ -1157,18 +987,6 @@ void Gun_startup() {
 		
 	}
 	
-}
-
-void LineConnect(ENTITY *connector, ENTITY *connected)
-{
-	while(connector && connected)
-	{
-		draw_line3d(vector(connector.x, connector.y, connector.z), NULL, 100);
-		draw_line3d(vector(connected.x, connected.y, connected.z), LineConnectColor, 100);
-		
-		wait (1);
-	}
-
 }
 
 void draw_rotated_bbox(ENTITY* ent)

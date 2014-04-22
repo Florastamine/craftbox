@@ -105,9 +105,6 @@ int PassObjectDataToClipboard(ENTITY *o, ObjectStruct *of) {
 		
 		of.of_objtype = o.ObjectType;
 		
-		of.pStatic = o.ObjectDynamic;
-		of.pPhysics = o.ObjectPhysics;
-		
 		switch ( o.ObjectType ) {
 			
 			case ObjectAnimal: str_cpy( of.name, PATH_OBJECTS_ANMS ); break;
@@ -298,10 +295,6 @@ int PassClipboardDataToObject(ENTITY *e) {
 		
 		e.ObjectType = clipboard.of_objtype;
 		
-		e.skill2 = clipboard.pStatic;
-		e.skill3 = clipboard.pPhysics;
-		e.material = clipboard.m;
-		
 		if(clipboard._flags[0]) set(e,BRIGHT);
 		else reset(e,BRIGHT);
 		
@@ -344,7 +337,9 @@ int PassClipboardDataToObject(ENTITY *e) {
 		e.lightrange = clipboard._range;
 		e.LightMode = clipboard._LightMode;
 		
+		#ifndef A7_DEVELOPMENT
 		e.material = mtl_model;
+		#endif
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -358,7 +353,9 @@ int PassClipboardDataToObject(ENTITY *e) {
 		WriteLog("[ ] Clipboard contains information of a particle object.");
 		NewLine();
 		
+		#ifndef A7_DEVELOPMENT
 		e.material = mtl_model;
+		#endif
 		
 		WriteLog("[X] Task completed.");
 		NewLine();
@@ -372,7 +369,9 @@ int PassClipboardDataToObject(ENTITY *e) {
 		WriteLog("[ ] Clipboard contains information of a sound object.");
 		NewLine();
 		
+		#ifndef A7_DEVELOPMENT
 		e.material = mtl_sprite;
+		#endif
 		
 		WriteLog("[X] Task completed.");
 		NewLine();

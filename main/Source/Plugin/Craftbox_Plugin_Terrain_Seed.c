@@ -2,6 +2,8 @@
 
 #define Craftbox_Plugin_Terrain_Seed
 
+#ifndef A7_DEVELOPMENT
+
 /*
 --------------------------------------------------
 var ent_seed_c(
@@ -249,5 +251,11 @@ void paint_canvas()
 }
 
 #define PRAGMA_PRINT " [Loaded plugin terrain seeding] "
+
+#else
+
+#define PRAGMA_PRINT " [Gamestudio A7 detected - terrain seeding functionality will be disabled.]"
+
+#endif
 
 #endif

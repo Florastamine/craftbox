@@ -47,16 +47,18 @@ void InitMystymood() {
 	sndThunder5			= snd_create("thunder5.wav");
 	sndUnderwater		= snd_create("underwater.wav");
 	
-	entHorizon			= ent_createlayer("horizon.tga", SKY | SCENE | SHOW, 5); entHorizon.scale_x = 0.25; entHorizon.scale_y = 0.25; entHorizon.tilt = -60; entHorizon.alpha = 100; set(entHorizon, TRANSLUCENT);
-	entCloud1			= ent_createlayer("clouds.tga", SKY | DOME | SHOW, 2); entCloud1.scale_x = 1.5; entCloud1.scale_y = 1.5; entCloud1.tilt = -12; entCloud1.alpha = 80; set(entCloud1, TRANSLUCENT);
-	entCloud2			= ent_createlayer("clouds.tga", SKY | DOME | SHOW, 3); entCloud2.u = 1; entCloud2.v = 5; entCloud2.scale_x = 2.5; entCloud2.scale_y = 2.5; entCloud2.tilt = -10; entCloud2.alpha = 60; set(entCloud2, TRANSLUCENT);
-	entCloud3			= ent_createlayer("clouds_bad.tga", SKY | DOME | SHOW, 4); entCloud3.u = 1; entCloud3.v = 5; entCloud3.scale_x = 2; entCloud3.scale_y = 2; entCloud3.tilt = -10; entCloud3.alpha = 0; set(entCloud3, TRANSLUCENT);
-	entSkyDay			= ent_createlayer("sky_day.tga", SKY | SCENE | SHOW, 1); entSkyDay.scale_x = 0.25; entSkyDay.tilt = -20; vec_set(entSkyDay.blue, vector(255,255,255)); entSkyDay.alpha = 60; set(entSkyDay, TRANSLUCENT);
-	entSkySun			= ent_createlayer("sky_sun.tga", SKY | SHOW, 6); entSkySun.alpha = 65; set(entSkySun, TRANSLUCENT | BRIGHT);
-	entSkySunCorona	= ent_createlayer("sky_suncorona.tga", SKY | SHOW, 3); entSkySunCorona.alpha = 40; set(entSkySunCorona, TRANSLUCENT | BRIGHT);
-	entSkySunshine		= ent_createlayer("sky_sunshine.tga", SKY | SHOW, 7); entSkySunshine.alpha = 50; set(entSkySunshine, TRANSLUCENT | BRIGHT);
-	entSkyNight			= ent_createlayer("sky_night.tga", SKY | DOME | SHOW, 1); entSkyNight.alpha = 0; set(entSkyNight, TRANSLUCENT);
-	entSkyMoon			= ent_createlayer("sky_moon.tga", SKY | SHOW, 2); entSkyMoon.alpha = 100; set(entSkyMoon, TRANSLUCENT);
+	entHorizon			= ent_createlayer("horizon.tga", SKY | SCENE , 5); entHorizon.scale_x = 0.25; entHorizon.scale_y = 0.25; entHorizon.tilt = -60; entHorizon.alpha = 100; set(entHorizon, TRANSLUCENT);
+	entCloud1			= ent_createlayer("clouds.tga", SKY | DOME , 2); entCloud1.scale_x = 1.5; entCloud1.scale_y = 1.5; entCloud1.tilt = -12; entCloud1.alpha = 80; set(entCloud1, TRANSLUCENT);
+	entCloud2			= ent_createlayer("clouds.tga", SKY | DOME , 3); entCloud2.u = 1; entCloud2.v = 5; entCloud2.scale_x = 2.5; entCloud2.scale_y = 2.5; entCloud2.tilt = -10; entCloud2.alpha = 60; set(entCloud2, TRANSLUCENT);
+	entCloud3			= ent_createlayer("clouds_bad.tga", SKY | DOME , 4); entCloud3.u = 1; entCloud3.v = 5; entCloud3.scale_x = 2; entCloud3.scale_y = 2; entCloud3.tilt = -10; entCloud3.alpha = 0; set(entCloud3, TRANSLUCENT);
+	entSkyDay			= ent_createlayer("sky_day.tga", SKY | SCENE , 1); entSkyDay.scale_x = 0.25; entSkyDay.tilt = -20; vec_set(entSkyDay.blue, vector(255,255,255)); entSkyDay.alpha = 60; set(entSkyDay, TRANSLUCENT);
+	entSkySun			= ent_createlayer("sky_sun.tga", SKY , 6); entSkySun.alpha = 65; set(entSkySun, TRANSLUCENT | BRIGHT);
+	entSkySunCorona	= ent_createlayer("sky_suncorona.tga", SKY , 3); entSkySunCorona.alpha = 40; set(entSkySunCorona, TRANSLUCENT | BRIGHT);
+	entSkySunshine		= ent_createlayer("sky_sunshine.tga", SKY , 7); entSkySunshine.alpha = 50; set(entSkySunshine, TRANSLUCENT | BRIGHT);
+	entSkyNight			= ent_createlayer("sky_night.tga", SKY | DOME , 1); entSkyNight.alpha = 0; set(entSkyNight, TRANSLUCENT);
+	entSkyMoon			= ent_createlayer("sky_moon.tga", SKY , 2); entSkyMoon.alpha = 100; set(entSkyMoon, TRANSLUCENT);
+	
+	LoadMystymood( false );
 	
 }
 
@@ -244,7 +246,6 @@ void weather_increase_brightness() {
 }
 
 void weather_thunder_strike() {
-	var vSoundHandleThunder;
 	var vRandomCount;
 	var vRandomCountState;
 	var vOuterRadius;
@@ -340,12 +341,6 @@ void weather_change() {
 	weather_thunder_strike();
 	weather_random();
 
-	var vSndHandleRain			= 0;
-	var vSndHandleWind			= 0;
-	var vSndHandleBgDay			= 0;
-	var vSndHandleBgNight		= 0;
-	var vSndHandleUnderwater	= 0;
-
 	var vVolumeRain				= 2;
 	var vVolumeWind				= 2;
 	var vVolumeBgDay				= 2;
@@ -360,20 +355,17 @@ void weather_change() {
 		vSndHandleBgDay = snd_loop(sndDay,vVolumeBgDay,0);
 		vSndHandleBgNight = snd_loop(sndNight,vVolumeBgNight,0);
 	}
-	if(nUnderwaterSounds == 1) {
-		vSndHandleUnderwater = snd_loop(sndUnderwater,vVolumeUnderwater,0);
-	}
+	if(nUnderwaterSounds) vSndHandleUnderwater = snd_loop(sndUnderwater,vVolumeUnderwater,0);
 	
 	nWeatherState = 0;
 	
-	
-	while(1) {
+	while( mystymoodActive ) {
 		
 		vecParticleSeedBox.x=WEATHER_BOX_X/2;
 		vecParticleSeedBox.y=WEATHER_BOX_Y/2;
 		vecParticleSeedBox.z=WEATHER_BOX_Z/2;
 		
-		if(nUnderwaterSounds == 1){
+		if(nUnderwaterSounds){
 			if(camera.z > nWaterLevel) { // > 0
 				vVolumeUnderwater = 2;	
 				} else {
@@ -383,9 +375,8 @@ void weather_change() {
 				vVolumeBgNight = 2;
 				vVolumeUnderwater = 100;
 			}
-			} else {
-			snd_stop(vVolumeUnderwater);
-		}	
+			}
+			else snd_stop(vVolumeUnderwater);
 		
 		if(nWeatherState>0) {
 			
@@ -637,7 +628,7 @@ action act_mystymood_trigg()
 	my.skill81 = vecSnowDirection.z;
 	my.skill82 = 10;	
 
-	while(1)
+	while( mystymoodActive )
 	{
 		if(vec_dist(my.x,camera.x) < my.TRIGGER_RANGE)
 		{
@@ -805,10 +796,8 @@ void LoadMystymood(bool _switch) {
 	WriteLog("[ ] Loading Mystymood");
 	NewLine();
 
-	if( ! _switch ) { // Unload mystymood & lensflare effect
-		
-		// macros work only with flag1? :-? (idk)
-		// so we use the inverse flag to control flags2.
+	if( ! _switch ) { // Unload Mystymood
+	
 		entHorizon.flags2 &= ~SHOW;
 		entCloud1.flags2 &= ~SHOW;
 		entCloud2.flags2 &= ~SHOW;
@@ -821,6 +810,13 @@ void LoadMystymood(bool _switch) {
 		entSkyMoon.flags2 &= ~SHOW;
 		
 		mystymoodActive = 0;
+		snd_stop (  vSndHandleRain	);
+		snd_stop (  vSndHandleWind	);
+		snd_stop (  vSndHandleBgDay );
+		snd_stop (  vSndHandleBgNight	);
+		snd_stop (  vSndHandleUnderwater );
+		snd_stop (  vSoundHandleThunder );
+		
 		
 		WriteLog("[X] Task completed, switched off Mystymood because no parameters were on.");
 		NewLine();
@@ -894,10 +890,6 @@ void LoadMystymood(bool _switch) {
 			
 			if(nWeatherState == 0 && nActiveTriggerId < 0) {
 				
-				/*if(nDynamicDayNight==0) {
-					fade_colors(d3d_fogcolor1,vecCurrentColor,vector(160,170,160)); // Constant fog when there is no day night change
-				}*/
-				
 				if(camera.fog_start>LAND_FOG_NEAR) {
 					camera.fog_start -= 10*time_step;
 					} else {
@@ -912,9 +904,6 @@ void LoadMystymood(bool _switch) {
 		}
 		
 		vec_set(vecCurrentColor,d3d_fogcolor1);
-		
-		camera.clip_near = 0; 
-		camera.clip_far = LAND_FOG_FAR+10;
 		
 		vec_set(vecTemp,sun_pos); 
 		vec_set(entSkySun.x,vecTemp);
@@ -931,8 +920,8 @@ void LoadMystymood(bool _switch) {
 		
 		if(nDynamicDayNight==1) {
 			
-			if(sun_angle.pan > 230 && sun_angle.pan < 360){sun_angle.pan += 0.01*vNightTransitionTime*time_step;}
-			else{sun_angle.pan += 0.01*vDayTransitionTime*time_step;}
+			if(sun_angle.pan > 230 && sun_angle.pan < 360){sun_angle.pan += 0.01*vNightTransitionTime*NightDuration*time_step;}
+			else{sun_angle.pan += 0.01*vDayTransitionTime*DayDuration*time_step;}
 			
 			sun_angle.pan %= 360;
 			sun_angle.tilt = fsin(sun_angle.pan, 50);
@@ -962,16 +951,15 @@ void LoadMystymood(bool _switch) {
 		if(sun_angle.pan > 40 && sun_angle.pan < 160){	
 			set_sky_day();
 		}	
+		
 		if(sun_angle.pan > 160 && sun_angle.pan < 190){
 			fade_in_sky_night();
 			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(72,135,240)); // Evening
 		}
-		if(sun_angle.pan > 190 && sun_angle.pan < 340){
-			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(30,20,20)); // Night
-		}
-		if(sun_angle.pan > 190 && sun_angle.pan < 340){	
-			set_sky_night();
-		}
+		
+		if(sun_angle.pan > 190 && sun_angle.pan < 340) fade_colors(d3d_fogcolor1,vecCurrentColor,vector(30,20,20)); // Night
+		if(sun_angle.pan > 190 && sun_angle.pan < 340) set_sky_night();
+		
 		if(sun_angle.pan > 340 && sun_angle.pan < 360){
 			fade_colors(d3d_fogcolor1,vecCurrentColor,vector(111,190,250)); // Morning
 		}
@@ -995,11 +983,15 @@ void LoadMystymood(bool _switch) {
 		entSkySunshine.scale_x = 30;
 		entSkySunshine.scale_y = 12;
 		
+		/*
+		
 		entSkyMoon.scale_x = 4.5;
 		entSkyMoon.scale_y = 4.5;	 
 		
 		entSkyNight.scale_x = 0.5;
 		entSkyNight.scale_y = 0.5;
+		
+		*/
 		
 		wait(1);
 	}
@@ -1008,31 +1000,6 @@ void LoadMystymood(bool _switch) {
 	
 	WriteLog("[X] Switched off Mystymood.");
 	NewLine();
-	
-}
-
-/*
---------------------------------------------------
-void sndPlay(STRING *str)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void sndPlay(STRING *str) {
-	
-	if( str_len(str) ) {
-		
-		var hndl = media_play(str,NULL,VOL_EFFECTS);
-		//		var hndl = snd_play(snd_create(str),VOL_EFFECTS,0);
-		if(!hndl) return;
-		
-		//		while(snd_playing(hndl)) wait(1);
-		while(media_playing(hndl)) wait(1);
-		
-		
-	} else return;
 	
 }
 
@@ -1055,7 +1022,104 @@ void Scale(ENTITY *ent, var amount) {
 }
 
 
+/*
+--------------------------------------------------
+void GenerateReflection( ENTITY *Entity )
 
+Desc: Applies the watershader using skin1 as the bitmap that was defined 
+ in SKYSTR, thus creating custom, changeable sky reflection on object's 
+ surface. To update object's surface after SKYSTR has been changed, 
+ simply call GenerateReflection() on that object again, or 
+ UpdateGeneratedReflections() to perform a global update over all 
+ available entities.
+ Uses GENERATED_REFLECTION to mark entities that were affected by
+ GenerateReflection().
+
+Returns: -
+--------------------------------------------------
+*/
+void GenerateReflection( ENTITY *Entity ) {
+
+	if( !Entity ) {
+
+		WriteLog("!! [ERROR] The entity which was used as parameter in GenerateReflection can't be found.");
+		NewLine();
+
+		return;
+
+	}
+
+	if( !Entity->material ) { // create new
+
+		MATERIAL *reflectionMap = mtl_create();
+		reflectionMap->skin1 = bmap_create(SKYSTR);
+		reflectionMap->event = transenv_event;
+		reflectionMap->flags |= ENABLE_VIEW;
+
+		effect_load(reflectionMap,"./Source/Rendering/Envmapping.fx");
+		bmap_to_cubemap(bmap_to_mipmap(reflectionMap->skin1));
+		
+		Entity->material = reflectionMap;
+		Entity->material->IsReflectionMap = true;
+		Entity->GENERATED_REFLECTION = 1; // register newly created entity
+
+	}
+
+	else { // just want to update the current reflection bmap or ignore (different shader)
+
+		if(Entity->material->IsReflectionMap == true) {
+
+			BMAP *_new = bmap_create(SKYSTR);
+			if( _new != Entity->material->skin1 ) {
+
+				Entity->material->skin1 = _new;
+				bmap_to_cubemap(bmap_to_mipmap(Entity->material->skin1));
+
+			}
+
+		}
+
+	}
+
+}
+
+/*
+--------------------------------------------------
+void UpdateGeneratedReflections(STRING *newImage)
+
+Desc: Perform an update for all generated reflection objects.
+
+Returns: -
+--------------------------------------------------
+*/
+void UpdateGeneratedReflections(STRING *newImage) {
+
+	BMAP *newMap = bmap_create(newImage);
+
+	if( !newMap ) {
+
+		WriteLog("!! [ERROR] Failed to update generated reflections, can't create new reflection map from the given string.");
+		NewLine();
+
+		return;
+
+	}
+
+	ENTITY *cycler = ent_next(NULL);
+
+	while(you) {
+
+		if(you.GENERATED_REFLECTION) GenerateReflection( you );
+
+		you = ent_next( you );
+
+		wait(1);
+
+	}
+
+}
+
+// The sky cube in the background menu
 ENTITY *SkyCube = {
 	
 	type = "./Cooked2D/Skies/s_s_greenland+6.tga";

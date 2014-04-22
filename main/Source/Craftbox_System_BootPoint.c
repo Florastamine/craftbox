@@ -28,6 +28,42 @@ NOTES:
 
 */
 
+// Generic game splash
+void GameSplash () {
+	
+	PANEL *pSplash = pan_create( NULL, 100 );
+	pSplash->flags |= ( TRANSLUCENT );
+	pSplash->alpha = 0;
+	pSplash->bmap = bmap_create( "./Cooked2D/Splash1.png" );
+	GPanelResize( pSplash, RESIZE_XY );
+	
+	set ( pSplash, SHOW );
+	GPanelFade ( pSplash, 0, 100, 5 );
+	while( proc_status( GPanelFade ) ) wait( 1 );
+	
+	while( !key_enter ) wait ( 1 );
+	
+	GPanelFade( pSplash, 100, 0, 5 );
+	while( proc_status( GPanelFade ) ) wait( 1 );
+	
+	pSplash->bmap = bmap_create( "./Cooked2D/Splash2.png" );
+	
+	set ( pSplash, SHOW );
+	GPanelFade ( pSplash, 0, 100, 5 );
+	while( proc_status( GPanelFade ) ) wait( 1 );
+	
+	while( !key_enter ) wait ( 1 );
+	
+	GPanelFade( pSplash, 100, 0, 5 );
+	while( proc_status( GPanelFade ) ) wait( 1 );
+	
+	reset( pSplash, SHOW );
+	ptr_remove( pSplash->bmap );
+	ptr_remove( pSplash );
+	pan_remove ( pSplash );
+	
+}
+
 /*
 --------------------------------------------------
 void UnloadKernel()
@@ -199,8 +235,6 @@ void LoadKernel() {
 	// GUI calculations/initializations are on their own
 	cbKernelRunning = 1;
 	
-	if( is(LoadKernelScreen,SHOW) ) reset(LoadKernelScreen,SHOW);
-	
 	WriteLog("[X] Finished initializing the kernel.");
 	NewLine();
 	
@@ -222,6 +256,10 @@ void PostLoadKernel() {
 	// Before the show can be started, there are some things left to be done!
 	// Please be patient, and let our workers finalizing under the curtains.
 	
+//	#ifndef CBOX_DEVELOPMENT
+	
+//	#endif
+	
 	// Init (calculate) the GUI stuff
 	GGUIInit();
 	while(proc_status(GGUIInit)) wait(1);
@@ -233,6 +271,8 @@ void PostLoadKernel() {
 	// Show-Time!
 	GLoadMainMenu();
 	while(proc_status(GLoadMainMenu)) wait(1);
+	
+	MainMenuMusicHndl = media_play( "./CookedSounds/01 - Funny Death - She Never Existed.mp3", NULL, midi_vol );
 	
 	//	PANEL *black_cover = pan_create("pos_x = 0; pos_y = 0;",0);
 	//	layer_sort(black_cover,SplashScreen->layer-1 );
@@ -272,6 +312,8 @@ void LoopKernel() {
 
 	while( cbKernelRunning ) {
 		
+		DEBUG_VAR ( ( int ) PlayerPresent, 10 );
+		
 		// This is optional, it's for low-end computers. Comment them
 		// all the instructions from '{' to '}' (plus the if) to remove this feature.
 		if(fog_color) {
@@ -304,6 +346,17 @@ void LoopKernel() {
 		
 		if(cbInBuildment) 
 		{
+			
+			if ( !media_playing( mpHandle ) )  mpNext ();
+			else wait( 1 );
+		   
+		   // Update the water plane
+		   if( WaterPlaneLoc ) {
+		      
+		      WaterPlaneLoc.u = WATER_PLANE_U_SHIFT * total_ticks;
+		      WaterPlaneLoc.v = WATER_PLANE_V_SHIFT * total_ticks;
+		      
+		   }
 			
 			// Prevent the cursor from going outside the level border
 			if(!temp_pos.x) temp_pos.x = level_ent.max_x;
@@ -430,11 +483,15 @@ void CBox_startup() {
 	WriteLog("[SYS] Loading CBox_startup()...");
 	NewLine();
 
-	video_window(NULL,NULL,0,"craftbox Pre-alpha");
+	video_window(NULL,NULL,0,titleWindow);
 	
 	// Read and setup settings prior to executing other functions.
 	ConfigFileRead(FILE_CONFIG);
 	while(proc_status(ConfigFileRead)) wait(1);
+	
+	#ifdef CBOX_LOADSCREEN
+	// To-do
+	#endif
 	
 	// Fixed A8 variables
 	max_entities = max_particles = 20000;
@@ -447,7 +504,10 @@ void CBox_startup() {
 	if(edition > 2) max_lights = 100; // still can't afford a comm license
 	//	max_paths = max_entities = max_particles = pow(10,5);
 	tex_share = 1;
-	camera.clip_far = 5000000;
+	
+	camera.clip_near = 0;
+	camera.clip_far = 500000;
+	
 	camera.arc = 75;
 	
 	if( sys_metrics(0) < MINIMUM_RESOLUTION_X || sys_metrics(1) < MINIMUM_RESOLUTION_Y ) {
@@ -501,6 +561,7 @@ void CBox_startup() {
 				if(key_del) {
 					
 					//					RemoveFromTextureProjectionArray(select);
+					if( select == player) PlayerPresent = false;
 					ptr_remove(select);
 					
 					// After this nothing is selected so we disable the panels.
@@ -595,43 +656,6 @@ void CBox_startup() {
 	}
 
 	WriteLog("[X] CBox_startup() was terminated.");
-	NewLine();
-
-}
-
-
-/*
---------------------------------------------------
-void PrecacheContent()
-
-Desc: Precache game data. This increases load time, but prevents a little slow down (jerk)
-when the entity is shown for the first time.
-This is optional, and by default is included with the kernel loading code.
-Uncomment PrecacheContent() in LoadKernel() to turn off content precaching.
-
-Returns: -
---------------------------------------------------
-*/
-void PrecacheContent() {
-
-	WriteLog("[SYS] Precaching  game content...");
-	NewLine();
-
-	var   old_VOL_EFFECTS = VOL_EFFECTS,
-	old_VOL_MUSIC = VOL_MUSIC;
-
-	VOL_EFFECTS = VOL_MUSIC = 0;
-
-	GSEMenuMouseHover();
-	wait_for(GSEMenuMouseHover);
-
-	GSEMenuMouseClick();
-	wait_for(GSEMenuMouseClick);
-
-	VOL_EFFECTS = old_VOL_EFFECTS;
-	VOL_MUSIC = old_VOL_MUSIC;
-
-	WriteLog("[X] Finished precaching contents.");
 	NewLine();
 
 }

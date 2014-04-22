@@ -77,9 +77,9 @@ void LoadPlayground() {
 	GPanelResize(Playtest_Loadscreen,RESIZE_XY);	
 	set(Playtest_Loadscreen,SHOW);
 	
-	if( PlayerPresent <= 0 ) { // There was no player!
+	if( !PlayerPresent ) { // There was no player!
 		
-		error("Insert AT LEAST one player into the scene!");
+		error("Insert a player into the scene!");
 		
 		reset(Playtest_Loadscreen,SHOW);
 		mouse_mode = olmouse;
@@ -142,40 +142,6 @@ void LoadPlayground() {
 		
 	}
 	
-	/*
-	
-	switch( (int) _weather_mode ) {
-		
-		case RAIN_ONLY: 
-		// values recommended by developers
-		// over tweak this leads to some random bright rainbow powered by Nguyen Ngoc Huy
-		rain(1,8);
-		rainhndl = snd_loop(rain_wav,VOL_EFFECTS,0);
-		break;
-		
-		case SNOW_ONLY:
-		snow(5000,camera.x,NULL);
-		snowhndl = snd_loop(snowstorm_ambient,VOL_EFFECTS,0);
-		break;
-		
-		case RAIN_SNOW: 
-
-		rain(1,8);
-		snow(5000,camera.x,NULL);
-		
-		rainhndl = snd_loop(rain_wav,VOL_EFFECTS,0);
-		snowhndl = snd_loop(snowstorm_ambient,VOL_EFFECTS,0);
-		
-		break;
-		
-		case NO_RAIN_SNOW: wait(.1); break;
-		
-		default: wait(.1); break;
-		
-	}
-	
-	*/
-	
 
 	GGUIHide();
 	
@@ -186,7 +152,7 @@ void LoadPlayground() {
 	_oldcampos.tilt = camera.tilt;
 	_oldcampos.roll = camera.roll;
 
-	cbPlaytesting = 1;
+	cbPlaytesting = true;
 
 	/*
 	// Test if there is any entity in the projection array
@@ -216,7 +182,7 @@ void LoadPlayground() {
 	
 	if(is(Playtest_Loadscreen,SHOW)) reset(Playtest_Loadscreen,SHOW);
 	
-	from_test_play = 1;
+	from_test_play = false;
 
 	while(cbPlaytesting) {
 		

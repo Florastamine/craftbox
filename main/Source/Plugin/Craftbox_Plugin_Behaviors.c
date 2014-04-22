@@ -483,6 +483,8 @@ void act_glass(ENTITY *entity ) {
 
 void GenerateWaterPlane( ) {
 	
+	/*
+	
 	set(my,TRANSLUCENT);
 	my->alpha = 50;
 	
@@ -498,6 +500,8 @@ void GenerateWaterPlane( ) {
 	bmap_to_cubemap(bmap_to_mipmap(waterplaneMat.skin1));
 	
 	my.material = waterplaneMat;
+	
+	*/
 	
 }
 
@@ -550,13 +554,13 @@ void act_spotlight(ENTITY *entity, var r, var g, var b, var lrange, var mode, va
 
 void act_water(ENTITY *entity) {
 	
-	FFE_Water.matrix11 = floatv(10);
-	FFE_Water.matrix22 = floatv(5);
-
-	bmap_to_mipmap(FFE_Water.skin1);
-	bmap_to_mipmap(FFE_Water.skin2);
-
-	entity.material = FFE_Water;
+//	FFE_Water.matrix11 = floatv(10);
+//	FFE_Water.matrix22 = floatv(5);
+//
+//	bmap_to_mipmap(FFE_Water.skin1);
+//	bmap_to_mipmap(FFE_Water.skin2);
+//
+//	entity.material = FFE_Water;
 	
 }
 
@@ -649,7 +653,7 @@ action AI_Patrol()
 				}
 				*/
 				
-				safe_remove(_target);
+				//safe_remove(_target);
 				//				_target = ent_next(_target);
 				
 			}
@@ -685,7 +689,7 @@ void health_indicator()
 action NeutralEnt() {
 	
 	my.ObjectType = Terrain;
-	my.material = mat_model;
+	//my.material = mat_model;
 	
 	GenerateTerrain();
 	
@@ -701,7 +705,7 @@ action Player_Bike() {
 
 	set(my,SHADOW | POLYGON);
 	
-	PlayerPresent += 1;
+	PlayerPresent = true;
 
 	while(my)
 	{
@@ -734,7 +738,7 @@ action Player_Bike() {
 			}
 
 			// 15 gives the acceleration, 0.1 gives the frictiob
-			vec_set(bike_speed.x, accelerate (movement_speed, 15 * (key_w - key_s), 0.1));
+			vec_set(bike_speed.x, accelerate (movement_speed, 8 * (key_w - key_s), 0.1));
 
 			bike_speed.y = 0;
 
@@ -756,8 +760,6 @@ action Player_Bike() {
 		wait (1);
 
 	}
-	
-	PlayerPresent -= 1;
 
 }
 
@@ -1080,39 +1082,26 @@ action Player_Normal()
 	VECTOR fpos;
 	var gun_height;
 	var gun_bob_rate = 15;
-	//	var _footstep;
 	
-	flashlight = ent_create ("flashlight1.mdl",nullvector,NULL);
-	
-	vec_set(flashlight.blue,vector(60,128,120));
-	set(flashlight,PASSABLE | SPOTLIGHT);
-	player = me;
-	
-	PlayerPresent += 1;
+	player = me;	
+	PlayerPresent = true;
 	
 	set(my,UNLIT | POLYGON | SHADOW);
 	my._HEALTH = 100;
 	my.gravity = 6; // needed for
 	my.zoffset = 2; // gravity handling
 	c_setminmax(me);
-	my.material = mat_model;
+	my.ambient = 75;
 	
 	my.emask |= (ENABLE_ENTITY | ENABLE_IMPACT);
 	my.event = damage_player;
-	//	my.material = mtl_pTex1;
-	
-	ent_create ("health.pcx", my.x, health_indicator);
 	
 	act_grassgenerator(me);
 	act_nodegenerator(me);
 	//	act_foggenerator(me);
 	
-	while(my)
+	while( player )
 	{
-		
-		// Initial setup
-		vec_for_bone(fpos,me,"Bip01 R Finger1");
-		vec_set(flashlight.x,fpos);vec_set(flashlight.pan,my.pan);
 		
 		while(my._HEALTH > 0) {
 			
@@ -1320,8 +1309,6 @@ action Player_Normal()
 		wait(1);
 	}
 	
-	PlayerPresent -= 1;
-	
 }
 
 action camLoc() {
@@ -1341,6 +1328,7 @@ action camLoc() {
 	camera->pan = CameraLoc->skill1;
 	camera->tilt = CameraLoc->skill2;
 	camera->roll = CameraLoc->skill3;
+	camera->ambient = my->skill4;
 	
 	if(cam) ptr_remove(cam);
 	cam = ent_create("marker.mdl", vector(CameraLoc.x,CameraLoc.y,CameraLoc.z) ,free_camera);
@@ -1373,34 +1361,6 @@ action waypoint() {
 	
 	GenerateWaypoint();
 	
-}
-
-action random_guy()
-{ 
-	var anim_percentage;
-	var time_passed = 0;
-	var random_interval;
-
-	while (1)
-	{
-		if (time_passed == 0) random_interval = 4 + random(6);
-
-		c_move (my, vector(5 * time_step, 0, 0), nullvector, GLIDE); // "5" controls the walking speed
-		ent_animate(my, "walk", anim_percentage, ANM_CYCLE);
-		anim_percentage += 6 * time_step; // "6" controls the "walk" animation speed
-		time_passed += time_step / 16;
-		if (time_passed > random_interval)
-		{
-			
-			time_passed = 0; // reset time_passed
-			my.pan += 90 - random(180); // and then add -90...+90 degrees to the pan angle
-			
-		}
-
-		wait(1);
-		
-	}
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -1443,6 +1403,46 @@ action general_action() {
 	enemy();
 	
 }
+
+// Actions for the background menu
+action FogGenerator() { act_foggenerator( me ); }
+action Anmtor_Sittingman() { 
+
+my.ambient = 75;
+
+while( 1 ) {
+	
+ent_animate( me, "action", my.skill1, ANM_CYCLE );
+my.skill1 += 2.5 * time_step;
+
+wait(1);
+
+}
+
+}
+
+action Spawn_Warning () {
+	
+	my->flags |= ( PASSABLE | POLYGON );
+	
+	while( my ) {
+		
+		if( cbPlaytesting ) {
+			
+			if ( vec_dist ( player->x, my->x ) < 50 ) {
+				
+				WriteToBlackboard ( my.String1, " ", 5 );
+				
+			}
+			
+		}
+		
+		wait ( 1);
+		
+	}
+	
+}
+
 
 #define PRAGMA_PRINT " [Loaded plugin behaviors] "
 

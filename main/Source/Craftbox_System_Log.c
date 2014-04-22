@@ -44,7 +44,7 @@ Returns: -
 */
 void NewLine() {
 	
-	#ifdef USE_TXT_LOG
+	#ifdef CBOX_USE_TXT_LOG
 		// Windows uses CR/LF
 		file_asc_write(LOGFILEHNDL,13); // CR
 		file_asc_write(LOGFILEHNDL,10); // LF
@@ -90,7 +90,7 @@ void OpenLog (STRING *LogFile) {
 	
 	if(LOGFILEHNDL) return;
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		
 		LOGFILEHNDL = file_open_append(LogFile);
 		
@@ -173,7 +173,7 @@ void CloseLog() {
 	
 	if(LOGFILEHNDL) { // just in case
 		
-		#ifndef USE_TXT_LOG
+		#ifndef CBOX_USE_TXT_LOG
 			file_str_write(LOGFILEHNDL,"</table></body></html>");
 		#endif
 		
@@ -212,7 +212,7 @@ void PutToHTML(char *content) {
 ////////////////////////////////////////////////////////////
 void WriteLog(STRING *str) {
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		PutToHTML(str);
 		#else
 		if(LOGFILEHNDL) file_str_write(LOGFILEHNDL,str);
@@ -222,7 +222,7 @@ void WriteLog(STRING *str) {
 
 void WriteLog(int _int) {
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		PutToHTML(str_for_int(str_create(_int),_int));
 		#else
 		if(LOGFILEHNDL) file_var_write(LOGFILEHNDL,(int) _int) ;
@@ -232,7 +232,7 @@ void WriteLog(int _int) {
 
 void WriteLog(var _var) {
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		PutToHTML(str_for_num(str_create(_var),_var));
 		#else
 		if(LOGFILEHNDL) file_var_write(LOGFILEHNDL,_var);
@@ -242,7 +242,7 @@ void WriteLog(var _var) {
 
 void WriteLog(float _float) {
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		PutToHTML(str_for_float(str_create(_float),_float));
 		#else
 		WriteLog( (var)_float );
@@ -252,7 +252,7 @@ void WriteLog(float _float) {
 
 void WriteLog(double _double) {
 	
-	#ifndef USE_TXT_LOG
+	#ifndef CBOX_USE_TXT_LOG
 		PutToHTML(str_for_float(str_create(_double),_double)); 
 		#else
 		WriteLog( (var)_double );

@@ -241,4 +241,31 @@ int GenerateLight() {
 	
 }
 
+/*
+--------------------------------------------------
+int GenerateWaterPlane()
+
+Desc: Generates out a water plane based on the sky being used.
+
+Returns: -
+--------------------------------------------------
+*/
+STRING *shuffledWaterPlane = "./CookedObjects/Lands/l_ocean1.hmp";
+
+int GenerateWaterPlane() {
+   
+   if( WaterPlaneMarker ) WaterPlaneLoc = ent_create(shuffledWaterPlane,vector( WaterPlaneMarker.x, WaterPlaneMarker.y, WaterPlaneMarker.z), NULL);
+   else WaterPlaneLoc = ent_create(shuffledWaterPlane,nullvector,NULL);
+   
+	set(WaterPlaneLoc,TRANSLUCENT | PASSABLE | SHOW);
+	WaterPlaneLoc->alpha = 50;
+
+	// Apply cubereflection
+	GenerateReflection( WaterPlaneLoc );
+
+	// Now scale it
+	Scale( WaterPlaneLoc, 50 );
+
+}
+
 #endif

@@ -177,6 +177,21 @@ void Event_MouseLeft() {
 				if(select)
 				{
 					
+					/*
+					
+					if(select.ObjectType == ObjectSystem) {
+						
+						switch ( select.ObjectSystemType ) {
+							
+							case Trigger_SpawnNotification: GSpawnNotificationHide(); break;
+							case Trigger_SpawnConversation: GSpawnDialogueHide(); break;
+							
+						}
+						
+					}
+					
+					*/
+					
 					if(select.ObjectType == Light) GLightWindowHide();
 					if(select.ObjectType > Object && select.ObjectType <= ObjectNode) GPropertiesWindowHide();
 					if(select.ObjectType == Sound) GSoundWindowHide();
@@ -185,7 +200,6 @@ void Event_MouseLeft() {
 					
 					// TRA HET CHO NGUOI TRA HET CHO NGUOI ~~~ =))
 					//					select.material = mat_temp;
-					select.ambient = old_ambient;
 					select = NULL;
 				}
 				
@@ -193,7 +207,6 @@ void Event_MouseLeft() {
 				
 				//				if(select.material) mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
 				//				select.material = mat_select;
-				select.ambient = 100; // maximum brightness
 				
 				/*
 				
@@ -224,11 +237,7 @@ void Event_MouseLeft() {
 			// ground (which means !mouse_ent)
 			//						if(!mouse_ent) { // Nothing is on top of the cursor
 				
-				if(manip_type >= scale + 1) {
-					
-					CreateObject();
-					
-				}
+				if(manip_type >= scale + 1) CreateObject ();
 				
 			//						}
 			
@@ -277,7 +286,6 @@ void Event_MouseRight() {
 						
 						// TRA HET CHO NGUOI TRA HET CHO NGUOI ~~~ =))
 						//						select.material = mat_temp;
-						select.ambient = old_ambient;
 						select = NULL;
 					}
 					
@@ -285,7 +293,6 @@ void Event_MouseRight() {
 					
 					//					if(select.material) mat_temp = select.material; // Luc nay select da duoc xac dinh nen ta cu thoai mai
 					//					select.material = mat_select;
-					select.ambient = 100;
 					
 					OpenRightClickMenu();
 					
@@ -355,7 +362,11 @@ void Event_key_esc() {
 		
 		if( proc_status(GCreditsShow) ) {
 			
+			#ifndef A7_DEVELOPMENT
 			proc_kill2(GCreditsShow,NULL);
+			#else
+			proc_kill( GCreditsShow );
+			#endif
 			
 			return;
 			
@@ -420,8 +431,8 @@ void Event_key_esc() {
 		
 		if(cbPlaytesting ) {
 			
-			cbPlaytesting = 0;
-			from_test_play = 0; // reset
+			cbPlaytesting = false;
+			from_test_play = false; // reset
 			
 			return;
 			

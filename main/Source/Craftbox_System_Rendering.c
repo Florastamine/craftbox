@@ -55,30 +55,30 @@ http://gamestart3d.com/wiki/index.php?title=Forward_or_Deferred_rendering%3F
 
 + Shaders List
 - [X] Watershader
-- Light Shaft
-- God Rays
+- [ ] Light Shaft
+- [ ] God Rays
 - [X] Specular
 - [X] Velvet
 - [X] Fur
-- (Motion) Blur
+- [ ] (Motion) Blur
 - [X] Chrome
-- Multitexturing
+- [ ] Multitexturing
 - [X] Toon
 - [X] Grass waving
-- Refraction
+- [ ] Refraction
 - [X] Ocean
-- Flame
-- Soft Particles
+- [ ] Flame
+- [ ] Soft Particles
 
 
 >+++
 --------------------------------------------------
 */
 
-MATERIAL *FFE_Water;
-MATERIAL *FFE_TerrainMultitexturing;
-MATERIAL *FFE_Env;
-MATERIAL *FFE_ImprovedOverlay;
+//MATERIAL *ffeWater;
+//MATERIAL *ffeTerrainMultitexturing;
+//MATERIAL *ffeEnv;
+//MATERIAL *ffeImprovedOverlay;
 //MATERIAL *Toon;
 //MATERIAL *Chrome;
 //MATERIAL *GrassWaving;
@@ -110,18 +110,6 @@ void mtl_vegetation_init();
 //#include "./Source/Craftbox_System_mtlFX.c"
 //#include "./Source/Craftbox_System_mtlView.c"
 
-// Xd1Vo's Projection texture
-//#include "pMat.c" // projection materials
-//#include "projMain.c" //code for creating matrix
-//#include "eRender.c" //render bitmap for projection texture
-
-// BoH_Havoc's Shade-C v 0.91 BETA Snapshot 1
-#include "./Source/Rendering/sc_core.c"
-
-// SSAO v0.6 for Gamestudio A7 & A8 by Christian Behrenberg
-#include "./Source/Rendering/ppSsao.h"
-//#include "./Source/Rendering/dof.c"
-
 /*
 --------------------------------------------------
 GraphicsSettingsStruct *CreateGraphicsStruct(int..)
@@ -148,18 +136,18 @@ int ppe
 
 ) {
    
-   GraphicsSettingsStruct *newStruct;
+   GraphicsSettingsStruct *newStruct = sys_malloc( sizeof(GraphicsSettingsStruct) );
 
-   newStruct->Brightness = abs(brightness);
-   newStruct->BitDepth = abs(bitdepth);
-   newStruct->AFLevel = abs(af);
-   newStruct->AALevel = abs(aa);
-   newStruct->_SSAO = abs(ssao);
-   newStruct->DOF = abs(dof);
-   newStruct->HDR = abs(hdr);
-   newStruct->Shadows = abs(shadows);
-   newStruct->ObjShaders = abs(objshaders);
-   newStruct->PPE = abs(ppe);
+   newStruct->Brightness = brightness;
+   newStruct->BitDepth = bitdepth;
+   newStruct->AFLevel = af;
+   newStruct->AALevel = aa;
+   newStruct->_SSAO = ssao;
+   newStruct->DOF = dof;
+   newStruct->HDR = hdr;
+   newStruct->Shadows = shadows;
+   newStruct->ObjShaders = objshaders;
+   newStruct->PPE = ppe;
    
    return newStruct;
    
@@ -241,8 +229,6 @@ void ApplyGraphicsSettings( GraphicsSettingsStruct *dConfig ) {
 
 	}
 	
-	*/
-	
 	if( dConfig->HDR || dConfig->DOF || dConfig->Shadows ) sc_setup();
 	
 	// SSAO
@@ -253,6 +239,23 @@ void ApplyGraphicsSettings( GraphicsSettingsStruct *dConfig ) {
 		
 	}
 	
+	*/
+	
+}
+
+/*
+--------------------------------------------------
+void SetDefaultGraphicsSettings()
+
+Desc: Sets the pre-defined graphics struct (defaultConfig) to default settings.
+
+Returns: -
+--------------------------------------------------
+*/
+void SetDefaultGraphicsSettings() {
+	
+	wait(1);
+   
 }
 
 /*
@@ -276,60 +279,13 @@ int SetupShader() {
 		
 	}
 	
-	ApplyGraphicsSettings( defaultConfig );
-	
-	/*
-	
-	// Shade-C
-	
-	allowHDR = 1;
-	allowDOF = 0;
-	sc_bRefract = 1;
-	sc_bWater = 1;
-	sc_bReflect = 1;
-	sc_bVolParts = 1;
-	
-	sc_setup();	
-	
-	sc_smSunSetup(screen_size.x, 2000, 1500, 0.002, 0);
-	
-	sc_lightRayStr =5.4;
-	sc_lightRayLength = 3.5; //set light ray length
-	
-	//activate light rays
-	sc_lightRays();
-	
-	//set mat_model to shadow material. Now all models without any material will receive shadows
-	mat_model.effect = "sc_obj_doShadow.fx";
-	//set mat_flat to shadow material. Now all level blocks with flat shading and without any material will receive shadows
-	mat_flat.effect = "sc_level_doShadow.fx";
-	mat_shaded.effect = "sc_level_doShadow.fx";
-	
-	set(sc_pan_sunDummy,SHOW);
-	
-	*/
-	
-	/*
-	// SSAO
-	_SSAO();
-	while(proc_status(_SSAO)) wait(1);
-	
-	// Depth of field
-	dof();
-	
-	// Misc.
-	shadow_stencil = 2;
-	//	stencil_blur(3);
-	*/
-	
 	WriteLog("[X] Task completed.");
 	NewLine();
-	
 	
 }
 
 // Here goes custom shaders...
-MATERIAL *FFE_Water =
+MATERIAL *ffeWater =
 {
 	skin1 = waterbump;
 	skin2 = envspec;
@@ -340,7 +296,7 @@ MATERIAL *FFE_Water =
 	effect = "water.fx";
 }
 
-MATERIAL *FFE_TerrainMultitexturing =
+MATERIAL *ffeTerrainMultitexturing =
 {
 	skin1 = sand;
 	skin2 = grass;
@@ -351,7 +307,7 @@ MATERIAL *FFE_TerrainMultitexturing =
 }
 
 
-MATERIAL* FFE_Env = 
+MATERIAL* ffeEnv = 
 {
 	skin1 = transenvmap_cube;
 	
@@ -360,7 +316,7 @@ MATERIAL* FFE_Env =
 	effect = "Envmapping.fx";
 }
 
-MATERIAL *FFE_ImprovedOverlay = 
+MATERIAL *ffeImprovedOverlay = 
 {
 	event=mtl_vegetation_init;
 	effect=
@@ -387,6 +343,34 @@ MATERIAL *FFE_ImprovedOverlay =
 	}
 technique fallback{pass p0{}}
 	";
+}
+
+void mtl_ffpwater_event()
+{
+	//Lets make it scroll in some direction
+	mtl.skill1 += 10*time_step;
+	mtl.skill2 += 10*time_step;
+	mtl.matrix31 = floatd(mtl.skill1,40000);
+	mtl.matrix32 = floatd(mtl.skill2,40000);
+}
+
+void transenv_event()
+{
+	mat_set(mtl.matrix,matViewInv);
+	mtl.matrix41=0;
+	mtl.matrix42=0;
+	mtl.matrix43=0;
+}
+
+void mtl_vegetation_init()
+{
+	vec_set(mtl.emissive_blue,mat_model.emissive_blue);
+	vec_set(mtl.ambient_blue,mat_model.ambient_blue);
+	vec_set(mtl.diffuse_blue,mat_model.diffuse_blue);
+	vec_set(mtl.specular_blue,mat_model.specular_blue);
+	mtl.power=mat_model.power;
+	mtl.albedo=mat_model.albedo;
+	mtl.skill1=pixel_for_vec(vector(128,0,0),0,8888); // the first value in the vector is the threshold
 }
 
 /*
@@ -454,67 +438,40 @@ MATERIAL *Water = {
 
 */
 
-void mtl_ffpwater_event()
+// Public actions for entities
+action sffeWater()
 {
-	//Lets make it scroll in some direction
-	mtl.skill1 += 10*time_step;
-	mtl.skill2 += 10*time_step;
-	mtl.matrix31 = floatd(mtl.skill1,40000);
-	mtl.matrix32 = floatd(mtl.skill2,40000);
+	ffeWater.matrix11 = floatv(10);
+	ffeWater.matrix22 = floatv(5);
+
+	bmap_to_mipmap(ffeWater.skin1);
+	bmap_to_mipmap(ffeWater.skin2);
+
+	my.material = ffeWater;
 }
 
-void transenv_event()
+action sffeMultiTex()
 {
-	mat_set(mtl.matrix,matViewInv);
-	mtl.matrix41=0;
-	mtl.matrix42=0;
-	mtl.matrix43=0;
-}
-
-void mtl_vegetation_init()
-{
-	vec_set(mtl.emissive_blue,mat_model.emissive_blue);
-	vec_set(mtl.ambient_blue,mat_model.ambient_blue);
-	vec_set(mtl.diffuse_blue,mat_model.diffuse_blue);
-	vec_set(mtl.specular_blue,mat_model.specular_blue);
-	mtl.power=mat_model.power;
-	mtl.albedo=mat_model.albedo;
-	mtl.skill1=pixel_for_vec(vector(128,0,0),0,8888); // the first value in the vector is the threshold
-}
-
-action sFFE_Water()
-{
-	FFE_Water.matrix11 = floatv(10);
-	FFE_Water.matrix22 = floatv(5);
-
-	bmap_to_mipmap(FFE_Water.skin1);
-	bmap_to_mipmap(FFE_Water.skin2);
-
-	my.material = FFE_Water;
-}
-
-action sFFE_MultiTex()
-{
-	bmap_to_mipmap(FFE_TerrainMultitexturing.skin1);
-	bmap_to_mipmap(FFE_TerrainMultitexturing.skin2);
-	bmap_to_mipmap(FFE_TerrainMultitexturing.skin3);
-	bmap_to_mipmap(FFE_TerrainMultitexturing.skin4);
+	bmap_to_mipmap(ffeTerrainMultitexturing.skin1);
+	bmap_to_mipmap(ffeTerrainMultitexturing.skin2);
+	bmap_to_mipmap(ffeTerrainMultitexturing.skin3);
+	bmap_to_mipmap(ffeTerrainMultitexturing.skin4);
 	
-	my.material = FFE_TerrainMultitexturing;
+	my.material = ffeTerrainMultitexturing;
 }
 
-action sFFE_EnvMap()
+action sffeEnvMap()
 {
-	bmap_to_cubemap(bmap_to_mipmap(FFE_Env.skin1));
+	bmap_to_cubemap(bmap_to_mipmap(ffeEnv.skin1));
 	
 	set(my,TRANSLUCENT);
 	my.alpha=50;
-	my.material = FFE_Env;
+	my.material = ffeEnv;
 }
 
-action sFFE_IOverlay() {
+action sffeIOverlay() {
 	
-	my.material = FFE_ImprovedOverlay;
+	my.material = ffeImprovedOverlay;
 	
 }
 
@@ -581,7 +538,6 @@ action sWater()
 }
 
 */
-
 
 /*
 --------------------------------------------------

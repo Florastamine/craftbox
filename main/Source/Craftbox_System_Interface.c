@@ -28,41 +28,6 @@ NOTES:
 --------------------------------------------------
 */
 
-PANEL *LoadKernelScreen = {
-	
-	layer = 999;
-	
-	pos_x = 0;
-	pos_y = 0;
-	bmap = "LoadKernelScreen.jpg";
-	
-}
-
-PANEL *SplashScreen = {
-	
-	pos_x = 0;
-	pos_y = 0;
-	
-	//	layer = 1;
-	
-	flags = TRANSLUCENT;
-	
-	alpha = 0;
-	
-}
-
-BMAP *previewImg;
-
-PANEL *PreviewBox = {
-	
-	layer = 15;
-	
-	pos_x = 10;
-	pos_y = 10;
-	
-	//	flags = SHOW;
-}
-
 void GQuitCraftbox() {
 	
 	if(event_type == EVENT_RELEASE) return;
@@ -86,6 +51,20 @@ void GOpenPropertiesWindow() {
 	
 	reset(RightClickMenu,SHOW);
 	
+	if( select.ObjectType == Sound) GSoundWindowShow ();
+	if( select.ObjectType == Light) GLightWindowShow ();
+	if ( select.ObjectType == Particle ) GParticleWindowShow ();
+	if( select.ObjectType == ObjectSystem ) {
+		
+		switch ( select.ObjectSystemType ) {
+	
+		case Trigger_SpawnNotification: GSpawnNotificationShow(); break;
+		case Trigger_SpawnConversation: GSpawnDialogueShow(); break;
+		
+	}
+		
+	}
+	
 	switch(select.ObjectType) {
 		
 		case Sound: GSoundWindowShow(); break;
@@ -94,6 +73,60 @@ void GOpenPropertiesWindow() {
 		default: GPropertiesWindowShow(); break;
 		
 	}
+	
+}
+
+
+void GSpawnNotificationHide () {
+	
+	wait(1);
+	
+}
+
+void GSpawnNotificationShow () {
+	
+	wait(1);
+
+}
+
+void GSpawnDialogueHide () {
+	
+	reset ( panDialogue , SHOW );
+
+}
+
+void GSpawnDialogueShow () {
+	
+	set( panDialogue, SHOW );
+
+
+}
+
+void PassToSelect1String () {
+	
+	if( event_type == EVENT_RELEASE ) return;
+	
+	select.String1 = str_create( "#400" );
+	
+	char *open = file_dialog_open ( " ", "*.*" );
+	if( !open ) return;
+	else str_cpy( select.String1, _str( open ) );
+	
+}
+
+PANEL *panDialogue = {
+	
+	bmap = "panDialogue.png";
+	pos_x = 30;
+	pos_y = 30;
+	
+	button( 30, 30, "panDialogue_Selector.png", "panDialogue_Selector.png", "panDialogue_Selector.png", NULL, PassToSelect1String, NULL );
+	
+	flags = TRANSLUCENT;
+	alpha = 50;
+	
+	on_click = GPanelDrag;
+	
 	
 }
 
@@ -121,6 +154,8 @@ PANEL *QuitDialog = {
 }
 
 PANEL *seedPanelCover = {
+   
+   /*
 	
 	//	bmap = "c07_d.png";
 	layer = 10;
@@ -134,6 +169,8 @@ PANEL *seedPanelCover = {
 	pos_y = 0;
 	
 	flags = OVERLAY;
+	
+	*/
 
 }
 
@@ -195,6 +232,7 @@ PANEL *TerrainToolbar = {
 	
 	button(403,84,"TerrainToolbar_Close_on.png","TerrainToolbar_Close.png","TerrainToolbar_Close_on.png",NULL,GToggleTerrainEditor,NULL);
 	
+	
 	hslider(289,34,155,"slider.bmp",500,5000,bSize);
 	hslider(289,72,155,"slider.bmp",5,25,brush_speed);
 	
@@ -220,7 +258,7 @@ PANEL *InDev = {
 	layer = 999;
 	
 	bmap = "InDev.png";
-	button(170,184,"InDev_Close.png","InDev_Close.png","InDev_Close.png",NULL,GInDevHide,GSEMenuMouseHover);
+	button(170,184,"InDev_Close.png","InDev_Close.png","InDev_Close.png",NULL,GInDevHide,NULL);
 	
 }
 
@@ -266,7 +304,7 @@ PANEL *MusicPlayer = {
 	button(138,0,"mp_media_pause.png","mp_media_pause.png","mp_media_pause.png",NULL,mpPause,NULL);
 	button(276,0,"mp_media_play.png","mp_media_play.png","mp_media_play.png",NULL,mpResume,NULL);
 	button(414,0,"mp_media_next.png","mp_media_next.png","mp_media_next.png",NULL,mpNext,NULL);
-	//	button_toggle(336,156,"Musicplayer_checkbox_random_on.png","Musicplayer_checkbox_random_off.png","Musicplayer_checkbox_random_on.png","Musicplayer_checkbox_random_on.png",NULL,GToggleMusicPlayerRandomize,GSEMenuMouseHover);
+	button_toggle(336,156,"Musicplayer_random_on.png","Musicplayer_random_off.png","Musicplayer_random_on.png","Musicplayer_random_on.png",NULL,GToggleMusicPlayerRandomize,NULL);
 	
 	flags = OVERLAY;
 	
@@ -360,21 +398,21 @@ PANEL *NewGame_ScreenDyn_Step1 = {
 	
 	bmap = "NewGame_ScreenDyn_Step1.bmp";
 	
-	button_toggle(30,96,"NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_Off.bmp","NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_On.bmp",GSEMenuMouseClick,NULL,NULL);
-	button_toggle(30,126,"NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_Off.bmp","NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_On.bmp",GSEMenuMouseClick,NULL,NULL);
-	button_toggle(30,156,"NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_Off.bmp","NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_On.bmp",GSEMenuMouseClick,NULL,NULL);
-	button_toggle(30,186,"NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_Off.bmp","NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_On.bmp",GSEMenuMouseClick,NULL,NULL);
+	button_toggle(30,96,"NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_Off.bmp","NewGame_Checkbox_Lensflare_On.bmp","NewGame_Checkbox_Lensflare_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,126,"NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_Off.bmp","NewGame_Checkbox_Sun_On.bmp","NewGame_Checkbox_Sun_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,156,"NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_Off.bmp","NewGame_Checkbox_Moon_On.bmp","NewGame_Checkbox_Moon_On.bmp",NULL,NULL,NULL);
+	button_toggle(30,186,"NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_Off.bmp","NewGame_Checkbox_Stars_On.bmp","NewGame_Checkbox_Stars_On.bmp",NULL,NULL,NULL);
 	
-	button_radio(36,250."NewGame_Radiobox_Rain_On.bmp","NewGame_Radiobox_Rain_Off.bmp","NewGame_Radiobox_Rain_On.bmp",GSEMenuMouseClick,GWeatherMode_RainOnly,NULL);
-	button_radio(36,280,"NewGame_Radiobox_Snow_On.bmp","NewGame_Radiobox_Snow_Off.bmp","NewGame_Radiobox_Snow_On.bmp",GSEMenuMouseClick,GWeatherMode_SnowOnly,NULL);
-	button_radio(36,310,"NewGame_Radiobox_Both_On.bmp","NewGame_Radiobox_Both_Off.bmp","NewGame_Radiobox_Both_On.bmp",GSEMenuMouseClick,GWeatherMode_RainSnow,NULL);
-	button_radio(36,340,"NewGame_Radiobox_Nothing_On.bmp","NewGame_Radiobox_Nothing_Off.bmp","NewGame_Radiobox_Nothing_On.bmp",GSEMenuMouseClick,GWeatherMode_Nothing,NULL);
+	button_radio(36,250."NewGame_Radiobox_Rain_On.bmp","NewGame_Radiobox_Rain_Off.bmp","NewGame_Radiobox_Rain_On.bmp",NULL,GWeatherMode_RainOnly,NULL);
+	button_radio(36,280,"NewGame_Radiobox_Snow_On.bmp","NewGame_Radiobox_Snow_Off.bmp","NewGame_Radiobox_Snow_On.bmp",NULL,GWeatherMode_SnowOnly,NULL);
+	button_radio(36,310,"NewGame_Radiobox_Both_On.bmp","NewGame_Radiobox_Both_Off.bmp","NewGame_Radiobox_Both_On.bmp",NULL,GWeatherMode_RainSnow,NULL);
+	button_radio(36,340,"NewGame_Radiobox_Nothing_On.bmp","NewGame_Radiobox_Nothing_Off.bmp","NewGame_Radiobox_Nothing_On.bmp",NULL,GWeatherMode_Nothing,NULL);
 	
-	hslider(503,115,274,"SliderKnob.bmp",0,150,_time_speed); // [0..150]
-	hslider(503,164,274,"SliderKnob.bmp",0,150,_time_speed_night); // [0..150]
-	hslider(503,215,274,"SliderKnob.bmp",2.5,40,_moon_scale_fac); // [2,5..40]
-	hslider(503,263,274,"SliderKnob.bmp",0.5,5,_night_sky_scale_x); // [0,5..5]
-	hslider(503,318,274,"SliderKnob.bmp",0,200,_night_sky_speed_x); // [0..200]
+	hslider(503,115,274,"SliderKnob.bmp",5,20,_DayDuration); // [0..150]
+	hslider(503,164,274,"SliderKnob.bmp",5,20,_NightDuration); // [0..150]
+	hslider(503,215,274,"SliderKnob.bmp",5,40,_MoonScaleFactor); // [2,5..40]
+	hslider(503,263,274,"SliderKnob.bmp",1,5,_NightScaleFactor); // [0,5..5]
+	hslider(503,318,274,"SliderKnob.bmp",25,200,_NightSkySpeed); // [0..200]
 	
 	flags =  TRANSLUCENT;
 	
@@ -387,7 +425,7 @@ PANEL *NewGame_ScreenStatic_Step1 = {
 	bmap = "NewGame_ScreenStatic_Step1.bmp";
 	
 	hslider(323,107,271,"SliderKnob.bmp",-200,300,_sun_light); // actually I found sun_light ranged from -200 to 200+
-	button_toggle(37,166,"NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_Off.bmp","NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_On.bmp",GSEMenuMouseClick,NULL,NULL);
+	button_toggle(37,166,"NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_Off.bmp","NewGame_Checkbox_Fog_On.bmp","NewGame_Checkbox_Fog_On.bmp",NULL,NULL,NULL);
 	
 	hslider(283,255,271,"SliderKnob.bmp",0,255,_d3d_fogcolor1_red);
 	hslider(283,291,271,"SliderKnob.bmp",0,255,_d3d_fogcolor1_blue);
@@ -403,7 +441,7 @@ PANEL *NewGame_Screen3 = {
 	
 	bmap = "NewGame_Screen3.bmp";
 	
-	button(661,354,"button_Start_on.png","button_Start_off.png","button_Start_on.png",NULL,LaunchGameSession,GSEMenuMouseHover);
+	button(661,354,"button_Start_on.png","button_Start_off.png","button_Start_on.png",NULL,LaunchGameSession,NULL);
 	
 	button_toggle(40,264,"checkbox_WaterPlane_on.png","checkbox_WaterPlane_off.png","checkbox_WaterPlane_on.png","checkbox_WaterPlane_on.png",NULL,NULL,NULL);
 	
@@ -427,31 +465,16 @@ PANEL *MainMenu_Bar = {
 	
 }
 
-
-PANEL *ZTool = {
-	
-	layer = 6;
-	
-	bmap = "z_tool.bmp";
-	
-	pos_x = 200;
-	pos_y = 10;
-	
-	vslider(10,10,300,"slider.bmp",-3000,4000,v_objectz);
-	
-	on_click = GPanelDrag;
-	
-}
-
 PANEL *LoadGame = {
 	
 	layer = 1;
 	
 	bmap = "LoadGame.bmp";
 	
+	flags = TRANSLUCENT;
+	alpha = 75;
+	
 }
-
-// C++'s inheritance is needed here DUDE!
 
 PANEL *Options_Graphics = {
 	
@@ -489,12 +512,12 @@ PANEL *Options_Graphics = {
 	//	
 	
 	//
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -521,12 +544,12 @@ PANEL *Options_Sound = {
 	button(400,141,"arrow_right.png","arrow_right.png","arrow_right.png",NULL,GOptionsAdjustSettings,NULL);
 	
 	//
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -540,12 +563,12 @@ PANEL *Options_Themes = {
 	
 	bmap = "Options_Themes.bmp";
 	
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -559,16 +582,16 @@ PANEL *Options_Maintenance = {
 	
 	bmap = "Options_Maintenance.bmp";
 	
-	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,GSEMenuMouseHover);
-	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,GSEMenuMouseHover);
-	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,GSEMenuMouseHover);
-	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,GSEMenuMouseHover);
+	button(216,8,"button_Options_Graphics_on.png","button_Options_Graphics.png","button_Options_Graphics_on.png",NULL,GOptions_Graphics,NULL);
+	button(316,8,"button_Options_Sound_on.png","button_Options_Sound.png","button_Options_Sound_on.png",NULL,GOptions_Sound,NULL);
+	button(450,8,"button_Options_Themes_on.png","button_Options_Themes.png","button_Options_Themes_on.png",NULL,GOptions_Themes,NULL);
+	button(555,8,"button_Options_Maintenance_on.png","button_Options_Maintenance.png","button_Options_Maintenance_on.png",NULL,GOptions_Maintenance,NULL);
 	
-	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,GSEMenuMouseHover);
+	button(24,349,"button_Options_Back_on.png","button_Options_Back.png","button_Options_Back_on.png",NULL,GOptions_SaveSettings,NULL);
 	
 	button(27,100,"button_benchmark_on.png","button_benchmark_off.png","button_benchmark_on.png",NULL,NULL,NULL);
 	button(27,140,"button_redetectPC_on.png","button_redetectPC_off.png","button_redetectPC_on.png",NULL,NULL,NULL);
-	button(24,180,"button_openConsole_on.png","button_openConsole_off.png","button_openConsole_on.png",NULL,NULL,NULL);
+	button(24,180,"button_openConsole_on.png","button_openConsole_off.png","button_openConsole_on.png",NULL,OpenConsole,NULL);
 	
 	flags = TRANSLUCENT;
 	
@@ -589,10 +612,10 @@ PANEL *InputBox_GROUNDSTR = {
 	
 	bmap = "InputPalette_4.bmp";
 	
-	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
-	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
-	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
-	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToGROUNDSTR,NULL);
+	button_radio(0,0,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToGROUNDSTR,NULL);
+	button_radio(0,27,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToGROUNDSTR,NULL);
+	button_radio(0,54,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToGROUNDSTR,NULL);
+	button_radio(0,81,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToGROUNDSTR,NULL);
 	
 	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GGROUNDSTR_Up,NULL);
 	button(247,76,"sort_down.png","sort_down.png","sort_down.png",NULL,GGROUNDSTR_Down,NULL);
@@ -609,10 +632,10 @@ PANEL *InputBox_SKYSTR = {
 	
 	bmap = "InputPalette_4.bmp";
 	
-	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
-	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
-	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
-	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToSKYSTR,NULL);
+	button_radio(0,0,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToSKYSTR,NULL);
+	button_radio(0,27,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToSKYSTR,NULL);
+	button_radio(0,54,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToSKYSTR,NULL);
+	button_radio(0,81,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToSKYSTR,NULL);
 	
 	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GSKYSTR_Up,NULL);
 	button(247,76,"sort_down.png","sort_down.png","sort_down.png",NULL,GSKYSTR_Down,NULL);
@@ -629,14 +652,14 @@ PANEL *InputBox_LOADGAMESTR = {
 	
 	bmap = "InputPalette_8.bmp";
 	
-	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,27,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,54,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,81,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,108,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,135,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,162,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
-	button(0,189,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,0,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,27,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,54,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,81,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,108,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,135,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,162,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
+	button_radio(0,189,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,PassToLOADGAMESTR,NULL);
 	
 	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GLOADGAMESTR_Up,NULL);
 	button(247,184,"sort_down.png","sort_down.png","sort_down.png",NULL,GLOADGAMESTR_Down,NULL);
@@ -646,7 +669,6 @@ PANEL *InputBox_LOADGAMESTR = {
 	alpha = 50;
 	
 }
-
 
 PANEL *InsertObject_Inputter = {
 	
@@ -659,32 +681,32 @@ PANEL *InsertObject_Inputter = {
 	
 	bmap = "InputPalette_20.bmp";
 	
-	button(0,0,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,30,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,60,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,90,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,120,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,0,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,30,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,60,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,90,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,120,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
 	
-	button(0,150,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,180,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,210,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,240,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,270,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,150,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,180,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,210,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,240,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,270,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
 	
-	button(0,300,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,330,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,360,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,390,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,420,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,300,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,330,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,360,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,390,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,420,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
 	
-	button(0,450,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,480,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,510,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,540,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
-	button(0,570,"InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp","InsertObject_Inputter_Button.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,450,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,480,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,510,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,540,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
+	button_radio(0,570,"Inputter_Button_on.bmp","InsertObject_Inputter_Button.bmp","Inputter_Button_on.bmp",NULL,GSelectObject,NULL);
 	
-	button(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GTEMPSTR_Up,NULL);
-	button(247,565,"sort_down.png","sort_down.png","sort_down.png",NULL,GTEMPSTR_Down,NULL);
+	button_radio(247,0,"sort_up.png","sort_up.png","sort_up.png",NULL,GTEMPSTR_Up,NULL);
+	button_radio(247,565,"sort_down.png","sort_down.png","sort_down.png",NULL,GTEMPSTR_Down,NULL);
 
 	flags = TRANSLUCENT;
 
@@ -727,8 +749,13 @@ PANEL *InsertSystemObjects = {
 	
 	layer = 6;
 	
-	button(0,0,"sys_foot.jpg","sys_foot.jpg","sys_foot.jpg",NULL,NULL,NULL);
-	button(138,0,"sys_bike.jpg","sys_bike.jpg","sys_bike.jpg",NULL,NULL,NULL);
+	button(0,0,"sys_foot_on.jpg","sys_foot.jpg","sys_foot_on.jpg",NULL,SECreate_PlayerNormal,NULL);
+	button(138,0,"sys_bike_on.jpg","sys_bike.jpg","sys_bike_on.jpg",NULL,SECreate_PlayerBike,NULL);
+	
+	//button( 0, 158 ,"sys_spawnwarning.png","sys_spawnwarning.png","sys_spawnwarning.png",NULL,SECreate_SpawnNotification,NULL);
+	//button( 138, 158,"sys_openconversation.png","sys_openconversation.png","sys_openconversation.png",NULL,NULL,NULL);
+	
+	/* 
 	
 	// 128 + 30
 	button(0,158,"sys_adjustfog.JPG","sys_adjustfog.JPG","sys_adjustfog.JPG",NULL,NULL,NULL);
@@ -739,6 +766,8 @@ PANEL *InsertSystemObjects = {
 	button(0,308,"sys_openconversation.png","sys_openconversation.png","sys_openconversation.png",NULL,NULL,NULL);
 	button(138,308,"sys_openletter.png","sys_openletter.png","sys_openletter.png",NULL,NULL,NULL);
 	button(266,308,"sys_spawnwarning.png","sys_spawnwarning.png","sys_spawnwarning.png",NULL,NULL,NULL);
+	
+	*/
 	
 }
 
@@ -813,51 +842,35 @@ PANEL *LightPresets = {
 	
 }
 
-PANEL *buttonlst_submenu_terrain = {
-	layer = 1;
-	
-	bmap = "button_submenu_black.bmp";
-	
-	button(0,0,"torreeiffel_up.png","torreeiffel_up.png","torreeiffel_up.png",NULL,GToggleTerrainEditor,NULL);
-	button(0,0,"torreeiffel_down.png","torreeiffel_down.png","torreeiffel_down.png",NULL,GToggleObjectSeeder,NULL);
-	//	button(0,0,menu1_submenu3,menu1_submenu3_off,menu1_submenu3_over,NULL,NULL,NULL);
-	//	button(0,0,menu1_submenu4,menu1_submenu4_off,menu1_submenu4_over,NULL,NULL,NULL);
-	
-	// The final button will be the back button.
-	button(0,0,"button_back.png","button_back.png","button_back.png",NULL,GTerrainSubmenuHide,NULL);
-	
-	flags = OVERLAY;
-}
-
 PANEL *panProp = {
 	
 	layer = 2;
 	
-	bmap = "panProp.png";
+	bmap = panProp1_IMG;
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GPropertiesWindowHide,NULL);
+	button(265,1,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GPropertiesWindowHide,NULL);
 	
 	//	button(0,0,"button_apply_on.bmp","button_apply.bmp","button_apply_on.bmp",NULL,NULL,NULL);
 	
-	button_toggle(110,0,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
-	button_toggle(110,20,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
-	button_toggle(110,40,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
-	button_toggle(110,60,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
-	button_toggle(110,80,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
-	button_toggle(110,100,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
-	button_toggle(110,120,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
-	button_toggle(110,140,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
+	button_toggle(110,85,flag_BIRGHT_on,flag_BIRGHT,flag_BIRGHT_on,flag_BIRGHT_on,NULL,NULL,NULL);
+	button_toggle(110,105,flag_INVISIBLE_on,flag_INVISIBLE,flag_INVISIBLE_on,flag_INVISIBLE_on,NULL,NULL,NULL);
+	button_toggle(110,125,flag_NOFOG_on,flag_NOFOG,flag_NOFOG_on,flag_NOFOG_on,NULL,NULL,NULL);
+	button_toggle(110,145,flag_OVERLAY_on,flag_OVERLAY,flag_OVERLAY_on,flag_OVERLAY_on,NULL,NULL,NULL);
+	button_toggle(110,165,flag_PASSABLE_on,flag_PASSABLE,flag_PASSABLE_on,flag_PASSABLE_on,NULL,NULL,NULL);
+	button_toggle(110,185,flag_POLYGON_on,flag_POLYGON,flag_POLYGON_on,flag_POLYGON_on,NULL,NULL,NULL);
+	button_toggle(110,205,flag_SHADOW_on,flag_SHADOW,flag_SHADOW_on,flag_SHADOW_on,NULL,NULL,NULL);
+	button_toggle(110,225,flag_TRANSLUCENT_on,flag_TRANSLUCENT,flag_TRANSLUCENT_on,flag_TRANSLUCENT_on,NULL,NULL,NULL);
 	
-	button(2,170,"button_default_on.bmp","button_default_off.bmp","button_default_on.bmp",NULL,ObjectRestoreDefault,NULL);
-	button(90,170,"button_randomrotate_on.bmp","button_randomrotate_off.bmp","button_randomrotate_on.bmp",NULL,ObjectRandomPan,NULL);
+	button(110,255,"button_default_on.bmp","button_default_off.bmp","button_default_on.bmp",NULL,ObjectRestoreDefault,NULL);
+	button(220,255,"button_randomrotate_on.bmp","button_randomrotate_off.bmp","button_randomrotate_on.bmp",NULL,ObjectRandomPan,NULL);
 	
-	hslider(110,221,100,slider,0,100,v_alpha);	
-	hslider(110,268,100,slider,0,100,v_ambient);
+	hslider(110,301,100,slider,0,100,v_alpha);	
+	hslider(110,345,100,slider,0,100,v_ambient);
 	
 	
 	on_click = GPanelDrag;
 	
-	flags = TRANSLUCENT;
+	flags = TRANSLUCENT | OVERLAY;
 	
 	alpha = 50;
 }
@@ -904,7 +917,7 @@ PANEL *panSnd = {
 	
 	layer = 3;
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GSoundWindowHide,NULL);
+	button(220,1,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GSoundWindowHide,NULL);
 	
 	bmap = "panSnd.bmp";
 	
@@ -918,7 +931,7 @@ PANEL *panParticle = {
 	
 	layer = 3;
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GParticleWindowHide,NULL);
+	button(265,1,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GParticleWindowHide,NULL);
 	
 	bmap = "panParticle.bmp";
 	
@@ -949,8 +962,7 @@ PANEL *panMain_Bottom = {
 	button(0,0,"home_on.png","home.png","home_on.png",NULL,GBackMenuShow,NULL);
 	button(0,0,"objects_on.png","objects.png","objects_on.png",NULL,GInsertObjectShow,NULL);
 	button(0,0,"pathing_on.png","pathing.png","pathing_on.png",NULL,GTerrainSubmenuShow,NULL);
-	//	button(0,0,"path_32.png","path_32.png","path_32.png",NULL,GPathSubmenuShow,NULL);
-	
+	button(0,0,"flying_grass.png","flying_grass.png","flying_grass.png",NULL,GToggleObjectSeeder,NULL);
 	
 	flags = OVERLAY;
 }
@@ -971,7 +983,7 @@ PANEL *panLight = {
 	
 	bmap = "panLight.bmp";
 	
-	button(0,0,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GLightWindowHide,NULL);
+	button(166,1,"button_close_on.bmp","button_close_off.bmp","button_close_over.bmp",NULL,GLightWindowHide,NULL);
 	
 	hslider(153,65,65,"slider.bmp",0,255,v_lred);
 	hslider(153,87,65,"slider.bmp",0,255,v_lgreen);
@@ -1010,7 +1022,7 @@ PANEL *MainMenu_Item1 = {
 	layer = 2;
 	
 	bmap = "button_NewGame_off.bmp";
-	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,GSEMenuMouseHover);
+	button(0,0,"button_NewGame_on.bmp","button_NewGame_off.bmp","button_NewGame_on.bmp",NULL,GWorldNewShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
@@ -1023,7 +1035,7 @@ PANEL *MainMenu_Item2 = {
 	layer = 2;
 	
 	bmap = "button_LoadGame_off.bmp";
-	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,GSEMenuMouseHover);
+	button(0,0,"button_LoadGame_on.bmp","button_LoadGame_off.bmp","button_LoadGame_on.bmp",NULL,GLoadGameShow,NULL);
 
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -1036,7 +1048,7 @@ PANEL *MainMenu_Item3 = {
 	layer = 2;
 	
 	bmap = "button_Options_off.bmp";
-	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,GSEMenuMouseHover);
+	button(0,0,"button_Options_on.bmp","button_Options_off.bmp","button_Options_on.bmp",NULL,GOptionsShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -1049,7 +1061,7 @@ PANEL *MainMenu_Item4 = {
 	layer = 2;
 	
 	bmap = "button_Achievements_off.bmp";
-	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,GTrophiesShow,GSEMenuMouseHover);
+	button(0,0,"button_Achievements_on.bmp","button_Achievements_off.bmp","button_Achievements_on.bmp",NULL,GTrophiesShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -1062,7 +1074,7 @@ PANEL *MainMenu_Item5 = {
 	layer = 2;
 	
 	bmap = "button_Credits_off.bmp";
-	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GCreditsShow,GSEMenuMouseHover);
+	button(0,0,"button_Credits_on.bmp","button_Credits_off.bmp","button_Credits_on.bmp",NULL,GCreditsShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 
@@ -1075,7 +1087,7 @@ PANEL *MainMenu_Item6 = {
 	layer = 2;
 	
 	bmap = "button_Help_on.bmp";
-	button(0,0,"button_Help_on.bmp","button_Help_off.bmp","button_Help_on.bmp",NULL,GHelpShow,GSEMenuMouseHover);
+	button(0,0,"button_Help_on.bmp","button_Help_off.bmp","button_Help_on.bmp",NULL,GHelpShow,NULL);
 	
 	flags = OVERLAY | TRANSLUCENT;
 	
@@ -1561,70 +1573,10 @@ ENTITY *flare20_ent =
 
 */
 
-void GWeatherMode_RainOnly() { _weather_mode = RAIN_ONLY; }
-void GWeatherMode_SnowOnly() { _weather_mode = SNOW_ONLY; }
-void GWeatherMode_Nothing() { _weather_mode = NO_RAIN_SNOW; }
-void GWeatherMode_RainSnow() { _weather_mode = RAIN_SNOW; }
-
-/*
---------------------------------------------------
-void GGUIUpdate(PANEL *wg)
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GGUIUpdate(PANEL *wg) {
-
-	if(wg == panLight) {
-		
-		pan_setpos(panLight,3,1,vector(bmap_width(panLight.bmap) - 38 - 15,0,0));
-		
-	}
-	
-	if(wg == panSnd) {
-		
-		pan_setpos(panSnd,3,1,vector(bmap_width(panSnd.bmap) - 38 - 15,0,0));
-		
-	}
-	
-	if(wg == panParticle) {
-		
-		pan_setpos(panParticle,3,1,vector(bmap_width(panParticle.bmap) - 38 - 15,0,0));
-		
-	}
-}
-
-/* 
---------------------------------------------------
-void GGameLoad()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GGameLoad() {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-}
-
-/* 
---------------------------------------------------
-void GGameSave()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GGameSave() {
-	
-	if(event_type == EVENT_RELEASE) return;
-	
-}
+void GWeatherMode_RainOnly() { if( event_type == EVENT_RELEASE ) return; weather_rain(); if( nRandomWeather ) nRandomWeather = 0; }
+void GWeatherMode_SnowOnly() { if( event_type == EVENT_RELEASE ) return; weather_snow(); if( nRandomWeather ) nRandomWeather = 0; }
+void GWeatherMode_Nothing() { if( event_type == EVENT_RELEASE ) return; weather_sun();  if( nRandomWeather ) nRandomWeather = 0; }
+void GWeatherMode_RainSnow() { if( event_type == EVENT_RELEASE ) return; nRandomWeather = 1; }
 
 /* 
 --------------------------------------------------
@@ -1796,10 +1748,8 @@ void GGUIInit() {
 	
 	wait(2);
 	
-	layer_sort(PreviewBox,InsertObject->layer+1);
-	layer_sort(Gun,panCAMRecorder->layer-1);
+	//layer_sort(Gun,panCAMRecorder->layer-1);
 	
-	GPanelResize(LoadKernelScreen,RESIZE_XY);
 	GPanelResize(CreateWorld,RESIZE_XY);
 	GPanelCenter(InsertObject);
 	//	GPanelResize(seedPanelCover,RESIZE_XY);
@@ -1847,6 +1797,12 @@ void GGUIInit() {
 
 	panMain_Bottom.pos_x = BORDER;
 	panMain_Bottom.pos_y = screen_size.y - 64 - BORDER;
+	
+	#ifdef A7_DEVELOPMENT
+	// permanently disable the terrain seeding functionality
+	BMAP *dummy_b = bmap_create("./Cooked2D/button_black.bmp");
+	pan_setbutton( panMain_Bottom, 4, 1, 0, 0, dummy_b, dummy_b, dummy_b, dummy_b, dummy, dummy, dummy );
+	#endif
 
 	panRotateHelp.pos_x = screen_size.x - bmap_width(panRotateHelp.bmap) - BORDER * 2;
 	panRotateHelp.pos_y = panMain_Top.pos_y + BORDER * 2;
@@ -1888,9 +1844,6 @@ void GGUIInit() {
 	TerrainToolbar.pos_y = screen_size.y - BORDER * 10 - bmap_height(TerrainToolbar.bmap);
 	TerrainToolbar.pos_x = BORDER;
 	
-	ZTool.pos_x = screen_size.x - bmap_width(ZTool.bmap) - BORDER * 2;
-	ZTool.pos_y = (screen_size.y - bmap_height(ZTool.bmap))/2;
-	
 	MainMenu_Bar.pos_x = 0;
 	MainMenu_Bar.pos_y = screen_size.y/4;
 	
@@ -1907,20 +1860,6 @@ void GGUIInit() {
 
 	panMain_Play.pos_x = screen_size.x - BORDER - bmap_width(panMain_Play.bmap);
 	panMain_Play.pos_y = screen_size.y - BORDER - bmap_height(panMain_Play.bmap);
-
-	buttonlst_submenu_terrain.pos_x = BORDER;
-	buttonlst_submenu_terrain.pos_y = screen_size.y - 2 * BORDER - 64;
-
-	int i = 1;
-	while(i < 5) {
-		
-		pan_setpos(buttonlst_submenu_terrain,3,i,vector(BORDER * (i-1) + 32 * (i-1),NULL,NULL));
-		
-		i++;
-	}
-
-	var cache = BORDER * 4 + 32 * 4; // the above formula, i = 5
-	pan_setpos(buttonlst_submenu_terrain,3,5,vector(cache,NULL,NULL));
 	
 	OptionsGraphicsTxt = txt_create(10,500);
 	OptionsSoundTxt = txt_create(10,500);
@@ -1997,17 +1936,7 @@ void GTerrainSubmenuShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	reset(buttonlst_submenu_terrain,SHOW);
-	
 	GToggleTerrainEditor();
-	
-	// set(buttonlst_submenu_terrain,SHOW);
-	
-}
-
-void GTerrainSubmenuHide() {
-	
-	reset(buttonlst_submenu_terrain,SHOW);
 	
 }
 
@@ -2026,7 +1955,6 @@ void GToggleTerrainEditor() {
 	
 	if( !is(TerrainToolbar,SHOW) ) {
 		
-		GTerrainSubmenuHide();
 		if(is(InsertObject, SHOW) ) GInsertObjectHide();
 		if( is(seedPanelCover,SHOW) ) GToggleObjectSeeder();
 		
@@ -2082,7 +2010,6 @@ void GToggleObjectSeeder( ) {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GTerrainSubmenuHide();
 	if( is(TerrainToolbar,SHOW) ) GToggleTerrainEditor();
 	if(is(InsertObject,SHOW) ) GInsertObjectHide();
 	
@@ -2094,7 +2021,8 @@ void GToggleObjectSeeder( ) {
 	
 	// Simple test to see if there's a mask before
 	TEXT *simple = txt_create(100, 1);
-	int i = txt_for_dir( simple ,"./Cooked2D/*.tga");
+	int i = txt_for_dir( simple ,"./Cooked2D/Masks/*.tga");
+	
 	if( i ) {
 		
 		for(;j<i;j++) {
@@ -2128,15 +2056,16 @@ void GToggleObjectSeeder( ) {
 	
 	if( k != -1 && TerrainEnt ) { // The other case, I don't use !k here because...it could be 0, which can cause bug.
 		
-		bmap_savetga( ent_getskin(TerrainEnt,1), "tskin.tga");
+		bmap_savetga( ent_getskin(TerrainEnt,1), "./Cooked2D/Masks/tskin.tga");
 		while( proc_status(bmap_savetga) ) wait(1);
 		
 		// canvas_paint = ent_getskin(TerrainEnt,1);
-		canvas_paint = bmap_create("tskin.tga");
+		canvas_paint = bmap_create("./Cooked2D/Masks/tskin.tga");
 		canvas_pan.bmap = canvas_paint;
 		//		GPanelResize(canvas_pan,RESIZE_XY); // <- It could cause bug
 		GPanelCenter(canvas_pan);
 		canvas_pan->pos_y += 100;
+		canvas_pan->pos_x = 10;
 		
 		pan_setbutton(canvas_pan,0,0,0,0,canvas_paint,canvas_paint,canvas_paint,canvas_paint,paint_canvas,NULL,NULL);
 		set(canvas_pan, SHOW);
@@ -2230,10 +2159,8 @@ void GGUIHide() {
 	reset(panMain_Play,SHOW);
 
 	// Also disables any remaining active content.
-	reset(buttonlst_submenu_terrain,SHOW);
 	reset(panRotateHelp,SHOW);
 	reset(panScaleHelp,SHOW);
-	reset(ZTool,SHOW);
 	
 	if( is(InsertObject,SHOW) ) GInsertObjectHide();
 	if( is(TerrainToolbar,SHOW) ) GToggleTerrainEditor();
@@ -2496,7 +2423,7 @@ void GCreditsShow() {
 	
 	var rollspeed = 3.5;
 	
-	GSEMenuMouseClick();
+	
 	
 	//	reset(panNewGame,SHOW);
 	GMainMenuHide();
@@ -2658,16 +2585,18 @@ Returns: -
 */
 void GLoadMainMenu() {
 	
-	cbInBuildment = 0;
+	cbInBuildment = false;
 	str_cpy(SKYSTR,undef);
 	
 	GGUIHide();
 	GMainMenuShow();
 	//	GPanelCenter(panMMenu);
 	
-	//	launch_newgame_from_main = 1;
+	level_load( "./CookedWorlds/background.wmb"  );
 	
-	level_load(LEVEL_MENU);
+	// Personalized settings for the main menu.
+	camera->ambient = 75;
+	
 	//	level_load(NULL);
 	//	game_load(pref_savebmaps,0);
 	
@@ -2684,6 +2613,7 @@ void GLoadMainMenu() {
 	guiViewPreset(&guiCurrentViewPreset, MENU_CAMERA_EXIT, MENU_CAMERA_EXIT_pos, MENU_CAMERA_EXIT_ang );
 	
 	GQuitDialogToggle();
+	
 }
 
 /*
@@ -2707,7 +2637,7 @@ void GOptionsShow() {
 		
 	}
 	
-	//	GSEMenuMouseClick();
+	//	
 	
 	////	guiCurrentViewPreset = ;
 	
@@ -2804,6 +2734,8 @@ Returns: -
 */
 void GPropertiesWindowHide() {
 	
+	if ( event_type == EVENT_RELEASE ) return;
+	
 	// Object is deactivated/other object has been selected.
 	
 	//	if(is(panMat_Sub1,SHOW)) reset(panMat_Sub1,SHOW);
@@ -2822,7 +2754,6 @@ Returns: -
 */
 void GSoundWindowShow() {
 	
-	GGUIUpdate(panSnd);
 	set(panSnd,SHOW);
 	
 	GPanelSelect(panSnd);
@@ -2840,6 +2771,8 @@ Returns: -
 */
 void GSoundWindowHide() {
 	
+	if( event_type == EVENT_RELEASE ) return;
+	
 	reset(panSnd,SHOW);
 	
 }
@@ -2854,8 +2787,6 @@ Returns: -
 --------------------------------------------------
 */
 void GParticleWindowShow() {
-	
-	GGUIUpdate(panParticle);
 	
 	set(panParticle,SHOW);
 	
@@ -2872,6 +2803,8 @@ Returns: -
 */
 void GParticleWindowHide() {
 	
+	if( event_type == EVENT_RELEASE ) return;
+	
 	reset(panParticle,SHOW);
 	
 }
@@ -2886,9 +2819,6 @@ Returns: -
 --------------------------------------------------
 */
 void GLightWindowShow() {
-	
-	//		GPanelCenter(panLight);
-	GGUIUpdate(panLight);
 	
 	set(panLight,SHOW);
 	
@@ -2917,6 +2847,8 @@ Returns: -
 --------------------------------------------------
 */
 void GLightWindowHide() {
+	
+	if( event_type == EVENT_RELEASE ) return;
 	
 	// For passing to loop_kernel without messing up the code 
 	// and/or write a new one.
@@ -2960,8 +2892,6 @@ void GWorldNewShow() {
 		
 	}
 	
-	GSEMenuMouseClick();
-	
 	guiCurrentViewPreset = MENU_CAMERA_NEW_GAME;
 	
 	GLoadGameHide();
@@ -2983,11 +2913,14 @@ void GWorldNewShow() {
 		
 		if( is(NewGame_ScreenDyn_Step1,SHOW) || ( is(NewGame_Screen3,SHOW) && WorldType == WORLD_DYNAMIC) ) {
 			
-			//				moon_scale_fac = _moon_scale_fac;
-			//				time_speed_night = _time_speed_night;
-			//				night_sky_scale_x = _night_sky_scale_x;
-			//				night_sky_speed_x = _night_sky_speed_x;
-			//				time_speed = _time_speed;
+			MoonScaleFactor = _MoonScaleFactor;
+			NightDuration = _NightDuration;
+			DayDuration = _DayDuration;
+			NightSkySpeed = _NightSkySpeed;
+			NightScaleFactor = _NightScaleFactor;
+			
+			Scale( entSkyMoon, _MoonScaleFactor );
+			Scale( entSkyNight, _NightScaleFactor );
 			
 			if(is(NewGame_ScreenDyn_Step1,SHOW)) {
 				
@@ -3385,8 +3318,6 @@ void GInsertObjectShow() {
 	if(event_type == EVENT_RELEASE) return;
 	
 	if(is(InsertObject,SHOW)) GInsertObjectHide();
-	
-	GTerrainSubmenuHide();
 	if( is(TerrainToolbar,SHOW) ) GToggleTerrainEditor();
 	if( is(seedPanelCover,SHOW) ) GToggleObjectSeeder();
 	
@@ -3471,61 +3402,6 @@ void GInsertObjectHide() {
 	reset(files_list_TEMPSTR,SHOW);
 	
 }
-
-STRING *previewFile = "#1000";
-TEXT *aaa = {
-	string(previewFile);
-	pos_x = 100;pos_y=100;
-	font="Arial#25b";
-	flags=SHOW;
-
-}
-
-void LoadPreview() {
-	
-	str_cpy(previewFile, TEMPSTR);
-	str_trunc(previewFile, 4);
-	str_cat(previewFile, ".bmp");
-	
-	//   if(  file_exists(str_create(str_cat(TEMPSTR,"0.bmp")))) 
-	
-	if(file_exists(previewFile))
-	{
-		previewImg = bmap_create(previewFile);
-		
-		PreviewBox.bmap = previewImg;
-		
-	}
-	
-}
-
-/*
-ENTITY *blank;
-
-void lol() {
-	
-	set(blank, TRANSLUCENT | PASSABLE);
-	blank.alpha = 100;
-	
-	while(blank) {
-		
-		blank.x = marker.x;
-		blank.y = marker.y;
-		blank.z = marker.z;
-		
-		wait(1);
-		
-	}
-	
-}
-
-void create() {
-	
-	if(blank) ptr_remove(blank);   
-	blank = ent_create(TEMPSTR,temp_pos,lol);
-	
-}
-*/
 
 /*
 --------------------------------------------------
@@ -3622,6 +3498,7 @@ void GSelectObject(var ID) {
 			//			LoadPreview			();			
 			
 			GInsertObjectHide();
+			SystemObjectID = -1;
 			//			create();
 			
 			mark_seedEntstr = 1;
@@ -3637,6 +3514,7 @@ void GSelectObject(var ID) {
 			TEMP_OBJECT_TYPE = Sound;
 			
 			GInsertObjectHide();
+			SystemObjectID = -1;
 			
 			return;
 			
@@ -3649,6 +3527,7 @@ void GSelectObject(var ID) {
 			TEMP_OBJECT_TYPE = Sprite;
 			
 			GInsertObjectHide();
+			SystemObjectID = -1;
 			
 			return;
 			
@@ -3917,7 +3796,7 @@ void GOptions_Graphics() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(is(Options_Sound,SHOW)) {
 		
@@ -3929,6 +3808,7 @@ void GOptions_Graphics() {
 	if(is(Options_Maintenance,SHOW)) reset(Options_Maintenance,SHOW);
 	
 	// Reflect settings from defaultConfig struct to GUI
+	
 	button_state(Options_Graphics,11,defaultConfig._SSAO); // 11  SSAO
 	button_state(Options_Graphics,12,defaultConfig.HDR); // 12  HDR
 	button_state(Options_Graphics,13,defaultConfig.DOF); // 13  DOF
@@ -4032,7 +3912,7 @@ void GOptions_Sound() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -4074,7 +3954,7 @@ void GOptions_Themes() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -4111,7 +3991,7 @@ void GOptions_Maintenance() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -4148,7 +4028,7 @@ void GOptions_SaveSettings() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	//	int temporary_BitDepth;
 	
@@ -4191,7 +4071,7 @@ void GOptions_SaveSettings() {
 		
 		wait(2);
 		
-		if(CompareGraphicsStruct(defaultConfig,tempConfig)) ApplyGraphicsSettings( defaultConfig );
+//		if(CompareGraphicsStruct(defaultConfig,tempConfig)) ApplyGraphicsSettings( defaultConfig );
 		
 		GOptionsHide();
 		
@@ -4242,7 +4122,7 @@ void GOptionsAdjustSettings(var ID) {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(is(Options_Graphics,SHOW)) {
 		
@@ -4445,7 +4325,7 @@ void GLoadGameShow() {
 	
 	guiCurrentViewPreset = MENU_CAMERA_LOAD_GAME;
 	
-	GSEMenuMouseClick();
+	
 	
 	GWorldNewHide();
 	GOptionsHide();
@@ -4490,7 +4370,7 @@ void GTrophiesShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	guiCurrentViewPreset = MENU_CAMERA_TROPHIES;
 	
@@ -4529,7 +4409,7 @@ void GHelpShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	guiCurrentViewPreset = MENU_CAMERA_HELP;
 	
@@ -4643,7 +4523,7 @@ Returns: -
 */
 void GNewGame_PreviewScene() {
 	
-	GSEMenuMouseClick();
+	
 	
 	GMainMenuHide();
 	
@@ -4662,7 +4542,7 @@ void GNewGame_UnPreviewScene() {
 	
 	if(event_type == EVENT_CLICKUP) return;
 	
-	//	GSEMenuMouseClick();
+	//	
 	
 	GMainMenuShow();
 	
@@ -4672,7 +4552,7 @@ void GTEMPSTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(TEMPSTR_Scaler > 0) {
 		
@@ -4688,7 +4568,7 @@ void GTEMPSTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	TEMPSTR_Scaler += 1;
 	FillFromPool(files_list_TEMPSTR, files_list_TEMPSTR_Pool, 20, TEMPSTR_Scaler );
@@ -4708,7 +4588,7 @@ void GLOADGAMESTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(LOADGAMESTR_Scaler > 0) {
 		
@@ -4731,7 +4611,7 @@ void GLOADGAMESTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	LOADGAMESTR_Scaler += 1;
 	FillFromPool(files_list_LOADGAMESTR, files_list_LOADGAMESTR_Pool, 8, LOADGAMESTR_Scaler);
@@ -4751,7 +4631,7 @@ void GSKYSTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(SKYSTR_Scaler > 0) {
 		
@@ -4775,7 +4655,7 @@ void GSKYSTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	SKYSTR_Scaler += 1; // ++
 	FillFromPool(files_list_SKYSTR, files_list_SKYSTR_Pool, 4, SKYSTR_Scaler);
@@ -4795,7 +4675,7 @@ void GGROUNDSTR_Up() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(GROUNDSTR_Scaler > 0) {
 		
@@ -4819,7 +4699,7 @@ void GGROUNDSTR_Down() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	GROUNDSTR_Scaler += 1;
 	FillFromPool(files_list_GROUNDSTR, files_list_GROUNDSTR_Pool, 4, GROUNDSTR_Scaler);
@@ -4839,7 +4719,7 @@ void GSwitchNewGameScreen ( var ID ) {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if( (int) ID == 1) {
 		
@@ -4910,7 +4790,7 @@ void GSwitchNewGameScreen ( var ID ) {
 				
 			}
 			else { // Static world
-				
+			
 				reset(NewGame_ScreenDyn_Step1,SHOW);  
 				set(NewGame_ScreenStatic_Step1,SHOW);
 				
@@ -4970,7 +4850,7 @@ void GNewGame_ChooseWorld(var ID) {
 	
 	WorldType = (int) ID;
 	
-	//	GSEMenuMouseClick();
+	//	
 	
 	GSwitchNewGameScreen(2);
 	
@@ -4989,7 +4869,7 @@ void GToggleMusicPlayerRandomize() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
+	
 	
 	if(button_state(MusicPlayer,5,-1)) mpRandomize = 1;
 	else mpRandomize = 0;
@@ -5052,7 +4932,7 @@ void GToggleStatistics() {
 	StatsPanel->pos_x = 50;
 	StatsPanel->pos_y = 50;
 	
-	GSEMenuMouseClick();
+	
 	
 	set(StatsPanel,SHOW);
 	set(Stats,SHOW);
@@ -5104,54 +4984,7 @@ void GInDevShow() {
 	
 	if(event_type == EVENT_RELEASE) return;
 	
-	GSEMenuMouseClick();
-	
 	set(InDev,SHOW);
-	
-}
-
-
-/*
---------------------------------------------------
-void GSEMenuMouseHover()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GSEMenuMouseHover() {
-	
-	return;
-	
-	proc_kill(4);
-	
-	str_cpy(sndConnectorShared,PATH_SOUNDS_); // STRING specifically for sndConnectorShared
-	str_cat(sndConnectorShared,SE_MM_hover);
-	
-	sndPlay(sndConnectorShared);
-	
-}
-
-/*
---------------------------------------------------
-void GSEMenuMouseClick()
-
-Desc:
-
-Returns: -
---------------------------------------------------
-*/
-void GSEMenuMouseClick() {
-	
-	return;
-	
-	proc_kill(4);
-	
-	str_cpy(sndConnectorShared,PATH_SOUNDS_);
-	str_cat(sndConnectorShared,SE_MM_click);
-	
-	sndPlay(sndConnectorShared);
 	
 }
 
@@ -5295,6 +5128,15 @@ void GPanelMoveAlphaY(PANEL *Panel, var oldy, var newy, var speed) {
 	
 }
 
+void KillInGameMusic () {
+	
+	var _midi_vol = midi_vol;
+	while( midi_vol > 0 ) { midi_vol -= 5 * time_step; wait ( 1 ) ;  } midi_vol = _midi_vol;
+	
+	media_stop(mpHandle);
+	
+}
+
 void GQuitToMainMenu() {
 	
 	if(event_type == EVENT_RELEASE) return;
@@ -5312,11 +5154,18 @@ void GQuitToMainMenu() {
 	}
 	set(CreateWorldCoffee,SHOW);
 	
+	KillInGameMusic ();
+	
 	GBackMenuHide();
 	GGUIHide();
 	
 	GLoadMainMenu();
 	while(proc_status(GLoadMainMenu)) wait(1);
+	
+	// Release resources
+	if( TerrainEnt ) ptr_remove ( TerrainEnt );
+	if( marker ) ptr_remove ( marker );
+	if( select ) ptr_remove ( select );
 	
 	mouse_mode = 4;
 	
@@ -5410,45 +5259,8 @@ void guiViewPreset (int* ref, int id, VECTOR* _pos, VECTOR* _ang)
 	}
 }
 
-void _GShowSplashScreen_Common(var fadespeed) {
-	
-	fadespeed = abs(fadespeed);
-	
-	GPanelResize(SplashScreen,RESIZE_XY);
-	//	GPanelCenter(SplashScreen);
-	SplashScreen->alpha = 0;
-	
-	set(SplashScreen,SHOW);
-	
-	while(SplashScreen->alpha <= 100) {
-		
-		SplashScreen->alpha += fadespeed * time_step;
-		wait(1);
-		
-	}
-	
-	while( !key_enter ) wait(1);
-	
-	while(SplashScreen->alpha > 0 ) {
-		
-		SplashScreen->alpha -= fadespeed * time_step;
-		wait(1);
-		
-	}
-	
-	SplashScreen->alpha = 0;
-	//	ptr_remove(SplashScreen->bmap);
-	reset(SplashScreen,SHOW);
-	
-}
-
-void GShowSplashScreen(STRING *input, var fadespeed) {
-	
-	if( proc_status(GShowSplashScreen) ) return;
-	SplashScreen->bmap = bmap_create ( input );
-	
-	_GShowSplashScreen_Common(fadespeed);
-	
-}
+void SECreate_PlayerNormal () { if(event_type == EVENT_RELEASE ) return; SystemObjectID = Trigger_PlayerStandard; GInsertObjectHide(); }
+void SECreate_PlayerBike () { if(event_type == EVENT_RELEASE ) return; SystemObjectID = Trigger_PlayerBike; GInsertObjectHide(); }
+void SECreate_SpawnNotification() { if (event_type == EVENT_RELEASE ) return; SystemObjectID = Trigger_SpawnNotification; GInsertObjectHide(); }
 
 #endif

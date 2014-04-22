@@ -40,20 +40,26 @@ NOTES:
 #include <acknex.h> // Engine objects
 //#include <stdio.h>
 #include <strio.c>
-#include <d3d9.h>
+//#include <d3d9.h>
 //#include <particles.c>
 #include <level.c>
 
-#define CBOX_DEVELOPMENT
-#define USE_TXT_LOG
+#define A7_DEVELOPMENT
+//#define CBOX_DEVELOPMENT
+#define CBOX_LOADSCREEN
+#define CBOX_SPLASHSCREENS
+#define CBOX_SHADERS
+#define CBOX_FLATMENU
+#define CBOX_USE_TXT_LOG
+#define CBOX_RANDOM_EVERYTHING
 
 typedef short bool;
 
 bool cbPlaytesting = false;
 bool cbNonWindows = false; // For running craftbox under other environments that is not Windows.
 bool cbFlatMenu = false; // Set this prior to executing the menu loader cause craftbox to use flat menu instead of 3D-based menu.
-bool cbError_NoGround; // Used for marking error caused by no grounds available
-bool cbFinishedLoadKernel; // To indicate the kernel has been successfully loaded.
+bool cbError_NoGround = false; // Used for marking error caused by no grounds available
+bool cbFinishedLoadKernel = false; // To indicate the kernel has been successfully loaded.
 bool cbKernelRunning = false;
 bool cbInBuildment = false;
 bool cbUsectraceOptimization = false;
@@ -63,6 +69,7 @@ bool cbTerrainEditing = false; // We're in the terrain editing mode
 bool PlayerPresent = false;
 bool AllowREC = true;
 bool AllowCompass = true; // If disabled, compass calculation will still be performed, but the GUI won't display it.
+bool LoadWorldBreak = false; // Indicate failure when loading a new level.
 
 int SessionsCount = 0; // Count how many sessions (worlds) we've played so far
 int guiCurrentViewPreset = 1; // Which view to be used at startup?
@@ -76,15 +83,15 @@ int sResX, sResY, sResMode; // Store screen resolution in X and Y.
 short CameraPosID_temp = 0;  // Temporary variable to store guiCurrentViewPreset at some point
 int DialogueSentencesCount = 0; // Count sentences in a dialogue.
 
-short LoadWorldBreak = 0; // Indicate failure when loading a new level.
-
 // Two strings for release number and release mode.
-STRING *RELEASE_STR_VER = "0.1";
-STRING *RELEASE_STR_INFO = "pre-alpha";
+STRING *RELEASE_STR_VER = "0.21";
+STRING *RELEASE_STR_INFO = "publicly available pre-alpha";
+
+STRING *titleWindow = "craftbox Pre-alpha";
 //////////////////////////////////////////////////////////////
 
 // A TEXT struct represents craftbox console.
-TEXT* def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
+TEXT *def_ctxt = { font = "Arial#15b"; string("Console","#80"); layer = 999; }
 
 // Some variables and an ANGLE struct represent the debug panel.
 var def_dfps,def_dtps,def_dtlv,def_dtcs,def_dtac,def_dtrf,def_dsnd;
@@ -92,26 +99,6 @@ ANGLE def_cang;
 
 var def_shot_num = 0;
 var def_oldmouse = 0;
-
-var fh_n;
-BMAP *canvas;
-BMAP *b_render1;
-BMAP *b_render2;
-BMAP *b_render3;
-BMAP *b_render4;
-BMAP *b_render5;
-BMAP *b_render6;
-var cubenumber = 0;
-var directions[18] = {180, 0, 0, 90, 0, 0, 0, 0, 0, -90, 0, 0, 90, -90, 0, 90, 90, 0};
-STRING *tempstring1 = "#200";
-STRING *tempstring2 = "#200";
-STRING *_ts_ = "#200";
-
-void write8(var);
-void write16(var);
-void str_padding(STRING *, var, var);
-void write_cubemap();
-void capture_cubemap();
 
 void def_box(var, var, var, var, VECTOR *);
 void def_debug();
@@ -156,12 +143,7 @@ typedef struct {
 	////////////////////////////////////////////////////////////
 	
 	////////////// Normal objects (chair, mouse, salon, book...)
-	bool pPhysics, pStatic, _flags[ 8 ];
-	
-	// Some vars define its physical properties
-	// var mass, friction
-	
-	MATERIAL *m;
+	bool /* pPhysics, pStatic, */ _flags[ 8 ];
 	
 	////////////// Particle objects
 	int _ParticleID;
@@ -205,11 +187,10 @@ typedef struct {
 } GraphicsSettingsStruct;
 
 ObjectStruct clipboard;
-GraphicsSettingsStruct defaultConfig, tempConfig; // tempConfig is used for temporary saving configuration for later comparison
+GraphicsSettingsStruct defaultConfig/*, tempConfig*/; // tempConfig is used for temporary saving configuration for later comparison
 //////////////////////////////////////////////////////////////
 
 // System
-
 char undef = '-';
 char endline = '|';
 char separate = '_';
@@ -245,7 +226,7 @@ STRING *PARAM_USECTRACE = " -com";
 #define MENU_CAMERA_LAUNCH_GAME 8
 #define MENU_CAMERA_EXIT 9
 
-// Fixed 
+// Fixed camera angles for use in the 3D-based main menu.
 VECTOR *MENU_CAMERA_LAUNCH_pos = { x = -240; y = -300; z = -36; }
 VECTOR *MENU_CAMERA_NEW_GAME_pos = { x = 437; y = -215; z = -98; }
 //VECTOR *MENU_CAMERA_NEW_GAME_pos = { x = 230; y = -193; z = -45; }
@@ -298,6 +279,7 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 
 #define MINIMUM_SCALE_CONSTANT .5
 #define SCALE_SPEED .002
+#define LOADSCREEN_FADE_SPEED 10
 
 #define DYNAMIC_LIGHT_DISCO_SPEED 0.1
 
@@ -323,6 +305,9 @@ ANGLE *MENU_CAMERA_EXIT_ang = { pan = 319; tilt = -6; roll = 0; }
 #define SCALE_MARKER .75
 #define SCALE_MARKER_TERRAIN 0
 
+#define WATER_PLANE_U_SHIFT 10
+#define WATER_PLANE_V_SHIFT 10
+
 #define _NODE_STATE skill27
 #define _NODE_HEARTBEAT skill28
 #define _BEING_MANIPULATED skill29
@@ -339,7 +324,7 @@ long SecondsPassed = 0, MinutesPassed = 0, HoursPassed = 0, DaysPassed = 0, Mont
 bool StopClock;
 
 // Controls the music player.
-int mpCount = 0, mpRandomize = 0, mpSongs, mpPauseMark; // Vars declared specifically for the music player.
+int mpCount = 0, mpRandomize = 1, mpSongs, mpPauseMark; // Vars declared specifically for the music player.
 var mpHandle;
 
 // Controls the terrain editor
@@ -361,9 +346,6 @@ var guiViewPresetSpeed = 0.1;
 
 var BBTranslucency;
 
-bool ToggleSnow = false;
-bool ToggleRain = false;
-
 STRING *mouse_str = "mouse_pointer.png";
 BMAP *mouse_painttex = "pen.png";
 
@@ -372,8 +354,8 @@ STRING *_mpSongTemp = "#100";
 
 SOUND *__beep = "./CookedSounds/beep.wav";
 //SOUND *footstep = "./CookedSounds/tap.wav";
-STRING *SE_MM_hover = "./CookedSounds/button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
-STRING *SE_MM_click = "./CookedSounds/button-30_CMMclickon.wav";
+//STRING *SE_MM_hover = "./CookedSounds/button-24_MMhover.wav"; // Actually they're sound files but under the STRING form.
+//STRING *SE_MM_click = "./CookedSounds/button-30_CMMclickon.wav";
 
 // Background level
 STRING *LEVEL_MENU = "./CookedWorlds/background.wmb";
@@ -382,10 +364,12 @@ STRING *CAMERA_MODEL = "real_cam.mdl";
 STRING *VAREXPLORER_EXITSTR = "exit";
 STRING *VAREXPLORER_REPORTSTR = "report";
 STRING *VAREXPLORER_FACTORYSTR = "default";
+STRING *VAREXPLORER_STARTKERNELSTR = "startkernel";
+STRING *VAREXPLORER_BENCHMARK = "benchmark";
 
 STRING *FILE_SCREENSHOT = "craftbox";
 STRING *FILE_CONFIG = "./Source/Config.cfg";
-STRING *FILE_CREDITS_TEXT = "./Source/_credits.cbt";
+STRING *FILE_CREDITS_TEXT = "./Source/Credits.cre";
 STRING *FILE_LOG = "./CBox.html";
 
 STRING *FILE_GAME_INTRO_VIDEO = "#300";
@@ -426,7 +410,7 @@ STRING *PATH_OBJECTS_TPORTTS = "./CookedObjects/Transports/";
 STRING *PATH_SKIES = "./Cooked2D/Skies/";
 STRING *PATH_GROUNDS = "./CookedWorlds/CookedGrounds/";
 STRING *PATH_SAVEDGAMES = "./CookedWorlds/";
-STRING *PATH_MUSIC = "CookedSounds\\Music";
+STRING *PATH_MUSIC = "CookedSounds\\Music\\";
 
 STRING *TERRAINDATA = "_geodata";
 STRING *SEEDMASKDATA = "_seed_mask";
@@ -534,6 +518,8 @@ void weather_thunder();
  */
 void weather_snow();
 
+void PassToSelect1String();
+
 // ----------------------------------------------------------------------
 // TWEAK HERE!
 // ----------------------------------------------------------------------
@@ -551,7 +537,7 @@ int nRandomWeatherStateDuration		=	40;	// Higher values -> Lower change probabil
 
 int nWeatherState							=	0;		// 0 sun, 1 rain, 2 snow
 
-int nWaterLevel							=	-10;		// z position of water
+int nWaterLevel							=	-160;		// z position of water
 
 // Use to tweak frame rates
 #define LAND_FOG_NEAR		200
@@ -564,13 +550,20 @@ int nWaterLevel							=	-10;		// z position of water
 #define WEATHER_FOG_FAR		1000
 
 // Weather particle box around the camera
-#define WEATHER_BOX_X		1000
-#define WEATHER_BOX_Y		1000
-#define WEATHER_BOX_Z		600
+#define WEATHER_BOX_X		20000
+#define WEATHER_BOX_Y		20000
+#define WEATHER_BOX_Z		20000
 
 // Effect density
-#define RAIN_DENSITY 10
-#define SNOW_DENSITY 20
+#define RAIN_DENSITY 1000
+#define SNOW_DENSITY 2000
+
+var NightDuration = .5;
+var DayDuration = .5;
+var MoonScaleFactor = .5;
+var NightScaleFactor = .5;
+var NightSkySpeed = 20;
+var _DayDuration, _NightDuration, _MoonScaleFactor, _NightScaleFactor, _NightSkySpeed;
 
 // ----------------------------------------------------------------------
 // WEATHER
@@ -637,6 +630,13 @@ VECTOR vecCurrentColor;
 int nIsUnderWater;
 int nLightningIsOn;
 
+var vSndHandleRain			= 0;
+var vSndHandleWind			= 0;
+var vSndHandleBgDay			= 0;
+var vSndHandleBgNight		= 0;
+var vSndHandleUnderwater	= 0;
+var vSoundHandleThunder    = 0;
+
 SOUND* sndRain				= NULL;
 SOUND* sndWind				= NULL;
 SOUND* sndDay				= NULL;
@@ -659,81 +659,8 @@ ENTITY* entSkySunshine	= NULL;
 ENTITY* entSkyNight		= NULL;
 ENTITY* entSkyMoon		= NULL;
 
-
-#define RAIN_ONLY 0
-#define SNOW_ONLY 1
-#define RAIN_SNOW 2
-#define NO_RAIN_SNOW 3
 var _fog_color, _sun_light;
 var _d3d_fogcolor1_red, _d3d_fogcolor1_green, _d3d_fogcolor1_blue, _camera_fog_end;
-
-/*
-#define snd_vol_rain_max 				50
-#define snd_vol_wind_max 				40
-#define snd_vol_wind_max_when_rainy 10
-#define snd_vol_bg_day_max 80
-#define snd_vol_bg_night_max 80
-
-//day sky
-#define sky_add_red 		  255//color tint of the day_sky.
-#define sky_add_green 	  255
-#define sky_add_blue 	  255
-#define sky_alpha 		 	10//0-100, decrease this to get more fogcolor1 tint
-
-var _fog_color = 0, _sun_light = 100, _d3d_fogcolor1_red = 128, _d3d_fogcolor1_blue = 128, _d3d_fogcolor1_green = 128, _camera_fog_end = 6000; // Default values
-
-//night sky
-var night_sky_scale_x = .5;//affects size of the stars at night
-var night_sky_scale_y = .5;
-var night_sky_speed_x = 1;//movement speed of the stars
-var night_sky_speed_y = 1;
-#define night_sky_alpha		 0
-
-//cloud layer 1
-#define cloud1_speed_x 	  0.5
-#define cloud1_speed_y 	  	 3
-#define cloud1_scale_x 	  1.5
-#define cloud1_scale_y 	  1.5
-#define cloud1_alpha	 	80//alpha changes can cause various sun/clouds effects
-
-//cloud layer 2
-#define cloud2_speed_x	  	 1
-#define cloud2_speed_y 	  	 5
-#define cloud2_scale_x	  2.5
-#define cloud2_scale_y 	  2.5
-#define cloud2_alpha 	 	60//alpha changes can cause various sun/clouds effects
-
-//bad weather clouds
-#define cloud3_speed_x 	  	 1
-#define cloud3_speed_y 	  	 5
-#define cloud3_scale_x 	  	 2
-#define cloud3_scale_y 	    2
-#define cloud3_alpha 	 	 0//0 = starts at nice weather!
-
-var sun_grow_z	=	 1500;//z-height of sun-grow/sun-shrink, adjust according to your horizon view
-
-//when your sun elevation is low, big scales (scale_x, scale_y) can look bad (sun-sprites touches the terrain!)
-#define sun_scale_x 		    3//7;////size of the sun, changes all other sun entitys (sun_corona, sun_shine) relative to it
-#define sun_scale_y 		    3//7;//
-
-#define sun_alpha 		 	65//alpha changes can cause various sun/clouds effects
-#define sun_corona_alpha 	40//0;//
-#define sun_shine_alpha  	50//0;//
-
-var moon_scale_fac = 1.5;
-#define moon_alpha 		  100
-
-#define sun_dist_minus	  1000//evtl. raise this value when you see the sun flickering or disappear, default is 10 (10 quant before land_fog_far/clip_far)
-
-#define land_fog_near	 200//fog above water
-#define land_fog_far	  	 4000//lower values increase the framerate
-
-#define weather_fog_near	  100//bad weather fog
-#define weather_fog_far	  	  1000
-
-//(screen center where pivot_dist = 0) and the sun (pivot_dist = 1).
-#define pivot_dist skill99
-*/
 
 ////////////////////////////////////////////////////////////
 
@@ -748,6 +675,7 @@ var moon_scale_fac = 1.5;
 #define ParticleID skill4 // Only particle effects use this.
 #define LightMode skill5
 #define FlickSpeed skill6
+#define ObjectSystemType skill7
 //#define ProjectionID skill9
 
 // Object type
@@ -761,6 +689,7 @@ var moon_scale_fac = 1.5;
 #define ObjectPlant 8
 #define ObjectTransport 9
 #define ObjectNode 10
+#define ObjectSystem 100
 
 #define Particle 11
 #define Light 12
@@ -773,6 +702,11 @@ var moon_scale_fac = 1.5;
 #define DynamicContent 18 // Entities which are marked with this are deleted when playtesting mode has finished.
 #define SeedEnt 19 // Entities crated by the ent_seed function.
 
+void SECreate_PlayerNormal ();
+void SECreate_PlayerBike ();
+void CreateSystemObject ();
+
+int SystemObjectID = -1;
 #define Trigger_PlayerStandard 20
 #define Trigger_PlayerBike 21
 #define Trigger_PlayerBulldozer 22
@@ -863,15 +797,29 @@ TEXT *files_list_TEMPSTR = {
 	
 	font = "Arial#27b";
 	
-	red = 0;
-	green = 255;
+	red = 255;
+	green = 0;
 	blue = 0;
 	
 }
 
 TEXT* ConsoleText = { font = "Arial#15b"; string("
 
-	< craftbox variable explorer >
+	This is a console, although there's not much to see and interact with.
+	
+	This is a safe place to view and modify craftbox's variables and/or execute maintenance functions.
+	
+	Official releases' users shouldn't be here.
+	
+	Commands are executed in a single or multi line fashion.
+	To combine commands, just enter them all in one line.
+	
+	Variables' names are followed by a \"=\".
+	[Enter] to view the variable's current value, or enter a new value 
+	and press [Enter] to assign a new value.
+	
+	A full list of commands (along with their executioners) can be found in the source code.
+	Type \"startkernel\" at any time to return to craftbox.
 
 ","#255","#255","#255","#255","#255"); layer = 999; }
 
@@ -909,7 +857,6 @@ int shot = 0;
 var files_already;
 
 var olrange; // Old light range
-var old_ambient;
 
 var v_alpha, v_ambient,
 
@@ -951,8 +898,7 @@ var
 _load_lensflare = 1,
 _use_moon = 1,
 _use_sun = 1,
-_use_nightstars = 1,
-_weather_mode = 1; // RAIN_ONLY, SNOW_ONLY, RAIN_SNOW, NO_RAIN_SNOW
+_use_nightstars = 1;
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
@@ -964,7 +910,6 @@ PANEL *InDev,
 *panMain_Top,
 *panMain_Bottom,
 *panMain_Play,
-*buttonlst_submenu_terrain,
 *panProp,
 *panSnd,
 *panParticle,
@@ -995,7 +940,6 @@ PANEL *InDev,
 *Options_Themes,
 *Options_Maintenance,
 *LoadGame,
-*ZTool,
 *MainMenu_Bar,
 *MainMenu_Item1,
 *MainMenu_Item2,
@@ -1024,9 +968,8 @@ PANEL *InDev,
 *BackMenu_Items,
 *QuitDialog,
 *RightClickMenu,
-*PreviewBox,
-*SplashScreen,
-*LoadKernelScreen;
+*panDialogue,
+*panNotification;
 
 ////////////////////////////////////////////////////////////
 // Entities will be declared here.
@@ -1040,43 +983,8 @@ ENTITY *select, // points to the being selected entity
 *CameraLoc, // points to the camera creator
 *GlassLoc, // points to the glass walls
 *WaterPlaneLoc, // points to the water plane
+*WaterPlaneMarker, // points to the marker for correctly placing the water plane
 *Gun; // 1st person gun
-
-ENTITY *sky_horizon,
-*sky_cloud1,
-*sky_cloud2,
-*sky_cloud3,
-*sky_day,
-*sky_sun,
-*sky_suncorona,
-*sky_sunshine,
-*sky_night,
-*sky_moon;
-
-/*
-
-*flare1_ent,
-*flare2_ent,
-*flare4_ent,
-*flare5_ent,
-*flare6_ent,
-*flare7_ent,
-*flare8_ent,
-*flare9_ent,
-*flare10_ent,
-*flare11_ent,
-*flare12_ent,
-*flare13_ent,
-*flare14_ent,
-*flare15_ent,
-*flare16_ent,
-*flare17_ent,
-*flare18_ent,
-*flare19_ent,
-*flare20_ent;
-
-*/
-
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
@@ -1103,7 +1011,6 @@ ANGLE *parted_temp_ang = {
 ////////////////////////////////////////////////////////////
 // Fonts and texts' declarations
 ////////////////////////////////////////////////////////////
-FONT *cbDefaultFont = "Arial#27b";
 
 ////////////////////////////////////////////////////////////
 // Sounds will be declared here.
@@ -1156,7 +1063,6 @@ BMAP *flag_FLICK_on = "flag_FLICK_on.bmp";
 BMAP *slider = "slider.bmp";
 
 BMAP *panProp1_IMG = "panProp_1.bmp";
-BMAP *panProp2_IMG = "panProp_2.bmp";
 
 /*** For particle effects ***/
 BMAP *point_blue_map = "point_blue.tga";
@@ -1170,7 +1076,6 @@ BMAP* drop1_map = "rain.tga";
 ////////////////////////////////////////////////////////////
 // Function prototypes declarations
 ////////////////////////////////////////////////////////////
-
 void path_make_absolute(STRING *path) // Makes a path absolute.
 {
 	static STRING *tmp = "#1024";
@@ -1181,561 +1086,10 @@ void path_make_absolute(STRING *path) // Makes a path absolute.
 }
 
 /************************************************************
-a vector() alternative
-************************************************************/
-int lvectorLastFrame = 0;
-int lvectorStoragePointer = 0;
-int lvectorStorageSize = 0;
-VECTOR *lvectorStorage = NULL;
-
-/**
-* Returns a temporary vector that is valid at least one frame.
-* param	x	X component
-* param	y	Y component
-* param	z	Z component
-*/
-VECTOR *lvector(var x, var y, var z);
-
-/**
-* Returns the current memory used by lvector.
-*/
-int lvector_usage();
-
-/************************************************************
-Generic linked list
-************************************************************/
-/**
-* ListData is used instead of void to give a clear difference between a normal pointer and a pointer used in lists.
-*/
-typedef void ListData;
-
-/**
-* A list item. You can use a list item to iterate through a list.
-*/
-typedef struct ListItem
-{
-	//private:
-	struct ListItem *previous;
-	struct ListItem *next;
-
-	//public:	
-	/**
-	* The data stored in this list item.
-	*/
-	ListData *data;
-} ListItem;
-
-/**
-* A generic list which allows you handling a collection of structs.
-* The list doesn't have a fixed size, so you can just add or remove items.
-*/
-typedef struct List
-{
-	//private:
-	int count;
-	//public:
-	/**
-	* The first item of the list.
-	*/
-	ListItem *first;
-	
-	/**
-	* The last item of the list.
-	*/
-	ListItem *last;
-} List;
-
-/**
-* An iterator for a list. You need the iterator to go through all items in a list.
-*/
-typedef struct ListIterator
-{
-	//private:
-	List *list;
-	ListItem *current;
-	int valid;
-	//public:
-	int hasNext;
-} ListIterator;
-
-/**
-* Creates a new list.
-* return				A new list.
-*/
-List *list_create();
-
-/**
-* Deletes a list.
-* param	list		The list to delete.
-*/
-void list_delete(List *list);
-
-/**
-* Clones a list with all list items.
-* param	list		The list to clone.
-* return				A new list with all items which were in the list to clone.
-*/
-List *list_clone(List *list);
-
-/**
-* Adds a new item to the last position of a list
-* param	list		The list where the item should be added.
-* param	item		The item which should be added to the list.
-*/
-void list_add(List *list, ListData *item);
-
-/**
-* Adds a range of items to the list.
-* param	list		The list where the items should be added.
-* param	array		The array where the items should be copied from.
-* param	count		The number of items which should be copied.
-*/
-void list_add_range(List *list, ListData **array, int count);
-
-/**
-* Adds a new item in the first position of a list.
-* param	list		The list where the item should be added.
-* param	item		The item which should be added to the list.
-*/
-void list_add_first ( List *list, ListData *item );
-
-/**
-* Adds a new item sorted by a comparision function
-* param	list			The list where the item should be added.
-* param	item			The item which should be added to the list.
-* param	compare		A pointer to a comparision function. The function needs this signature: int compare(ListData *left, ListData *right) and returns 1 if left>right, 0 if left=right and -1 if left<right.
-*/
-void list_add_sorted ( List *list, ListData *item, void *compare );
-
-/**
-* Removes the item from the list.
-* param	list		The list where the item should be removed.
-* param	item		The item to remove from the list.
-*/
-void list_remove(List *list, ListData *item);
-
-/**
-* Removes all matching item sfrom the list.
-* param	list		The list where the items should be removed.
-* param	item		The item to remove from the list.
-*/
-void list_remove_all(List *list, ListData *item);
-
-/**
-* Removes the item at a given index from the list.
-* param	list		The list where the item should be removed.
-* param	index		The index of the item to remove.
-*/
-void list_remove_at(List *list, int index);
-
-/**
-* Checks if a list contains an item.
-* param	list		The list which should be checked.
-* param	item		The item which should be searched.
-* return				0 if the item is not found, else != 0.
-*/
-int list_contains(List *list, ListData *item);
-
-
-/**
-* Returns the item stored at a given index.
-* param	list		The list where the item is.
-* param	index		The index of the item.
-* return				The item or NULL if index out of range.
-*/
-ListData *list_item_at(List *list, int index);
-
-/**
-* Removes all items from a list.
-* param	list		The list which should be cleared.
-*/
-void list_clear(List *list);
-
-/**
-* Clears the listitems and the listitems data of a list
-* param	list		The list where the item should be added.
-* param	remove_function		A pointer to a remove function. The function needs this signature: void remove_function ( ListData *item )
-*/
-void list_clear_content ( List *list, void *remove_function );
-
-
-/**
-* Sorts a list.
-* param	list		The list which should be sorted.
-* param	compare		A pointer to a comparision function. The function needs this signature: int compare(ListData *left, ListData *right) and returns 1 if left>right, 0 if left=right and -1 if left<right.
-*/
-void list_sort(List *list, void *compare);
-
-/**
-* Reverses a list (first item will be last, last will be first, ...).
-* param	list		The list to be reversed.
-*/
-void list_reverse(List *list);
-
-/**
-* Gets the count of items in a list.
-* param	list		The list to get the count from.
-* return				The amount of items in the list.
-*/
-int list_get_count(List *list);
-
-/**
-* Copies a list to an array of items.
-* param	list		The list to be reversed.
-* param	array		The array where the items should be copied to.
-* param	arrayLength	The max. number of items in the array.
-* return				The amount of items copied.
-*/
-int list_copy_to(List *list, ListData **array, int arrayLength);
-
-/**
-* Begins a list iteration.
-* param	list		The list to iterate through
-* return				A new iterator for the given list.
-*/
-ListIterator *list_begin_iterate(List *list);
-
-/**
-* Gets the next value in a list iteration.
-* param	iterator	The iterator to be used.
-* return				The next value in the iteration.
-*/
-ListData *list_iterate(ListIterator *iterator);
-
-/**
-* Ends an iteration and frees the iterator.
-* param	iterator	The iteration to be freed.
-*/
-void list_end_iterate(ListIterator *iterator);
-
-/************************************************************
-Generic state machines manager
-************************************************************/
-/*
- * A state machine is a code structure that changes the execution flow in reference to the 
- * state of a variable. A function pointer based state machine is the same concept but it 
- * references a function to be executed next frame instead of checking a variable value.
- *
- * This module offers the possibility of running state machines for any kind of data, even
- * without any data. It is conceived to ensure that the actual state of every object is 
- * executed before been changed by another machine. This characteristic avoids the inherent advantage of the
- * execution order. It has also the minor benefit of executing all the machines from a single
- * array pass inside a single while loop. The state machines will be executed in the same order
- * they were created
- *
- * # How to use these state machine
- * 
- * - Include TUST library into your project.
- * - Start the state machines manager.
- *   ~~~
- *   // Funtion to be executed by a state machine
- *   function myState1 ( STMACHINE *stm ) 
- *   {
- *      // Retrieve the object of the machine
- *      MyStruct *myStruct = stm_me ( stm ); 
- *      you = stm_by_index ( stm ); // Retrieve an object by its index
- *      stm_set_state ( stm, stEnt2, 2 );
- *      my->clock += 20+random(30);
- *   }
- *   ...
- *   stm_open ();
- *   ...
- *   ~~~
-*/
-
-/**
-*     Check for NULL pointers 
-*/
-// In release mode, these #defines will be disabled
-//#define STMC_SAFE_MODE
-
-/**
-*     Try to describe the errors ;) 
-*/
-//#define STMC_ERRORS
-
-/**
-*     Show global state machine collections count
-*/
-#define STMC_COUNT
-
-/**
-*     State machines count into each memory allocation step 
-*/
-#define STMC_MEMSTEP					4
-
-/* ----------------------------------------------------------------------------------------- */
-/* STMACHINE DATA STRUCT
-/* ----------------------------------------------------------------------------------------- */
-typedef struct STMACHINE
-{
-	var stateNext;
-	void *fncNext;
-	void *ptrMe;
-	void remover ( void *ptr );
-	int *index;
-	var flags;
-	var state;
-	void fncPtr ( struct STMACHINE *machine );
-} STMACHINE;
-
-/* ----------------------------------------------------------------------------------------- */
-/* GENERAL FUNCTIONS
-/* ----------------------------------------------------------------------------------------- */
-
-/**
-*     Start the state machines automation 
-*/
-void stm_open ();
-
-/**
-*     Finish the state machines automation 
-*/
-void stm_close ();
-
-/**
-*     Add a new state machine
-* param    obj        A pointer to an object. It can be NULL too.
-* param    remover    A function that removes the object, 
-*                      If NULL the object will not be removed when the state machine is removed
-* param    fnc        The state machine starting function. It can't be NULL!
-* param    state      a number to identify the starting function. Just a helper. Not used.
-* param    index      a pointer to an integer that will be filled 
-*	                     with the actual index in the global state machines array.
-*	                     Since the state machines memory location is dynamic,
-*	                     their index into the array and memory address changes with the flow
-*                      so this integer is used as a secure and fast reference
-*                      to the new state machine.
-* returns             A pointer to the object.
-*/
-void *stm_add ( void *obj, void *remover, void *fnc, var state, int *index );
-
-/* ----------------------------------------------------------------------------------------- */
-/* GENERAL FUNCTION HELPER MACROS
-/* ----------------------------------------------------------------------------------------- */
-
-/**
-*     Create an integer variable and cast its pointer to another type
-*
-* Use it when you want to use an entity or panel (etc) skill as state machine index allocator
-*
-* param    i          Fixed variable (var) to use as pointer to an integer			
-*/
-#define stm_create_index(i)		i=(int*)sys_malloc(sizeof(int))
-
-/**
-*     Delete an integer variable created with stm_create_index
-*
-* It has to be called after using stm_create_index
-*
-* param    i          Fixed variable (var) used as pointer to an integer			
-*/
-#define stm_delete_index(i)		sys_free(i)
-
-/**
-*     The pointer saved in the variable used as a pointer to an integer
-*
-* Use it into last parameter of stm_add function when stm_create_index is used
-*
-* param    i          Fixed variable (var) used as pointer to an integer			
-*/
-#define stm_index_ptr(i)			(int*)i
-
-/* ----------------------------------------------------------------------------------------- */
-/* INSIDE MACHINE FUNCTIONS
-/* ----------------------------------------------------------------------------------------- */
-
-/**
-*     Change a state of a machine
-* param    stm        A pointer to a state machine
-* param    fnc        Function to execute in the new state
-* param    state      A number to identify the new state
-*/
-void stm_set_state ( STMACHINE *stm, void *fnc, var state );
-
-/**
-*     Change the object of a machine
-* param    stm        A pointer to a state machine
-* param    obj        A pointer to an object
-* param    remover    A function that deletes the object
-*/
-void stm_set_me ( STMACHINE *stm, void *obj, void *remover );
-
-/**
-*     Stop all the state machines that point to a certain object
-* param    obj        A pointer to an object
-*/
-void stm_stop_ptr ( void *obj );
-
-/* ----------------------------------------------------------------------------------------- */
-/* INSIDE MACHINE HELPER MACROS
-/* ----------------------------------------------------------------------------------------- */
-
-/**
-*     A state identify number of a state machine
-* param    stmt	      A pointer to a state machine			
-*/
-#define stm_state(stmt)				stmt->state
-
-/**
-*     The pointer to the object of a state machine 
-* param    stmt       A pointer to a state machine			
-*/
-#define stm_me(stmt)					stmt->ptrMe
-
-/**
-*     Stop a state machine in the next frame 
-* param    stmt       A pointer to a state machine			
-*/
-#define stm_stop(stmt)				stm_set_state(stmt,stm_stop_machine,NULL)
-
-/**
-*     The content of an integer pointed by a pointer casted into another type variable
-*
-* Use it when you used an entity or panel (etc) skill as state machine index allocator
-*
-* param    i          Fixed variable (var) to be casted to an integer pointer			
-*/
-#define stm_index(i)					*((int*)i)
-
-/**
-*     The pointer to the nth state machine
-* param    i          Index into the state machines array			
-*/
-#define stm_by_index(i)				(gblMachines->stmFirst+i)
-
-/************************************************************
-Node mesh pathfinding
-************************************************************/
-typedef struct Node
-{
-	var x;
-	var y;
-	var z;
-	
-	int index;
-	var weight;
-	int includer;
-	int *linked;
-	int count;
-	int capacity;
-	struct Node *next;
-} Node;
-
-/**
-* struct   NodeMesh
-* brief    Generic NodeMesh struct
-*/
-typedef struct NodeMesh
-{
-	Node *nodes;
-	int count;
-	int capacity;
-} NodeMesh;
-
-/**
-* brief    Route is used instead of List to give a clear difference between a normal list and a route of nodes.
-*/
-typedef List Route;
-
-/**
-* brief    A pointer to the nodemesh constructor collision entity
-*/
-ENTITY *nodemesh_collider = NULL;
-
-/**
-* brief    Creates a new nodemesh.
-* return   A new nodemesh.
-*/
-NodeMesh *nodemesh_create ();
-
-/**
-* brief Removes a nodemesh.
-* param    nodemesh      The nodemesh to delete.
-*/
-void nodemesh_remove ( NodeMesh *nodemesh );
-
-/**
-* brief    Adds a node to the nodemesh and builds it neighborhood with a c_trace.
-* param    nodemesh      The nodemesh.
-* param    pos           The position of the node to be added.
-* return   The node index in the nodemesh list.
-*/
-int nodemesh_add ( NodeMesh *nodemesh, VECTOR *pos );
-
-/**
-* brief    Looks for the nearest node to a certain position.
-* param    nodemesh      The nodemesh.
-* param    pos           The position .
-* return   The index of the node in the nodemesh list.
-*/
-int nodemesh_nearest ( NodeMesh *nodemesh, VECTOR *pos );
-
-/**
-* brief    Checks the visibilty between a node and all the other nodes inside a nodemesh.
-*           Connects them if visible
-* param    nodemesh      The nodemesh.
-* param    nodeindex     The index of the node.
-*/
-void nodemesh_ctrace_node ( NodeMesh *nodemesh, int nodeindex );
-
-/**
-* brief    Looks for a route between two nodes.
-* param    nodemesh      The nodemesh.
-* param    indexFrom     The index of the starting node
-* param    indexTo       The index of the ending node
-* return   A new route between nodes. NULL in the case there is no route.
-*/
-Route *nodemesh_find_route ( NodeMesh *nodemesh, int indexFrom, int indexTo );
-
-/**
-* brief    Deletes a route.
-* param    route         The route to delete.
-*/
-void route_delete ( Route *route );
-
-void nodes_connect ( Node *nodeFrom, Node *nodeTo );
-int nodes_trace ( Node *nodeFrom, Node *nodeTo, var mode, ENTITY *collider );
-
-/************************************************************
-TUST Headers
-************************************************************/
-
-// This macro maps a varible from type a into type b without changing the bits.
-#define type_convert(variable, T) (*((T*)(&variable)))
-
-/*
- * Move block of memory.
- *
- * Copies the values of num bytes from the location pointed by source to the memory block pointed by destination. Copying takes place as if an intermediate buffer were used, allowing the destination and source to overlap.
- * The underlying type of the objects pointed by both the source and destination pointers are irrelevant for this function; The result is a binary copy of the data.
- * The function does not check for any terminating null character in source - it always copies exactly num bytes.
- * To avoid overflows, the size of the arrays pointed by both the destination and source parameters, shall be at least num bytes.
- * 
- * destination		Pointer to the destination array where the content is to be copied, type-casted to a pointer of type void*.
- * source			Pointer to the source of data to be copied, type-casted to a pointer of type void*.
- * num				Number of bytes to copy.
- * destination is returned.
- * Copied from http://www.cplusplus.com/reference/cstring/memmove/
-*/
-void *memmove(BYTE *destination, BYTE *source, unsigned int num);
-
-// Sets all values of an angle between 0 and 360
-void ang_normalize(ANGLE* _ang);
-
-// Calculates a vertex position of an entity in world space.
-VECTOR* vec_for_ent_ext(VECTOR* _target, ENTITY* _ent, int _vertexNumber);
-
-// Writes a string at the given XY screen position in the current frame, using a Gamestudio FONT.
-void draw_font(STRING* text, var x, var y, COLOR* color, FONT *font, int flags, var alpha);
-
-/************************************************************
 Math
 ************************************************************/
-long sresult = 0;
-static double U[50];
-int vec_to_bezierBufferSize = 0;
-VECTOR *vec_to_bezierBuffer = NULL;
+
+/*
 
 long GCD(long, long);
 
@@ -1753,127 +1107,11 @@ float _vec_length(VECTOR *);
 float _vec_dot(VECTOR *, VECTOR *);
 float vec_ang(VECTOR *, VECTOR *);
 
-/************************************************************
-The following functions are from math.h from the TUST library.
-************************************************************/
-var ang_lerp_single(var a1, var a2, var factor); // Interpolates a single angle.
-ANGLE* ang_lerp(ANGLE* a, ANGLE* a1, ANGLE* a2, var f); // Interpolates an euler angle.
-void vec_rotateXY ( VECTOR *vec, var angle ); // Rotates a vector about an orthogonal axis
-void vec_rotateXZ ( VECTOR *vec, var angle ); // Rotates a vector about an orthogonal axis.
-void vec_rotateYZ ( VECTOR *vec, var angle ); // Rotates a vector about an orthogonal axis.
-var point_to_line2D_dist ( var px, var py, var l1x, var l1y, var l2x, var l2y ); // Gives the distance from a point to a line described by two other points
-var point_to_line2D_escalar ( var px, var py, var l1x, var l1y, var l2x, var l2y ); // Gives the escalar of the orthogonal projection of a point over a vector described by two other points
-List* calculate_spline(List* _points,  int _detail); // Calculates a spline
-VECTOR* math_get_spline(VECTOR* points, int pointcount, float pos); // Calculates a spline
-VECTOR *vec_to_bezier(VECTOR *pos, VECTOR *points, int count, float p); // Calculates a position on a bezier courve
-VECTOR *vec_to_catmull(VECTOR *pos, VECTOR *v0, VECTOR *v1, VECTOR *v2, VECTOR *v3, float s); // Calculates a position on a catmull courve
-int float_cmp(float _f1, float _f2); // Compares 2 float values with a precision of %.2f
-void mat_eye ( float *_matrix, VECTOR *_vecPos, VECTOR *_vecDir ); // Computes the world to custom coordinates tranformation matrix (matView)
-
-/************************************************************
-craftbox's implementations of TUST math functions, marked with prefix c_function name
-************************************************************/
-
-
-/************************************************************
-INI functions
-************************************************************/
-char iniBuffer[2048];
-
-/**
- * Writes a string into an ini file.
- * param	filename	The absolute path to the filename of the ini file.
- * param	section		The section to write into.
- * param	entry		The key of the section entry to write.
- * param	value		The value which will be written into the key entry.
- */
-void ini_write(STRING *filename, STRING *section, STRING *entry, STRING *value);
-
-/**
- * Writes an integer into an ini file.
- * param	filename	The absolute path to the filename of the ini file.
- * param	section		The section to write into.
- * param	entry		The key of the section entry to write.
- * param	value		The value which will be written into the key entry.
- */
-void ini_write_int(STRING *filename, STRING *section, STRING *entry, int value);
-
-/**
- * Writes a var into an ini file.
- * param	filename	The absolute path to the filename of the ini file.
- * param	section		The section to write into.
- * param	entry		The key of the section entry to write.
- * param	value		The value which will be written into the key entry.
- */
-void ini_write_var(STRING *filename, STRING *section, STRING *entry, var value);
-
-/**
- * Writes a float into an ini file.
- * param	filename	The absolute path to the filename of the ini file.
- * param	section		The section to write into.
- * param	entry		The key of the section entry to write.
- * param	value		The value which will be written into the key entry.
- */
-void ini_write_float(STRING *filename, STRING *section, STRING *entry, float value);
-
-/**
- * Reads all sections from an ini file into a TEXT object.
- * param	txt			The TEXT object where the sections will be stored in.
- * param	filename	The absolute path to the filename of the ini file.
- * return				Number of sections read from the ini file.
- */
-int ini_read_sections(TEXT *txt, STRING *filename);
-
-/**
- * Reads a string from an ini file.
- * param	targetValue		The string where the result will be stored in.
- * param	filename		The absolute path to the filename of the ini file.
- * param	section			The section to read from.
- * param	entry			The key of the section entry to read.
- * param	defaultValue	The default value which will be written into the return value if the key doesn't exist.
- * return					Number of characters read into the string.
- */
-int ini_read(STRING *targetValue, STRING *filename, STRING *section, STRING *entry, STRING *defaultValue);
-
-/**
- * Reads an integer from an ini file.nichts
- * param	filename		The absolute path to the filename of the ini file.
- * param	section			The section to read from.
- * param	entry			The key of the section entry to read.
- * param	defaultValue	The default value which will be returned if the key doesn't exist.
- * return					The entry value converted to an integer.
- */
-int ini_read_int(STRING *filename, STRING *section, STRING *entry, int defaultValue);
-
-/**
- * Reads a float from an ini file.
- * param	filename		The absolute path to the filename of the ini file.
- * param	section			The section to read from.
- * param	entry			The key of the section entry to read.
- * param	defaultValue	The default value which will be returned if the key doesn't exist.
- * return					The entry value converted to an float.
- */
-float ini_read_float(STRING *filename, STRING *section, STRING *entry, float defaultValue);
-
-/**
- * Reads a var from an ini file.
- * param	filename		The absolute path to the filename of the ini file.
- * param	section			The section to read from.
- * param	entry			The key of the section entry to read.
- * param	defaultValue	The default value which will be returned if the key doesn't exist.
- * return					The entry value converted to a var.
- */
-var ini_read_var(STRING *filename, STRING *section, STRING *entry, var defaultValue);
+*/
 
 /************************************************************
 TUST FX
 ************************************************************/
-
-#define FOG_MAX_ALPHA skill1
-#define FOG_CAMERA_DISTANCE 300
-#define FOG_SPEED 10
-
-List* fogEntities = NULL;
 
 VECTOR vecEffectsTemp;
 
@@ -1900,12 +1138,6 @@ void eff_explosion(VECTOR* _pos);
 */
 void eff_complexSmoke(STRING *smoke, VECTOR* _pos, VECTOR* _size, var density, var time);
 
-/**
-* Generate fog or dust that is always placed around the camera
-* param	int	Fog density
-*/
-void eff_generate_fog(int _density);
-
 void pFountain(PARTICLE *p);
 void pDenseSmoke(PARTICLE *p);
 void pStars(PARTICLE *p);
@@ -1923,7 +1155,6 @@ void pExplosionDust(PARTICLE *p);
 void pExplosionScatter(PARTICLE *p);
 
 // Internal
-
 void pAlphaFade(PARTICLE *p);
 void pAlphaFadeFlame(PARTICLE *p);
 void vec_randomize(VECTOR* _vector, var _range);
@@ -1933,6 +1164,7 @@ Graphics struct
 ************************************************************/
 GraphicsSettingsStruct *CreateGraphicsStruct(int, int, int, int, int, int, int ,int ,int, int);
 int CompareGraphicsStruct(GraphicsSettingsStruct *, GraphicsSettingsStruct *);
+void SetDefaultGraphicsSettings();
 
 void SetReleaseNumber(STRING *); // Sets RELEASE_STR_VER to an arbitrary string (normally RELEASE_STR_VER contains release number in string format)
 void SetReleaseInfo(STRING *); // The same, but with RELEASE_STR_INFO which contains release info.
@@ -1943,17 +1175,16 @@ void LoadKernel();
 void PostLoadKernel();
 void LoopKernel();
 void LoadPlayground();
-void PrecacheContent();
 void _beep();
 void ApplyGraphicsSettings( GraphicsSettingsStruct * );
 int UnloadKernel();
 int ReloadKernel();
 int Console();
+void OpenConsole();
+void OpenBenchmark() { wait( 1 ); }
 int PlayVideo(STRING *, var);
 int SetupShader();
 void FolderScan(TEXT *,STRING *,STRING *);
-void WriteObjectCustomSettings(ENTITY *);
-void LoadObjectCustomSettings(ENTITY *);
 int GetPercent(var, var);
 void on_level_event(var);
 //COLOR *CopyColor(var, var, var);
@@ -2020,6 +1251,7 @@ void free_camera();
 //void good_weather();
 
 // A simple music player, developed in a rush.
+var MainMenuMusicHndl;
 void mpLoad(STRING *, STRING *);
 void mpUnload();
 void mpPrev();
@@ -2028,7 +1260,6 @@ void mpPause();
 void mpResume();
 void mpPlay(STRING *);
 void ToggleMusicPlayer();
-void sndPlay(STRING *);
 
 // Terrain deformation functions
 //void TDeform_deform_terrain();
@@ -2044,6 +1275,8 @@ void TDeform_saveterrain(ENTITY *);
 void TDeform_LoadHeightFrom(ENTITY *);
 
 // A bunch of functions for saving and loading levels
+/*
+
 void SaveWorld(STRING *, int);
 void SaveWorld_system(var);
 void SaveWorld_geodata(var);
@@ -2053,6 +1286,8 @@ void LoadWorld(STRING *, int);
 void LoadWorld_system(var);
 void LoadWorld_geodata(var);
 void LoadWorld_objectdata(var);
+
+*/
 
 // Object seeding
 void paint_canvas();
@@ -2064,7 +1299,6 @@ var alpha_value = 100;
 var canvas_modified = 0;
 var paint_outside;
 COLOR *current_color2 = { red = 0; green = 255; blue = 255; } // Cyan
-COLOR *LineConnectColor = { red = 0; blue = 0; green = 255; }
 BMAP* canvas;
 BMAP* canvas_paint;
 var mark_seedEntstr = 0;
@@ -2079,11 +1313,7 @@ PANEL *seedPanelCover, *canvas_pan;
 void GGUIInit();
 void GGUIHide();
 void GGUIShow();
-void GGUIUpdate(PANEL *);
 
-void _GShowSplashScreen_Common(var);
-void GShowSplashScreen(STRING *, var);
-void GShowSplashScreen(BMAP *, var);
 void guiViewPreset (int *, int, VECTOR *, VECTOR *);
 void GPanelAlignMainMenu(PANEL *);
 void GPanelCenterInside(PANEL *, PANEL *);
@@ -2100,12 +1330,13 @@ void GPanelMoveAlphaY(PANEL *, var, var, var);
 //void GNotificationCreate(FONT *, STRING *);
 //void GWindowClose(var, PANEL *);
 
+void GameSplash ();
 void GBlackboardAlphaFade();
 void GBlackboardAlphaRestore();
 void GToggleStatistics();
 void GInsertObjectShow();
 void GInsertObjectHide();
-void GMaterialEditorShow();
+//void GMaterialEditorShow();
 void GToggleTerrainEditor();
 void GToggleObjectSeeder();
 void GSwitchToMoveMode();
@@ -2118,8 +1349,6 @@ void GOptionsAdjustSettings(var);
 void GOptions_SaveSettings();
 void GOptionsHide();
 void GCreditsShow();
-void GGameLoad();
-void GGameSave();
 void GLightWindowShow();
 void GLightWindowHide();
 void GPropertiesWindowShow();
@@ -2143,7 +1372,7 @@ void GNewGameResetDynamicSettings();
 void GNewGameResetStaticSettings();
 void GSwitchNewGameScreen(var);
 void GNewGame_ChooseWorld(var);
-void GNewGame_Scrollbar(var, PANEL *);
+//void GNewGame_Scrollbar(var, PANEL *);
 void GNewGame_PreviewScene();
 void GNewGame_UnPreviewScene();
 void LaunchGameSession();
@@ -2166,15 +1395,18 @@ void GWeatherMode_RainSnow();
 void GBackMenuShow();
 void GBackMenuHide();
 void GQuitToMainMenu();
-void GTerrainSubmenuHide();
 void GTerrainSubmenuShow();
 void GQuitCraftbox();
 void GUnQuitCraftbox();
 void GOpenPropertiesWindow();
 
+// GUI stuff for system objects
+void GSpawnNotificationHide ();
+void GSpawnNotificationShow ();
+void GSpawnDialogueHide ();
+void GSpawnDialogueShow ();
+
 // wrappers/controllers for sound instructions
-void GSEMenuMouseHover();
-void GSEMenuMouseClick();
 
 void GIO_ObjectTab_SwitchTab(var);
 void GOptions_Graphics();
@@ -2201,10 +1433,10 @@ void ObjectRandomPan();
 
 int PassObjectPropertiesToGUI(ENTITY *);
 
-void ReadMaterialDataFromFile(MATERIAL *, STRING *);
-void WriteMaterialDataToFile(STRING *, MATERIAL *);
-void PassMaterialDataToWindow(MATERIAL *);
-void MaterialCopyColor(MATERIAL *, MATERIAL *);
+//void ReadMaterialDataFromFile(MATERIAL *, STRING *);
+//void WriteMaterialDataToFile(STRING *, MATERIAL *);
+//void PassMaterialDataToWindow(MATERIAL *);
+//void MaterialCopyColor(MATERIAL *, MATERIAL *);
 
 int PassObjectDataToClipboard(ENTITY *, ObjectStruct *);
 int PassClipboardDataToObject(ENTITY *);
@@ -2224,8 +1456,8 @@ ENTITY *CreateObject();
 
 //void LoadSavedBMAPs();
 
-int SaveGameToSlot(var);
-int LoadGameFromSlot(var);
+//int SaveGameToSlot(var);
+//int LoadGameFromSlot(var);
 
 int ConfigFileRead(STRING *);
 int ConfigFileWrite(STRING *);
@@ -2234,6 +1466,11 @@ int GenerateLight();
 int GenerateSound();
 int GenerateWaypoint();
 int GenerateTerrain();
+int GenerateWaterPlane();
+
+#define GENERATED_REFLECTION skill25
+void GenerateReflection(ENTITY *);
+void UpdateGeneratedReflections(STRING *);
 
 void func_particle_segment();
 void func_lightning_effect();
@@ -2243,19 +1480,14 @@ void sky_day_fade_in();
 void sky_day_state();
 void sky_night_fade_in();
 void sky_night_state();
-//void act_mystymood_trigg_label1();
-//void lensflare_create();
-//void lensflare_start();
-//void flare_init(ENTITY *);
-//void flare_place(ENTITY *);
 
 void LoadNewLevel();
-void LoadNewLevelFromWindow();
-void LoadNewLevelFromMenuWindow();
+//void LoadNewLevelFromWindow();
+//void LoadNewLevelFromMenuWindow();
 
 //void LevelCleaner();
 void TakeScreenshot();
-void OptimizeFramerate(var);
+//void OptimizeFramerate(var);
 
 void InitMystymood(); // This will load the necessary resources for the Mystymood engine.
 void LoadMystymood( bool ); // This will toggle the Mystymood engine on and off. Not to be confused with InitMystymood() which only loads the resources.
@@ -2339,11 +1571,15 @@ void p_fire_1_create(VECTOR *);
 void p_double_helix_create(VECTOR *);
 void p_composition_create(VECTOR *);
 
-void rain_event(PARTICLE *);
-void rain_base(PARTICLE *);
-void rain(VECTOR *);
-
 void SetReleaseNumber(STRING *Num) { str_cpy(RELEASE_STR_VER,Num); }
 void SetReleaseInfo(STRING *Inf) { str_cpy(RELEASE_STR_INFO,Inf); }
+
+// compiler missing function fix
+void bullet_particles();
+
+void dummy() { wait( 1 ); }
+action Player_Normal();
+action Player_Bike();
+action Spawn_Warning();
 
 #endif HEADER_H
