@@ -1,3 +1,0 @@
-//not much in here...
-
-void sc_objDummy123();
