@@ -38,13 +38,8 @@ TODO:
 NOTES:
 <+++
 
-#include "sc_volumeTexture.h"
 http://en.wikipedia.org/wiki/Volume_rendering
-
-#include "sc_deferredLighting.h"
 http://en.wikipedia.org/wiki/Deferred_shading
-
-#include "sc_forward.h"
 http://gamestart3d.com/wiki/index.php?title=Forward_or_Deferred_rendering%3F
 
 + Fixed Function Effects List
@@ -136,7 +131,7 @@ int ppe
 
 ) {
    
-   GraphicsSettingsStruct *newStruct = sys_malloc( sizeof(GraphicsSettingsStruct) );
+   GraphicsSettingsStruct *newStruct = malloc( sizeof(GraphicsSettingsStruct) );
 
    newStruct->Brightness = brightness;
    newStruct->BitDepth = bitdepth;
@@ -150,37 +145,6 @@ int ppe
    newStruct->PPE = ppe;
    
    return newStruct;
-   
-}
-
-
-/*
---------------------------------------------------
-int CompareGraphicsStruct(GraphicsSettingsStruct *struct1, GraphicsSettingsStruct *struct2)
-
-Desc: Compare two GraphicsSettingsStruct struct.
-
-Returns: > 0 if struct1 differs from struct2.
---------------------------------------------------
-*/
-int CompareGraphicsStruct(GraphicsSettingsStruct *struct1, GraphicsSettingsStruct *struct2) {
-   
-   while( !struct1 || !struct2 ) wait(1);
-   
-   return (
-   
-   (struct1->Brightness != struct2->Brightness) ||
-   (struct1->BitDepth != struct2->BitDepth) ||
-   (struct1->AFLevel != struct2->AFLevel) || 
-   (struct1->AALevel != struct2->AALevel) ||
-   (struct1->_SSAO != struct2->_SSAO) ||
-   (struct1->DOF != struct2->DOF) ||
-   (struct1->Shadows != struct2->Shadows) ||
-   (struct1->ObjShaders != struct2->ObjShaders) ||
-   (struct1->PPE != struct2->PPE) ||
-   (struct1->HDR != struct2->HDR)
-   
-   );
    
 }
 
@@ -203,44 +167,6 @@ void ApplyGraphicsSettings( GraphicsSettingsStruct *dConfig ) {
 	video_depth = dConfig->BitDepth;
 	d3d_antialias = dConfig->AALevel;
 	d3d_anisotropy = dConfig->AFLevel;
-	
-	/*
-	
-	if( !dConfig->HDR && !dConfig->DOF && !dConfig->Shadows) {
-		
-		// switches off HDR views
-		reset(sc_view_hdrDownsample,SHOW);
-		reset(sc_view_hdrHighpass,SHOW);
-		reset(sc_view_hdrBlur,SHOW);
-		reset(sc_view_hdrHBlur,SHOW);
-		reset(sc_view_hdrVBlur,SHOW);
-		
-		reset(sc_view_depth,SHOW);
-		reset(sc_view_hdrGamma,SHOW);
-		reset(sc_view_reflect,SHOW);
-		//		reset(shadowView,SHOW); // local
-		//		reset(shadowDepthView,SHOW);
-		
-		wait(1);
-		video_set(sys_metrics(0)-1,0,0,0);
-		sc_scSetup = 0;
-		
-		wait(2);
-
-	}
-	
-	if( dConfig->HDR || dConfig->DOF || dConfig->Shadows ) sc_setup();
-	
-	// SSAO
-	if (dConfig->_SSAO) {
-		
-		if( !ssaoLoaded ) LoadSSAO(); // If SSAO hasn't yet been initialized, initializes and loads SSAO
-		else toggleSsaoState();
-		
-	}
-	
-	*/
-	
 }
 
 /*

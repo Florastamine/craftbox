@@ -1163,7 +1163,6 @@ void vec_randomize(VECTOR* _vector, var _range);
 Graphics struct
 ************************************************************/
 GraphicsSettingsStruct *CreateGraphicsStruct(int, int, int, int, int, int, int ,int ,int, int);
-int CompareGraphicsStruct(GraphicsSettingsStruct *, GraphicsSettingsStruct *);
 void SetDefaultGraphicsSettings();
 
 void SetReleaseNumber(STRING *); // Sets RELEASE_STR_VER to an arbitrary string (normally RELEASE_STR_VER contains release number in string format)

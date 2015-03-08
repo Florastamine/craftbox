@@ -4068,11 +4068,8 @@ void GOptions_SaveSettings() {
 		defaultConfig.Shadows = button_state(Options_Graphics,14,-1); // 14 = Shadows
 		defaultConfig.ObjShaders = button_state(Options_Graphics,15,-1); // 15 = Object-based shaders
 		defaultConfig.PPE = button_state(Options_Graphics,16,-1); // Post Process effects
-		
 		wait(2);
-		
-//		if(CompareGraphicsStruct(defaultConfig,tempConfig)) ApplyGraphicsSettings( defaultConfig );
-		
+			
 		GOptionsHide();
 		
 		return;
